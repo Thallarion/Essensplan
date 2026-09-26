@@ -170,6 +170,11 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--mustard);outlin
 .pick{display:flex;flex-direction:column;gap:6px;margin-top:8px}
 .pick button{text-align:left;font:15px var(--body);padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer;display:flex;justify-content:space-between;gap:10px}
 .pick button:hover{border-color:var(--basil)}
+.pick-filters{flex-wrap:nowrap;overflow-x:auto;margin:0 -18px 4px;padding:0 18px 6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.pick-filters::-webkit-scrollbar{display:none}
+.pick-filters button{flex:none;white-space:nowrap}
+.pick button .chip{align-self:flex-start;flex:none}
+.pick-count{font-size:13px;color:var(--muted);margin:2px 0 4px}
 .days{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 .days button{font:700 14px var(--body);padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
 .days button:hover{background:var(--basil);color:var(--basil-ink);border-color:var(--basil)}
@@ -1580,20 +1585,7 @@ $("#viewDay").addEventListener("click",()=>{ shopPrefs.view="day"; saveShopPrefs
 let filter = "alle", query = "", surprise = null;
 function renderIdeas(){
   const q = query.trim().toLowerCase();
-  const list = allDishes().filter(d=>{
-    if(filter==="veg"&&d.k!=="veg") return false;
-    if(filter==="fleisch"&&d.k!=="fleisch") return false;
-    if(filter==="fisch"&&d.k!=="fisch") return false;
-    if(filter==="schnell"&&d.t>20) return false;
-    if(filter==="alltag"&&d.t>30) return false;
-    if(filter==="zeit"&&d.t<40) return false;
-    if(filter==="kinder"&&!d.kid) return false;
-    if(filter==="eigene"&&!d.own&&!d.foto&&!d.web) return false;
-    if(filter==="ausgewogen"&&!d.aus) return false;
-    if((filter==="asia"||filter==="indien")&&d.cu!==filter) return false;
-    if(q && !(d.n.toLowerCase().includes(q) || d.i.some(x=>x[2].toLowerCase().includes(q)))) return false;
-    return true;
-  });
+  const list = allDishes().filter(d=>matchFilter(d,filter) && matchQuery(d,q));
   const inPlan = new Set(planned());
   $("#ideas").innerHTML = list.length ? list.map(d=>`<div class="idea">
     <h4 data-open="${d.id}">${esc(d.n)}</h4>
@@ -1635,17 +1627,45 @@ function showDish(id){
     ${d.foto?`<p class="src">📷 Aus deinem Kochbuch-Foto übernommen, Mengen auf 3 Personen umgerechnet.</p>`:''}
     ${d.own?`<h3>Eigenes Rezept</h3><div class="bar"><button class="btn" data-editrecipe="${d.id}">Bearbeiten</button><button class="btn ghost" data-delrecipe="${d.id}">Löschen</button></div>`:''}`);
 }
+function matchFilter(d,f){
+  if(f==="veg"&&d.k!=="veg") return false;
+  if(f==="fleisch"&&d.k!=="fleisch") return false;
+  if(f==="fisch"&&d.k!=="fisch") return false;
+  if(f==="schnell"&&d.t>20) return false;
+  if(f==="alltag"&&d.t>30) return false;
+  if(f==="zeit"&&d.t<40) return false;
+  if(f==="kinder"&&!d.kid) return false;
+  if(f==="eigene"&&!d.own&&!d.foto&&!d.web) return false;
+  if(f==="ausgewogen"&&!d.aus) return false;
+  if((f==="asia"||f==="indien")&&d.cu!==f) return false;
+  return true;
+}
+function matchQuery(d,q){ return !q || d.n.toLowerCase().includes(q) || d.i.some(x=>String(x[2]).toLowerCase().includes(q)); }
 function pickFor(day){
   const opts = allDishes().sort((a,b)=>a.n.localeCompare(b.n,"de"));
+  const cats = [...document.querySelectorAll("#filters button")].map(b=>[b.dataset.f,b.textContent]);
+  let pf = "alle";
   openSheet(`<button class="btn small close" data-close>Schließen</button>
     <h2>${DAYS_LONG[day]}</h2>
     <div class="add" style="margin-top:10px"><input id="customDish" type="text" placeholder="Eigenes Gericht, z. B. Resteessen" autocomplete="off"><button class="btn primary" data-custom="${day}">Übernehmen</button></div>
-    <input class="search" id="pickSearch" type="search" placeholder="Suchen …" style="margin:0">
-    <div class="pick" id="pickList">${opts.map(d=>`<button data-setday="${day}" data-dish="${d.id}" data-name="${esc(d.n.toLowerCase())}"><span>${esc(d.n)}</span><span class="chip ${d.k}">${d.t?d.t+" Min":KIND[d.k]}</span></button>`).join("")}</div>`);
-  $("#pickSearch").addEventListener("input",e=>{
-    const q = e.target.value.toLowerCase();
-    document.querySelectorAll("#pickList button").forEach(b=>b.hidden = !b.dataset.name.includes(q));
+    <input class="search" id="pickSearch" type="search" placeholder="Gericht oder Zutat suchen …" style="margin:0 0 8px">
+    <div class="filters pick-filters" id="pickFilters">${cats.map(([f,l])=>`<button type="button" data-pf="${f}" aria-pressed="${f===pf}">${esc(l)}</button>`).join("")}</div>
+    <p class="pick-count" id="pickCount"></p>
+    <div class="pick" id="pickList">${opts.map(d=>`<button data-setday="${day}" data-dish="${d.id}"><span>${esc(d.n)}</span><span class="chip ${d.k}">${d.t?d.t+" Min":KIND[d.k]}</span></button>`).join("")}</div>`);
+  const byId = Object.fromEntries(opts.map(d=>[d.id,d]));
+  const apply = ()=>{
+    const q = $("#pickSearch").value.trim().toLowerCase(); let n=0;
+    document.querySelectorAll("#pickList button").forEach(b=>{ const ok = matchFilter(byId[b.dataset.dish],pf) && matchQuery(byId[b.dataset.dish],q); b.hidden=!ok; if(ok) n++; });
+    $("#pickCount").textContent = n ? `${n} Gericht${n>1?"e":""}` : "Nichts gefunden – andere Kategorie oder Suche probieren.";
+  };
+  $("#pickSearch").addEventListener("input",apply);
+  $("#pickFilters").addEventListener("click",e=>{
+    const b = e.target.closest("button[data-pf]"); if(!b) return; e.stopPropagation();
+    pf = b.dataset.pf;
+    document.querySelectorAll("#pickFilters button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+    apply();
   });
+  apply();
 }
 
 /* ---------- Events ---------- */
