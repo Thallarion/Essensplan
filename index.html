@@ -372,7 +372,8 @@ const DISHES = [
  {id:"k03",foto:1,aus:1,n:"Buntes Ofengemüse mit Limetten-Dill-Quark",t:35,k:"veg",i:[[600,"g","Rosenkohl","g"],[3,"Stk","Pastinaken","g"],[3,"Stk","Petersilienwurzeln","g"],[3,"Stk","Möhren (lila oder orange)","g"],[1,"Bund","Dill","g"],[1,"Stk","Limette (Bio)","g"],[400,"g","Quark (20 % Fett)","k"]],m:"Ofen auf 200 °C. Rosenkohl halbieren, Wurzelgemüse vierteln, mit Öl, Salz, Pfeffer und Räucherpaprika mischen und 15–20 Min. backen. Quark mit gehacktem Dill und Limettensaft verrühren, abschmecken. Gemüse mit Quark und Limettenspalten servieren."},
  {id:"k04",foto:1,aus:1,n:"Linsen-Mangold-Suppe mit Joghurt",t:35,k:"veg",i:[[2,"Stk","Zwiebel","g"],[2,"Zehen","Knoblauch","g"],[600,"g","Mangold (oder Blattspinat)","g"],[1,"Stk","Zitrone (Bio)","g"],[1,"Bund","Koriander","g"],[150,"g","Grüne Linsen","v"],[150,"g","Naturjoghurt (3,8 %)","k"]],m:"Zwiebel, Knoblauch und zerstoßene Korianderkörner in Öl 5 Min. anbraten. Mangold und Zitronenschale 3–4 Min. mitbraten. Brühe, Wasser und Linsen dazu, zugedeckt 20 Min. köcheln, abschmecken. Mit Zitronensaft, Joghurt und Koriander servieren."},
  {id:"k05",foto:1,aus:1,n:"Grüner Spargel mit Tofu, Graupenrisotto & Pesto",t:45,k:"veg",i:[[750,"g","Grüner Spargel","g"],[300,"g","Tofu mit Kräutern","k"],[120,"g","Gerstengraupen (oder Risottoreis)","v"],[0.4,"l","Gemüsebrühe","v"],[1,"Bund","Bärlauch (oder Schnittlauch / fertiges grünes Pesto)","g"],[75,"g","Walnusskerne","v"],[1,"Pck","Hefeflocken","v"],[1,"Stk","Zitrone (Bio)","g"],[2,"Stk","Schalotten","g"],[2,"Zehen","Knoblauch","g"],[50,"g","Parmesan am Stück","k"]],m:"Ofen auf 180 °C. Pesto aus Bärlauch, Walnüssen, Hefeflocken, Zitronensaft und Öl pürieren. Spargel und Tofuwürfel mit Öl, Salz, Pfeffer 15 Min. im Ofen garen. Schalotte und Knoblauch andünsten, Graupen und Brühe dazu, 20 Min. köcheln, Parmesan unterziehen. Mit Spargel, Tofu, Pesto und Zitronenschale anrichten."},
- {id:"k06",foto:1,aus:1,cu:"asia",n:"Grüne Power-Pfanne mit Hähnchen",t:15,k:"fleisch",kid:1,i:[[450,"g","Hähnchenbrustfilet","f"],[450,"g","Brokkoli (TK)","t"],[300,"g","Grüne Bohnen (TK)","t"],[1,"Bund","Frühlingszwiebeln","g"],[30,"g","Cashewkerne","v"],[1,"Flasche","Sesamöl","v"],[250,"g","Reis (optional)","v"]],m:"Brokkoli und Bohnen antauen lassen. Hähnchen in Streifen im Wok in Sesamöl rundum anbraten. Brokkoli 3 Min. mitdünsten, dann Bohnen, Frühlingszwiebeln und Cashews dazu. Mit Sojasauce, Pfeffer und Kurkuma würzen und sofort servieren."}
+ {id:"k06",foto:1,aus:1,cu:"asia",n:"Grüne Power-Pfanne mit Hähnchen",t:15,k:"fleisch",kid:1,i:[[450,"g","Hähnchenbrustfilet","f"],[450,"g","Brokkoli (TK)","t"],[300,"g","Grüne Bohnen (TK)","t"],[1,"Bund","Frühlingszwiebeln","g"],[30,"g","Cashewkerne","v"],[1,"Flasche","Sesamöl","v"],[250,"g","Reis (optional)","v"]],m:"Brokkoli und Bohnen antauen lassen. Hähnchen in Streifen im Wok in Sesamöl rundum anbraten. Brokkoli 3 Min. mitdünsten, dann Bohnen, Frühlingszwiebeln und Cashews dazu. Mit Sojasauce, Pfeffer und Kurkuma würzen und sofort servieren."},
+ {id:"k07",web:1,aus:1,src:["einfachkochen.de: Rote-Bete-Carpaccio","https://www.einfachkochen.de/rezepte/rote-bete-carpaccio-einfach-lecker"],n:"Rote-Bete-Carpaccio mit Walnüssen & Ziegenkäse",t:20,k:"veg",i:[[3,"Stk","Rote Bete (klein, roh)","g"],[75,"g","Rucola","g"],[1,"Bund","Petersilie","g"],[60,"g","Walnusskerne","v"],[75,"g","Ziegenfrischkäse (oder Feta)","k"],[1,"Stk","Zitrone","g"],[1,"Laib","Vollkornbrot","b"]],m:"Rote Bete schälen und hauchdünn hobeln. Walnüsse rösten und hacken. Dressing aus Öl, Zitronensaft, Honig, Senf, hellem Balsamico, Salz und Pfeffer rühren. Bete fächerförmig anrichten, mit Petersilie, Rucola, Dressing, Käse und Walnüssen belegen. Mit Vollkornbrot servieren."}
 ];
 const STEPS = {};
 Object.assign(STEPS, {
@@ -1256,7 +1257,14 @@ k06:{v:"3 EL Sojasauce (gern glutenfrei), Pfeffer, ½ TL gemahlene Kurkuma",s:[
 "3 EL Sesamöl im Wok oder einer großen Pfanne erhitzen und die Hähnchenstreifen rundum anbraten.",
 "Brokkoli dazugeben und ca. 3 Min. mitdünsten.",
 "Bohnen, Frühlingszwiebeln und Cashewkerne dazugeben und 2–3 Min. mitbraten.",
-"Mit Sojasauce, Pfeffer und Kurkuma würzen und sofort servieren."]}
+"Mit Sojasauce, Pfeffer und Kurkuma würzen und sofort servieren."]},
+k07:{v:"2 EL Olivenöl, 1½ TL flüssiger Honig, 1½ TL Senf, 1½ EL heller Balsamico, Salz, Pfeffer, Einweghandschuhe",s:[
+"Rote Bete schälen (am besten mit Handschuhen, sie färbt stark ab) und mit dem Gemüsehobel in sehr dünne Scheiben hobeln.",
+"Rucola waschen und trocken schleudern. Petersilie abbrausen, trocken schütteln und grob hacken.",
+"Walnüsse in einer Pfanne ohne Fett goldbraun rösten, kurz abkühlen lassen und grob hacken.",
+"Für das Dressing Öl und 1½ EL Zitronensaft verquirlen, Honig und Senf unterrühren, Balsamico dazugeben und mit Salz und Pfeffer abschmecken.",
+"Rote-Bete-Scheiben fächerförmig auf Tellern auslegen, Petersilie darüberstreuen und Rucola in die Mitte setzen.",
+"Mit Dressing beträufeln, Käse darüberbröseln und mit Walnüssen bestreuen. Mit Vollkornbrot servieren."]}
 });
 
 const BY = Object.fromEntries(DISHES.map(d=>[d.id,d]));
@@ -1266,7 +1274,7 @@ function ownDish(id){
   return {id, own:1, n:r.n, t:r.t||0, k:r.k||"veg", kid:r.kid?1:0, m:r.m||"", i:(r.i||[]).map(x=>[x.a||0, x.u||"", x.n, x.c||"v"])};
 }
 function dish(id){ return BY[id] || ownDish(id); }
-function allDishes(){ return [...Object.keys(state.recipes||{}).map(ownDish).filter(Boolean), ...DISHES.filter(d=>d.foto), ...DISHES.filter(d=>!d.foto)]; }
+function allDishes(){ return [...Object.keys(state.recipes||{}).map(ownDish).filter(Boolean), ...DISHES.filter(d=>d.foto||d.web), ...DISHES.filter(d=>!d.foto&&!d.web)]; }
 const CATS = [["g","Obst & Gemüse"],["b","Brot & Backwaren"],["k","Kühlregal"],["f","Fleisch & Fisch"],["t","Tiefkühl"],["v","Vorrat"],["x","Sonstiges"]];
 const KIND = {veg:"Vegetarisch",fleisch:"Fleisch",fisch:"Fisch"};
 const DAYS = ["Mo","Di","Mi","Do","Fr","Sa","So"];
@@ -1419,7 +1427,7 @@ function fmtQty(a,u){
   return num+" "+unit;
 }
 function chips(d){
-  return `${d.own?'<span class="chip own">Eigenes Rezept</span>':''}${d.foto?'<span class="chip own">📷 Eigenes Rezept</span>':''}${d.aus?'<span class="chip aus">Ausgewogen</span>':''}${d.cu?`<span class="chip cu">${d.cu==="asia"?"Asiatisch":"Indisch"}</span>`:''}<span class="chip ${d.k}">${KIND[d.k]}</span>${d.t?`<span class="chip time">${d.t} Min</span>`:''}${d.kid?'<span class="chip">Kinderliebling</span>':''}`;
+  return `${d.own?'<span class="chip own">Eigenes Rezept</span>':''}${d.foto?'<span class="chip own">📷 Eigenes Rezept</span>':''}${d.web?'<span class="chip own">🔗 Eigenes Rezept</span>':''}${d.aus?'<span class="chip aus">Ausgewogen</span>':''}${d.cu?`<span class="chip cu">${d.cu==="asia"?"Asiatisch":"Indisch"}</span>`:''}<span class="chip ${d.k}">${KIND[d.k]}</span>${d.t?`<span class="chip time">${d.t} Min</span>`:''}${d.kid?'<span class="chip">Kinderliebling</span>':''}`;
 }
 function toast(msg){
   const r = $("#toastRoot"); r.innerHTML = `<div class="toast" role="status">${esc(msg)}</div>`;
@@ -1570,7 +1578,7 @@ function renderIdeas(){
     if(filter==="alltag"&&d.t>30) return false;
     if(filter==="zeit"&&d.t<40) return false;
     if(filter==="kinder"&&!d.kid) return false;
-    if(filter==="eigene"&&!d.own&&!d.foto) return false;
+    if(filter==="eigene"&&!d.own&&!d.foto&&!d.web) return false;
     if(filter==="ausgewogen"&&!d.aus) return false;
     if((filter==="asia"||filter==="indien")&&d.cu!==filter) return false;
     if(q && !(d.n.toLowerCase().includes(q) || d.i.some(x=>x[2].toLowerCase().includes(q)))) return false;
