@@ -367,7 +367,8 @@ const DISHES = [
  {id:"e11",cu:"asia",n:"Bibimbap-Bowl mit Spiegelei",t:35,k:"veg",i:[[250,"g","Sushireis","v"],[3,"Stk","Eier","k"],[100,"g","Babyspinat","g"],[2,"Stk","Karotten","g"],[200,"g","Champignons","g"],[1,"Stk","Gurke","g"],[1,"Tube","Gochujang (koreanische Chilipaste)","v"]],m:"Reis kochen. Karotten und Gurke in Streifen schneiden, Pilze in Scheiben braten, Spinat kurz zusammenfallen lassen, alles leicht mit Sojasauce und Sesamöl würzen. Spiegeleier braten. Reis in Schalen, Gemüse darauf verteilen, Ei obenauf. Gochujang nur für die Erwachsenen."},
  {id:"e12",cu:"asia",n:"Pad Thai mit Garnelen",t:30,k:"fisch",i:[[250,"g","Reisnudeln","v"],[250,"g","Garnelen","t"],[2,"Stk","Eier","k"],[200,"g","Mungbohnensprossen","g"],[1,"Bund","Frühlingszwiebeln","g"],[50,"g","Erdnüsse (geröstet)","v"],[1,"Stk","Limette","g"]],m:"Reisnudeln nach Packung einweichen. Sauce aus 3 EL Sojasauce, 2 EL Zucker, Limettensaft und etwas Tomatenketchup verrühren. Garnelen im Wok anbraten, zur Seite schieben, Eier darin stocken lassen. Nudeln und Sauce dazu, kräftig durchschwenken. Sprossen und Frühlingszwiebeln unterheben, mit gehackten Erdnüssen bestreuen."},
  {id:"e13",cu:"asia",n:"Gemüse-Gyoza mit Reis & Gurkensalat",t:20,k:"veg",kid:1,i:[[500,"g","Gyoza mit Gemüsefüllung","t"],[250,"g","Jasminreis","v"],[1,"Stk","Gurke","g"],[2,"Stk","Pak Choi","g"]],m:"Reis kochen. Gyoza nach Packung in der Pfanne anbraten, mit etwas Wasser ablöschen und zugedeckt garen, bis das Wasser verdampft ist. Pak Choi halbieren und kurz mitbraten. Gurke hobeln und mit Reisessig, etwas Zucker und Salz anmachen. Sojasauce zum Dippen."},
- {id:"k01",n:"Wraps mit Avocado & Roter Bete",t:15,k:"veg",i:[[4,"Stk","Vollkorn-Tortillas","b"],[2,"Stk","Avocados (reif)","g"],[1,"Stk","Zitrone","g"],[1,"Zehen","Knoblauch","g"],[75,"g","Feldsalat","g"],[1,"Stk","Salatgurke","g"],[1,"Pck","Rote Bete (gegart, vakuumverpackt)","g"],[75,"g","Gouda am Stück","k"],[1,"Beet","Kresse","g"]],m:"Avocados mit Zitronensaft und Knoblauch zu einer Creme zerdrücken. Feldsalat waschen, Gurke und Rote Bete klein würfeln, Gouda reiben. Tortillas kurz in der Pfanne erwärmen, mit Avocadocreme bestreichen, belegen, aufrollen und sofort essen."}
+ {id:"k01",foto:1,aus:1,n:"Wraps mit Avocado & Roter Bete",t:15,k:"veg",i:[[4,"Stk","Vollkorn-Tortillas","b"],[2,"Stk","Avocados (reif)","g"],[1,"Stk","Zitrone","g"],[1,"Zehen","Knoblauch","g"],[75,"g","Feldsalat","g"],[1,"Stk","Salatgurke","g"],[1,"Pck","Rote Bete (gegart, vakuumverpackt)","g"],[75,"g","Gouda am Stück","k"],[1,"Beet","Kresse","g"]],m:"Avocados mit Zitronensaft und Knoblauch zu einer Creme zerdrücken. Feldsalat waschen, Gurke und Rote Bete klein würfeln, Gouda reiben. Tortillas kurz in der Pfanne erwärmen, mit Avocadocreme bestreichen, belegen, aufrollen und sofort essen."},
+ {id:"k02",foto:1,aus:1,cu:"asia",n:"Hähnchen-Saté mit Thai-Gurkensalat & Erdnusssauce",t:20,k:"fleisch",i:[[400,"g","Hähnchenbrustfilet","f"],[1,"Stk","Salatgurke (groß)","g"],[1,"Bund","Frühlingszwiebeln","g"],[1,"Bund","Koriander","g"],[1,"Stk","Rote Chilischote","g"],[1,"Stk","Limette","g"],[2,"Zehen","Knoblauch","g"],[1,"Stk","Ingwer (klein)","g"],[1,"Stk","Zwiebel","g"],[30,"g","Erdnusskerne (ungesalzen)","v"],[1,"Glas","Erdnussmus","v"],[1,"Flasche","Fischsauce","v"],[1,"Flasche","Sesamöl","v"],[200,"g","Reisnudeln (optional)","v"],[1,"Pck","Holzspieße","x"]],m:"Gurke in Streifen hobeln, mit Frühlingszwiebeln, Koriander und einem Dressing aus Limettensaft, Fischsauce, Zucker und Chili mischen. Erdnusssauce aus Knoblauch, Ingwer, Zwiebel, Sesamöl und Erdnussmus kochen. Hähnchen in Streifen auf Spieße fädeln, 3–5 Min. scharf anbraten, mit Sauce, Salat und gerösteten Erdnüssen servieren."}
 ];
 const STEPS = {};
 Object.assign(STEPS, {
@@ -1206,7 +1207,17 @@ k01:{v:"Kräutersalz, Pfeffer",s:[
 "Etwa die halbe Gurke waschen und klein würfeln. Rote Bete klein würfeln (Achtung, färbt stark ab – am besten auf einem Teller oder mit Handschuhen).",
 "Gouda reiben. Kresse vom Beet schneiden, in einem Sieb abbrausen und abtropfen lassen.",
 "Tortillas nacheinander in einer trockenen Pfanne je Seite ca. 20 Sek. erwärmen.",
-"Tortillas mit Avocadocreme bestreichen, Feldsalat, Gurke, Rote Bete, Gouda und Kresse darauf verteilen, aufrollen und sofort essen."]}
+"Tortillas mit Avocadocreme bestreichen, Feldsalat, Gurke, Rote Bete, Gouda und Kresse darauf verteilen, aufrollen und sofort essen."]},
+k02:{v:"Rohrzucker, Salz, Cayennepfeffer",s:[
+"Wer Reisnudeln dazu möchte: nach Packungsangabe einweichen bzw. garen (ca. 80 g roh pro Erwachsenem).",
+"Gurke waschen und mit dem Sparschäler in lange Streifen schneiden, dabei das Kerngehäuse aussparen. 2–3 Frühlingszwiebeln in dünne Ringe schneiden, eine Handvoll Koriander grob zupfen. Alles in eine Schüssel geben.",
+"Erdnüsse hacken und in einer Pfanne ohne Fett hell rösten, herausnehmen und abkühlen lassen.",
+"Chili entkernen und in feine Ringe schneiden. Saft von 1 Limette (ca. 2 EL), 1½ EL Fischsauce und 1 TL Zucker verrühren und unter den Salat mischen. Chili nur in den Salat der Erwachsenen geben oder separat hinstellen. Salat ziehen lassen.",
+"Für die Sauce Knoblauch, ein ca. 3 cm großes Stück Ingwer und die Zwiebel schälen und sehr fein würfeln. In einem kleinen Topf 1½ EL Sesamöl erhitzen und alles darin andünsten.",
+"3 EL Erdnussmus und 1–2 EL heißes Wasser einrühren, mit Salz und Cayennepfeffer abschmecken (fürs Kind mild lassen) und offen bei kleiner Hitze 2–3 Min. einkochen, dabei umrühren.",
+"Hähnchen trocken tupfen, längs in ca. 6 Streifen schneiden und wellenförmig auf Spieße fädeln.",
+"Restliches Sesamöl (ca. 1½ EL) in einer Pfanne erhitzen, Spieße darin 3–5 Min. unter Wenden scharf anbraten, bis sie durch sind.",
+"Spieße mit Erdnusssauce bestreichen, mit Gurkensalat (und Reisnudeln) anrichten und mit den gerösteten Erdnüssen bestreuen."]}
 });
 
 const BY = Object.fromEntries(DISHES.map(d=>[d.id,d]));
@@ -1216,7 +1227,7 @@ function ownDish(id){
   return {id, own:1, n:r.n, t:r.t||0, k:r.k||"veg", kid:r.kid?1:0, m:r.m||"", i:(r.i||[]).map(x=>[x.a||0, x.u||"", x.n, x.c||"v"])};
 }
 function dish(id){ return BY[id] || ownDish(id); }
-function allDishes(){ return [...Object.keys(state.recipes||{}).map(ownDish).filter(Boolean), ...DISHES]; }
+function allDishes(){ return [...Object.keys(state.recipes||{}).map(ownDish).filter(Boolean), ...DISHES.filter(d=>d.foto), ...DISHES.filter(d=>!d.foto)]; }
 const CATS = [["g","Obst & Gemüse"],["b","Brot & Backwaren"],["k","Kühlregal"],["f","Fleisch & Fisch"],["t","Tiefkühl"],["v","Vorrat"],["x","Sonstiges"]];
 const KIND = {veg:"Vegetarisch",fleisch:"Fleisch",fisch:"Fisch"};
 const DAYS = ["Mo","Di","Mi","Do","Fr","Sa","So"];
@@ -1369,7 +1380,7 @@ function fmtQty(a,u){
   return num+" "+unit;
 }
 function chips(d){
-  return `${d.own?'<span class="chip own">Eigenes Rezept</span>':''}${d.aus?'<span class="chip aus">Ausgewogen</span>':''}${d.cu?`<span class="chip cu">${d.cu==="asia"?"Asiatisch":"Indisch"}</span>`:''}<span class="chip ${d.k}">${KIND[d.k]}</span>${d.t?`<span class="chip time">${d.t} Min</span>`:''}${d.kid?'<span class="chip">Kinderliebling</span>':''}`;
+  return `${d.own?'<span class="chip own">Eigenes Rezept</span>':''}${d.foto?'<span class="chip own">📷 Eigenes Rezept</span>':''}${d.aus?'<span class="chip aus">Ausgewogen</span>':''}${d.cu?`<span class="chip cu">${d.cu==="asia"?"Asiatisch":"Indisch"}</span>`:''}<span class="chip ${d.k}">${KIND[d.k]}</span>${d.t?`<span class="chip time">${d.t} Min</span>`:''}${d.kid?'<span class="chip">Kinderliebling</span>':''}`;
 }
 function toast(msg){
   const r = $("#toastRoot"); r.innerHTML = `<div class="toast" role="status">${esc(msg)}</div>`;
@@ -1520,7 +1531,7 @@ function renderIdeas(){
     if(filter==="alltag"&&d.t>30) return false;
     if(filter==="zeit"&&d.t<40) return false;
     if(filter==="kinder"&&!d.kid) return false;
-    if(filter==="eigene"&&!d.own) return false;
+    if(filter==="eigene"&&!d.own&&!d.foto) return false;
     if(filter==="ausgewogen"&&!d.aus) return false;
     if((filter==="asia"||filter==="indien")&&d.cu!==filter) return false;
     if(q && !(d.n.toLowerCase().includes(q) || d.i.some(x=>x[2].toLowerCase().includes(q)))) return false;
@@ -1564,6 +1575,7 @@ function showDish(id){
     ${methodHtml(d)}
     <h3>An welchem Tag?</h3><div class="days">${DAYS.map((x,i)=>`<button data-setday="${i}" data-dish="${d.id}">${x}</button>`).join("")}</div>
     ${d.src?`<p class="src">Nach einem Rezept von <a href="${esc(d.src[1])}" target="_blank" rel="noopener">${esc(d.src[0])}</a>. Mengen auf 3 Personen umgerechnet, Zubereitung in eigenen Worten.</p>`:''}
+    ${d.foto?`<p class="src">📷 Aus deinem Kochbuch-Foto übernommen, Mengen auf 3 Personen umgerechnet.</p>`:''}
     ${d.own?`<h3>Eigenes Rezept</h3><div class="bar"><button class="btn" data-editrecipe="${d.id}">Bearbeiten</button><button class="btn ghost" data-delrecipe="${d.id}">Löschen</button></div>`:''}`);
 }
 function pickFor(day){
