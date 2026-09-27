@@ -238,6 +238,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--mustard);outlin
     </div>
     <div class="bar">
       <button class="btn small" id="copyList">Liste kopieren</button>
+      <button class="btn small" id="sendGoogle">An Google senden</button>
       <button class="btn small ghost" id="clearDone">Abgehakte ausblenden</button>
     </div>
     <div class="add">
@@ -1786,6 +1787,19 @@ $("#copyList").addEventListener("click",()=>{
     openSheet(`<button class="btn small close" data-close>Schließen</button><h2>Einkaufsliste</h2><p class="sub">Markieren und kopieren:</p><textarea id="copyArea" style="width:100%;height:50vh;font:14px var(--body);background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px">${esc(text)}</textarea>`);
     $("#copyArea").select();
   });
+});
+// Offene Einträge über Make an Google Tasks ("Einkaufsliste") schicken
+const GOOGLE_HOOK = "https://hook.eu1.make.com/kflfoqxfpjxh48k5buemy5g5jyszhd5w";
+$("#sendGoogle").addEventListener("click",()=>{
+  const items = [...groupParts(shopParts()), ...extraItems()].filter(it=>!isDone(it));
+  if(!items.length){ toast("Nichts offen auf der Liste"); return; }
+  const qs = new URLSearchParams();
+  items.forEach(i=>qs.append("items[]", ((i.extra?"":fmtQty(i.a,i.u)+" ")+i.n).trim()));
+  const btn = $("#sendGoogle"); btn.disabled = true;
+  fetch(GOOGLE_HOOK+"?"+qs.toString(), {mode:"no-cors"})
+    .then(()=>toast(`${items.length} Einträge an Google Tasks gesendet`))
+    .catch(()=>toast("Senden fehlgeschlagen – Internet prüfen"))
+    .finally(()=>{ btn.disabled = false; });
 });
 $("#copyPlan").addEventListener("click",()=>{
   const text = "Essensplan diese Woche:\n"+DAYS_LONG.map((d,i)=>{ const v=state.days[i]; const name = typeof v==="string"&&dish(v)?dish(v).n:(v&&v.custom)||"–"; return d+": "+name; }).join("\n");
