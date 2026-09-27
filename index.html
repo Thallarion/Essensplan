@@ -238,7 +238,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--mustard);outlin
     </div>
     <div class="bar">
       <button class="btn small" id="copyList">Liste kopieren</button>
-      <button class="btn small" id="sendGoogle">An Google senden</button>
+      <button class="btn small" id="sendGoogle">An To Do senden</button>
       <button class="btn small ghost" id="clearDone">Abgehakte ausblenden</button>
     </div>
     <div class="add">
@@ -1788,7 +1788,7 @@ $("#copyList").addEventListener("click",()=>{
     $("#copyArea").select();
   });
 });
-// Offene Einträge über Make an Google Tasks ("Einkaufsliste") schicken
+// Offene Einträge über Make an Microsoft To Do ("Einkaufsliste") schicken
 const GOOGLE_HOOK = "https://hook.eu1.make.com/kflfoqxfpjxh48k5buemy5g5jyszhd5w";
 $("#sendGoogle").addEventListener("click",()=>{
   const items = [...groupParts(shopParts()), ...extraItems()].filter(it=>!isDone(it));
@@ -1797,7 +1797,7 @@ $("#sendGoogle").addEventListener("click",()=>{
   items.forEach(i=>qs.append("items[]", ((i.extra?"":fmtQty(i.a,i.u)+" ")+i.n).trim()));
   const btn = $("#sendGoogle"); btn.disabled = true;
   fetch(GOOGLE_HOOK+"?"+qs.toString(), {mode:"no-cors"})
-    .then(()=>toast(`${items.length} Einträge an Google Tasks gesendet`))
+    .then(()=>toast(`${items.length} Einträge an Microsoft To Do gesendet`))
     .catch(()=>toast("Senden fehlgeschlagen – Internet prüfen"))
     .finally(()=>{ btn.disabled = false; });
 });
