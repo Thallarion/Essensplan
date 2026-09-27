@@ -188,6 +188,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--mustard);outlin
 .pick-filters::-webkit-scrollbar{display:none}
 .pick-filters button{flex:none;white-space:nowrap}
 .pick button .chip{align-self:flex-start;flex:none}
+.keep-steps{margin:6px 0 0;padding-left:20px}
+.keep-steps li{margin:6px 0}
+a.btn{text-decoration:none;display:inline-block}
 .pick-count{font-size:13px;color:var(--muted);margin:2px 0 4px}
 .days{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 .days button{font:700 14px var(--body);padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
@@ -238,7 +241,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--mustard);outlin
     </div>
     <div class="bar">
       <button class="btn small" id="copyList">Liste kopieren</button>
-      <button class="btn small" id="sendGoogle">An To Do senden</button>
+      <button class="btn small primary" id="sendKeep">📋 Für Keep kopieren</button>
       <button class="btn small ghost" id="clearDone">Abgehakte ausblenden</button>
     </div>
     <div class="add">
@@ -1788,18 +1791,23 @@ $("#copyList").addEventListener("click",()=>{
     $("#copyArea").select();
   });
 });
-// Offene Einträge über Make an Microsoft To Do ("Einkaufsliste") schicken
-const GOOGLE_HOOK = "https://hook.eu1.make.com/kflfoqxfpjxh48k5buemy5g5jyszhd5w";
-$("#sendGoogle").addEventListener("click",()=>{
+// Offene Einträge als einfache Zeilen für eine Google-Keep-Checkliste kopieren (Keep macht beim Einfügen aus jeder Zeile einen Punkt)
+$("#sendKeep").addEventListener("click",()=>{
   const items = [...groupParts(shopParts()), ...extraItems()].filter(it=>!isDone(it));
   if(!items.length){ toast("Nichts offen auf der Liste"); return; }
-  const qs = new URLSearchParams();
-  items.forEach(i=>qs.append("items[]", ((i.extra?"":fmtQty(i.a,i.u)+" ")+i.n).trim()));
-  const btn = $("#sendGoogle"); btn.disabled = true;
-  fetch(GOOGLE_HOOK+"?"+qs.toString(), {mode:"no-cors"})
-    .then(()=>toast(`${items.length} Einträge an Microsoft To Do gesendet`))
-    .catch(()=>toast("Senden fehlgeschlagen – Internet prüfen"))
-    .finally(()=>{ btn.disabled = false; });
+  const order = Object.fromEntries(CATS.map(([c],i)=>[c,i]));
+  const lines = items.slice().sort((x,y)=>(order[x.c]??99)-(order[y.c]??99) || x.n.localeCompare(y.n,"de"))
+    .map(i=>((i.extra?"":fmtQty(i.a,i.u)+" ")+i.n).trim());
+  const text = lines.join("\n");
+  const done = ()=>openSheet(`<button class="btn small close" data-close>Schließen</button>
+    <h2>${lines.length} Einträge kopiert ✔</h2>
+    <p class="sub">So kommen sie in eure geteilte Keep-Liste:</p>
+    <ol class="keep-steps"><li>Google Keep öffnen und die Liste <b>„Einkaufsliste“</b> antippen</li><li>Auf <b>„+ Listenelement“</b> tippen</li><li>Lange ins Feld tippen → <b>Einfügen</b> – jede Zeile wird ein eigener Punkt</li></ol>
+    <div class="bar" style="margin-top:12px"><a class="btn primary" href="https://keep.google.com/" target="_blank" rel="noopener">Google Keep öffnen</a></div>`);
+  navigator.clipboard.writeText(text).then(done).catch(()=>{
+    openSheet(`<button class="btn small close" data-close>Schließen</button><h2>Für Keep kopieren</h2><p class="sub">Markieren und kopieren, dann in Keep einfügen:</p><textarea id="copyArea" style="width:100%;height:50vh;font:14px var(--body);background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px">${esc(text)}</textarea>`);
+    $("#copyArea").select();
+  });
 });
 $("#copyPlan").addEventListener("click",()=>{
   const text = "Essensplan diese Woche:\n"+DAYS_LONG.map((d,i)=>{ const v=state.days[i]; const name = typeof v==="string"&&dish(v)?dish(v).n:(v&&v.custom)||"–"; return d+": "+name; }).join("\n");
