@@ -191,6 +191,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--mustard);outlin
 .keep-steps{margin:6px 0 0;padding-left:20px}
 .keep-steps li{margin:6px 0}
 a.btn{text-decoration:none;display:inline-block}
+.keep-ok{margin-top:8px;font-size:14px;color:var(--basil);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .pick-count{font-size:13px;color:var(--muted);margin:2px 0 4px}
 .days{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 .days button{font:700 14px var(--body);padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
@@ -1665,12 +1666,24 @@ function methodHtml(d){
     <h3>So geht's <span class="hint">– Schritt antippen zum Abhaken</span></h3>
     <ol class="steps-list">${list.map(x=>`<li tabindex="0">${esc(x)}</li>`).join("")}</ol>`;
 }
+function copyDishForKeep(id){
+  const d = dish(id); if(!d) return;
+  const lines = d.i.map(([a,u,n])=>((fmtQty(a,u)?fmtQty(a,u)+" ":"")+n).trim()).filter(Boolean);
+  const text = lines.join("\n");
+  const ok = ()=>{ const el=$("#keepOk"); if(!el) return toast(`${lines.length} Zutaten kopiert`);
+    el.innerHTML = `<span>✔ ${lines.length} Zutaten kopiert – in Keep lange ins neue Listenelement tippen → Einfügen.</span> <a class="btn small primary" href="https://keep.google.com/" target="_blank" rel="noopener">Google Keep öffnen</a>`; el.hidden=false; };
+  navigator.clipboard.writeText(text).then(ok).catch(()=>{
+    openSheet(`<button class="btn small close" data-close>Schließen</button><h2>Zutaten: ${esc(d.n)}</h2><p class="sub">Markieren und kopieren, dann in Keep einfügen:</p><textarea id="copyArea" style="width:100%;height:40vh;font:14px var(--body);background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px">${esc(text)}</textarea>`);
+    $("#copyArea").select();
+  });
+}
 function showDish(id){
   const d = dish(id); if(!d) return;
   openSheet(`<button class="btn small close" data-close>Schließen</button>
     <h2>${esc(d.n)}</h2><div class="meta">${chips(d,true)}</div>
     ${nutriHtml(d)}
     <h3>Zutaten für 3 Personen</h3><ul>${d.i.map(([a,u,n])=>`<li>${fmtQty(a,u)?`<strong>${fmtQty(a,u)}</strong> `:""}${esc(n)}</li>`).join("")}</ul>
+    <div class="bar" style="margin:10px 0 0"><button class="btn small" data-keepcopy="${d.id}">📋 Zutaten für Keep kopieren</button></div><div class="keep-ok" id="keepOk" hidden></div>
     ${methodHtml(d)}
     <h3>An welchem Tag?</h3><div class="days">${DAYS.map((x,i)=>`<button data-setday="${i}" data-dish="${d.id}">${x}</button>`).join("")}</div>
     ${d.src?`<p class="src">Nach einem Rezept von <a href="${esc(d.src[1])}" target="_blank" rel="noopener">${esc(d.src[0])}</a>. Mengen auf 3 Personen umgerechnet, Zubereitung in eigenen Worten.</p>`:''}
@@ -1737,6 +1750,7 @@ document.addEventListener("click",e=>{
   if(t.dataset.setday){ state.days[t.dataset.setday]=t.dataset.dish; closeSheet(); commit(); toast(`Für ${DAYS_LONG[t.dataset.setday]} eingeplant`); return; }
   if(t.dataset.custom){ const v = $("#customDish").value.trim(); if(!v) { $("#customDish").focus(); return; } state.days[t.dataset.custom]={custom:v}; closeSheet(); commit(); return; }
   if(t.dataset.assign){ showDish(t.dataset.assign); return; }
+  if(t.dataset.keepcopy){ copyDishForKeep(t.dataset.keepcopy); return; }
   if(t.dataset.editrecipe){ openRecipeForm(t.dataset.editrecipe); return; }
   if(t.dataset.delrecipe){ deleteRecipe(t.dataset.delrecipe, t); return; }
   if(t.dataset.rmextra){ delete state.extras[t.dataset.rmextra]; delete state.checked["x:"+t.dataset.rmextra]; commit(); return; }
