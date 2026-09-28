@@ -84,6 +84,11 @@ TAB = {
  "Wurst (z. B. Mettwurst oder Fleischwurst)":(None,300,14,27,1,0,0,1), "Ziegenfrischkäse (oder Feta)":(None,250,12,21,1,0,0,0),
  "Zitrone (Bio)":(40,30,0.5,0.2,7,0.5,0,0), "Zitrone":(40,30,0.5,0.2,7,0.5,0,0), "Zucchini":(250,20,1.5,0.4,2,1.1,1,0),
  "Zwiebel":(100,30,1.2,0.2,5,1.8,1,0),
+ "Gemüsebrühe (ohne Jodsalz)":(None,3,0.2,0.2,0.4,0,0,0), "Quinoa":(None,360,14,6,58,7,0,0), "Tahin (Sesammus)":(60,600,24,53,10,9,0,0),
+ "Forellenfilet":(None,110,20,3,0,0,0,0), "Buchweizen":(None,340,10,1.7,70,4,0,0), "Rindersteak (Hüfte)":(None,120,22,4,0,0,0,0),
+ "Hirse":(None,355,11,4,69,4,0,0), "Grünkohl":(None,45,4.3,0.9,2.5,4.2,1,0), "Haferdrink (ohne Jodzusatz)":(None,45,0.5,1.5,7,0.8,0,0),
+ "Leinsamen (geschrotet)":(None,450,24,31,2,30,0,0), "Minze":(25,45,3.5,0.7,5,7,0,0), "Kürbiskerne":(None,570,30,46,8,9,0,0),
+ "Bananen":(120,90,1.1,0.2,20,2,0,0),
 }
 # Einheiten, die als Gramm/ml zählen
 GRAM = {"g":1, "ml":1, "l":1000, "kg":1000}

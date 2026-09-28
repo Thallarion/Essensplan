@@ -92,6 +92,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--mustard);outlin
 .chip.time{font-variant-numeric:tabular-nums}
 .chip.cu{background:var(--tomato-soft);color:var(--tomato)}
 .chip.aus{background:var(--sea-soft);color:var(--sea)}
+.chip.ai{background:var(--basil-soft);color:var(--basil)}
+.ai-note{font-size:13px;background:var(--basil-soft);border-radius:10px;padding:8px 12px;margin:10px 0 0}
 .chip.hl{background:var(--sea-soft);color:var(--sea)}
 .nutri{display:flex;flex-wrap:wrap;gap:6px}
 .nutri span{background:var(--sunk);border-radius:10px;padding:6px 10px;font-size:13px;font-variant-numeric:tabular-nums}
@@ -278,6 +280,7 @@ a.btn{text-decoration:none;display:inline-block}
       <button data-f="ballast" aria-pressed="false">🌾 Ballaststoffreich</button>
       <button data-f="leicht" aria-pressed="false">🥗 Leicht</button>
       <button data-f="lowcarb" aria-pressed="false">🥩 Low-Carb</button>
+      <button data-f="antient" aria-pressed="false">🌿 Antientzündlich</button>
       <button data-f="asia" aria-pressed="false">Asiatisch</button>
       <button data-f="indien" aria-pressed="false">Indisch</button>
       <button data-f="eigene" aria-pressed="false">Eigene</button>
@@ -404,7 +407,25 @@ const DISHES = [
  {id:"k06",N:{kcal:500,p:52,f:22,kh:24,bs:9,gv:300,pm:0,q:"b"},foto:1,aus:1,cu:"asia",n:"Grüne Power-Pfanne mit Hähnchen",t:15,k:"fleisch",kid:1,i:[[450,"g","Hähnchenbrustfilet","f"],[450,"g","Brokkoli (TK)","t"],[300,"g","Grüne Bohnen (TK)","t"],[1,"Bund","Frühlingszwiebeln","g"],[30,"g","Cashewkerne","v"],[1,"Flasche","Sesamöl","v"],[250,"g","Reis (optional)","v"]],m:"Brokkoli und Bohnen antauen lassen. Hähnchen in Streifen im Wok in Sesamöl rundum anbraten. Brokkoli 3 Min. mitdünsten, dann Bohnen, Frühlingszwiebeln und Cashews dazu. Mit Sojasauce, Pfeffer und Kurkuma würzen und sofort servieren."},
  {id:"k07",N:{kcal:550,p:16,f:27,kh:55,bs:14,gv:180,pm:0,q:"s"},web:1,aus:1,src:["einfachkochen.de: Rote-Bete-Carpaccio","https://www.einfachkochen.de/rezepte/rote-bete-carpaccio-einfach-lecker"],n:"Rote-Bete-Carpaccio mit Walnüssen & Ziegenkäse",t:20,k:"veg",i:[[3,"Stk","Rote Bete (klein, roh)","g"],[75,"g","Rucola","g"],[1,"Bund","Petersilie","g"],[60,"g","Walnusskerne","v"],[75,"g","Ziegenfrischkäse (oder Feta)","k"],[1,"Stk","Zitrone","g"],[1,"Laib","Vollkornbrot","b"]],m:"Rote Bete schälen und hauchdünn hobeln. Walnüsse rösten und hacken. Dressing aus Öl, Zitronensaft, Honig, Senf, hellem Balsamico, Salz und Pfeffer rühren. Bete fächerförmig anrichten, mit Petersilie, Rucola, Dressing, Käse und Walnüssen belegen. Mit Vollkornbrot servieren."},
  {id:"k08",N:{kcal:850,p:48,f:58,kh:35,bs:1,gv:0,pm:0,q:"s"},web:1,kid:1,src:["Instagram @meraschkoch: Reis-Papier-Börek","https://www.instagram.com/reel/DaGJ2zdN37m/"],n:"Reispapier-Börek mit Hackfleisch & Käse",t:40,k:"fleisch",i:[[450,"g","Hackfleisch gemischt","f"],[150,"g","Gouda gerieben","k"],[2,"Stk","Eier","k"],[100,"ml","Milch","k"],[1,"Pck","Reispapier","v"],[2,"Zehen","Knoblauch","g"],[1,"Pck","Schwarzer Sesam","v"]],m:"Hack mit Salz, Pfeffer und Knoblauch krümelig durchbraten, abkühlen lassen und mit Käse mischen. Eier mit Milch verquirlen. Je 2 Reispapierblätter darin einweichen, Füllung daraufgeben, fest aufrollen, zur Schnecke drehen und in eine Form legen. Mit Sesam bestreuen und bei 200 °C knusprig backen."},
- {id:"k09",N:{kcal:470,p:17,f:22,kh:48,bs:11,gv:280,pm:1,q:"s"},foto:1,kid:1,n:"Bohneneintopf mit Wurst",t:40,k:"fleisch",i:[[500,"g","Grüne Bohnen","g"],[600,"g","Kartoffeln (festkochend)","g"],[250,"g","Möhren","g"],[1,"Stk","Zwiebel","g"],[150,"g","Wurst (z. B. Mettwurst oder Fleischwurst)","f"],[1,"l","Fleischbrühe","v"]],m:"Wurst und Zwiebel fein würfeln und in Öl anbraten. Kartoffeln und Möhren schälen, würfeln und kurz mitbraten. Mit Brühe ablöschen, 10 Min. kochen, Bohnen dazu und weitere 15 Min. garen. Mit Pfeffer und Bohnenkraut abschmecken."}
+ {id:"k09",N:{kcal:470,p:17,f:22,kh:48,bs:11,gv:280,pm:1,q:"s"},foto:1,kid:1,n:"Bohneneintopf mit Wurst",t:40,k:"fleisch",i:[[500,"g","Grüne Bohnen","g"],[600,"g","Kartoffeln (festkochend)","g"],[250,"g","Möhren","g"],[1,"Stk","Zwiebel","g"],[150,"g","Wurst (z. B. Mettwurst oder Fleischwurst)","f"],[1,"l","Fleischbrühe","v"]],m:"Wurst und Zwiebel fein würfeln und in Öl anbraten. Kartoffeln und Möhren schälen, würfeln und kurz mitbraten. Mit Brühe ablöschen, 10 Min. kochen, Bohnen dazu und weitere 15 Min. garen. Mit Pfeffer und Bohnenkraut abschmecken."},
+ {id:"s01",N:{kcal:930,p:33,f:32,kh:120,bs:14,gv:300,pm:0,q:"s"},ai:1,cu:"indien",kid:1,n:"Rote-Linsen-Dal mit Spinat & Basmatireis",t:30,k:"veg",i:[[250,"g","Rote Linsen","v"],[250,"g","Basmatireis","v"],[1,"Dose","Kokosmilch","v"],[400,"g","Passierte Tomaten","v"],[1,"Stk","Zwiebel","g"],[2,"Zehen","Knoblauch","g"],[1,"Stk","Ingwer (klein)","g"],[150,"g","Babyspinat","g"],[1,"Stk","Zitrone","g"]],m:"Zwiebel, Knoblauch und Ingwer in Öl andünsten, Gewürze kurz mitrösten. Linsen, Tomaten, Kokosmilch und Wasser dazu, 15 Min. köcheln. Spinat unterheben, mit Zitrone abschmecken, mit Reis servieren."},
+ {id:"s02",N:{kcal:770,p:21,f:34,kh:91,bs:15,gv:350,pm:0,q:"s"},ai:1,cu:"indien",kid:1,n:"Paprika-Brokkoli-Curry mit Kichererbsen & Vollkornreis",t:35,k:"veg",i:[[250,"g","Vollkornreis","v"],[1,"Stk","Brokkoli","g"],[2,"Stk","Paprika","g"],[1,"Dose","Kichererbsen","v"],[1,"Dose","Kokosmilch","v"],[1,"Stk","Zwiebel","g"],[2,"Zehen","Knoblauch","g"],[1,"Stk","Ingwer (klein)","g"],[1,"Stk","Limette","g"]],m:"Vollkornreis kochen. Zwiebel, Knoblauch, Ingwer und Gewürze anschwitzen, Paprika und Brokkoli kurz mitbraten. Kichererbsen und Kokosmilch dazu, 10 Min. köcheln, mit Limette abschmecken."},
+ {id:"s03",N:{kcal:690,p:25,f:24,kh:89,bs:19,gv:440,pm:0,q:"s"},ai:1,n:"Ofengemüse-Quinoa-Bowl mit Tahin-Zitronen-Dressing",t:35,k:"veg",i:[[200,"g","Quinoa","v"],[1,"Stk","Süßkartoffel","g"],[1,"Stk","Zucchini","g"],[2,"Stk","Paprika","g"],[1,"Dose","Kichererbsen","v"],[100,"g","Babyspinat","g"],[1,"Glas","Tahin (Sesammus)","v"],[1,"Stk","Zitrone","g"],[1,"Bund","Petersilie","g"]],m:"Süßkartoffel, Zucchini, Paprika und Kichererbsen mit Öl und Gewürzen 25 Min. im Ofen rösten. Quinoa kochen. Dressing aus Tahin, Zitrone und Wasser rühren. Alles mit Spinat in Schalen anrichten."},
+ {id:"s04",N:{kcal:720,p:23,f:27,kh:92,bs:14,gv:130,pm:0,q:"s"},ai:1,kid:1,n:"Vollkornnudeln mit Walnuss-Petersilien-Pesto & Kirschtomaten",t:20,k:"veg",i:[[400,"g","Vollkornnudeln","v"],[75,"g","Walnusskerne","v"],[2,"Bund","Petersilie","g"],[1,"Zehen","Knoblauch","g"],[1,"Stk","Zitrone","g"],[400,"g","Kirschtomaten","g"]],m:"Nudeln kochen. Walnüsse rösten und mit Petersilie, Knoblauch, Zitrone und Olivenöl zu Pesto pürieren. Kirschtomaten halbieren, alles mit etwas Nudelwasser mischen."},
+ {id:"s05",N:{kcal:480,p:41,f:12,kh:45,bs:10,gv:130,pm:0,q:"s"},ai:1,kid:1,n:"Forelle aus dem Ofen mit Kräuterkartoffeln & Brokkoli",t:35,k:"fisch",i:[[450,"g","Forellenfilet","f"],[800,"g","Kartoffeln (festkochend)","g"],[1,"Stk","Brokkoli","g"],[1,"Stk","Zitrone","g"],[1,"Bund","Dill","g"],[1,"Bund","Petersilie","g"]],m:"Kartoffeln mit Öl im Ofen rösten. Forellenfilets mit Zitrone und Kräutern die letzten 12 Min. mitgaren. Brokkoli dämpfen. Forelle ist ein Süßwasserfisch und jodärmer als Seefisch."},
+ {id:"s06",N:{kcal:480,p:24,f:9,kh:70,bs:16,gv:250,pm:0,q:"s"},ai:1,kid:1,n:"Linsen-Gemüse-Eintopf mit Kurkuma",t:45,k:"veg",i:[[200,"g","Grüne Linsen","v"],[3,"Stk","Karotten","g"],[1,"Stangen","Lauch","g"],[500,"g","Kartoffeln (festkochend)","g"],[1,"Stk","Zwiebel","g"],[2,"Zehen","Knoblauch","g"],[1.2,"l","Gemüsebrühe (ohne Jodsalz)","v"],[1,"Bund","Petersilie","g"]],m:"Zwiebel und Knoblauch andünsten, Kurkuma dazu. Linsen, Gemüse und Brühe zugeben und 30 Min. köcheln. Mit Essig, Salz und Petersilie abschmecken."},
+ {id:"s07",N:{kcal:520,p:17,f:20,kh:64,bs:9,gv:220,pm:0,q:"s"},ai:1,n:"Buchweizen-Pilz-Pfanne mit Spinat & Walnüssen",t:25,k:"veg",i:[[250,"g","Buchweizen","v"],[400,"g","Champignons","g"],[150,"g","Babyspinat","g"],[1,"Stk","Zwiebel","g"],[2,"Zehen","Knoblauch","g"],[0.5,"l","Gemüsebrühe (ohne Jodsalz)","v"],[50,"g","Walnusskerne","v"],[1,"Bund","Petersilie","g"]],m:"Buchweizen in Brühe garen. Pilze scharf anbraten, Zwiebel und Knoblauch dazu, Spinat unterheben. Mit Buchweizen mischen und mit Walnüssen und Petersilie servieren."},
+ {id:"s08",N:{kcal:620,p:43,f:15,kh:76,bs:8,gv:240,pm:0,q:"s"},ai:1,cu:"asia",kid:1,n:"Rindfleisch-Brokkoli-Pfanne mit Ingwer & Reis",t:25,k:"fleisch",i:[[400,"g","Rindersteak (Hüfte)","f"],[250,"g","Basmatireis","v"],[1,"Stk","Brokkoli","g"],[1,"Stk","Paprika","g"],[1,"Bund","Frühlingszwiebeln","g"],[1,"Stk","Ingwer (klein)","g"],[2,"Zehen","Knoblauch","g"],[1,"Stk","Limette","g"],[1,"Pck","Schwarzer Sesam","v"]],m:"Reis kochen. Rindfleisch in Streifen scharf anbraten, herausnehmen. Brokkoli, Paprika, Ingwer und Knoblauch braten, Fleisch zurück, mit Honig, Limette und etwas Wasser glasieren. Ohne Sojasauce (jodarm)."},
+ {id:"s09",N:{kcal:440,p:13,f:11,kh:71,bs:8,gv:310,pm:0,q:"s"},ai:1,kid:1,n:"Hirse-Gemüse-Pfanne mit Paprika & Zucchini",t:25,k:"veg",i:[[250,"g","Hirse","v"],[2,"Stk","Paprika","g"],[1,"Stk","Zucchini","g"],[1,"Stk","Zwiebel","g"],[250,"g","Kirschtomaten","g"],[0.5,"l","Gemüsebrühe (ohne Jodsalz)","v"],[1,"Bund","Petersilie","g"],[1,"Stk","Zitrone","g"]],m:"Hirse in Brühe garen. Zwiebel, Paprika und Zucchini anbraten, Tomaten kurz mitgaren. Hirse unterheben, mit Zitrone und Petersilie abschmecken."},
+ {id:"s10",N:{kcal:700,p:25,f:39,kh:62,bs:17,gv:440,pm:0,q:"s"},ai:1,kid:1,n:"Kürbis-Linsen-Suppe mit Ingwer",t:35,k:"veg",i:[[1,"Stk","Hokkaido-Kürbis","g"],[150,"g","Rote Linsen","v"],[2,"Stk","Karotten","g"],[1,"Stk","Zwiebel","g"],[1,"Stk","Ingwer (klein)","g"],[1,"l","Gemüsebrühe (ohne Jodsalz)","v"],[1,"Dose","Kokosmilch","v"],[40,"g","Kürbiskerne","v"]],m:"Zwiebel und Ingwer andünsten, Kürbis, Karotten und Linsen mit Brühe 20 Min. kochen. Kokosmilch dazu, pürieren, mit gerösteten Kürbiskernen servieren."},
+ {id:"s11",N:{kcal:450,p:21,f:11,kh:59,bs:18,gv:490,pm:0,q:"s"},ai:1,kid:1,n:"Minestrone mit weißen Bohnen & Grünkohl",t:35,k:"veg",i:[[1,"Dose","Weiße Bohnen","v"],[200,"g","Grünkohl","g"],[2,"Stk","Karotten","g"],[1,"Stk","Zucchini","g"],[1,"Stangen","Lauch","g"],[400,"g","Stückige Tomaten","v"],[150,"g","Vollkornnudeln","v"],[1.2,"l","Gemüsebrühe (ohne Jodsalz)","v"],[2,"Zehen","Knoblauch","g"]],m:"Gemüse in Olivenöl andünsten, mit Tomaten und Brühe 10 Min. köcheln. Nudeln, Bohnen und Grünkohl dazu und weitere 10 Min. garen."},
+ {id:"s12",N:{kcal:530,p:21,f:14,kh:73,bs:15,gv:400,pm:0,q:"s"},ai:1,n:"Quinoa-Taboulé mit Gurke, Tomaten & Minze",t:25,k:"veg",i:[[250,"g","Quinoa","v"],[1,"Stk","Gurke","g"],[4,"Stk","Tomaten","g"],[1,"Bund","Frühlingszwiebeln","g"],[2,"Bund","Petersilie","g"],[1,"Bund","Minze","g"],[2,"Stk","Zitrone","g"],[1,"Dose","Kichererbsen","v"]],m:"Quinoa kochen und abkühlen lassen. Gurke, Tomaten, Frühlingszwiebeln und viele Kräuter fein schneiden, mit Kichererbsen, Zitronensaft und Olivenöl mischen."},
+ {id:"s13",N:{kcal:470,p:15,f:22,kh:52,bs:9,gv:470,pm:0,q:"s"},ai:1,n:"Gefüllte Zucchini mit Hirse & Tomate",t:45,k:"veg",i:[[3,"Stk","Zucchini","g"],[150,"g","Hirse","v"],[400,"g","Passierte Tomaten","v"],[1,"Stk","Zwiebel","g"],[2,"Zehen","Knoblauch","g"],[1,"Stk","Paprika","g"],[50,"g","Walnusskerne","v"],[1,"Bund","Basilikum","g"],[0.3,"l","Gemüsebrühe (ohne Jodsalz)","v"]],m:"Hirse in Brühe garen. Zucchini aushöhlen, Fruchtfleisch mit Zwiebel, Paprika und Knoblauch braten und mit Hirse mischen. Zucchini füllen, auf Tomatensauce 20 Min. backen, mit Walnüssen und Basilikum bestreuen."},
+ {id:"s14",N:{kcal:730,p:35,f:24,kh:86,bs:10,gv:420,pm:0,q:"s"},ai:1,kid:1,n:"Rinderhack-Gemüse-Reispfanne mit Paprika",t:30,k:"fleisch",i:[[300,"g","Rinderhack","f"],[250,"g","Basmatireis","v"],[2,"Stk","Paprika","g"],[1,"Stk","Zucchini","g"],[200,"g","Erbsen","t"],[1,"Stk","Zwiebel","g"],[2,"Zehen","Knoblauch","g"],[400,"g","Stückige Tomaten","v"],[1,"Bund","Petersilie","g"]],m:"Reis kochen. Hack krümelig braten, Zwiebel, Knoblauch, Paprika und Zucchini mitbraten. Tomaten und Erbsen dazu, 5 Min. köcheln, Reis unterheben."},
+ {id:"s15",N:{kcal:520,p:19,f:20,kh:58,bs:17,gv:220,pm:0,q:"s"},ai:1,n:"Grünkohl-Kartoffel-Pfanne mit Bohnen & Walnüssen",t:30,k:"veg",i:[[800,"g","Kartoffeln (festkochend)","g"],[300,"g","Grünkohl","g"],[1,"Dose","Weiße Bohnen","v"],[1,"Stk","Zwiebel","g"],[2,"Zehen","Knoblauch","g"],[50,"g","Walnusskerne","v"],[1,"Stk","Zitrone","g"]],m:"Kartoffeln vorkochen und in Scheiben knusprig braten. Zwiebel, Knoblauch und Grünkohl mitbraten, Bohnen unterheben. Mit Zitrone, Senf und Walnüssen abschmecken."},
+ {id:"s16",N:{kcal:670,p:17,f:28,kh:81,bs:18,gv:0,pm:0,q:"s"},ai:1,kid:1,n:"Warmer Haferbrei mit Beeren, Leinsamen & Walnüssen",t:10,k:"veg",i:[[200,"g","Haferflocken","v"],[750,"ml","Haferdrink (ohne Jodzusatz)","k"],[300,"g","Beerenmischung","t"],[2,"Stk","Bananen","g"],[30,"g","Leinsamen (geschrotet)","v"],[40,"g","Walnusskerne","v"]],m:"Haferflocken mit Haferdrink aufkochen und 3–4 Min. quellen lassen. Mit zerdrückter Banane und Zimt süßen, mit erwärmten Beeren, Leinsamen und Walnüssen servieren."},
+ {id:"s17",N:{kcal:570,p:21,f:20,kh:73,bs:14,gv:310,pm:0,q:"s"},ai:1,n:"Kurkuma-Blumenkohl aus dem Ofen mit Kichererbsen & Tahin",t:35,k:"veg",i:[[1,"Stk","Blumenkohl","g"],[1,"Dose","Kichererbsen","v"],[200,"g","Basmatireis","v"],[100,"g","Babyspinat","g"],[1,"Glas","Tahin (Sesammus)","v"],[1,"Stk","Zitrone","g"],[1,"Bund","Petersilie","g"]],m:"Blumenkohl und Kichererbsen mit Kurkuma, Kreuzkümmel und Öl 25 Min. rösten. Reis kochen. Mit Spinat, Tahin-Zitronen-Soße und Petersilie servieren."},
+ {id:"s18",N:{kcal:670,p:25,f:12,kh:107,bs:21,gv:590,pm:0,q:"s"},ai:1,kid:1,n:"Vollkornspaghetti mit Ratatouille-Sauce",t:30,k:"veg",i:[[400,"g","Vollkornnudeln","v"],[1,"Stk","Aubergine","g"],[1,"Stk","Zucchini","g"],[2,"Stk","Paprika","g"],[1,"Stk","Zwiebel","g"],[2,"Zehen","Knoblauch","g"],[800,"g","Stückige Tomaten","v"],[1,"Bund","Basilikum","g"]],m:"Aubergine, Zucchini, Paprika, Zwiebel und Knoblauch in Olivenöl anbraten, Tomaten und Kräuter dazu, 15 Min. köcheln. Mit Vollkornspaghetti und Basilikum servieren."}
 ];
 const STEPS = {};
 Object.assign(STEPS, {
@@ -1313,7 +1334,134 @@ k09:{v:"1–2 EL Öl, Pfeffer, getrocknetes Bohnenkraut, evtl. Salz",s:[
 "Kartoffeln und Möhren dazugeben und kurz mitanbraten.",
 "Mit 1 l Fleischbrühe ablöschen, aufkochen und ca. 10 Min. kochen lassen.",
 "Bohnen dazugeben und weitere ca. 15 Min. garen, bis alles weich ist.",
-"Mit Pfeffer und 1–2 TL Bohnenkraut abschmecken, bei Bedarf salzen (die Brühe ist schon salzig)."]}
+"Mit Pfeffer und 1–2 TL Bohnenkraut abschmecken, bei Bedarf salzen (die Brühe ist schon salzig)."]},
+s01:{v:"2 EL Rapsöl, 1 TL Kurkuma, 1 TL Kreuzkümmel, 1 TL Garam Masala (mild), jodfreies Salz, Pfeffer",s:[
+"Basmatireis nach Packungsangabe kochen.",
+"Zwiebel, Knoblauch und Ingwer schälen und fein würfeln bzw. reiben. Linsen in einem Sieb abspülen.",
+"Öl in einem großen Topf erhitzen, Zwiebel 3 Min. andünsten, Knoblauch, Ingwer, Kurkuma, Kreuzkümmel und Garam Masala 1 Min. mitrösten.",
+"Linsen, passierte Tomaten, Kokosmilch und 400 ml Wasser dazugeben, aufkochen und offen 15 Min. köcheln, bis die Linsen zerfallen. Ab und zu umrühren.",
+"Spinat unterheben und 1–2 Min. zusammenfallen lassen.",
+"Mit jodfreiem Salz, Pfeffer und dem Saft einer halben Zitrone abschmecken. Mit dem Reis servieren, Chili nur für die Erwachsenen."]},
+s02:{v:"2 EL Rapsöl, 2 TL mildes Currypulver, 1 TL Kurkuma, jodfreies Salz",s:[
+"Vollkornreis nach Packungsangabe kochen (ca. 30 Min.).",
+"Zwiebel, Knoblauch und Ingwer schälen und fein würfeln. Brokkoli in kleine Röschen teilen, Paprika würfeln. Kichererbsen abspülen.",
+"Öl in einer großen Pfanne erhitzen, Zwiebel 3 Min. andünsten, Knoblauch, Ingwer, Curry und Kurkuma 1 Min. mitrösten.",
+"Paprika und Brokkoli dazugeben und 3 Min. unter Rühren braten.",
+"Kichererbsen und Kokosmilch dazugeben und zugedeckt ca. 10 Min. köcheln, bis der Brokkoli bissfest ist.",
+"Mit jodfreiem Salz und Limettensaft abschmecken und mit dem Reis servieren."]},
+s03:{v:"3 EL Olivenöl, 1 TL Paprikapulver, 1 TL Kreuzkümmel, 1 TL Honig oder Ahornsirup, jodfreies Salz, Pfeffer, Backpapier",s:[
+"Backofen auf 200 °C (Umluft 180 °C) vorheizen, ein Blech mit Backpapier belegen.",
+"Süßkartoffel schälen und in 2 cm große Würfel schneiden, Zucchini und Paprika grob würfeln. Kichererbsen abspülen und gut abtropfen lassen.",
+"Gemüse und Kichererbsen mit Öl, Paprikapulver, Kreuzkümmel und jodfreiem Salz mischen und ca. 25 Min. rösten, einmal wenden.",
+"Quinoa in einem Sieb heiß abspülen, mit der doppelten Menge Wasser aufkochen und 15 Min. leise köcheln, dann ausquellen lassen.",
+"Für das Dressing 4 EL Tahin, Saft von 1 Zitrone, Honig und ca. 5 EL Wasser glatt rühren, salzen.",
+"Petersilie hacken. Quinoa, Spinat und Ofengemüse in Schalen verteilen, mit Dressing beträufeln und Petersilie bestreuen."]},
+s04:{v:"6 EL Olivenöl, jodfreies Salz, Pfeffer",s:[
+"Vollkornnudeln in Wasser mit jodfreiem Salz nach Packungsangabe kochen. Vor dem Abgießen eine Tasse Nudelwasser abnehmen.",
+"Walnüsse in einer Pfanne ohne Fett 3–4 Min. rösten, abkühlen lassen.",
+"Petersilie grob zupfen. Mit 50 g Walnüssen, Knoblauch, Saft einer halben Zitrone, Olivenöl und etwas jodfreiem Salz im Mixer zu einem Pesto pürieren.",
+"Kirschtomaten halbieren.",
+"Nudeln mit Pesto und 3–4 EL Nudelwasser mischen, Tomaten unterheben.",
+"Mit den restlichen gehackten Walnüssen und Pfeffer servieren."]},
+s05:{v:"3 EL Olivenöl, jodfreies Salz, Pfeffer, Backpapier",s:[
+"Backofen auf 200 °C (Umluft 180 °C) vorheizen, ein Blech mit Backpapier belegen.",
+"Kartoffeln waschen, längs vierteln, mit 2 EL Öl und jodfreiem Salz mischen und auf dem Blech ca. 20 Min. rösten.",
+"Dill und Petersilie hacken. Zitrone halbieren, eine Hälfte in Scheiben schneiden.",
+"Forellenfilets mit der Hautseite nach unten zwischen die Kartoffeln legen, mit Salz, Pfeffer, 1 EL Öl und der Hälfte der Kräuter würzen, Zitronenscheiben darauflegen. Weitere 10–12 Min. garen.",
+"Brokkoli in Röschen teilen und in wenig Wasser zugedeckt 5–6 Min. dämpfen.",
+"Kartoffeln mit den restlichen Kräutern bestreuen, alles mit Zitronensaft beträufeln und servieren. Bei Kindern Gräten prüfen."]},
+s06:{v:"2 EL Rapsöl, 1 TL Kurkuma, 1 TL Paprikapulver, 1–2 EL Essig, jodfreies Salz, Pfeffer",s:[
+"Zwiebel und Knoblauch schälen und würfeln. Karotten und Kartoffeln schälen und würfeln, Lauch in Ringe schneiden. Linsen abspülen.",
+"Öl in einem großen Topf erhitzen, Zwiebel und Knoblauch 3 Min. andünsten, Kurkuma und Paprikapulver kurz mitrösten.",
+"Linsen, Karotten, Kartoffeln und Lauch dazugeben und mit der Brühe (ohne Jodsalz) aufgießen.",
+"Aufkochen und zugedeckt bei kleiner Hitze ca. 30 Min. köcheln, bis Linsen und Kartoffeln weich sind.",
+"Mit Essig, jodfreiem Salz und Pfeffer abschmecken.",
+"Petersilie hacken und darüberstreuen."]},
+s07:{v:"3 EL Olivenöl, 1 TL Thymian, jodfreies Salz, Pfeffer",s:[
+"Buchweizen in einem Sieb abspülen, mit der Brühe (ohne Jodsalz) aufkochen und zugedeckt 12–15 Min. leise garen, bis die Flüssigkeit aufgesogen ist.",
+"Pilze putzen und in Scheiben schneiden, Zwiebel und Knoblauch fein würfeln.",
+"2 EL Öl in einer großen Pfanne stark erhitzen, Pilze 5 Min. goldbraun braten.",
+"Zwiebel, Knoblauch, 1 EL Öl und Thymian dazugeben und 2 Min. mitbraten. Spinat unterheben, bis er zusammenfällt.",
+"Buchweizen untermischen, mit jodfreiem Salz und Pfeffer abschmecken.",
+"Walnüsse grob hacken, Petersilie hacken und beides darüberstreuen."]},
+s08:{v:"3 EL Rapsöl, 1 TL Speisestärke, 1 EL Honig, jodfreies Salz, Pfeffer, Chiliflocken (nur Erwachsene)",s:[
+"Reis nach Packungsangabe kochen.",
+"Rindfleisch trocken tupfen, quer zur Faser in dünne Streifen schneiden und mit der Speisestärke mischen.",
+"Brokkoli in kleine Röschen teilen, Paprika in Streifen, Frühlingszwiebeln in Ringe schneiden. Ingwer und Knoblauch fein hacken.",
+"2 EL Öl im Wok oder in einer großen Pfanne stark erhitzen, Fleisch 2 Min. scharf anbraten, herausnehmen.",
+"1 EL Öl zugeben, Brokkoli und Paprika 4 Min. braten, Ingwer und Knoblauch 1 Min. mitbraten.",
+"Fleisch zurückgeben, Honig, Saft einer Limette und 4 EL Wasser zugeben, kurz durchschwenken und mit jodfreiem Salz und Pfeffer abschmecken.",
+"Mit Frühlingszwiebeln und Sesam bestreuen und mit Reis servieren. Chiliflocken nur für die Erwachsenen."]},
+s09:{v:"3 EL Olivenöl, 1 TL Paprikapulver edelsüß, jodfreies Salz, Pfeffer",s:[
+"Hirse in einem Sieb heiß abspülen, mit der Brühe (ohne Jodsalz) aufkochen und zugedeckt 10 Min. leise köcheln, dann 10 Min. ausquellen lassen.",
+"Zwiebel würfeln, Paprika und Zucchini in kleine Würfel schneiden, Kirschtomaten halbieren.",
+"Öl in einer großen Pfanne erhitzen, Zwiebel 2 Min. andünsten, Paprika und Zucchini 5 Min. mitbraten.",
+"Tomaten und Paprikapulver dazugeben und 2 Min. mitgaren.",
+"Hirse unterheben, mit Saft einer halben Zitrone, jodfreiem Salz und Pfeffer abschmecken.",
+"Petersilie hacken und darüberstreuen."]},
+s10:{v:"2 EL Rapsöl, 1 TL Kurkuma, 1 TL Kreuzkümmel, jodfreies Salz, Pfeffer",s:[
+"Kürbis waschen, entkernen und mit Schale würfeln. Karotten schälen und in Scheiben schneiden. Zwiebel und Ingwer schälen und würfeln. Linsen abspülen.",
+"Öl in einem großen Topf erhitzen, Zwiebel und Ingwer 3 Min. andünsten, Kurkuma und Kreuzkümmel kurz mitrösten.",
+"Kürbis, Karotten und Linsen dazugeben, mit der Brühe (ohne Jodsalz) aufgießen und zugedeckt ca. 20 Min. köcheln.",
+"Kokosmilch einrühren (1–2 EL für die Deko zurückbehalten) und alles fein pürieren.",
+"Mit jodfreiem Salz und Pfeffer abschmecken.",
+"Kürbiskerne in einer Pfanne ohne Fett rösten und mit der restlichen Kokosmilch über die Suppe geben."]},
+s11:{v:"3 EL Olivenöl, 1 TL italienische Kräuter, jodfreies Salz, Pfeffer",s:[
+"Karotten schälen und würfeln, Zucchini würfeln, Lauch in Ringe schneiden, Knoblauch hacken. Grünkohl von den dicken Stielen zupfen und klein schneiden.",
+"Öl in einem großen Topf erhitzen, Karotten, Lauch und Knoblauch 4 Min. andünsten.",
+"Zucchini, Kräuter, Tomaten und die Brühe (ohne Jodsalz) dazugeben und 10 Min. köcheln.",
+"Nudeln (kleine Sorte oder zerbrochen), abgespülte Bohnen und Grünkohl dazugeben und weitere ca. 10 Min. köcheln, bis die Nudeln gar sind.",
+"Mit jodfreiem Salz und Pfeffer abschmecken.",
+"Mit einem Schuss Olivenöl servieren."]},
+s12:{v:"5 EL Olivenöl, 1 TL Kreuzkümmel, jodfreies Salz, Pfeffer",s:[
+"Quinoa heiß abspülen, mit der doppelten Menge Wasser aufkochen, 15 Min. leise köcheln und ausquellen lassen. Auf einem Teller ausbreiten und abkühlen lassen.",
+"Gurke und Tomaten klein würfeln, Frühlingszwiebeln in feine Ringe schneiden.",
+"Petersilie und Minze fein hacken. Kichererbsen abspülen.",
+"Saft von 2 Zitronen mit Olivenöl, Kreuzkümmel, jodfreiem Salz und Pfeffer verrühren.",
+"Quinoa, Gemüse, Kräuter und Kichererbsen mit dem Dressing mischen und 10 Min. ziehen lassen.",
+"Nochmals abschmecken. Hält sich auch gut für den nächsten Tag."]},
+s13:{v:"3 EL Olivenöl, 1 TL Oregano, jodfreies Salz, Pfeffer",s:[
+"Backofen auf 200 °C (Umluft 180 °C) vorheizen. Hirse heiß abspülen, mit der Brühe (ohne Jodsalz) aufkochen und 10 Min. leise köcheln, dann ausquellen lassen.",
+"Zucchini längs halbieren und mit einem Löffel aushöhlen, dabei einen Rand stehen lassen. Das Fruchtfleisch klein hacken.",
+"Zwiebel, Knoblauch und Paprika würfeln und mit dem Zucchinifleisch in 2 EL Öl 5 Min. braten. Mit der Hirse mischen, mit Oregano, jodfreiem Salz und Pfeffer würzen.",
+"Passierte Tomaten mit Salz würzen und in eine Auflaufform gießen. Zucchinihälften hineinsetzen und füllen, mit 1 EL Öl beträufeln.",
+"Im Ofen ca. 20 Min. backen, bis die Zucchini weich sind.",
+"Walnüsse hacken, Basilikum zupfen und beides darüberstreuen."]},
+s14:{v:"2 EL Rapsöl, 1 TL Paprikapulver, ½ TL Kurkuma, jodfreies Salz, Pfeffer",s:[
+"Reis nach Packungsangabe kochen.",
+"Zwiebel und Knoblauch würfeln, Paprika und Zucchini in kleine Würfel schneiden.",
+"Öl in einer großen Pfanne erhitzen, Rinderhack krümelig braten, bis es braun ist.",
+"Zwiebel, Knoblauch, Paprika und Zucchini dazugeben und 4 Min. mitbraten, Paprikapulver und Kurkuma unterrühren.",
+"Tomaten und Erbsen dazugeben und 5 Min. köcheln.",
+"Reis unterheben, mit jodfreiem Salz und Pfeffer abschmecken und mit gehackter Petersilie servieren."]},
+s15:{v:"3 EL Rapsöl, ½ TL Muskat, 1 TL Senf, jodfreies Salz, Pfeffer",s:[
+"Kartoffeln mit Schale in Wasser ca. 15 Min. vorkochen, abgießen, kurz abkühlen lassen und in Scheiben schneiden.",
+"Grünkohl von den dicken Stielen zupfen und klein schneiden. Zwiebel und Knoblauch würfeln. Bohnen abspülen.",
+"2 EL Öl in einer großen Pfanne erhitzen und die Kartoffeln ca. 8 Min. goldbraun braten.",
+"1 EL Öl, Zwiebel, Knoblauch und Grünkohl dazugeben und 4–5 Min. mitbraten, bis der Kohl zusammenfällt.",
+"Bohnen unterheben und warm werden lassen. Mit Senf, Muskat, Zitronensaft, jodfreiem Salz und Pfeffer abschmecken.",
+"Walnüsse grob hacken und darüberstreuen."]},
+s16:{v:"1 Prise jodfreies Salz, ½ TL Zimt, 1–2 TL Honig oder Ahornsirup",s:[
+"Haferflocken mit Haferdrink, 1 Prise jodfreiem Salz und Zimt in einem Topf aufkochen.",
+"Bei kleiner Hitze 3–4 Min. unter Rühren köcheln, bis der Brei cremig ist.",
+"Eine Banane zerdrücken und unterrühren, die andere in Scheiben schneiden.",
+"Beeren in einem kleinen Topf kurz erwärmen (TK-Beeren 3–4 Min.).",
+"Walnüsse grob hacken.",
+"Brei in Schalen füllen, mit Beeren, Bananenscheiben, Leinsamen und Walnüssen toppen, nach Geschmack mit Honig süßen."]},
+s17:{v:"4 EL Olivenöl, 1½ TL Kurkuma, 1 TL Kreuzkümmel, ½ TL Paprikapulver, jodfreies Salz, Pfeffer, Backpapier",s:[
+"Backofen auf 220 °C (Umluft 200 °C) vorheizen, ein Blech mit Backpapier belegen.",
+"Blumenkohl in kleine Röschen teilen, Kichererbsen abspülen und trocken tupfen.",
+"Beides mit Öl, Kurkuma, Kreuzkümmel, Paprikapulver und jodfreiem Salz mischen und ca. 25 Min. rösten, bis der Blumenkohl gebräunt ist.",
+"Inzwischen Reis nach Packungsangabe kochen.",
+"4 EL Tahin mit Saft einer Zitrone und 5–6 EL Wasser glatt rühren, salzen.",
+"Reis, Spinat und Ofen-Blumenkohl anrichten, mit Tahin-Soße beträufeln und gehackte Petersilie darüberstreuen."]},
+s18:{v:"3 EL Olivenöl, 1 TL Kräuter der Provence, 1 Prise Zucker, jodfreies Salz, Pfeffer",s:[
+"Aubergine, Zucchini und Paprika in kleine Würfel schneiden, Zwiebel und Knoblauch fein würfeln.",
+"Öl in einem großen Topf erhitzen, Aubergine 5 Min. anbraten, dann Zwiebel, Paprika und Zucchini weitere 4 Min. mitbraten.",
+"Knoblauch und Kräuter der Provence 1 Min. mitbraten, Tomaten und 1 Prise Zucker dazugeben.",
+"Zugedeckt ca. 15 Min. köcheln, mit jodfreiem Salz und Pfeffer abschmecken. Wer es feiner mag, einen Teil für die Kinder pürieren.",
+"Inzwischen Vollkornspaghetti in Wasser mit jodfreiem Salz nach Packungsangabe kochen.",
+"Spaghetti mit der Sauce mischen und mit Basilikum servieren."]}
 });
 
 const BY = Object.fromEntries(DISHES.map(d=>[d.id,d]));
@@ -1492,7 +1640,7 @@ function nutriHtml(d){
     <div class="nutri"><span><b>${N.kcal}</b> kcal</span><span><b>${N.p} g</b> Eiweiß</span><span><b>${N.f} g</b> Fett</span><span><b>${N.kh} g</b> Kohlenhydr.</span><span><b>${N.bs} g</b> Ballastst.</span><span><b>${N.gv} g</b> Gemüse</span></div>`;
 }
 function chips(d, full){
-  return `${d.own?'<span class="chip own">Eigenes Rezept</span>':''}${d.foto?'<span class="chip own">📷 Eigenes Rezept</span>':''}${d.web?'<span class="chip own">🔗 Eigenes Rezept</span>':''}${(()=>{ const t=healthTags(d); const show=full?t:t.slice(0,2); return show.map(k=>`<span class="chip hl">${HEALTH.find(h=>h[0]===k)[1]}</span>`).join('')+(!full&&t.length>2?`<span class="chip hl">+${t.length-2}</span>`:''); })()}${d.cu?`<span class="chip cu">${d.cu==="asia"?"Asiatisch":"Indisch"}</span>`:''}<span class="chip ${d.k}">${KIND[d.k]}</span>${d.t?`<span class="chip time">${d.t} Min</span>`:''}${d.kid?'<span class="chip">Kinderliebling</span>':''}`;
+  return `${d.own?'<span class="chip own">Eigenes Rezept</span>':''}${d.ai?'<span class="chip ai">🌿 Antientzündlich</span>':''}${d.foto?'<span class="chip own">📷 Eigenes Rezept</span>':''}${d.web?'<span class="chip own">🔗 Eigenes Rezept</span>':''}${(()=>{ const t=healthTags(d); const show=full?t:t.slice(0,2); return show.map(k=>`<span class="chip hl">${HEALTH.find(h=>h[0]===k)[1]}</span>`).join('')+(!full&&t.length>2?`<span class="chip hl">+${t.length-2}</span>`:''); })()}${d.cu?`<span class="chip cu">${d.cu==="asia"?"Asiatisch":"Indisch"}</span>`:''}<span class="chip ${d.k}">${KIND[d.k]}</span>${d.t?`<span class="chip time">${d.t} Min</span>`:''}${d.kid?'<span class="chip">Kinderliebling</span>':''}`;
 }
 function toast(msg){
   const r = $("#toastRoot"); r.innerHTML = `<div class="toast" role="status">${esc(msg)}</div>`;
@@ -1681,6 +1829,7 @@ function showDish(id){
   const d = dish(id); if(!d) return;
   openSheet(`<button class="btn small close" data-close>Schließen</button>
     <h2>${esc(d.n)}</h2><div class="meta">${chips(d,true)}</div>
+    ${d.ai?`<p class="ai-note">🌿 <b>Antientzündlich &amp; jodarm:</b> Mit jodfreiem Salz und Gemüsebrühe ohne Jodsalz kochen. Ohne Seefisch, Algen und Sojasauce, wenig Milchprodukte. Bei einer Schilddrüsenerkrankung die Ernährung mit der Ärztin / dem Arzt abstimmen.</p>`:""}
     ${nutriHtml(d)}
     <h3>Zutaten für 3 Personen</h3><ul>${d.i.map(([a,u,n])=>`<li>${fmtQty(a,u)?`<strong>${fmtQty(a,u)}</strong> `:""}${esc(n)}</li>`).join("")}</ul>
     <div class="bar" style="margin:10px 0 0"><button class="btn small" data-keepcopy="${d.id}">📋 Zutaten für Keep kopieren</button></div><div class="keep-ok" id="keepOk" hidden></div>
@@ -1699,6 +1848,7 @@ function matchFilter(d,f){
   if(f==="zeit"&&d.t<40) return false;
   if(f==="kinder"&&!d.kid) return false;
   if(f==="eigene"&&!d.own&&!d.foto&&!d.web) return false;
+  if(f==="antient"&&!d.ai) return false;
   if(HEALTH.some(h=>h[0]===f) && !healthTags(d).includes(f)) return false;
   if((f==="asia"||f==="indien")&&d.cu!==f) return false;
   return true;
