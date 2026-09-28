@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#2E6A44">
+<meta name="theme-color" content="#FAFAF7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111412" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Essensplan">
@@ -199,6 +200,121 @@ a.btn{text-decoration:none;display:inline-block}
 .days button{font:700 14px var(--body);padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
 .days button:hover{background:var(--basil);color:var(--basil-ink);border-color:var(--basil)}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--ground);padding:10px 16px;border-radius:999px;font-size:14px;z-index:30}
+
+/* ===== Design 2: ruhig & minimal ===== */
+:root{
+  --ground:#FAFAF7; --surface:#FFFFFF; --sunk:#F1F2EE; --ink:#1E2420; --muted:#6A716C; --line:#E4E7E2;
+  --basil:#2F6B47; --basil-ink:#FFFFFF; --basil-soft:#EAF2EC; --mustard:#8A7A55; --mustard-soft:#F3F1EA;
+  --tomato:#A34A38; --tomato-soft:#F6ECE9; --sea:#56615A; --sea-soft:#F1F2EE; --shadow:none;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#111412; --surface:#171B18; --sunk:#1F2420; --ink:#E7EBE8; --muted:#98A19B; --line:#2A302C;
+    --basil:#86C79D; --basil-ink:#0F1A12; --basil-soft:#1C2A21; --mustard:#B8A983; --mustard-soft:#1F2420;
+    --tomato:#E0907C; --tomato-soft:#2A1F1C; --sea:#98A19B; --sea-soft:#1F2420; --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#111412; --surface:#171B18; --sunk:#1F2420; --ink:#E7EBE8; --muted:#98A19B; --line:#2A302C;
+  --basil:#86C79D; --basil-ink:#0F1A12; --basil-soft:#1C2A21; --mustard:#B8A983; --mustard-soft:#1F2420;
+  --tomato:#E0907C; --tomato-soft:#2A1F1C; --sea:#98A19B; --sea-soft:#1F2420; --shadow:none;
+}
+body{line-height:1.5}
+.wrap{padding-block:24px 72px}
+h1{font-weight:700;font-size:clamp(26px,6vw,34px);letter-spacing:-.025em}
+.sub{font-size:13px;line-height:1.45}
+.sync{background:transparent;font-weight:400}
+/* Tabs als ruhige Segment-Leiste */
+nav.tabs{background:var(--ground);padding-block:10px;margin-bottom:14px}
+nav.tabs{gap:0}
+nav.tabs::before{content:"";position:absolute;inset:10px 0;background:var(--sunk);border-radius:12px;z-index:-1}
+nav.tabs{isolation:isolate;position:sticky}
+nav.tabs button{border:0;background:transparent;color:var(--muted);font-weight:600;padding:9px 8px;border-radius:9px;margin:3px}
+nav.tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);border:0;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+nav.tabs button[aria-selected="true"] .count{background:var(--basil);color:var(--basil-ink)}
+.count{font-weight:700}
+/* Knöpfe */
+.btn{font-weight:600;border-radius:10px;background:var(--surface)}
+.btn.ghost{border-color:transparent;color:var(--muted)}
+.btn:hover{border-color:var(--muted)}
+.btn.primary:hover{filter:brightness(1.05)}
+.note{background:var(--sunk)}
+/* Woche */
+.week{border-radius:14px}
+.day{padding:14px 16px}
+.day.today{background:transparent;box-shadow:inset 3px 0 0 var(--basil)}
+.day.today .dname{color:var(--basil)}
+.dname{font-weight:700;font-size:18px}
+.dish button.title{font-weight:600}
+.icon{border-color:transparent;background:transparent;color:var(--muted)}
+.icon:hover{background:var(--sunk);border-color:transparent;color:var(--ink)}
+/* Symbolzeile */
+.mline{font-size:13px;color:var(--muted);margin-top:3px;display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px;font-variant-numeric:tabular-nums}
+.mline .ic{font-size:14px;line-height:1;letter-spacing:1px}
+.mline .dot{opacity:.5}
+/* Einkauf */
+.shop,.shopdays{border-radius:14px}
+.seg{background:var(--sunk)}
+.item{border-bottom-style:solid}
+/* Ideen */
+.surprise{background:var(--surface);border:1px solid var(--line)}
+.surprise strong{font-weight:700;font-size:18px}
+.search{border-radius:10px}
+.filters{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin:0 -16px 6px;padding:2px 16px 6px}
+.filters::-webkit-scrollbar{display:none}
+.filters button{flex:none;white-space:nowrap;font-weight:600;background:transparent;color:var(--muted)}
+.filters button[aria-pressed="true"]{background:var(--basil-soft);color:var(--basil);border-color:var(--basil)}
+.fcount{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);margin:0 0 10px;min-height:26px}
+.fcount button{border:0;background:none;color:var(--basil);font:600 13px var(--body);cursor:pointer;padding:2px 4px}
+.ideas{gap:8px}
+.idea{border-radius:12px;padding:12px 14px;gap:2px}
+.idea h4{font-weight:600;line-height:1.3}
+.idea .row{padding-top:8px}
+.idea .row .inplan{font-size:12px;color:var(--muted)}
+/* Sheet */
+.sheet{border-radius:16px 16px 0 0}
+.sheet h2{font-weight:700;font-size:22px}
+.sheet h3{letter-spacing:.06em;font-weight:600;margin:20px 0 8px}
+.pick button{border-radius:10px;align-items:center}
+.pick-filters{margin:0 -18px 4px;padding:2px 18px 6px}
+.tags{font-size:13px;color:var(--muted);margin:2px 0 0;line-height:1.6}
+.tags .dot{opacity:.5;margin:0 3px}
+.nutri-line{font-size:13px;color:var(--muted);margin:10px 0 0;font-variant-numeric:tabular-nums;line-height:1.6}
+.nutri-line b{color:var(--ink);font-weight:600}
+details.info{margin-top:8px;font-size:13px;color:var(--muted)}
+details.info summary{cursor:pointer;color:var(--muted);list-style:none;display:inline-flex;align-items:center;gap:6px;padding:2px 0}
+details.info summary::-webkit-details-marker{display:none}
+details.info[open] summary{color:var(--ink)}
+details.info p{margin:8px 0 0}
+.ai-note{background:var(--sunk);color:var(--ink)}
+.steps-list li::before{background:var(--sunk);color:var(--muted)}
+.days button{font-weight:600}
+.days button:hover{background:var(--basil-soft);color:var(--basil);border-color:var(--basil)}
+.mline .more{font-size:12px;color:var(--muted)}
+.mline .ic{filter:saturate(.75)}
+.idea{flex-direction:row;align-items:center;gap:10px;padding:12px 10px 12px 14px}
+.idea-main{flex:1;min-width:0;cursor:pointer}
+.idea-main:hover h4{color:var(--basil)}
+.idea .inplan{display:inline-block;font-size:12px;color:var(--basil);margin-top:2px}
+.plan-btn{font-size:20px;line-height:1;width:40px;height:40px;padding:0;border-radius:50%;flex:none;color:var(--basil)!important}
+.plan-btn:hover{background:var(--basil-soft)}
+.day{grid-template-columns:52px 1fr auto;gap:10px;align-items:center}
+.acts{gap:0}
+.icon{width:34px;height:34px}
+.icon svg{width:17px;height:17px}
+@media (max-width:460px){.day{grid-template-columns:44px 1fr auto;padding:12px 8px 12px 14px}.acts{grid-column:auto;justify-content:flex-end;margin-top:0;flex-direction:row}.icon{width:32px;height:32px}}
+@media (max-width:380px){.acts .icon[data-roll]{display:none}}
+.tags .tg{white-space:nowrap}
+.plan-btn{display:grid;place-items:center;border:1px solid var(--line)!important}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) nav.tabs button[aria-selected="true"]{background:var(--line)}}
+:root[data-theme="dark"] nav.tabs button[aria-selected="true"]{background:var(--line)}
+.ing-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:20px 0 8px}
+.ing-head h3{margin:0}
+.stepper{display:flex;align-items:center;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.stepper button{width:36px;height:34px;border:0;background:transparent;color:var(--ink);font:600 18px var(--body);cursor:pointer}
+.stepper button:hover{background:var(--sunk)}
+.stepper span{min-width:28px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums}
+.pers-hint{font-size:12px;color:var(--muted);margin:-2px 0 6px}
 @media (prefers-reduced-motion:no-preference){.sheet{animation:up .18s ease-out}@keyframes up{from{transform:translateY(16px);opacity:.6}}}
 </style>
 </head>
@@ -207,7 +323,6 @@ a.btn{text-decoration:none;display:inline-block}
   <header class="top">
     <div>
       <h1>Was <span>essen</span> wir?</h1>
-      <p class="sub">Wochenplan für 2 Erwachsene + 1 Kind · unter der Woche schnell, am Wochenende mit Zeit · wenig Fleisch</p>
     </div>
     <button class="sync" id="sync" type="button"><i></i><span>Nur auf diesem Handy</span></button>
   </header>
@@ -220,9 +335,9 @@ a.btn{text-decoration:none;display:inline-block}
 
   <section id="p-woche">
     <div class="bar">
-      <button class="btn primary" id="fillWeek">Leere Tage füllen</button>
-      <button class="btn" id="copyPlan">Plan kopieren</button>
-      <button class="btn" id="newWeek">Neue Woche</button>
+      <button class="btn small primary" id="fillWeek">Leere Tage füllen</button>
+      <button class="btn small" id="copyPlan">Plan kopieren</button>
+      <button class="btn small" id="newWeek">Neue Woche</button>
     </div>
     <div class="note" id="exampleNote" hidden>Beispielwoche — tausch einfach Gerichte aus, dann wird dein Plan gespeichert.</div>
     <div class="week" id="week"></div>
@@ -267,24 +382,25 @@ a.btn{text-decoration:none;display:inline-block}
     <input class="search" id="search" type="search" placeholder="Gericht oder Zutat suchen, z. B. Nudeln, Feta …">
     <div class="filters" id="filters">
       <button data-f="alle" aria-pressed="true">Alle</button>
-      <button data-f="veg" aria-pressed="false">Vegetarisch</button>
-      <button data-f="fleisch" aria-pressed="false">Fleisch</button>
-      <button data-f="fisch" aria-pressed="false">Fisch</button>
+      <button data-f="veg" aria-pressed="false">🌱 Vegetarisch</button>
+      <button data-f="fleisch" aria-pressed="false">🥩 Fleisch</button>
+      <button data-f="fisch" aria-pressed="false">🐟 Fisch</button>
       <button data-f="schnell" aria-pressed="false">Bis 20 Min</button>
       <button data-f="alltag" aria-pressed="false">Bis 30 Min</button>
-      <button data-f="zeit" aria-pressed="false">Mehr Zeit (ab 40 Min)</button>
-      <button data-f="kinder" aria-pressed="false">Kinderliebling</button>
+      <button data-f="zeit" aria-pressed="false">Ab 40 Min</button>
+      <button data-f="kinder" aria-pressed="false">👶 Kinderliebling</button>
       <button data-f="gesund" aria-pressed="false">❤️ Gesund</button>
       <button data-f="protein" aria-pressed="false">💪 Proteinreich</button>
       <button data-f="gemuese" aria-pressed="false">🥦 Gemüsereich</button>
       <button data-f="ballast" aria-pressed="false">🌾 Ballaststoffreich</button>
       <button data-f="leicht" aria-pressed="false">🥗 Leicht</button>
-      <button data-f="lowcarb" aria-pressed="false">🥩 Low-Carb</button>
+      <button data-f="lowcarb" aria-pressed="false">📉 Low-Carb</button>
       <button data-f="antient" aria-pressed="false">🌿 Antientzündlich</button>
-      <button data-f="asia" aria-pressed="false">Asiatisch</button>
-      <button data-f="indien" aria-pressed="false">Indisch</button>
-      <button data-f="eigene" aria-pressed="false">Eigene</button>
+      <button data-f="asia" aria-pressed="false">🥢 Asiatisch</button>
+      <button data-f="indien" aria-pressed="false">🍛 Indisch</button>
+      <button data-f="eigene" aria-pressed="false">📷 Eigene</button>
     </div>
+    <div class="fcount" id="ideaCount"></div>
     <div class="ideas" id="ideas"></div>
   </section>
 </div>
@@ -1630,17 +1746,33 @@ const HEALTH = [
   ["gemuese","🥦 Gemüsereich", N=>N.gv>=250],
   ["ballast","🌾 Ballaststoffreich", N=>N.bs>=10],
   ["leicht","🥗 Leicht", N=>N.kcal<=550],
-  ["lowcarb","🥩 Low-Carb", N=>N.kh<=35],
+  ["lowcarb","📉 Low-Carb", N=>N.kh<=35],
 ];
 function healthTags(d){ return d.N ? HEALTH.filter(h=>h[2](d.N)).map(h=>h[0]) : []; }
 function nutriHtml(d){
   if(!d.N) return "";
   const N=d.N;
-  return `<h3>Nährwerte pro Portion <span class="hint">– ${N.q==="b"?"laut Kochbuch (Ballaststoffe geschätzt)":"geschätzt aus den Zutaten"}</span></h3>
-    <div class="nutri"><span><b>${N.kcal}</b> kcal</span><span><b>${N.p} g</b> Eiweiß</span><span><b>${N.f} g</b> Fett</span><span><b>${N.kh} g</b> Kohlenhydr.</span><span><b>${N.bs} g</b> Ballastst.</span><span><b>${N.gv} g</b> Gemüse</span></div>`;
+  return `<p class="nutri-line">Pro Portion ca. <b>${N.kcal} kcal</b> · <b>${N.p} g</b> Eiweiß · <b>${N.f} g</b> Fett · <b>${N.kh} g</b> KH · <b>${N.bs} g</b> Ballaststoffe · <b>${N.gv} g</b> Gemüse</p>`;
+}
+const KIND_IC = {veg:"🌱",fleisch:"🥩",fisch:"🐟"};
+function tagList(d){
+  const t = [];
+  t.push([KIND_IC[d.k]||"", KIND[d.k]]);
+  if(d.kid) t.push(["👶","Kinderliebling"]);
+  if(d.ai) t.push(["🌿","Antientzündlich"]);
+  healthTags(d).forEach(k=>{ const h=HEALTH.find(x=>x[0]===k); t.push([h[1].split(" ")[0], h[1].replace(/^\S+\s/,"")]); });
+  if(d.cu) t.push(d.cu==="asia"?["🥢","Asiatisch"]:["🍛","Indisch"]);
+  if(d.foto) t.push(["📷","Eigenes Rezept"]); else if(d.web) t.push(["🔗","Eigenes Rezept"]); else if(d.own) t.push(["✍️","Eigenes Rezept"]);
+  return t;
+}
+function metaLine(d){
+  const t = tagList(d);
+  return `<div class="mline">${d.t?`<span>${d.t} Min</span><span class="dot">·</span>`:""}<span class="ic">${t.slice(0,5).map(([i,l])=>`<span title="${esc(l)}" aria-label="${esc(l)}">${i}</span>`).join("")}</span>${t.length>5?`<span class="more">+${t.length-5}</span>`:""}</div>`;
 }
 function chips(d, full){
-  return `${d.own?'<span class="chip own">Eigenes Rezept</span>':''}${d.ai?'<span class="chip ai">🌿 Antientzündlich</span>':''}${d.foto?'<span class="chip own">📷 Eigenes Rezept</span>':''}${d.web?'<span class="chip own">🔗 Eigenes Rezept</span>':''}${(()=>{ const t=healthTags(d); const show=full?t:t.slice(0,2); return show.map(k=>`<span class="chip hl">${HEALTH.find(h=>h[0]===k)[1]}</span>`).join('')+(!full&&t.length>2?`<span class="chip hl">+${t.length-2}</span>`:''); })()}${d.cu?`<span class="chip cu">${d.cu==="asia"?"Asiatisch":"Indisch"}</span>`:''}<span class="chip ${d.k}">${KIND[d.k]}</span>${d.t?`<span class="chip time">${d.t} Min</span>`:''}${d.kid?'<span class="chip">Kinderliebling</span>':''}`;
+  if(!full) return metaLine(d);
+  const parts = [d.t?`${d.t} Min`:null, ...tagList(d).map(([i,l])=>`${i} ${l}`)].filter(Boolean);
+  return `<p class="tags">${parts.map(x=>`<span class="tg">${esc(x)}</span>`).join('<span class="dot">·</span>')}</p>`;
 }
 function toast(msg){
   const r = $("#toastRoot"); r.innerHTML = `<div class="toast" role="status">${esc(msg)}</div>`;
@@ -1676,7 +1808,7 @@ function renderWeek(){
   $("#week").innerHTML = DAYS.map((d,i)=>{
     const v = state.days[i]; let body;
     if(typeof v==="string" && dish(v)){ const x = dish(v);
-      body = `<button class="title" data-open="${x.id}">${esc(x.n)}</button><div class="meta">${chips(x)}</div>`;
+      body = `<button class="title" data-open="${x.id}">${esc(x.n)}</button>${chips(x)}`;
     } else if(v && typeof v==="object" && v.custom){
       body = `<span class="title" style="font-weight:700">${esc(v.custom)}</span><div class="meta"><span class="chip">Eigenes Gericht</span></div>`;
     } else body = `<span class="empty">Noch nichts geplant</span>`;
@@ -1780,15 +1912,15 @@ $("#viewCat").addEventListener("click",()=>{ shopPrefs.view="cat"; saveShopPrefs
 $("#viewDay").addEventListener("click",()=>{ shopPrefs.view="day"; saveShopPrefs(); renderShop(); });
 
 /* ---------- Render: Ideen ---------- */
-let filter = "alle", query = "", surprise = null;
+let filterSet = new Set(), query = "", surprise = null;
 function renderIdeas(){
   const q = query.trim().toLowerCase();
-  const list = allDishes().filter(d=>matchFilter(d,filter) && matchQuery(d,q));
+  const list = allDishes().filter(d=>matchFilters(d,filterSet) && matchQuery(d,q));
+  $("#ideaCount").innerHTML = countHtml(list.length, filterSet);
   const inPlan = new Set(planned());
   $("#ideas").innerHTML = list.length ? list.map(d=>`<div class="idea">
-    <h4 data-open="${d.id}">${esc(d.n)}</h4>
-    <div class="meta">${chips(d)}</div>
-    <div class="row"><span class="chip">${inPlan.has(d.id)?'Schon im Plan':d.i.length+' Zutaten'}</span><button class="btn small" data-assign="${d.id}">Einplanen</button></div>
+    <div class="idea-main" data-open="${d.id}"><h4>${esc(d.n)}</h4>${chips(d)}${inPlan.has(d.id)?'<span class="inplan">✓ im Plan</span>':''}</div>
+    <button class="btn small ghost plan-btn" data-assign="${d.id}" aria-label="${esc(d.n)} einplanen" title="Einplanen"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
   </div>`).join("") : `<p class="empty">Nichts gefunden. Probier einen anderen Suchbegriff.</p>`;
   if(!surprise) nextSurprise(false);
 }
@@ -1814,9 +1946,33 @@ function methodHtml(d){
     <h3>So geht's <span class="hint">– Schritt antippen zum Abhaken</span></h3>
     <ol class="steps-list">${list.map(x=>`<li tabindex="0">${esc(x)}</li>`).join("")}</ol>`;
 }
+const CEIL_UNITS = new Set(["Dose","Dosen","Glas","Pck","Packung","Bund","Kopf","Beet","Flasche","Laib","Becher","Tube","Kugeln"]);
+function scaleQty(a,u,n,name){
+  if(!a || n===3) return a;
+  const x = a*n/3;
+  if(u==="g"||u==="ml"){ const step = x<50?5:(x<500?25:50); return Math.max(step, Math.round(x/step)*step); }
+  if(u==="l"||u==="kg"){ const m = x*1000, step = m<500?25:50; return Math.max(step, Math.round(m/step)*step)/1000; }
+  if(CEIL_UNITS.has(u)) return Math.max(1, Math.ceil(x-0.05));
+  if(u==="Zehen") return Math.max(1, Math.round(x));
+  if(/^Eier$/i.test(name||"")) return Math.max(1, Math.ceil(x-0.05));
+  return Math.max(0.5, Math.round(x*2)/2);
+}
+function ingItems(d,n){
+  return d.i.map(([a,u,nm])=>{ const q=fmtQty(scaleQty(a,u,n,nm),u); return `<li>${q?`<strong>${q}</strong> `:""}${esc(nm)}</li>`; }).join("");
+}
+let curPersons = 3;
+function setPersons(id,n){
+  const d = dish(id); if(!d) return;
+  curPersons = Math.min(12, Math.max(1, n));
+  $("#persN").textContent = curPersons;
+  $("#ingTitle").textContent = `Zutaten für ${curPersons} Person${curPersons>1?"en":""}`;
+  $("#ingList").innerHTML = ingItems(d, curPersons);
+  $("#persHint").hidden = curPersons===3;
+  const ok=$("#keepOk"); if(ok) ok.hidden=true;
+}
 function copyDishForKeep(id){
   const d = dish(id); if(!d) return;
-  const lines = d.i.map(([a,u,n])=>((fmtQty(a,u)?fmtQty(a,u)+" ":"")+n).trim()).filter(Boolean);
+  const lines = d.i.map(([a,u,n])=>{ const q=fmtQty(scaleQty(a,u,curPersons,n),u); return ((q?q+" ":"")+n).trim(); }).filter(Boolean);
   const text = lines.join("\n");
   const ok = ()=>{ const el=$("#keepOk"); if(!el) return toast(`${lines.length} Zutaten kopiert`);
     el.innerHTML = `<span>✔ ${lines.length} Zutaten kopiert – in Keep lange ins neue Listenelement tippen → Einfügen.</span> <a class="btn small primary" href="https://keep.google.com/" target="_blank" rel="noopener">Google Keep öffnen</a>`; el.hidden=false; };
@@ -1827,16 +1983,23 @@ function copyDishForKeep(id){
 }
 function showDish(id){
   const d = dish(id); if(!d) return;
+  curPersons = 3;
   openSheet(`<button class="btn small close" data-close>Schließen</button>
-    <h2>${esc(d.n)}</h2><div class="meta">${chips(d,true)}</div>
-    ${d.ai?`<p class="ai-note">🌿 <b>Antientzündlich &amp; jodarm:</b> Mit jodfreiem Salz und Gemüsebrühe ohne Jodsalz kochen. Ohne Seefisch, Algen und Sojasauce, wenig Milchprodukte. Bei einer Schilddrüsenerkrankung die Ernährung mit der Ärztin / dem Arzt abstimmen.</p>`:""}
+    <h2>${esc(d.n)}</h2>${chips(d,true)}
     ${nutriHtml(d)}
-    <h3>Zutaten für 3 Personen</h3><ul>${d.i.map(([a,u,n])=>`<li>${fmtQty(a,u)?`<strong>${fmtQty(a,u)}</strong> `:""}${esc(n)}</li>`).join("")}</ul>
+    ${(()=>{ const notes=[];
+      if(d.ai) notes.push(`🌿 <b>Antientzündlich &amp; jodarm:</b> Mit jodfreiem Salz und Gemüsebrühe ohne Jodsalz kochen. Ohne Seefisch, Algen und Sojasauce, wenig Milchprodukte. Bei einer Schilddrüsenerkrankung die Ernährung mit der Ärztin / dem Arzt abstimmen.`);
+      if(d.N) notes.push(d.N.q==="b"?"Nährwerte laut Kochbuch (Ballaststoffe und Gemüse geschätzt). Eine Portion = ein Drittel der Rezeptmenge.":"Nährwerte aus den Zutaten geschätzt, inkl. ca. 20 g Öl pro Gericht. Eine Portion = ein Drittel der Rezeptmenge.");
+      if(d.src) notes.push(`Nach einem Rezept von <a href="${esc(d.src[1])}" target="_blank" rel="noopener">${esc(d.src[0])}</a>. Mengen auf 3 Personen umgerechnet, Zubereitung in eigenen Worten.`);
+      if(d.foto) notes.push("📷 Aus deinem Kochbuch-Foto übernommen, Mengen auf 3 Personen umgerechnet.");
+      return notes.length?`<details class="info"><summary>ⓘ Hinweise${d.src?" &amp; Quelle":""}</summary>${notes.map(n=>`<p>${n}</p>`).join("")}</details>`:""; })()}
+    <div class="ing-head"><h3 id="ingTitle">Zutaten für 3 Personen</h3>
+      <div class="stepper" role="group" aria-label="Personen"><button type="button" data-pers="-1" aria-label="Eine Person weniger">−</button><span id="persN">3</span><button type="button" data-pers="1" aria-label="Eine Person mehr">+</button></div></div>
+    <p class="pers-hint" id="persHint" hidden>Mengen in den Kochschritten gelten für 3 Personen.</p>
+    <ul id="ingList">${ingItems(d,3)}</ul>
     <div class="bar" style="margin:10px 0 0"><button class="btn small" data-keepcopy="${d.id}">📋 Zutaten für Keep kopieren</button></div><div class="keep-ok" id="keepOk" hidden></div>
     ${methodHtml(d)}
     <h3>An welchem Tag?</h3><div class="days">${DAYS.map((x,i)=>`<button data-setday="${i}" data-dish="${d.id}">${x}</button>`).join("")}</div>
-    ${d.src?`<p class="src">Nach einem Rezept von <a href="${esc(d.src[1])}" target="_blank" rel="noopener">${esc(d.src[0])}</a>. Mengen auf 3 Personen umgerechnet, Zubereitung in eigenen Worten.</p>`:''}
-    ${d.foto?`<p class="src">📷 Aus deinem Kochbuch-Foto übernommen, Mengen auf 3 Personen umgerechnet.</p>`:''}
     ${d.own?`<h3>Eigenes Rezept</h3><div class="bar"><button class="btn" data-editrecipe="${d.id}">Bearbeiten</button><button class="btn ghost" data-delrecipe="${d.id}">Löschen</button></div>`:''}`);
 }
 function matchFilter(d,f){
@@ -1853,31 +2016,42 @@ function matchFilter(d,f){
   if((f==="asia"||f==="indien")&&d.cu!==f) return false;
   return true;
 }
+const FGROUP = {veg:"art",fleisch:"art",fisch:"art",schnell:"zeit",alltag:"zeit",zeit:"zeit",asia:"kueche",indien:"kueche"};
+function matchFilters(d,set){
+  if(!set || !set.size) return true;
+  const groups = {};
+  set.forEach(f=>{ const g = FGROUP[f]||f; (groups[g]=groups[g]||[]).push(f); });
+  return Object.values(groups).every(fs=>fs.some(f=>matchFilter(d,f)));
+}
+function toggleFilter(set,f){ if(f==="alle") set.clear(); else if(set.has(f)) set.delete(f); else set.add(f); }
+function syncFilterButtons(sel,attr,set){ document.querySelectorAll(sel).forEach(x=>x.setAttribute("aria-pressed",String(x.dataset[attr]==="alle"?!set.size:set.has(x.dataset[attr])))); }
+function countHtml(n,set){ return `<span>${n ? `${n} Gericht${n>1?"e":""}` : "Nichts gefunden – Filter oder Suche ändern."}</span>${set.size?`<button type="button" data-freset>× Zurücksetzen</button>`:""}`; }
 function matchQuery(d,q){ return !q || d.n.toLowerCase().includes(q) || d.i.some(x=>String(x[2]).toLowerCase().includes(q)); }
 function pickFor(day){
   const opts = allDishes().sort((a,b)=>a.n.localeCompare(b.n,"de"));
   const cats = [...document.querySelectorAll("#filters button")].map(b=>[b.dataset.f,b.textContent]);
-  let pf = "alle";
+  const pf = new Set();
   openSheet(`<button class="btn small close" data-close>Schließen</button>
     <h2>${DAYS_LONG[day]}</h2>
     <div class="add" style="margin-top:10px"><input id="customDish" type="text" placeholder="Eigenes Gericht, z. B. Resteessen" autocomplete="off"><button class="btn primary" data-custom="${day}">Übernehmen</button></div>
     <input class="search" id="pickSearch" type="search" placeholder="Gericht oder Zutat suchen …" style="margin:0 0 8px">
-    <div class="filters pick-filters" id="pickFilters">${cats.map(([f,l])=>`<button type="button" data-pf="${f}" aria-pressed="${f===pf}">${esc(l)}</button>`).join("")}</div>
-    <p class="pick-count" id="pickCount"></p>
-    <div class="pick" id="pickList">${opts.map(d=>`<button data-setday="${day}" data-dish="${d.id}"><span>${esc(d.n)}</span><span class="chip ${d.k}">${d.t?d.t+" Min":KIND[d.k]}</span></button>`).join("")}</div>`);
+    <div class="filters pick-filters" id="pickFilters">${cats.map(([f,l])=>`<button type="button" data-pf="${f}" aria-pressed="${f==="alle"}">${esc(l)}</button>`).join("")}</div>
+    <div class="fcount" id="pickCount"></div>
+    <div class="pick" id="pickList">${opts.map(d=>`<button data-setday="${day}" data-dish="${d.id}"><span>${esc(d.n)}${metaLine(d)}</span></button>`).join("")}</div>`);
   const byId = Object.fromEntries(opts.map(d=>[d.id,d]));
   const apply = ()=>{
     const q = $("#pickSearch").value.trim().toLowerCase(); let n=0;
-    document.querySelectorAll("#pickList button").forEach(b=>{ const ok = matchFilter(byId[b.dataset.dish],pf) && matchQuery(byId[b.dataset.dish],q); b.hidden=!ok; if(ok) n++; });
-    $("#pickCount").textContent = n ? `${n} Gericht${n>1?"e":""}` : "Nichts gefunden – andere Kategorie oder Suche probieren.";
+    document.querySelectorAll("#pickList button").forEach(b=>{ const ok = matchFilters(byId[b.dataset.dish],pf) && matchQuery(byId[b.dataset.dish],q); b.hidden=!ok; if(ok) n++; });
+    $("#pickCount").innerHTML = countHtml(n, pf);
   };
   $("#pickSearch").addEventListener("input",apply);
   $("#pickFilters").addEventListener("click",e=>{
     const b = e.target.closest("button[data-pf]"); if(!b) return; e.stopPropagation();
-    pf = b.dataset.pf;
-    document.querySelectorAll("#pickFilters button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+    toggleFilter(pf, b.dataset.pf);
+    syncFilterButtons("#pickFilters button","pf",pf);
     apply();
   });
+  $("#pickCount").addEventListener("click",e=>{ if(e.target.closest("[data-freset]")){ e.stopPropagation(); pf.clear(); syncFilterButtons("#pickFilters button","pf",pf); apply(); } });
   apply();
 }
 
@@ -1901,6 +2075,7 @@ document.addEventListener("click",e=>{
   if(t.dataset.custom){ const v = $("#customDish").value.trim(); if(!v) { $("#customDish").focus(); return; } state.days[t.dataset.custom]={custom:v}; closeSheet(); commit(); return; }
   if(t.dataset.assign){ showDish(t.dataset.assign); return; }
   if(t.dataset.keepcopy){ copyDishForKeep(t.dataset.keepcopy); return; }
+  if(t.dataset.pers){ const id = document.querySelector("[data-keepcopy]")?.dataset.keepcopy; setPersons(id, curPersons + (+t.dataset.pers)); return; }
   if(t.dataset.editrecipe){ openRecipeForm(t.dataset.editrecipe); return; }
   if(t.dataset.delrecipe){ deleteRecipe(t.dataset.delrecipe, t); return; }
   if(t.dataset.rmextra){ delete state.extras[t.dataset.rmextra]; delete state.checked["x:"+t.dataset.rmextra]; commit(); return; }
@@ -1981,9 +2156,10 @@ $("#copyPlan").addEventListener("click",()=>{
   });
 });
 $("#search").addEventListener("input",e=>{ query=e.target.value; renderIdeas(); });
+$("#ideaCount").addEventListener("click",e=>{ if(e.target.closest("[data-freset]")){ filterSet.clear(); syncFilterButtons("#filters button","f",filterSet); renderIdeas(); } });
 $("#filters").addEventListener("click",e=>{
-  const b = e.target.closest("button"); if(!b) return; filter = b.dataset.f;
-  document.querySelectorAll("#filters button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); renderIdeas();
+  const b = e.target.closest("button"); if(!b) return; toggleFilter(filterSet, b.dataset.f);
+  syncFilterButtons("#filters button","f",filterSet); renderIdeas();
 });
 $("#surpriseAgain").addEventListener("click",()=>nextSurprise());
 $("#surpriseUse").addEventListener("click",()=>surprise&&showDish(surprise.id));
