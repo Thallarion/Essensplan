@@ -305,6 +305,7 @@ details.info p{margin:8px 0 0}
 @media (max-width:460px){.day{grid-template-columns:44px 1fr auto;padding:12px 8px 12px 14px}.acts{grid-column:auto;justify-content:flex-end;margin-top:0;flex-direction:row}.icon{width:32px;height:32px}}
 @media (max-width:380px){.acts .icon[data-roll]{display:none}}
 .tags .tg{white-space:nowrap}
+.gfb{display:inline-block;font:700 9px/1 var(--body);letter-spacing:.02em;padding:2px 3px;border:1.5px solid currentColor;border-radius:4px;vertical-align:2px;color:var(--basil);margin:0 1px}
 .plan-btn{display:grid;place-items:center;border:1px solid var(--line)!important}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) nav.tabs button[aria-selected="true"]{background:var(--line)}}
 :root[data-theme="dark"] nav.tabs button[aria-selected="true"]{background:var(--line)}
@@ -396,6 +397,7 @@ details.info p{margin:8px 0 0}
       <button data-f="leicht" aria-pressed="false">🥗 Leicht</button>
       <button data-f="lowcarb" aria-pressed="false">📉 Low-Carb</button>
       <button data-f="antient" aria-pressed="false">🌿 Antientzündlich</button>
+      <button data-f="glutenfrei" aria-pressed="false"><span class="gfb">GF</span> Glutenfrei</button>
       <button data-f="asia" aria-pressed="false">🥢 Asiatisch</button>
       <button data-f="indien" aria-pressed="false">🍛 Indisch</button>
       <button data-f="eigene" aria-pressed="false">📷 Eigene</button>
@@ -541,7 +543,25 @@ const DISHES = [
  {id:"s15",N:{kcal:520,p:19,f:20,kh:58,bs:17,gv:220,pm:0,q:"s"},ai:1,n:"Grünkohl-Kartoffel-Pfanne mit Bohnen & Walnüssen",t:30,k:"veg",i:[[800,"g","Kartoffeln (festkochend)","g"],[300,"g","Grünkohl","g"],[1,"Dose","Weiße Bohnen","v"],[1,"Stk","Zwiebel","g"],[2,"Zehen","Knoblauch","g"],[50,"g","Walnusskerne","v"],[1,"Stk","Zitrone","g"]],m:"Kartoffeln vorkochen und in Scheiben knusprig braten. Zwiebel, Knoblauch und Grünkohl mitbraten, Bohnen unterheben. Mit Zitrone, Senf und Walnüssen abschmecken."},
  {id:"s16",N:{kcal:670,p:17,f:28,kh:81,bs:18,gv:0,pm:0,q:"s"},ai:1,kid:1,n:"Warmer Haferbrei mit Beeren, Leinsamen & Walnüssen",t:10,k:"veg",i:[[200,"g","Haferflocken","v"],[750,"ml","Haferdrink (ohne Jodzusatz)","k"],[300,"g","Beerenmischung","t"],[2,"Stk","Bananen","g"],[30,"g","Leinsamen (geschrotet)","v"],[40,"g","Walnusskerne","v"]],m:"Haferflocken mit Haferdrink aufkochen und 3–4 Min. quellen lassen. Mit zerdrückter Banane und Zimt süßen, mit erwärmten Beeren, Leinsamen und Walnüssen servieren."},
  {id:"s17",N:{kcal:570,p:21,f:20,kh:73,bs:14,gv:310,pm:0,q:"s"},ai:1,n:"Kurkuma-Blumenkohl aus dem Ofen mit Kichererbsen & Tahin",t:35,k:"veg",i:[[1,"Stk","Blumenkohl","g"],[1,"Dose","Kichererbsen","v"],[200,"g","Basmatireis","v"],[100,"g","Babyspinat","g"],[1,"Glas","Tahin (Sesammus)","v"],[1,"Stk","Zitrone","g"],[1,"Bund","Petersilie","g"]],m:"Blumenkohl und Kichererbsen mit Kurkuma, Kreuzkümmel und Öl 25 Min. rösten. Reis kochen. Mit Spinat, Tahin-Zitronen-Soße und Petersilie servieren."},
- {id:"s18",N:{kcal:670,p:25,f:12,kh:107,bs:21,gv:590,pm:0,q:"s"},ai:1,kid:1,n:"Vollkornspaghetti mit Ratatouille-Sauce",t:30,k:"veg",i:[[400,"g","Vollkornnudeln","v"],[1,"Stk","Aubergine","g"],[1,"Stk","Zucchini","g"],[2,"Stk","Paprika","g"],[1,"Stk","Zwiebel","g"],[2,"Zehen","Knoblauch","g"],[800,"g","Stückige Tomaten","v"],[1,"Bund","Basilikum","g"]],m:"Aubergine, Zucchini, Paprika, Zwiebel und Knoblauch in Olivenöl anbraten, Tomaten und Kräuter dazu, 15 Min. köcheln. Mit Vollkornspaghetti und Basilikum servieren."}
+ {id:"s18",N:{kcal:670,p:25,f:12,kh:107,bs:21,gv:590,pm:0,q:"s"},ai:1,kid:1,n:"Vollkornspaghetti mit Ratatouille-Sauce",t:30,k:"veg",i:[[400,"g","Vollkornnudeln","v"],[1,"Stk","Aubergine","g"],[1,"Stk","Zucchini","g"],[2,"Stk","Paprika","g"],[1,"Stk","Zwiebel","g"],[2,"Zehen","Knoblauch","g"],[800,"g","Stückige Tomaten","v"],[1,"Bund","Basilikum","g"]],m:"Aubergine, Zucchini, Paprika, Zwiebel und Knoblauch in Olivenöl anbraten, Tomaten und Kräuter dazu, 15 Min. köcheln. Mit Vollkornspaghetti und Basilikum servieren."},
+ {id:"g01",N:{kcal:570,p:21,f:13,kh:89,bs:7,gv:200,pm:0,q:"s"},gf:1,kid:1,n:"Pilz-Erbsen-Risotto",t:35,k:"veg",i:[[300,"g","Risottoreis","v"],[300,"g","Champignons","g"],[200,"g","Erbsen","t"],[1,"Stk","Zwiebel","g"],[1,"Zehen","Knoblauch","g"],[1,"l","Gemüsebrühe (glutenfrei)","v"],[50,"g","Parmesan am Stück","k"]],m:"Zwiebel und Reis andünsten, nach und nach heiße Brühe angießen und 18–20 Min. rühren. Pilze separat braten, mit Erbsen unterheben, Parmesan und Butter einrühren."},
+ {id:"g02",N:{kcal:780,p:28,f:44,kh:60,bs:11,gv:130,pm:0,q:"s"},gf:1,kid:1,n:"Kartoffel-Brokkoli-Gratin",t:55,k:"veg",i:[[1000,"g","Kartoffeln (festkochend)","g"],[1,"Stk","Brokkoli","g"],[200,"ml","Sahne","k"],[200,"ml","Milch","k"],[150,"g","Gouda gerieben","k"],[1,"Zehen","Knoblauch","g"]],m:"Kartoffeln in dünne Scheiben hobeln, mit Brokkoli in eine Form schichten. Sahne-Milch mit Knoblauch und Gewürzen darübergießen, mit Käse bestreuen und ca. 45 Min. backen."},
+ {id:"g03",N:{kcal:580,p:20,f:18,kh:82,bs:10,gv:410,pm:0,q:"s"},gf:1,n:"Cremige Polenta mit Paprika-Tomaten-Ragout & Mozzarella",t:30,k:"veg",i:[[250,"g","Polenta","v"],[3,"Stk","Paprika","g"],[1,"Stk","Zucchini","g"],[400,"g","Stückige Tomaten","v"],[1,"Stk","Zwiebel","g"],[2,"Zehen","Knoblauch","g"],[1,"Kugeln","Mozzarella","k"],[1,"Bund","Basilikum","g"],[1,"l","Gemüsebrühe (glutenfrei)","v"]],m:"Paprika, Zucchini, Zwiebel und Knoblauch anbraten, mit Tomaten 15 Min. schmoren. Polenta in Brühe einrühren und quellen lassen. Mit Ragout, Mozzarella und Basilikum servieren."},
+ {id:"g04",N:{kcal:780,p:31,f:24,kh:105,bs:14,gv:450,pm:0,q:"s"},gf:1,kid:1,n:"Mexikanische Reispfanne mit Bohnen & Mais",t:25,k:"veg",i:[[250,"g","Reis","v"],[1,"Dose","Kidneybohnen","v"],[1,"Dose","Mais","v"],[2,"Stk","Paprika","g"],[1,"Stk","Zwiebel","g"],[400,"g","Stückige Tomaten","v"],[0.3,"l","Gemüsebrühe (glutenfrei)","v"],[150,"g","Gouda gerieben","k"],[1,"Stk","Limette","g"]],m:"Zwiebel und Paprika anbraten, Reis kurz mitrösten, mit Tomaten und Brühe 18 Min. garen. Bohnen und Mais unterheben, mit Käse und Limette servieren."},
+ {id:"g05",N:{kcal:530,p:41,f:11,kh:60,bs:11,gv:100,pm:0,q:"s"},gf:1,kid:1,n:"Seelachs mit Zitronen-Kartoffelpüree & Erbsen",t:30,k:"fisch",i:[[450,"g","Seelachsfilet","f"],[900,"g","Kartoffeln (mehligkochend)","g"],[200,"ml","Milch","k"],[300,"g","Erbsen","t"],[1,"Stk","Zitrone","g"],[1,"Bund","Petersilie","g"]],m:"Kartoffeln kochen und mit Milch, Butter und Zitronenschale zu Püree stampfen. Seelachs ohne Mehl in Butter braten, Erbsen kurz garen, mit Petersilie servieren."},
+ {id:"g06",N:{kcal:620,p:40,f:10,kh:87,bs:9,gv:340,pm:0,q:"s"},gf:1,kid:1,n:"Hähnchen-Paella mit Paprika & Erbsen",t:35,k:"fleisch",i:[[350,"g","Hähnchenbrustfilet","f"],[250,"g","Risottoreis","v"],[2,"Stk","Paprika","g"],[200,"g","Erbsen","t"],[1,"Stk","Zwiebel","g"],[2,"Zehen","Knoblauch","g"],[400,"g","Stückige Tomaten","v"],[0.6,"l","Gemüsebrühe (glutenfrei)","v"],[1,"Stk","Zitrone","g"]],m:"Hähnchen anbraten und herausnehmen. Zwiebel, Paprika, Knoblauch und Reis mit Kurkuma und Paprikapulver anschwitzen, Tomaten und Brühe dazu, 20 Min. garen. Hähnchen und Erbsen unterheben."},
+ {id:"g07",N:{kcal:580,p:17,f:16,kh:86,bs:11,gv:290,pm:0,q:"s"},gf:1,cu:"asia",n:"Reisnudeln mit Gemüse & Erdnuss-Soße",t:20,k:"veg",i:[[250,"g","Reisnudeln","v"],[2,"Stk","Karotten","g"],[1,"Stk","Paprika","g"],[1,"Stk","Brokkoli","g"],[1,"Bund","Frühlingszwiebeln","g"],[1,"Glas","Erdnussmus","v"],[1,"Flasche","Tamari (glutenfreie Sojasauce)","v"],[1,"Stk","Limette","g"],[1,"Stk","Ingwer (klein)","g"]],m:"Reisnudeln einweichen. Gemüse im Wok braten. Soße aus Erdnussmus, Tamari, Limette, Ingwer und Wasser verrühren, alles mischen. Nur Tamari mit Glutenfrei-Hinweis verwenden."},
+ {id:"g08",N:{kcal:520,p:34,f:12,kh:62,bs:9,gv:230,pm:0,q:"s"},gf:1,kid:1,n:"Kartoffel-Rösti mit Kräuterquark & Salat",t:30,k:"veg",i:[[1000,"g","Kartoffeln (festkochend)","g"],[2,"Stk","Eier","k"],[500,"g","Quark","k"],[1,"Bund","Schnittlauch","g"],[1,"Kopf","Salat","g"],[1,"Stk","Gurke","g"]],m:"Kartoffeln grob reiben, ausdrücken, mit Ei und Salz mischen (ohne Mehl) und als Rösti knusprig braten. Mit Schnittlauchquark und Gurkensalat servieren."},
+ {id:"g09",N:{kcal:460,p:30,f:13,kh:52,bs:13,gv:330,pm:0,q:"s"},gf:1,kid:1,n:"Linsennudeln mit Tomaten-Spinat-Sauce",t:20,k:"veg",i:[[250,"g","Linsennudeln (glutenfrei)","v"],[500,"g","Passierte Tomaten","v"],[150,"g","Babyspinat","g"],[1,"Stk","Zwiebel","g"],[2,"Zehen","Knoblauch","g"],[40,"g","Parmesan am Stück","k"],[1,"Bund","Basilikum","g"]],m:"Zwiebel und Knoblauch andünsten, Tomaten 10 Min. köcheln, Spinat unterheben. Linsennudeln kochen und mit der Sauce, Parmesan und Basilikum servieren."},
+ {id:"g10",N:{kcal:810,p:43,f:34,kh:78,bs:5,gv:300,pm:0,q:"s"},gf:1,kid:1,n:"Hackbällchen in Tomatensauce mit Reis",t:35,k:"fleisch",i:[[400,"g","Rinderhack","f"],[1,"Stk","Eier","k"],[30,"g","Parmesan am Stück","k"],[250,"g","Reis","v"],[800,"g","Stückige Tomaten","v"],[1,"Stk","Zwiebel","g"],[2,"Zehen","Knoblauch","g"],[1,"Bund","Basilikum","g"]],m:"Hack mit Ei, Parmesan, Zwiebel und Gewürzen zu Bällchen formen (ohne Brötchen/Paniermehl), anbraten und in Tomatensauce 15 Min. garen. Mit Reis servieren."},
+ {id:"g11",N:{kcal:360,p:7,f:18,kh:39,bs:10,gv:230,pm:0,q:"s"},gf:1,kid:1,n:"Möhren-Kartoffel-Suppe mit Ingwer",t:30,k:"veg",i:[[600,"g","Möhren","g"],[400,"g","Kartoffeln (mehligkochend)","g"],[1,"Stk","Zwiebel","g"],[1,"Stk","Ingwer (klein)","g"],[1,"l","Gemüsebrühe (glutenfrei)","v"],[100,"ml","Sahne","k"],[1,"Bund","Petersilie","g"]],m:"Zwiebel und Ingwer andünsten, Möhren und Kartoffeln mit Brühe 20 Min. kochen, pürieren und mit Sahne verfeinern."},
+ {id:"g12",N:{kcal:670,p:35,f:33,kh:57,bs:5,gv:150,pm:0,q:"s"},gf:1,kid:1,n:"Buchweizen-Pfannkuchen mit Käse & Spinat",t:30,k:"veg",i:[[200,"g","Buchweizenmehl","v"],[400,"ml","Milch","k"],[3,"Stk","Eier","k"],[150,"g","Gouda gerieben","k"],[200,"g","Babyspinat","g"],[250,"g","Kirschtomaten","g"]],m:"Teig aus Buchweizenmehl, Milch, Eiern und Salz rühren, dünne Pfannkuchen backen und mit Käse, Spinat und Tomaten füllen (Galettes)."},
+ {id:"g13",N:{kcal:570,p:24,f:23,kh:61,bs:11,gv:310,pm:0,q:"s"},gf:1,n:"Quinoa-Gemüse-Pfanne mit Feta",t:25,k:"veg",i:[[250,"g","Quinoa","v"],[1,"Stk","Zucchini","g"],[2,"Stk","Paprika","g"],[1,"Stk","Zwiebel","g"],[250,"g","Kirschtomaten","g"],[150,"g","Feta","k"],[1,"Bund","Petersilie","g"],[1,"Stk","Zitrone","g"]],m:"Quinoa kochen. Zwiebel, Zucchini und Paprika anbraten, Tomaten kurz mitgaren, Quinoa unterheben. Mit Feta, Zitrone und Petersilie servieren."},
+ {id:"g14",N:{kcal:510,p:30,f:8,kh:70,bs:12,gv:270,pm:0,q:"s"},gf:1,kid:1,n:"Ofenkartoffeln mit Kräuterquark & Ofengemüse",t:45,k:"veg",i:[[1000,"g","Kartoffeln (festkochend)","g"],[2,"Stk","Paprika","g"],[1,"Stk","Zucchini","g"],[3,"Stk","Karotten","g"],[500,"g","Quark","k"],[1,"Bund","Schnittlauch","g"],[1,"Zehen","Knoblauch","g"]],m:"Kartoffelspalten und Gemüse mit Öl und Gewürzen 35 Min. im Ofen rösten. Quark mit Kräutern und Knoblauch anrühren und dazu servieren."},
+ {id:"g15",N:{kcal:850,p:40,f:32,kh:100,bs:7,gv:200,pm:0,q:"s"},gf:1,cu:"indien",kid:1,n:"Hähnchen-Kokos-Curry mit Süßkartoffel & Reis",t:30,k:"fleisch",i:[[350,"g","Hähnchenbrustfilet","f"],[1,"Stk","Süßkartoffel","g"],[1,"Dose","Kokosmilch","v"],[100,"g","Babyspinat","g"],[1,"Stk","Zwiebel","g"],[1,"Stk","Ingwer (klein)","g"],[2,"Zehen","Knoblauch","g"],[250,"g","Basmatireis","v"],[1,"Stk","Limette","g"]],m:"Reis kochen. Hähnchen anbraten, Zwiebel, Ingwer, Knoblauch und Currypulver dazu. Süßkartoffel und Kokosmilch 15 Min. köcheln, Spinat unterheben. Currypulver ohne Weizenzusatz verwenden."},
+ {id:"g16",N:{kcal:980,p:30,f:61,kh:77,bs:20,gv:320,pm:0,q:"s"},gf:1,kid:1,n:"Mais-Tortillas mit Bohnen, Avocado & Salsa",t:20,k:"veg",i:[[12,"Stk","Mais-Tortillas (glutenfrei)","b"],[1,"Dose","Kidneybohnen","v"],[2,"Stk","Avocado","g"],[3,"Stk","Tomaten","g"],[1,"Stk","Zwiebel","g"],[1,"Stk","Limette","g"],[200,"g","Schmand","k"],[150,"g","Gouda gerieben","k"]],m:"Bohnen mit Gewürzen erwärmen und zerdrücken. Guacamole und Tomatensalsa anrühren. Mais-Tortillas (100 % Mais) erwärmen und am Tisch füllen."},
+ {id:"g17",N:{kcal:760,p:34,f:34,kh:77,bs:8,gv:290,pm:0,q:"s"},gf:1,cu:"asia",n:"Reis-Bowl mit Lachs, Gurke & Avocado",t:25,k:"fisch",i:[[250,"g","Sushireis","v"],[350,"g","Lachsfilet","f"],[1,"Stk","Gurke","g"],[1,"Stk","Avocado","g"],[2,"Stk","Karotten","g"],[1,"Bund","Frühlingszwiebeln","g"],[1,"Flasche","Tamari (glutenfreie Sojasauce)","v"],[1,"Pck","Schwarzer Sesam","v"]],m:"Reis kochen und würzen. Lachs in der Pfanne braten und mit Tamari glasieren. Mit Gurke, Karotten, Avocado und Frühlingszwiebeln in Schalen anrichten."},
+ {id:"g18",N:{kcal:890,p:37,f:29,kh:118,bs:7,gv:250,pm:0,q:"s"},gf:1,kid:1,n:"Bolognese mit glutenfreien Nudeln",t:30,k:"fleisch",i:[[300,"g","Rinderhack","f"],[400,"g","Mais-Reis-Nudeln (glutenfrei)","v"],[500,"g","Passierte Tomaten","v"],[2,"Stk","Karotten","g"],[1,"Stk","Zwiebel","g"],[2,"Zehen","Knoblauch","g"],[40,"g","Parmesan am Stück","k"]],m:"Hack krümelig braten, Zwiebel, Karotten und Knoblauch dazu, mit Tomaten 15 Min. köcheln. Glutenfreie Nudeln nach Packung kochen (nicht zu weich) und mit Parmesan servieren."}
 ];
 const STEPS = {};
 Object.assign(STEPS, {
@@ -1577,7 +1597,134 @@ s18:{v:"3 EL Olivenöl, 1 TL Kräuter der Provence, 1 Prise Zucker, jodfreies Sa
 "Knoblauch und Kräuter der Provence 1 Min. mitbraten, Tomaten und 1 Prise Zucker dazugeben.",
 "Zugedeckt ca. 15 Min. köcheln, mit jodfreiem Salz und Pfeffer abschmecken. Wer es feiner mag, einen Teil für die Kinder pürieren.",
 "Inzwischen Vollkornspaghetti in Wasser mit jodfreiem Salz nach Packungsangabe kochen.",
-"Spaghetti mit der Sauce mischen und mit Basilikum servieren."]}
+"Spaghetti mit der Sauce mischen und mit Basilikum servieren."]},
+g01:{v:"2 EL Olivenöl, 1 EL Butter, Salz, Pfeffer",s:[
+"Brühe (glutenfrei) in einem Topf erhitzen und warm halten.",
+"Zwiebel und Knoblauch fein würfeln, Pilze in Scheiben schneiden.",
+"1 EL Öl in einer Pfanne erhitzen, Pilze 5 Min. goldbraun braten, salzen und beiseitestellen.",
+"1 EL Öl im Topf erhitzen, Zwiebel und Knoblauch 2 Min. andünsten, Reis dazugeben und 1 Min. glasig rühren.",
+"Eine Kelle Brühe angießen und rühren, bis sie aufgesogen ist. So weitermachen, bis der Reis nach ca. 18–20 Min. cremig und bissfest ist.",
+"Erbsen die letzten 4 Min. mitgaren, dann Pilze unterheben.",
+"Parmesan reiben, mit der Butter unterrühren, mit Salz und Pfeffer abschmecken und 2 Min. ruhen lassen."]},
+g02:{v:"Butter für die Form, Salz, Pfeffer, Muskat",s:[
+"Backofen auf 200 °C (Umluft 180 °C) vorheizen, eine Auflaufform mit Butter einfetten.",
+"Kartoffeln schälen und in ca. 3 mm dünne Scheiben hobeln. Brokkoli in kleine Röschen teilen.",
+"Sahne und Milch mit gepresstem Knoblauch, 1 TL Salz, Pfeffer und Muskat verrühren.",
+"Kartoffelscheiben und Brokkoli abwechselnd in die Form schichten, die Sahnemilch darübergießen.",
+"Mit Alufolie abdecken und 30 Min. backen.",
+"Folie abnehmen, Käse darüberstreuen und weitere 15 Min. goldbraun backen. Vor dem Servieren 5 Min. ruhen lassen."]},
+g03:{v:"3 EL Olivenöl, 1 EL Butter, 1 TL Oregano, Salz, Pfeffer",s:[
+"Zwiebel und Knoblauch würfeln, Paprika und Zucchini in Würfel schneiden.",
+"2 EL Öl in einer Pfanne erhitzen, Zwiebel, Paprika und Zucchini 5 Min. braten, Knoblauch und Oregano 1 Min. mitbraten.",
+"Tomaten dazugeben und zugedeckt ca. 15 Min. schmoren, mit Salz und Pfeffer abschmecken.",
+"Inzwischen die Brühe (glutenfrei) aufkochen, Polenta unter Rühren einrieseln lassen und bei kleiner Hitze nach Packung 5–10 Min. rühren, bis sie cremig ist. Butter unterrühren (bei Bedarf etwas Wasser nachgießen).",
+"Mozzarella zerzupfen, Basilikum zupfen.",
+"Polenta auf Teller geben, Ragout darauf verteilen, mit Mozzarella und Basilikum servieren."]},
+g04:{v:"2 EL Öl, 1 TL Paprikapulver, 1 TL Kreuzkümmel, Salz, Pfeffer, Chiliflocken (nur Erwachsene)",s:[
+"Zwiebel würfeln, Paprika in kleine Würfel schneiden. Bohnen und Mais abspülen.",
+"Öl in einer großen Pfanne mit Deckel erhitzen, Zwiebel und Paprika 4 Min. braten.",
+"Reis, Paprikapulver und Kreuzkümmel dazugeben und 1 Min. mitrösten.",
+"Tomaten und Brühe (glutenfrei) angießen, aufkochen und zugedeckt bei kleiner Hitze ca. 18 Min. garen, bis der Reis weich ist. Zwischendurch einmal umrühren.",
+"Bohnen und Mais unterheben und 2 Min. erwärmen, mit Salz, Pfeffer und Limettensaft abschmecken.",
+"Käse darüberstreuen und zugedeckt kurz schmelzen lassen. Chili nur für die Erwachsenen."]},
+g05:{v:"2 EL Butter, 1 EL Öl, Salz, Pfeffer, Muskat",s:[
+"Kartoffeln schälen, würfeln und in Salzwasser ca. 18 Min. weich kochen.",
+"Zitrone heiß waschen, Schale abreiben, Saft auspressen. Petersilie hacken.",
+"Kartoffeln abgießen, mit warmer Milch, 1 EL Butter, Zitronenschale, Salz und Muskat zu Püree stampfen.",
+"Erbsen in wenig Wasser 3–4 Min. garen.",
+"Seelachs trocken tupfen, salzen. Öl und 1 EL Butter in einer Pfanne erhitzen, Fisch je Seite 3 Min. braten (nicht in Mehl wenden).",
+"Mit Zitronensaft beträufeln, Petersilie darüberstreuen und mit Püree und Erbsen servieren."]},
+g06:{v:"3 EL Olivenöl, 1 TL Kurkuma, 1 TL Paprikapulver edelsüß, Salz, Pfeffer",s:[
+"Hähnchen in mundgerechte Stücke schneiden, salzen. Zwiebel und Knoblauch würfeln, Paprika in Streifen schneiden.",
+"2 EL Öl in einer großen Pfanne erhitzen, Hähnchen 4 Min. rundum anbraten, herausnehmen.",
+"1 EL Öl zugeben, Zwiebel und Paprika 3 Min. braten, Knoblauch, Kurkuma, Paprikapulver und Reis 1 Min. mitrösten.",
+"Tomaten und Brühe (glutenfrei) dazugeben, aufkochen und zugedeckt bei kleiner Hitze ca. 18 Min. garen, nicht zu oft rühren.",
+"Hähnchen und Erbsen dazugeben und weitere 5 Min. garen, bis der Reis weich ist.",
+"Mit Salz, Pfeffer und Zitronenspalten servieren."]},
+g07:{v:"2 EL Öl, 1 TL Honig, Chiliflocken (nur Erwachsene)",s:[
+"Reisnudeln nach Packung in heißem Wasser einweichen bzw. garen, abgießen.",
+"Karotten in feine Stifte, Paprika in Streifen schneiden, Brokkoli in kleine Röschen teilen, Frühlingszwiebeln in Ringe schneiden. Ingwer reiben.",
+"Für die Soße 3 EL Erdnussmus, 3 EL Tamari, Saft einer Limette, Ingwer, Honig und 5 EL warmes Wasser glatt rühren.",
+"Öl im Wok erhitzen, Karotten und Brokkoli 4 Min. braten, Paprika 2 Min. mitbraten.",
+"Nudeln und Soße dazugeben und 1–2 Min. durchschwenken.",
+"Mit Frühlingszwiebeln bestreuen. Chiliflocken nur für die Erwachsenen."]},
+g08:{v:"5 EL Öl, 2 EL Essig, Salz, Pfeffer, Muskat",s:[
+"Kartoffeln schälen, grob reiben und in einem sauberen Küchentuch kräftig ausdrücken.",
+"Mit Eiern, 1 TL Salz, Pfeffer und Muskat mischen (kein Mehl nötig).",
+"Quark mit etwas Milch oder Wasser glatt rühren, Schnittlauch in Röllchen schneiden und unterrühren, salzen.",
+"Salat waschen und zupfen, Gurke hobeln, mit Essig, 2 EL Öl, Salz und Pfeffer anmachen.",
+"Öl in einer großen Pfanne erhitzen, je 2 EL Masse flach drücken und pro Seite 3–4 Min. goldbraun braten. Auf Küchenpapier abtropfen lassen.",
+"Rösti mit Kräuterquark und Salat servieren."]},
+g09:{v:"2 EL Olivenöl, 1 TL Oregano, 1 Prise Zucker, Salz, Pfeffer",s:[
+"Zwiebel und Knoblauch fein würfeln.",
+"Öl in einem Topf erhitzen, Zwiebel und Knoblauch 3 Min. andünsten, Oregano kurz mitrösten.",
+"Passierte Tomaten und Zucker dazugeben und 10 Min. köcheln, mit Salz und Pfeffer abschmecken.",
+"Linsennudeln nach Packung in Salzwasser kochen (meist nur 6–8 Min., nicht zu lange, sonst werden sie weich).",
+"Spinat in die Sauce geben und zusammenfallen lassen.",
+"Nudeln mit der Sauce mischen, mit geriebenem Parmesan und Basilikum servieren."]},
+g10:{v:"2 EL Olivenöl, 1 TL Paprikapulver, 1 TL Oregano, Salz, Pfeffer",s:[
+"Reis nach Packungsangabe kochen.",
+"Zwiebel und Knoblauch sehr fein würfeln. Parmesan reiben.",
+"Hack mit Ei, Parmesan, der Hälfte der Zwiebeln, Paprikapulver, 1 TL Salz und Pfeffer verkneten und ca. 18 kleine Bällchen formen.",
+"Öl in einer großen Pfanne erhitzen, Bällchen 5 Min. rundum anbraten.",
+"Restliche Zwiebel und Knoblauch kurz mitbraten, Tomaten und Oregano dazugeben und zugedeckt ca. 15 Min. köcheln.",
+"Abschmecken, mit Basilikum bestreuen und mit Reis servieren."]},
+g11:{v:"2 EL Öl, Salz, Pfeffer, Muskat",s:[
+"Möhren und Kartoffeln schälen und klein schneiden, Zwiebel und Ingwer würfeln.",
+"Öl im Topf erhitzen, Zwiebel und Ingwer 3 Min. andünsten.",
+"Möhren und Kartoffeln dazugeben, mit der Brühe (glutenfrei) aufgießen und ca. 20 Min. weich kochen.",
+"Fein pürieren und die Sahne einrühren.",
+"Mit Salz, Pfeffer und Muskat abschmecken.",
+"Mit gehackter Petersilie servieren. Dazu passen geröstete Kerne oder glutenfreies Brot."]},
+g12:{v:"Butter oder Öl zum Braten, Salz, Pfeffer",s:[
+"Buchweizenmehl, Milch, Eier und ½ TL Salz glatt rühren und 10 Min. quellen lassen (bei Bedarf etwas Wasser zugeben, der Teig soll flüssig sein).",
+"Kirschtomaten halbieren, Spinat waschen.",
+"Eine Pfanne mit wenig Butter erhitzen, eine Kelle Teig dünn verteilen und 1–2 Min. backen, wenden.",
+"Etwas Käse, Spinat und Tomaten auf eine Hälfte geben, zusammenklappen und kurz weiterbacken, bis der Käse schmilzt.",
+"Warm halten und so weitermachen, bis der Teig verbraucht ist (ca. 8 Stück).",
+"Mit Pfeffer servieren. Für Kinder auch süß mit Apfelmus lecker."]},
+g13:{v:"3 EL Olivenöl, 1 TL Kreuzkümmel, Salz, Pfeffer",s:[
+"Quinoa heiß abspülen, mit der doppelten Menge Wasser aufkochen, 15 Min. leise köcheln und ausquellen lassen.",
+"Zwiebel, Zucchini und Paprika würfeln, Tomaten halbieren.",
+"Öl in einer großen Pfanne erhitzen, Zwiebel, Zucchini und Paprika 6 Min. braten, Kreuzkümmel kurz mitrösten.",
+"Tomaten 2 Min. mitgaren, Quinoa unterheben.",
+"Mit Zitronensaft, Salz und Pfeffer abschmecken.",
+"Feta darüberbröseln und mit gehackter Petersilie servieren."]},
+g14:{v:"4 EL Olivenöl, 1 TL Paprikapulver, 1 TL Rosmarin, Salz, Pfeffer, Backpapier",s:[
+"Backofen auf 220 °C (Umluft 200 °C) vorheizen, zwei Bleche mit Backpapier belegen.",
+"Kartoffeln waschen und in Spalten schneiden, Karotten in Stifte, Paprika und Zucchini in grobe Stücke schneiden.",
+"Kartoffeln mit 2 EL Öl, Paprikapulver, Rosmarin und Salz mischen, aufs erste Blech geben und 15 Min. vorbacken.",
+"Gemüse mit 2 EL Öl und Salz mischen, aufs zweite Blech geben und zusammen mit den Kartoffeln weitere 20 Min. rösten.",
+"Quark mit etwas Milch oder Wasser glatt rühren, gepressten Knoblauch und Schnittlauch unterrühren, salzen und pfeffern.",
+"Kartoffeln und Gemüse mit dem Kräuterquark servieren."]},
+g15:{v:"2 EL Öl, 2 TL mildes Currypulver (glutenfrei), 1 TL Kurkuma, Salz",s:[
+"Reis nach Packungsangabe kochen.",
+"Hähnchen in Stücke schneiden, Süßkartoffel schälen und in 1,5 cm Würfel schneiden. Zwiebel, Ingwer und Knoblauch fein hacken.",
+"Öl in einem Topf erhitzen, Hähnchen 3–4 Min. anbraten, Zwiebel, Ingwer, Knoblauch, Currypulver und Kurkuma 1 Min. mitbraten.",
+"Süßkartoffel und Kokosmilch dazugeben (plus ca. 100 ml Wasser) und zugedeckt ca. 15 Min. köcheln, bis die Süßkartoffel weich ist.",
+"Spinat unterheben, mit Salz und Limettensaft abschmecken.",
+"Mit Reis servieren. Wer es schärfer mag, gibt am Tisch Chili dazu."]},
+g16:{v:"1 EL Öl, 1 TL Kreuzkümmel, 1 TL Paprikapulver, Salz, Pfeffer",s:[
+"Bohnen abspülen, mit Öl, Kreuzkümmel, Paprikapulver und 3 EL Wasser 5 Min. erwärmen und grob zerdrücken, salzen.",
+"Tomaten und die Hälfte der Zwiebel fein würfeln, mit etwas Limettensaft und Salz zur Salsa mischen.",
+"Avocados zerdrücken, mit restlichem Limettensaft, fein gehackter restlicher Zwiebel und Salz zur Guacamole verrühren.",
+"Tortillas in einer trockenen Pfanne je Seite 20–30 Sek. erwärmen und in ein Tuch wickeln.",
+"Bohnen, Salsa, Guacamole, Schmand und Käse in Schälchen auf den Tisch stellen.",
+"Jeder füllt seine Tortillas selbst. Auf die Packung achten: nur Tortillas aus 100 % Mais sind glutenfrei."]},
+g17:{v:"1 EL Öl, 2 EL Reisessig, 1 TL Zucker, 1 TL Honig, Salz",s:[
+"Reis nach Packung kochen, mit Reisessig, Zucker und einer Prise Salz würzen.",
+"Gurke und Karotten in Streifen schneiden bzw. raspeln, Avocado in Scheiben, Frühlingszwiebeln in Ringe schneiden.",
+"Lachs in 3 Stücke teilen. Öl in einer Pfanne erhitzen, Lachs je Seite 3–4 Min. braten.",
+"2 EL Tamari mit Honig verrühren, in die Pfanne geben und den Lachs kurz darin glasieren.",
+"Reis in Schalen verteilen, Lachs und Gemüse darauf anrichten.",
+"Mit Sesam bestreuen und nach Geschmack mit etwas Tamari beträufeln."]},
+g18:{v:"2 EL Olivenöl, 1 TL Oregano, 1 Prise Zucker, Salz, Pfeffer",s:[
+"Zwiebel, Knoblauch und Karotten sehr fein würfeln.",
+"Öl in einem Topf erhitzen, Hack krümelig braun anbraten.",
+"Zwiebel, Karotten und Knoblauch 3 Min. mitbraten.",
+"Tomaten, Oregano und Zucker dazugeben und 15 Min. köcheln, mit Salz und Pfeffer abschmecken.",
+"Glutenfreie Nudeln in reichlich Salzwasser nach Packung kochen, 1 Min. früher probieren und gut abgießen (sie kleben sonst).",
+"Mit der Sauce und geriebenem Parmesan servieren."]}
 });
 
 const BY = Object.fromEntries(DISHES.map(d=>[d.id,d]));
@@ -1760,6 +1907,7 @@ function tagList(d){
   t.push([KIND_IC[d.k]||"", KIND[d.k]]);
   if(d.kid) t.push(["👶","Kinderliebling"]);
   if(d.ai) t.push(["🌿","Antientzündlich"]);
+  if(d.gf) t.push(["GF","Glutenfrei"]);
   healthTags(d).forEach(k=>{ const h=HEALTH.find(x=>x[0]===k); t.push([h[1].split(" ")[0], h[1].replace(/^\S+\s/,"")]); });
   if(d.cu) t.push(d.cu==="asia"?["🥢","Asiatisch"]:["🍛","Indisch"]);
   if(d.foto) t.push(["📷","Eigenes Rezept"]); else if(d.web) t.push(["🔗","Eigenes Rezept"]); else if(d.own) t.push(["✍️","Eigenes Rezept"]);
@@ -1767,11 +1915,11 @@ function tagList(d){
 }
 function metaLine(d){
   const t = tagList(d);
-  return `<div class="mline">${d.t?`<span>${d.t} Min</span><span class="dot">·</span>`:""}<span class="ic">${t.slice(0,5).map(([i,l])=>`<span title="${esc(l)}" aria-label="${esc(l)}">${i}</span>`).join("")}</span>${t.length>5?`<span class="more">+${t.length-5}</span>`:""}</div>`;
+  return `<div class="mline">${d.t?`<span>${d.t} Min</span><span class="dot">·</span>`:""}<span class="ic">${t.slice(0,5).map(([i,l])=>i==="GF"?`<span class="gfb" title="Glutenfrei" aria-label="Glutenfrei">GF</span>`:`<span title="${esc(l)}" aria-label="${esc(l)}">${i}</span>`).join("")}</span>${t.length>5?`<span class="more">+${t.length-5}</span>`:""}</div>`;
 }
 function chips(d, full){
   if(!full) return metaLine(d);
-  const parts = [d.t?`${d.t} Min`:null, ...tagList(d).map(([i,l])=>`${i} ${l}`)].filter(Boolean);
+  const parts = [d.t?`${d.t} Min`:null, ...tagList(d).map(([i,l])=>i==="GF"?l:`${i} ${l}`)].filter(Boolean);
   return `<p class="tags">${parts.map(x=>`<span class="tg">${esc(x)}</span>`).join('<span class="dot">·</span>')}</p>`;
 }
 function toast(msg){
@@ -1989,6 +2137,7 @@ function showDish(id){
     ${nutriHtml(d)}
     ${(()=>{ const notes=[];
       if(d.ai) notes.push(`🌿 <b>Antientzündlich &amp; jodarm:</b> Mit jodfreiem Salz und Gemüsebrühe ohne Jodsalz kochen. Ohne Seefisch, Algen und Sojasauce, wenig Milchprodukte. Bei einer Schilddrüsenerkrankung die Ernährung mit der Ärztin / dem Arzt abstimmen.`);
+      if(d.gf) notes.push(`<b>Glutenfrei:</b> Alle Zutaten sind von Natur aus glutenfrei oder als glutenfreie Variante angegeben. Bei Brühe, Gewürzmischungen, Currypulver, Sojasauce (Tamari nehmen), Nudeln und Tortillas auf den Hinweis „glutenfrei“ achten. Bei Zöliakie auch Kreuzkontakt vermeiden (eigenes Brett, frisches Kochwasser).`);
       if(d.N) notes.push(d.N.q==="b"?"Nährwerte laut Kochbuch (Ballaststoffe und Gemüse geschätzt). Eine Portion = ein Drittel der Rezeptmenge.":"Nährwerte aus den Zutaten geschätzt, inkl. ca. 20 g Öl pro Gericht. Eine Portion = ein Drittel der Rezeptmenge.");
       if(d.src) notes.push(`Nach einem Rezept von <a href="${esc(d.src[1])}" target="_blank" rel="noopener">${esc(d.src[0])}</a>. Mengen auf 3 Personen umgerechnet, Zubereitung in eigenen Worten.`);
       if(d.foto) notes.push("📷 Aus deinem Kochbuch-Foto übernommen, Mengen auf 3 Personen umgerechnet.");
@@ -2012,6 +2161,7 @@ function matchFilter(d,f){
   if(f==="kinder"&&!d.kid) return false;
   if(f==="eigene"&&!d.own&&!d.foto&&!d.web) return false;
   if(f==="antient"&&!d.ai) return false;
+  if(f==="glutenfrei"&&!d.gf) return false;
   if(HEALTH.some(h=>h[0]===f) && !healthTags(d).includes(f)) return false;
   if((f==="asia"||f==="indien")&&d.cu!==f) return false;
   return true;
