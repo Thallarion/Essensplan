@@ -84,6 +84,7 @@ TAB = {
  "Wurst (z. B. Mettwurst oder Fleischwurst)":(None,300,14,27,1,0,0,1), "Ziegenfrischkäse (oder Feta)":(None,250,12,21,1,0,0,0),
  "Zitrone (Bio)":(40,30,0.5,0.2,7,0.5,0,0), "Zitrone":(40,30,0.5,0.2,7,0.5,0,0), "Zucchini":(250,20,1.5,0.4,2,1.1,1,0),
  "Zwiebel":(100,30,1.2,0.2,5,1.8,1,0),
+ "Schwarze Bohnen":(240,110,8,0.5,14,7,1,0), "Grüne Peperoni":(40,30,1.5,0.3,4,2,1,0),
  "Gemüsebrühe (glutenfrei)":(None,3,0.2,0.2,0.4,0,0,0), "Tamari (glutenfreie Sojasauce)":(30,70,10,0,6,0,0,0),
  "Linsennudeln (glutenfrei)":(None,340,25,2,50,11,1,0), "Buchweizenmehl":(None,340,12,2.5,70,4,0,0),
  "Mais-Tortillas (glutenfrei)":(30,220,5,3,45,5,0,0), "Mais-Reis-Nudeln (glutenfrei)":(None,355,7,1.5,79,2,0,0),
@@ -100,6 +101,7 @@ GRAM = {"g":1, "ml":1, "l":1000, "kg":1000}
 BUCH = {
  "k01":(470,11,31,39), "k02":(465,40,27,12), "k03":(425,29,18,33),
  "k04":(335,17,13,29), "k05":(685,32,43,41), "k06":(500,52,22,24),
+ "k10":(515,31,22,44),
 }
 
 def load_dishes(src):
