@@ -1886,6 +1886,44 @@ function fmtQty(a,u){
   if(unit==="Laib" && v>1) unit="Laibe";
   return num+" "+unit;
 }
+/* ---------- Allergene (14 EU-Hauptallergene, aus Zutaten + Vorrat erkannt) ---------- */
+const ALLERGENS = [
+  ["gluten","🌾","Gluten", /spaghetti|nudel|penne|fusilli|makkaroni|lasagne|tortellini|gnocchi|spätzle|mehl|brot|brötchen|baguette|toast|wrap|tortilla|fladen|naan|pizzateig|blätterteig|flammkuchenteig|couscous|bulgur|grieß|graupen|dinkel|semmelbrösel|semmelknödel|paniermehl|haferflocken|cornflakes|udon|gyoza|fischstäbchen|sojasauce|teriyaki|gochujang|veggie-patties/],
+  ["krebs","🦐","Krebstiere", /garnele|shrimp|krabbe|scampi/],
+  ["ei","🥚","Ei", /\beier?\b|spätzle|tortellini|bandnudeln|mie-nudeln|mayonnaise|pfannkuchen/],
+  ["fisch","🐟","Fisch", /lachs|forelle|thunfisch|fisch|kabeljau|sardelle/],
+  ["erdnuss","🥜","Erdnüsse", /erdnu(ss|ß)|erdnüss/],
+  ["soja","🫘","Soja", /tofu|soja|tamari|edamame|teriyaki|miso|gochujang|veggie-patties/],
+  ["milch","🥛","Milch/Laktose", /milch(?!reis)|sahne|käse|gouda|parmesan|mozzarella|feta|quark|joghurt|schmand|crème|creme fra|ricotta|butter|emmentaler|cheddar|halloumi|paneer|tzatziki/],
+  ["nuss","🌰","Schalenfrüchte", /walnu(ss|ß)|walnüss|cashew|mandel|haselnu(ss|ß)|haselnüss|pistazie|pekan|macadamia/],
+  ["sellerie","🥬","Sellerie", /sellerie|suppengemüse|brühe/],
+  ["senf","🟡","Senf", /senf/],
+  ["sesam","⚪","Sesam", /sesam|tahin/],
+  ["sulfit","🍷","Sulfite", /\bwein\b|balsamico|getrocknete tomaten/],
+  ["lupine","🌼","Lupinen", /lupine/],
+  ["weich","🦑","Weichtiere", /muschel|tintenfisch|calamar|oktopus/],
+];
+function allergensOf(d){
+  const st = STEPS[d.id];
+  const texts = d.i.map(x=>String(x[2]).toLowerCase());
+  if(st && st.v) texts.push(...st.v.toLowerCase().split(/,|\(|\)/));
+  const hit = new Set();
+  texts.forEach(t=>{
+    ALLERGENS.forEach(([k,,,re])=>{
+      if(!re.test(t)) return;
+      if(k==="gluten" && (/glutenfrei|buchweizen|mais-|maismehl|reisnudel|reispapier|reismehl|kokosmilch/.test(t) || (d.gf && /brühe|currypulver/.test(t)))) return;
+      if(k==="milch" && /kokosmilch|haferdrink|mandelmilch|erdnussbutter/.test(t)) return;
+      if(k==="nuss" && /erdnu/.test(t)) return;
+      hit.add(k);
+    });
+  });
+  return ALLERGENS.filter(a=>hit.has(a[0]));
+}
+function allergenNote(d){
+  const a = allergensOf(d);
+  const list = a.length ? a.map(([,i,l])=>`${i} ${l}`).join(" · ") : "keine der 14 Hauptallergene erkannt";
+  return `<b>Allergene:</b> ${list}${[...allergensOf(d)].some(x=>x[0]==="sellerie")?" (Sellerie steckt meist in Brühe/Suppengemüse)":""}. <span class="hint">Automatisch aus den Zutaten erkannt – Angaben ohne Gewähr, bitte bei Allergien die Packungsangaben prüfen.</span>`;
+}
 /* ---------- Gesundheits-Kategorien (aus geschätzten Nährwerten N pro Portion) ---------- */
 const HEALTH = [
   ["gesund","❤️ Gesund", N=>N.gv>=200 && N.bs>=8 && !N.pm && N.f*9<=0.40*N.kcal && N.kcal<=800],
@@ -2135,13 +2173,13 @@ function showDish(id){
   openSheet(`<button class="btn small close" data-close>Schließen</button>
     <h2>${esc(d.n)}</h2>${chips(d,true)}
     ${nutriHtml(d)}
-    ${(()=>{ const notes=[];
+    ${(()=>{ const notes=[allergenNote(d)];
       if(d.ai) notes.push(`🌿 <b>Antientzündlich &amp; jodarm:</b> Mit jodfreiem Salz und Gemüsebrühe ohne Jodsalz kochen. Ohne Seefisch, Algen und Sojasauce, wenig Milchprodukte. Bei einer Schilddrüsenerkrankung die Ernährung mit der Ärztin / dem Arzt abstimmen.`);
       if(d.gf) notes.push(`<b>Glutenfrei:</b> Alle Zutaten sind von Natur aus glutenfrei oder als glutenfreie Variante angegeben. Bei Brühe, Gewürzmischungen, Currypulver, Sojasauce (Tamari nehmen), Nudeln und Tortillas auf den Hinweis „glutenfrei“ achten. Bei Zöliakie auch Kreuzkontakt vermeiden (eigenes Brett, frisches Kochwasser).`);
       if(d.N) notes.push(d.N.q==="b"?"Nährwerte laut Kochbuch (Ballaststoffe und Gemüse geschätzt). Eine Portion = ein Drittel der Rezeptmenge.":"Nährwerte aus den Zutaten geschätzt, inkl. ca. 20 g Öl pro Gericht. Eine Portion = ein Drittel der Rezeptmenge.");
       if(d.src) notes.push(`Nach einem Rezept von <a href="${esc(d.src[1])}" target="_blank" rel="noopener">${esc(d.src[0])}</a>. Mengen auf 3 Personen umgerechnet, Zubereitung in eigenen Worten.`);
       if(d.foto) notes.push("📷 Aus deinem Kochbuch-Foto übernommen, Mengen auf 3 Personen umgerechnet.");
-      return notes.length?`<details class="info"><summary>ⓘ Hinweise${d.src?" &amp; Quelle":""}</summary>${notes.map(n=>`<p>${n}</p>`).join("")}</details>`:""; })()}
+      return notes.length?`<details class="info"><summary>ⓘ Hinweise &amp; Allergene${d.src?" · Quelle":""}</summary>${notes.map(n=>`<p>${n}</p>`).join("")}</details>`:""; })()}
     <div class="ing-head"><h3 id="ingTitle">Zutaten für 3 Personen</h3>
       <div class="stepper" role="group" aria-label="Personen"><button type="button" data-pers="-1" aria-label="Eine Person weniger">−</button><span id="persN">3</span><button type="button" data-pers="1" aria-label="Eine Person mehr">+</button></div></div>
     <p class="pers-hint" id="persHint" hidden>Mengen in den Kochschritten gelten für 3 Personen.</p>
