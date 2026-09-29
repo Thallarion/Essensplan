@@ -79,6 +79,21 @@ html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45}
 .wrap{max-width:760px;margin:0 auto;padding-inline:16px;padding-block:20px 60px}
 header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 16px;margin-bottom:14px}
+.ttl{display:flex;align-items:center;gap:10px}
+.helpbtn{flex:none;width:30px;height:30px;border-radius:50%;border:1.5px solid var(--line);background:var(--surface);color:var(--basil);font:800 16px/1 var(--body);cursor:pointer;display:grid;place-items:center;padding:0}
+.help details{border-top:1px solid var(--line);padding:2px 0}
+.help details:last-of-type{border-bottom:1px solid var(--line)}
+.help summary{cursor:pointer;list-style:none;font:700 16px var(--body);padding:12px 26px 12px 0;position:relative}
+.help summary::-webkit-details-marker{display:none}
+.help summary::after{content:"▾";position:absolute;right:4px;top:12px;color:var(--muted);transition:transform .15s}
+.help details[open] summary::after{transform:rotate(180deg)}
+.help p,.help li{font-size:15px;line-height:1.5;margin:0 0 8px}
+.help ul{padding-left:20px;margin:0 0 8px}
+.help img{display:block;width:100%;max-width:340px;margin:6px auto 14px;border-radius:12px;border:1px solid var(--line);box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.help .legend{width:100%;border-collapse:collapse;font-size:14px;margin:4px 0 12px}
+.help .legend td{padding:5px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+.help .legend td:first-child{width:34px;text-align:center;font-size:17px}
+.help .intro{color:var(--muted);margin:4px 0 12px}
 h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);line-height:1;margin:0;letter-spacing:-.02em;text-wrap:balance}
 h1 span{color:var(--basil)}
 .sub{color:var(--muted);font-size:14px;margin:6px 0 0}
@@ -382,8 +397,9 @@ details.info p{margin:8px 0 0}
 <body>
 <div class="wrap">
   <header class="top">
-    <div>
+    <div class="ttl">
       <h1>Was <span>essen</span> wir?</h1>
+      <button class="helpbtn" id="helpBtn" type="button" aria-label="Anleitung öffnen" title="Anleitung">?</button>
     </div>
     <button class="sync" id="sync" type="button"><i></i><span>Nur auf diesem Handy</span></button>
   </header>
@@ -2292,6 +2308,81 @@ function openSheet(html){
   const f = $("#sheetRoot").querySelector("button"); if(f) f.focus();
 }
 function closeSheet(){ $("#sheetRoot").innerHTML = ""; }
+/* ---------- Anleitung ---------- */
+function openHelp(first){
+  try{ localStorage.setItem("essensplan-hilfe","1"); }catch(e){}
+  const img = (f,alt)=>`<img src="hilfe/${f}.webp" alt="${alt}" loading="lazy" width="320">`;
+  const leg = [["🌱","Vegetarisch"],["🥩","Fleisch"],["🐟","Fisch"],["👶","Kinderliebling – mild und kindertauglich"],["❤️","Gesund – viel Gemüse und Ballaststoffe, nicht zu fett, kein verarbeitetes Fleisch"],["💪","Proteinreich – mind. 25 g Eiweiß pro Portion"],["🥦","Gemüsereich – mind. 250 g Gemüse/Hülsenfrüchte pro Portion"],["🌾","Ballaststoffreich – mind. 10 g pro Portion"],["🥗","Leicht – höchstens 550 kcal pro Portion"],["📉","Low-Carb – höchstens 35 g Kohlenhydrate pro Portion"],["🌿","Antientzündlich – jodarm, viel Gemüse, gute Öle"],['<span class="gfb">GF</span>',"Glutenfrei"],["🥢","Asiatisch"],["🍛","Indisch"],["🥣","Beilage/Dip – wird nicht gewürfelt"],["📷 🔗","Eingesendet (Foto/Link)"],["⭐","Mein Rezept – selbst angelegt"],["👍 👎","Eure Bewertung"]];
+  openSheet(`<button class="btn small close" data-close>Schließen</button>
+  <div class="help">
+    <h2>${first?"Willkommen! 👋":"Anleitung"}</h2>
+    <p class="intro">Was essen wir? plant eure Woche, schreibt die Einkaufsliste und hat über 150 Rezepte – mit Mengen für 3 Personen. Tipp auf ein Thema:</p>
+    <details ${first?"open":""}><summary>👋 Erste Schritte</summary>
+      <p>Die App funktioniert sofort – ohne Anmeldung. Alles wird <b>nur auf deinem Handy</b> gespeichert, bis du den Plan mit jemandem teilst.</p>
+      <p>Am Anfang siehst du eine <b>Beispielwoche</b>. Tausch einfach Gerichte aus – ab dann ist es dein Plan.</p>
+      <p><b>Als App aufs Handy:</b> Im Browser-Menü ⋮ (Android) bzw. Teilen-Symbol (iPhone) → <b>„Zum Startbildschirm hinzufügen“</b>.</p>
+    </details>
+    <details><summary>📅 Wochenplan</summary>
+      ${img("woche","Wochenplan mit Gerichten")}
+      <ul>
+        <li><b>🎲 unter dem Tag</b> würfelt ein passendes Gericht.</li>
+        <li><b>☰</b> öffnet die Auswahl mit Suche und Filtern, <b>×</b> leert den Tag.</li>
+        <li><b>Leere Tage füllen</b> würfelt alle freien Tage – unter der Woche nur schnelle Gerichte (bis 30 Min), bevorzugt vegetarisch.</li>
+        <li><b>Plan kopieren</b> z. B. für WhatsApp, <b>Neue Woche</b> leert Plan und Einkaufsliste.</li>
+        <li>Tipp auf ein Gericht öffnet das Rezept.</li>
+      </ul>
+    </details>
+    <details><summary>🍽️ Rezept ansehen</summary>
+      ${img("rezept","Rezeptansicht mit Zutaten und Bewertung")}
+      <ul>
+        <li><b>👍 / 👎</b>: Mag die Familie das? 👍 kommt beim Würfeln öfter dran, 👎 nie.</li>
+        <li><b>🕒 Zuletzt gekocht</b> merkt sich die App automatisch aus dem Wochenplan.</li>
+        <li><b>− 3 +</b> rechnet die Zutaten für mehr oder weniger Personen um.</li>
+        <li><b>So geht's</b>: Schritte antippen zum Abhaken.</li>
+        <li><b>ⓘ Hinweise & Allergene</b>: die 14 Hauptallergene, Quelle und Nährwerte.</li>
+        <li>Unten wählst du den Tag, an dem es das Gericht geben soll.</li>
+      </ul>
+    </details>
+    <details><summary>🛒 Einkaufsliste</summary>
+      ${img("einkauf","Einkaufsliste nach Abteilungen")}
+      <ul>
+        <li>Entsteht <b>automatisch</b> aus dem Wochenplan – gleiche Zutaten werden zusammengezählt.</li>
+        <li>Oben wählst du, <b>für welche Tage</b> du einkaufst (z. B. „Heute + morgen“).</li>
+        <li>Sortiert <b>nach Supermarkt-Abteilung</b> oder nach Tagen. Abhaken beim Einkaufen.</li>
+        <li><b>Noch etwas dazu</b>: eigene Artikel wie Joghurt oder Obst ergänzen.</li>
+        <li><b>📋 Für Keep kopieren</b> und in Google Keep oder eine andere Listen-App einfügen.</li>
+        <li>Salz, Öl, Gewürze & Co. stehen nicht drauf – die hat man meist im Haus.</li>
+      </ul>
+    </details>
+    <details><summary>💡 Ideen, Suche & Filter</summary>
+      ${img("ideen","Ideen mit geöffnetem Filter")}
+      <ul>
+        <li><b>Keine Idee?</b> zeigt oben einen Zufallsvorschlag.</li>
+        <li>Suche nach Gericht oder Zutat, z. B. „Feta“ oder „Nudeln“.</li>
+        <li><b>⚙ Filter</b> öffnet alle Filter in Gruppen. Mehrere lassen sich kombinieren, z. B. „Vegetarisch“ + „Bis 30 Min“. Aktive Filter stehen als Chips darunter – mit × entfernen.</li>
+      </ul>
+      <p><b>Die Symbole:</b></p>
+      <table class="legend">${leg.map(([i,t])=>`<tr><td>${i}</td><td>${t}</td></tr>`).join("")}</table>
+      <p class="sub">Die Gesundheits-Symbole berechnet die App aus den Nährwerten pro Portion.</p>
+    </details>
+    <details><summary>👨‍👩‍👧 Gemeinsam planen</summary>
+      ${img("teilen","Gemeinsamen Plan starten")}
+      <ul>
+        <li>Tipp oben auf <b>„Nur auf diesem Handy · Gemeinsam nutzen“</b> → <b>„Gemeinsamen Plan starten“</b>.</li>
+        <li>Schick den <b>Einladungslink</b> an deinen Partner. Wer ihn öffnet, sieht denselben Plan, dieselbe Einkaufsliste und dieselben 👍/👎 – Änderungen erscheinen sofort bei allen.</li>
+        <li>Jede Familie hat ihren eigenen, privaten Plan. Teile den Link nur mit der Familie.</li>
+      </ul>
+    </details>
+    <details><summary>📷 Rezepte einsenden & eigene Rezepte</summary>
+      ${img("einsenden","Rezept einsenden")}
+      <ul>
+        <li><b>📷 Foto / 🔗 Link einsenden</b> (unter Ideen): Kochbuchseite fotografieren, Screenshot, PDF oder Link schicken. Das Rezept wird aufbereitet, auf 3 Personen umgerechnet und kommt für alle in die App.</li>
+        <li><b>+ Eigenes Rezept</b>: selbst eintippen – bleibt nur in deinem bzw. eurem Plan (Filter „⭐ Meine Rezepte“).</li>
+      </ul>
+    </details>
+    <p class="sub" style="margin-top:14px">Diese Anleitung findest du jederzeit oben über das <b>?</b> neben dem Titel.</p>
+  </div>`);
+}
 function methodHtml(d){
   const st = STEPS[d.id];
   let list = st ? st.s : (d.own && d.m ? d.m.split(/\n+/).map(x=>x.trim()).filter(Boolean) : null);
@@ -2779,6 +2870,8 @@ $("#sync").addEventListener("click", openSyncSheet);
 // Planänderungen: ausgeblendete/abgehakte Einträge zurücksetzen, wenn sich Mengen ändern, bleibt bewusst einfach
 render();
 if(recordCooked()) commit();
+$("#helpBtn").addEventListener("click",()=>openHelp(false));
+try{ if(!local && !sync && !localStorage.getItem("essensplan-hilfe")) setTimeout(()=>openHelp(true),500); }catch(e){}
 startSync().then(()=>{ if(window.__joined) toast("Mit dem Familien-Plan verbunden"); });
 try{ const tab = localStorage.getItem(LS+"-tab"); if(tab && tab!=="woche"){ const b=document.querySelector(`[data-tab="${tab}"]`); b&&b.click(); } }catch(e){}
 </script>
