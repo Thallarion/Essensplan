@@ -324,7 +324,12 @@ details.info p{margin:8px 0 0}
 @media (max-width:460px){.day{grid-template-columns:44px 1fr auto;padding:12px 8px 12px 14px}.acts{grid-column:auto;justify-content:flex-end;margin-top:0;flex-direction:row}.icon{width:32px;height:32px}}
 /* Aktionen untereinander – mehr Platz für Gericht & Kategorien */
 .day .acts{flex-direction:column;gap:0;align-self:center;margin:-6px -4px -6px 0}
-.day .acts .icon{width:34px;height:30px}
+.day .acts .icon{width:34px;height:32px}
+.dhead{display:flex;flex-direction:column;align-items:flex-start}
+.dhead .droll{width:30px;height:26px;margin:2px 0 -4px -6px}
+.dhead .dname{line-height:1.05}
+.dhead .ddate{line-height:1.2}
+.day{padding-top:10px;padding-bottom:10px}
 @media (max-width:460px){.day{grid-template-columns:44px 1fr auto;gap:8px}}
 .tags .tg{white-space:nowrap}
 .gfb{display:inline-block;font:700 9px/1 var(--body);letter-spacing:.02em;padding:2px 3px;border:1.5px solid currentColor;border-radius:4px;vertical-align:2px;color:var(--basil);margin:0 1px}
@@ -2086,10 +2091,10 @@ function renderWeek(){
       body = `<span class="title" style="font-weight:700">${esc(v.custom)}</span><div class="meta"><span class="chip">Eigenes Gericht</span></div>`;
     } else body = `<span class="empty">Noch nichts geplant</span>`;
     return `<div class="day${i===today?' today':''}">
-      <div><div class="dname" title="${DAYS_LONG[i]}">${d}</div><div class="ddate">${dates[i].toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"})}</div></div>
+      <div class="dhead"><div class="dname" title="${DAYS_LONG[i]}">${d}</div><div class="ddate">${dates[i].toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"})}</div>
+        <button class="icon droll" data-roll="${i}" aria-label="${DAYS_LONG[i]}: zufälliges Gericht" title="Würfeln">${ICON.dice}</button></div>
       <div class="dish">${body}</div>
       <div class="acts">
-        <button class="icon" data-roll="${i}" aria-label="${DAYS_LONG[i]}: zufälliges Gericht" title="Würfeln">${ICON.dice}</button>
         <button class="icon" data-pick="${i}" aria-label="${DAYS_LONG[i]}: Gericht auswählen" title="Auswählen">${ICON.list}</button>
         ${v?`<button class="icon" data-clear="${i}" aria-label="${DAYS_LONG[i]} leeren" title="Leeren">${ICON.x}</button>`:''}
       </div></div>`;
