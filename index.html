@@ -280,6 +280,10 @@ nav.tabs button[aria-selected="true"] .count{background:var(--basil);color:var(-
 .pick button{border-radius:10px;align-items:center}
 .pick-filters{margin:0 -18px 4px;padding:2px 18px 6px}
 .tags{font-size:13px;color:var(--muted);margin:2px 0 0;line-height:1.6}
+.rate{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:10px 0 4px}
+.rbtn{font-size:18px;line-height:1;padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);cursor:pointer;filter:grayscale(1);opacity:.75}
+.rbtn[aria-pressed="true"]{filter:none;opacity:1;border-color:var(--basil);background:var(--basil-soft)}
+.rate .cooked{font-size:13px;color:var(--muted)}
 .tags .dot{opacity:.5;margin:0 3px}
 .nutri-line{font-size:13px;color:var(--muted);margin:10px 0 0;font-variant-numeric:tabular-nums;line-height:1.6}
 .nutri-line b{color:var(--ink);font-weight:600}
@@ -385,6 +389,8 @@ details.info p{margin:8px 0 0}
     <input class="search" id="search" type="search" placeholder="Gericht oder Zutat suchen, z. B. Nudeln, Feta …">
     <div class="filters" id="filters">
       <button data-f="alle" aria-pressed="true">Alle</button>
+      <button data-f="like" aria-pressed="false">👍 Mögen wir</button>
+      <button data-f="lange" aria-pressed="false">🕒 Lange nicht gegessen</button>
       <button data-f="veg" aria-pressed="false">🌱 Vegetarisch</button>
       <button data-f="fleisch" aria-pressed="false">🥩 Fleisch</button>
       <button data-f="fisch" aria-pressed="false">🐟 Fisch</button>
@@ -403,6 +409,7 @@ details.info p{margin:8px 0 0}
       <button data-f="asia" aria-pressed="false">🥢 Asiatisch</button>
       <button data-f="indien" aria-pressed="false">🍛 Indisch</button>
       <button data-f="eigene" aria-pressed="false">📷 Eigene</button>
+      <button data-f="dislike" aria-pressed="false">👎 Mögen wir nicht</button>
     </div>
     <div class="fcount" id="ideaCount"></div>
     <div class="ideas" id="ideas"></div>
@@ -1771,10 +1778,10 @@ const DAYS_LONG = ["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samsta
 const EXAMPLE = {"0":"d07","1":"d02","2":"d05","3":"d25","4":"d19","5":"d24","6":"d04"};
 
 /* ---------- State ---------- */
-let state = {days:{...EXAMPLE}, checked:{}, hidden:{}, extras:{}, recipes:{}};
+let state = {days:{...EXAMPLE}, checked:{}, hidden:{}, extras:{}, recipes:{}, likes:{}, cooked:{}};
 let isExample = true;
 const LS = "essensplan-v1", LS_SYNC = "essensplan-sync";
-const MAPS = ["days","checked","hidden","extras","recipes"];
+const MAPS = ["days","checked","hidden","extras","recipes","likes","cooked"];
 
 function lsGet(k=LS){ try{ const s = localStorage.getItem(k); return s ? JSON.parse(s) : null; }catch(e){ return null; } }
 function lsSet(v,k=LS){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
@@ -1784,7 +1791,7 @@ function normalize(s){
   s = s || {};
   let extras = s.extras || {};
   if(Array.isArray(extras)){ const m={}; extras.forEach(e=>{ if(e&&e.id) m[e.id]={text:e.text}; }); extras=m; }
-  return {days:s.days||{}, checked:s.checked||{}, hidden:s.hidden||{}, extras, recipes:s.recipes||{}};
+  return {days:s.days||{}, checked:s.checked||{}, hidden:s.hidden||{}, extras, recipes:s.recipes||{}, likes:s.likes||{}, cooked:s.cooked||{}};
 }
 
 const local = lsGet();
@@ -1854,6 +1861,7 @@ async function startSync(){
         const data = normalize(snap.data());
         synced = clone(data); state = clone(data); isExample = false;
         lsSet(state); render();
+        if(!snap.metadata.fromCache && recordCooked()) commit();
       } else if(!snap.metadata.fromCache){
         // Neuer gemeinsamer Plan: aktuellen Stand hochladen
         docExists = true; synced = clone(state);
@@ -1971,6 +1979,7 @@ function nutriHtml(d){
 const KIND_IC = {veg:"🌱",fleisch:"🥩",fisch:"🐟"};
 function tagList(d){
   const t = [];
+  const lk = likeOf(d.id); if(lk) t.push([lk>0?"👍":"👎", lk>0?"Mögen wir":"Mögen wir nicht"]);
   t.push([KIND_IC[d.k]||"", KIND[d.k]]);
   if(d.side) t.push(["🥣","Beilage/Dip"]);
   if(d.kid) t.push(["👶","Kinderliebling"]);
@@ -1980,6 +1989,32 @@ function tagList(d){
   if(d.cu) t.push(d.cu==="asia"?["🥢","Asiatisch"]:["🍛","Indisch"]);
   if(d.foto) t.push(["📷","Eigenes Rezept"]); else if(d.web) t.push(["🔗","Eigenes Rezept"]); else if(d.own) t.push(["✍️","Eigenes Rezept"]);
   return t;
+}
+/* ---------- Bewertung & zuletzt gekocht ---------- */
+const LONG_DAYS = 42, RECENT_DAYS = 21;
+function likeOf(id){ return (state.likes||{})[id]||0; }
+function setLike(id,v){ state.likes = state.likes||{}; if(likeOf(id)===v) delete state.likes[id]; else state.likes[id]=v; commit(); }
+function isoDate(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; }
+// Vergangene Tage dieser Woche als „gekocht“ merken – je Datum nur einmal, damit spätere Planänderungen nichts verfälschen
+function recordCooked(){
+  if(isExample) return false;
+  state.cooked = state.cooked||{};
+  const dates = weekDates(), today = (new Date().getDay()+6)%7; let changed = false;
+  for(let i=0;i<today;i++){
+    const v = state.days[i], key = isoDate(dates[i]);
+    if(typeof v==="string" && dish(v) && !state.cooked[key]){ state.cooked[key]=v; changed=true; }
+  }
+  const cut = isoDate(new Date(Date.now()-400*864e5));
+  Object.keys(state.cooked).forEach(k=>{ if(k<cut){ delete state.cooked[k]; changed=true; } });
+  return changed;
+}
+function lastCooked(id){ let best=""; for(const [k,v] of Object.entries(state.cooked||{})) if(v===id && k>best) best=k; return best||null; }
+function daysSince(iso){ if(!iso) return Infinity; const [y,m,d]=iso.split("-").map(Number); const t=new Date(); t.setHours(0,0,0,0); return Math.round((t-new Date(y,m-1,d))/864e5); }
+function cookedText(id){
+  const iso = lastCooked(id); if(!iso) return "Noch nicht gekocht";
+  const n = daysSince(iso), [y,m,d] = iso.split("-");
+  const rel = n<=1 ? "gestern" : n<7 ? `vor ${n} Tagen` : n<14 ? "vor 1 Woche" : n<60 ? `vor ${Math.round(n/7)} Wochen` : `vor ${Math.round(n/30)} Monaten`;
+  return `Zuletzt gekocht: ${rel} (${d}.${m}.${n>300?y:""})`;
 }
 function metaLine(d){
   const t = tagList(d);
@@ -2005,7 +2040,7 @@ function planned(){ return Object.values(state.days).filter(v=>typeof v==="strin
 function randomDish(excludeDay){
   const used = new Set(Object.entries(state.days).filter(([k,v])=>k!==String(excludeDay)&&typeof v==="string").map(([,v])=>v));
   const nonVeg = Object.entries(state.days).filter(([k,v])=>k!==String(excludeDay)&&typeof v==="string"&&dish(v)&&dish(v).k!=="veg").length;
-  const ALL = allDishes().filter(d=>!d.side);
+  const ALL = allDishes().filter(d=>!d.side && likeOf(d.id)>=0);
   // Mo–Fr nur schnelle Gerichte (bis 30 Min), am Wochenende alles
   const weekday = +excludeDay>=0 && +excludeDay<=4;
   const fits = d=>!weekday || !d.t || d.t<=30;
@@ -2013,7 +2048,8 @@ function randomDish(excludeDay){
   if(!pool.length) pool = ALL.filter(d=>!used.has(d.id) && fits(d));
   if(!pool.length) pool = ALL;
   // vegetarisch bevorzugen
-  const weighted = pool.flatMap(d=>d.k==="veg"?[d,d,d]:[d]);
+  // Gewichtung: vegetarisch ×3, 👍 ×2, in den letzten 3 Wochen gekocht ÷3
+  const weighted = pool.flatMap(d=>{ let w=(d.k==="veg"?3:1)*(likeOf(d.id)>0?2:1)*3; if(daysSince(lastCooked(d.id))<=RECENT_DAYS) w=Math.max(1,Math.round(w/3)); return Array(w).fill(d); });
   return weighted[Math.floor(Math.random()*weighted.length)];
 }
 
@@ -2202,6 +2238,7 @@ function showDish(id){
   curPersons = 3;
   openSheet(`<button class="btn small close" data-close>Schließen</button>
     <h2>${esc(d.n)}</h2>${chips(d,true)}
+    <div class="rate"><button type="button" class="rbtn" data-like="${d.id}" data-v="1" aria-pressed="${likeOf(d.id)>0}" aria-label="Mögen wir">👍</button><button type="button" class="rbtn" data-like="${d.id}" data-v="-1" aria-pressed="${likeOf(d.id)<0}" aria-label="Mögen wir nicht">👎</button><span class="cooked">🕒 ${esc(cookedText(d.id))}</span></div>
     ${nutriHtml(d)}
     ${(()=>{ const notes=[allergenNote(d)];
       if(d.ai) notes.push(`🌿 <b>Antientzündlich &amp; jodarm:</b> Mit jodfreiem Salz und Gemüsebrühe ohne Jodsalz kochen. Ohne Seefisch, Algen und Sojasauce, wenig Milchprodukte. Bei einer Schilddrüsenerkrankung die Ernährung mit der Ärztin / dem Arzt abstimmen.`);
@@ -2230,11 +2267,14 @@ function matchFilter(d,f){
   if(f==="eigene"&&!d.own&&!d.foto&&!d.web) return false;
   if(f==="antient"&&!d.ai) return false;
   if(f==="glutenfrei"&&!d.gf) return false;
+  if(f==="like"&&likeOf(d.id)<=0) return false;
+  if(f==="dislike"&&likeOf(d.id)>=0) return false;
+  if(f==="lange"&&(d.side||daysSince(lastCooked(d.id))<=LONG_DAYS)) return false;
   if(HEALTH.some(h=>h[0]===f) && !healthTags(d).includes(f)) return false;
   if((f==="asia"||f==="indien")&&d.cu!==f) return false;
   return true;
 }
-const FGROUP = {veg:"art",fleisch:"art",fisch:"art",schnell:"zeit",alltag:"zeit",zeit:"zeit",asia:"kueche",indien:"kueche"};
+const FGROUP = {like:"bew",dislike:"bew",veg:"art",fleisch:"art",fisch:"art",schnell:"zeit",alltag:"zeit",zeit:"zeit",asia:"kueche",indien:"kueche"};
 function matchFilters(d,set){
   if(!set || !set.size) return true;
   const groups = {};
@@ -2292,6 +2332,7 @@ document.addEventListener("click",e=>{
   if(t.dataset.setday){ state.days[t.dataset.setday]=t.dataset.dish; closeSheet(); commit(); toast(`Für ${DAYS_LONG[t.dataset.setday]} eingeplant`); return; }
   if(t.dataset.custom){ const v = $("#customDish").value.trim(); if(!v) { $("#customDish").focus(); return; } state.days[t.dataset.custom]={custom:v}; closeSheet(); commit(); return; }
   if(t.dataset.assign){ showDish(t.dataset.assign); return; }
+  if(t.dataset.like){ const id=t.dataset.like; setLike(id,+t.dataset.v); document.querySelectorAll(`[data-like="${id}"]`).forEach(b=>b.setAttribute("aria-pressed",String(likeOf(id)===+b.dataset.v))); const h=document.querySelector(".sheet .tags"); if(h) h.outerHTML=chips(dish(id),true); toast(likeOf(id)>0?"👍 Gemerkt – kommt öfter dran":likeOf(id)<0?"👎 Gemerkt – wird nicht mehr gewürfelt":"Bewertung entfernt"); return; }
   if(t.dataset.keepcopy){ copyDishForKeep(t.dataset.keepcopy); return; }
   if(t.dataset.pers){ const id = document.querySelector("[data-keepcopy]")?.dataset.keepcopy; setPersons(id, curPersons + (+t.dataset.pers)); return; }
   if(t.dataset.editrecipe){ openRecipeForm(t.dataset.editrecipe); return; }
@@ -2312,7 +2353,7 @@ $("#fillWeek").addEventListener("click",()=>{
 });
 $("#newWeek").addEventListener("click",()=>{
   const b = $("#newWeek");
-  if(b.dataset.confirm){ state = {days:{},checked:{},hidden:{},extras:{},recipes:state.recipes||{}}; delete b.dataset.confirm; b.textContent="Neue Woche"; commit(true); toast("Plan und Einkaufsliste geleert"); return; }
+  if(b.dataset.confirm){ recordCooked(); state = {days:{},checked:{},hidden:{},extras:{},recipes:state.recipes||{},likes:state.likes||{},cooked:state.cooked||{}}; delete b.dataset.confirm; b.textContent="Neue Woche"; commit(true); toast("Plan und Einkaufsliste geleert"); return; }
   b.dataset.confirm="1"; b.textContent="Wirklich alles leeren?";
   setTimeout(()=>{ if(b.dataset.confirm){ delete b.dataset.confirm; b.textContent="Neue Woche"; } },4000);
 });
@@ -2628,6 +2669,7 @@ $("#sync").addEventListener("click", openSyncSheet);
 
 // Planänderungen: ausgeblendete/abgehakte Einträge zurücksetzen, wenn sich Mengen ändern, bleibt bewusst einfach
 render();
+if(recordCooked()) commit();
 startSync().then(()=>{ if(window.__joined) toast("Mit dem Familien-Plan verbunden"); });
 try{ const tab = localStorage.getItem(LS+"-tab"); if(tab && tab!=="woche"){ const b=document.querySelector(`[data-tab="${tab}"]`); b&&b.click(); } }catch(e){}
 </script>
