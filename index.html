@@ -322,7 +322,10 @@ details.info p{margin:8px 0 0}
 .icon{width:34px;height:34px}
 .icon svg{width:17px;height:17px}
 @media (max-width:460px){.day{grid-template-columns:44px 1fr auto;padding:12px 8px 12px 14px}.acts{grid-column:auto;justify-content:flex-end;margin-top:0;flex-direction:row}.icon{width:32px;height:32px}}
-@media (max-width:380px){.acts .icon[data-roll]{display:none}}
+/* Aktionen untereinander – mehr Platz für Gericht & Kategorien */
+.day .acts{flex-direction:column;gap:0;align-self:center;margin:-6px -4px -6px 0}
+.day .acts .icon{width:34px;height:30px}
+@media (max-width:460px){.day{grid-template-columns:44px 1fr auto;gap:8px}}
 .tags .tg{white-space:nowrap}
 .gfb{display:inline-block;font:700 9px/1 var(--body);letter-spacing:.02em;padding:2px 3px;border:1.5px solid currentColor;border-radius:4px;vertical-align:2px;color:var(--basil);margin:0 1px}
 .plan-btn{display:grid;place-items:center;border:1px solid var(--line)!important}
