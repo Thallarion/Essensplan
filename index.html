@@ -22,8 +22,8 @@
     }
     var h = location.hostname;
     if((h === NEW || h === "www." + NEW) && location.protocol === "http:"){
-      // Übergang: HTTPS-Zertifikat noch nicht fertig – nicht unverschlüsselt starten (andere Adresse = leere Daten)
-      document.write('<meta name="viewport" content="width=device-width,initial-scale=1"><div style="font:17px/1.5 system-ui,sans-serif;text-align:center;padding:60px 24px;color:#1E2420"><div style="font-size:44px">🔒</div><h1 style="font-size:22px;margin:8px 0">Gleich geht\'s los</h1><p style="color:#6A716C">wasessenwir.at bekommt gerade seine sichere Verbindung.<br>Bitte in etwa einer Stunde wieder öffnen – am besten mit <b>https://</b>wasessenwir.at</p><p><a href="https://wasessenwir.at/" style="color:#2F6B47">Jetzt mit https versuchen</a></p></div><plaintext style="display:none">');
+      // HTTPS ist aktiv – alte/gemerkte http-Aufrufe auf https umleiten
+      location.replace("https://" + NEW + location.pathname + location.search + location.hash);
       return;
     }
     if((h === NEW || h === "www." + NEW) && !localStorage.getItem(FLAG)){
