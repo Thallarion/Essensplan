@@ -1875,6 +1875,8 @@ function joinLink(){
   const raw = btoa(unescape(encodeURIComponent(JSON.stringify(sync)))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
   return location.origin + location.pathname + "#join=" + raw;
 }
+// Gemeinsame Datenbank für alle Familien – jede Familie bekommt einen eigenen, geheimen Plan (Regeln: kein Auflisten)
+const DEFAULT_FB = {apiKey:"AIzaSyBJ_ZL8MltMBryVwRDXYKo3rZt7hfQoE84",authDomain:"essensplan-f95f9.firebaseapp.com",projectId:"essensplan-f95f9",storageBucket:"essensplan-f95f9.firebasestorage.app",messagingSenderId:"117476300258",appId:"1:117476300258:web:11b83d02167c0140ba15bb"};
 function newPlanId(){
   const a = new Uint8Array(18); crypto.getRandomValues(a);
   return Array.from(a,b=>b.toString(36).padStart(2,"0")).join("").slice(0,28);
@@ -2046,7 +2048,7 @@ function tagList(d){
   if(d.gf) t.push(["GF","Glutenfrei"]);
   healthTags(d).forEach(k=>{ const h=HEALTH.find(x=>x[0]===k); t.push([h[1].split(" ")[0], h[1].replace(/^\S+\s/,"")]); });
   if(d.cu) t.push(d.cu==="asia"?["🥢","Asiatisch"]:["🍛","Indisch"]);
-  if(d.foto) t.push(["📷","Eigenes Rezept"]); else if(d.web) t.push(["🔗","Eigenes Rezept"]); else if(d.own) t.push(["✍️","Eigenes Rezept"]);
+  if(d.foto) t.push(["📷","Eingesendet"]); else if(d.web) t.push(["🔗","Eingesendet"]); else if(d.own) t.push(["⭐","Mein Rezept"]);
   return t;
 }
 /* ---------- Bewertung & zuletzt gekocht ---------- */
@@ -2232,7 +2234,7 @@ const FILTER_GROUPS = [
   ["Gesundheit",[["gesund","❤️ Gesund"],["protein","💪 Proteinreich"],["gemuese","🥦 Gemüsereich"],["ballast","🌾 Ballaststoffreich"],["leicht","🥗 Leicht"],["lowcarb","📉 Low-Carb"]]],
   ["Ernährung",[["kinder","👶 Kinderliebling"],["antient","🌿 Antientzündlich"],["glutenfrei",'<span class="gfb">GF</span> Glutenfrei']]],
   ["Küche",[["asia","🥢 Asiatisch"],["indien","🍛 Indisch"]]],
-  ["Herkunft",[["eigene","📷 Eigene"]]],
+  ["Herkunft",[["eingesendet","📷 Eingesendet"],["meine","⭐ Meine Rezepte"]]],
 ];
 const FLABEL = Object.fromEntries(FILTER_GROUPS.flatMap(g=>g[1]));
 function filterUI(id, placeholder){
@@ -2365,6 +2367,8 @@ function matchFilter(d,f){
   if(f==="zeit"&&d.t<40) return false;
   if(f==="kinder"&&!d.kid) return false;
   if(f==="eigene"&&!d.own&&!d.foto&&!d.web) return false;
+  if(f==="eingesendet"&&!d.foto&&!d.web) return false;
+  if(f==="meine"&&!d.own) return false;
   if(f==="antient"&&!d.ai) return false;
   if(f==="glutenfrei"&&!d.gf) return false;
   if(f==="like"&&likeOf(d.id)<=0) return false;
@@ -2635,7 +2639,15 @@ function inboxSetup(msg){
   });
 }
 async function openInbox(){
-  if(!inboxCfg()){ inboxSetup(); return; }
+  if(!inboxCfg()){
+    openSheet(`<button class="btn small close" data-close>Schließen</button>
+      <h2>Rezept einsenden</h2>
+      <p>Schick ein Rezept als Foto, PDF oder Link – es wird geprüft, auf 3 Personen umgerechnet und kommt dann für alle in die App.</p>
+      <div class="bar" style="margin:14px 0"><a class="btn primary" href="einsenden.html?app=1" style="text-decoration:none">📷 Rezept einsenden</a></div>
+      <p class="sub" style="margin-top:18px">Du hast einen Zugangsschlüssel für den Familien-Eingang? <button class="btn small ghost" id="ibSetup">Zugang einrichten</button></p>`);
+    $("#ibSetup").addEventListener("click",()=>inboxSetup());
+    return;
+  }
   const from = (lsGet(LS_INBOX)||{}).from||"";
   openSheet(`<button class="btn small close" data-close>Schließen</button>
     <h2>Rezept einsenden</h2>
@@ -2728,8 +2740,12 @@ function openSyncSheet(){
   }
   openSheet(`<button class="btn small close" data-close>Schließen</button>
     <h2>Gemeinsam planen</h2>
-    <p>Hast du schon einen Familien-Link bekommen? Dann öffne einfach den Link – fertig.</p>
-    <p>Zum ersten Einrichten (einmalig, ca. 10 Minuten, kostenlos):</p>
+    <p>Plant zu zweit oder als Familie: Alle sehen denselben Wochenplan, dieselbe Einkaufsliste und dieselben 👍/👎.</p>
+    <p><b>Hast du schon einen Familien-Link bekommen?</b> Dann öffne einfach den Link – fertig.</p>
+    <div class="bar" style="margin:14px 0"><button class="btn primary" id="quickShare">Gemeinsamen Plan starten</button></div>
+    <p class="sub">Dein aktueller Plan wird übernommen. Danach bekommst du einen Einladungslink für die anderen Handys. Jede Familie hat ihren eigenen, privaten Plan.</p>
+    <details class="info" style="margin-top:18px"><summary>Für Technik-Fans: eigene Firebase-Datenbank verwenden</summary>
+    <p>Zum Einrichten (einmalig, ca. 10 Minuten, kostenlos):</p>
     <ol class="steps">
       <li>Öffne <strong>console.firebase.google.com</strong> und melde dich mit einem Google-Konto an.</li>
       <li><strong>Projekt erstellen</strong>, Name z. B. <code>essensplan</code>. Google Analytics kannst du ausschalten.</li>
@@ -2745,7 +2761,11 @@ function openSyncSheet(){
     <textarea class="cfg" id="cfgInput" placeholder="const firebaseConfig = {&#10;  apiKey: &quot;…&quot;,&#10;  projectId: &quot;…&quot;,&#10;  …&#10;};"></textarea>
     <p class="err-text" id="cfgErr" hidden>Das sieht nicht nach dem firebaseConfig-Block aus. Er muss mindestens apiKey und projectId enthalten.</p>
     <div class="bar" style="margin-top:10px"><button class="btn primary" id="cfgSave">Verbinden</button></div>
-    <p class="sub">Dein aktueller Plan wird dabei in den gemeinsamen Plan übernommen.</p>`);
+    <p class="sub">Dein aktueller Plan wird dabei in den gemeinsamen Plan übernommen.</p></details>`);
+  $("#quickShare").addEventListener("click",()=>{
+    sync = {c:DEFAULT_FB, p:newPlanId()}; lsSet(sync, LS_SYNC);
+    closeSheet(); startSync().then(()=>setTimeout(openSyncSheet,600));
+  });
   $("#copyRules").addEventListener("click",()=>copyText(RULES,"Regeln kopiert"));
   $("#cfgSave").addEventListener("click",()=>{
     const cfg = parseConfig($("#cfgInput").value);

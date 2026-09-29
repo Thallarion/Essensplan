@@ -100,8 +100,9 @@ input:focus-visible,textarea:focus-visible,button:focus-visible,.pickbtn:focus-w
   <p class="foot">Es werden nur die Fotos/PDFs, der Link, die Notiz und dein Name übertragen.</p>
 </div>
 <script>
-// Zurück-Knopf nur für die Familie (wer die App auf diesem Gerät nutzt), nicht für Gäste
-try { if (/[?&]app=1/.test(location.search) || Object.keys(localStorage).some(k => /^essensplan-(v1|sync|inbox)$/.test(k))) document.getElementById("back").hidden = false; } catch (e) { if (/[?&]app=1/.test(location.search)) document.getElementById("back").hidden = false; }
+// Zurück-/Zur-App-Knopf für alle
+try { const known = /[?&]app=1/.test(location.search) || Object.keys(localStorage).some(k => /^essensplan-(v1|sync|inbox)$/.test(k)); document.getElementById("back").textContent = known ? "← Zurück zum Essensplan" : "🍲 Zur Essensplan-App"; } catch (e) {}
+document.getElementById("back").hidden = false;
 const HOOK = "https://hook.eu1.make.com/j73j4cto6mhok5p3tcm829c5slq9956s";
 const MAX_FILES = 5, MAX_BYTES = 4200000;
 const $ = s => document.querySelector(s);
