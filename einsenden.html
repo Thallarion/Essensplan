@@ -48,6 +48,8 @@ input:focus-visible,textarea:focus-visible,button:focus-visible,.pickbtn:focus-w
 .thumbs{display:flex;gap:8px;flex-wrap:wrap}
 .thumbs div{position:relative}
 .thumbs img{width:76px;height:76px;object-fit:cover;border-radius:10px;border:1px solid var(--line);display:block}
+.thumbs .pdf{width:76px;height:76px;border-radius:10px;border:1px solid var(--line);background:var(--sunk);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;padding:4px;text-align:center;overflow:hidden;word-break:break-all;line-height:1.2}
+.thumbs .pdf b{font-size:24px;line-height:1}
 .thumbs button{position:absolute;top:-6px;right:-6px;width:24px;height:24px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:14px;line-height:1;cursor:pointer}
 .send{font:700 16px var(--body);padding:14px;border:0;border-radius:12px;background:var(--basil);color:var(--basil-ink);cursor:pointer}
 .send:disabled{opacity:.6;cursor:default}
@@ -64,15 +66,15 @@ input:focus-visible,textarea:focus-visible,button:focus-visible,.pickbtn:focus-w
 <body>
 <div class="wrap">
   <h1>Rezept <span>einsenden</span></h1>
-  <p class="sub">Schick uns dein Lieblingsrezept – als Foto (z. B. Kochbuchseite oder Screenshot) oder als Link. Wir nehmen es in unseren Familien-Essensplan auf.</p>
+  <p class="sub">Schick uns dein Lieblingsrezept – als Foto (z. B. Kochbuchseite oder Screenshot), als PDF oder als Link. Wir nehmen es in unseren Familien-Essensplan auf.</p>
 
   <form id="f" novalidate>
     <label>Dein Name
       <input type="text" id="from" autocomplete="given-name" placeholder="z. B. Oma Helga" maxlength="60" required>
     </label>
     <div>
-      <label class="pickbtn" for="files">📷 Fotos auswählen <span class="hint">(bis zu 5)</span>
-        <input type="file" id="files" accept="image/*" multiple>
+      <label class="pickbtn" for="files">📷 Fotos oder 📄 PDF auswählen <span class="hint">(bis zu 5)</span>
+        <input type="file" id="files" accept="image/*,application/pdf,.pdf" multiple>
       </label>
       <div class="thumbs" id="thumbs" style="margin-top:10px"></div>
     </div>
@@ -93,7 +95,7 @@ input:focus-visible,textarea:focus-visible,button:focus-visible,.pickbtn:focus-w
     <button class="ghost" id="again" type="button">Noch ein Rezept einsenden</button>
   </div>
 
-  <p class="foot">Es werden nur die Fotos, der Link, die Notiz und dein Name übertragen.</p>
+  <p class="foot">Es werden nur die Fotos/PDFs, der Link, die Notiz und dein Name übertragen.</p>
 </div>
 <script>
 const HOOK = "https://hook.eu1.make.com/j73j4cto6mhok5p3tcm829c5slq9956s";
@@ -104,7 +106,7 @@ try { const n = localStorage.getItem("einsenden-name"); if (n) $("#from").value 
 
 function showErr(msg){ const e=$("#err"); e.textContent=msg; e.hidden=!msg; }
 function renderThumbs(){
-  $("#thumbs").innerHTML = files.map((f,i)=>`<div><img alt="" src="${URL.createObjectURL(f)}"><button type="button" data-rm="${i}" aria-label="Foto entfernen">×</button></div>`).join("");
+  $("#thumbs").innerHTML = files.map((f,i)=>`<div>${isPdf(f)?`<span class="pdf"><b>📄</b>${esc(f.name.slice(0,22))}</span>`:`<img alt="" src="${URL.createObjectURL(f)}">`}<button type="button" data-rm="${i}" aria-label="Foto entfernen">×</button></div>`).join("");
 }
 $("#files").addEventListener("change", e => {
   files = files.concat([...e.target.files]).slice(0, MAX_FILES);
@@ -114,6 +116,9 @@ $("#thumbs").addEventListener("click", e => {
   const b = e.target.closest("[data-rm]"); if (!b) return;
   files.splice(+b.dataset.rm, 1); renderThumbs();
 });
+const isPdf = f => f.type==="application/pdf" || /\.pdf$/i.test(f.name||"");
+const esc = t => String(t).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function fileB64(file){ return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(String(r.result).split(",")[1]); r.onerror=()=>rej(new Error("Eine Datei konnte nicht gelesen werden.")); r.readAsDataURL(file); }); }
 function b64utf8(str){ return btoa(unescape(encodeURIComponent(str))); }
 function shrink(file, max, q){
   return new Promise((res, rej) => {
@@ -130,20 +135,20 @@ function shrink(file, max, q){
 }
 async function encodeAll(){
   for (const [max, q] of [[1800, .8], [1400, .72], [1100, .65]]) {
-    const out = [];
-    for (let i = 0; i < files.length; i++) out.push({ name: `foto${i+1}.jpg`, b64: await shrink(files[i], max, q) });
+    const out = []; let nF = 0, nD = 0;
+    for (let i = 0; i < files.length; i++) out.push(isPdf(files[i]) ? { name: `dokument${++nD}.pdf`, b64: await fileB64(files[i]) } : { name: `foto${++nF}.jpg`, b64: await shrink(files[i], max, q) });
     if (out.reduce((s, p) => s + p.b64.length, 0) < MAX_BYTES) return out;
   }
-  throw new Error("Die Fotos sind zu groß – bitte weniger Fotos auswählen.");
+  throw new Error(files.some(isPdf) ? "Die Dateien sind zu groß – PDFs dürfen zusammen höchstens ca. 3 MB haben. Alternativ Fotos/Screenshots der Seiten schicken." : "Die Fotos sind zu groß – bitte weniger Fotos auswählen.");
 }
 $("#f").addEventListener("submit", async e => {
   e.preventDefault(); showErr("");
   const from = $("#from").value.trim(), link = $("#link").value.trim(), note = $("#note").value.trim();
   if (!from) { showErr("Bitte gib deinen Namen an."); $("#from").focus(); return; }
-  if (!files.length && !link) { showErr("Bitte ein Foto auswählen oder einen Link einfügen."); return; }
+  if (!files.length && !link) { showErr("Bitte ein Foto oder PDF auswählen oder einen Link einfügen."); return; }
   if (link && !/^https?:\/\/\S+$/i.test(link)) { showErr("Der Link muss mit https:// beginnen."); $("#link").focus(); return; }
   try { localStorage.setItem("einsenden-name", from); } catch (e2) {}
-  const btn = $("#send"); btn.disabled = true; btn.textContent = files.length ? "Fotos werden vorbereitet …" : "Wird gesendet …";
+  const btn = $("#send"); btn.disabled = true; btn.textContent = files.length ? "Dateien werden vorbereitet …" : "Wird gesendet …";
   try {
     const photos = await encodeAll();
     const now = new Date(), pad = n => String(n).padStart(2, "0");

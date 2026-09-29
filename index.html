@@ -119,6 +119,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--mustard);outlin
 .hint{font-size:12px;color:var(--muted);font-weight:400}
 .thumbs{display:flex;gap:8px;flex-wrap:wrap}
 .thumbs img{width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
+.thumbs .pdf{width:72px;height:72px;border-radius:10px;border:1px solid var(--line);background:var(--sunk,#F1F2EE);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;padding:4px;text-align:center;overflow:hidden;word-break:break-all;line-height:1.2}
+.thumbs .pdf b{font-size:24px;line-height:1}
 .form input[type=file]{font:15px var(--body)}
 .form input[type=password]{font:16px var(--body);padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
 .queue{list-style:none;padding:0;margin:6px 0 0}
@@ -2456,6 +2458,9 @@ async function gh(path, opts={}){
   return r.status===204 ? null : r.json();
 }
 function b64utf8(str){ return btoa(unescape(encodeURIComponent(str))); }
+const isPdf = f => f.type==="application/pdf" || /\.pdf$/i.test(f.name||"");
+function fileB64(file){ return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(String(r.result).split(",")[1]); r.onerror=()=>rej(new Error("Datei konnte nicht gelesen werden")); r.readAsDataURL(file); }); }
+function thumbHtml(f){ return isPdf(f) ? `<span class="pdf"><b>📄</b>${esc((f.name||"PDF").slice(0,22))}</span>` : `<img alt="" src="${URL.createObjectURL(f)}">`; }
 function shrinkImage(file){
   return new Promise((res,rej)=>{
     const img = new Image(); const url = URL.createObjectURL(file);
@@ -2506,7 +2511,7 @@ async function openInbox(){
     <h2>Rezept einsenden</h2>
     <p class="sub">Foto(s) von einem Rezept oder ein Link – Claude macht daraus ein Rezept für eure App (Mengen für 3 Personen, Kategorien, Schritte).</p>
     <div class="form">
-      <label>📷 Fotos <span class="hint">z. B. Kochbuchseite oder Screenshot, auch mehrere</span><input type="file" id="ibFiles" accept="image/*" multiple></label>
+      <label>📷 Fotos oder 📄 PDF <span class="hint">z. B. Kochbuchseite, Screenshot oder Rezept als PDF, auch mehrere</span><input type="file" id="ibFiles" accept="image/*,application/pdf,.pdf" multiple></label>
       <div class="thumbs" id="ibThumbs"></div>
       <label>🔗 Link <span class="hint">optional, z. B. Chefkoch oder einfachkochen.de</span><input type="text" id="ibLink" inputmode="url" autocomplete="off" placeholder="https://…"></label>
       <label>Notiz <span class="hint">optional, z. B. „ohne Koriander“ oder „fürs Wochenende“</span><input type="text" id="ibNote" autocomplete="off"></label>
@@ -2517,23 +2522,26 @@ async function openInbox(){
     <h3>Warteliste</h3><div id="ibQueue"><p class="hint">Wird geladen …</p></div>
     <p class="hint" style="margin-top:14px"><button class="btn small ghost" id="ibReset">Zugang entfernen</button></p>`);
   $("#ibFiles").addEventListener("change",e=>{
-    $("#ibThumbs").innerHTML = [...e.target.files].map(f=>`<img alt="" src="${URL.createObjectURL(f)}">`).join("");
+    $("#ibThumbs").innerHTML = [...e.target.files].map(thumbHtml).join("");
   });
   $("#ibReset").addEventListener("click",()=>{ try{ localStorage.removeItem(LS_INBOX); }catch(_){} closeSheet(); refreshInboxCount(); toast("Zugang entfernt"); });
   $("#ibSend").addEventListener("click",async()=>{
     const files = [...$("#ibFiles").files], link = $("#ibLink").value.trim(), note = $("#ibNote").value.trim(), who = $("#ibFrom").value.trim();
     const err = $("#ibErr"), btn = $("#ibSend");
-    if(!files.length && !link){ err.textContent="Bitte ein Foto auswählen oder einen Link einfügen."; err.hidden=false; return; }
+    if(!files.length && !link){ err.textContent="Bitte ein Foto oder PDF auswählen oder einen Link einfügen."; err.hidden=false; return; }
+    const big = files.find(f=>isPdf(f) && f.size>15e6); if(big){ err.textContent=`„${big.name}“ ist zu groß (max. 15 MB).`; err.hidden=false; return; }
     if(link && !/^https?:\/\//i.test(link)){ err.textContent="Der Link muss mit https:// beginnen."; err.hidden=false; return; }
     err.hidden=true; btn.disabled=true;
     const cfg = lsGet(LS_INBOX)||{}; cfg.from = who; lsSet(cfg, LS_INBOX);
     const now = new Date(); const pad = n=>String(n).padStart(2,"0");
     const id = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}_${Math.random().toString(36).slice(2,6)}`;
     try{
-      const names = [];
+      const names = []; let nF=0, nD=0;
       for(let k=0;k<files.length;k++){
-        btn.textContent = `Foto ${k+1} von ${files.length} wird hochgeladen …`;
-        const data = await shrinkImage(files[k]); const name = `foto${k+1}.jpg`;
+        btn.textContent = `Datei ${k+1} von ${files.length} wird hochgeladen …`;
+        const pdf = isPdf(files[k]);
+        const data = pdf ? await fileB64(files[k]) : await shrinkImage(files[k]);
+        const name = pdf ? `dokument${++nD}.pdf` : `foto${++nF}.jpg`;
         await gh(`/contents/inbox/${id}/${name}`,{method:"PUT",body:JSON.stringify({message:`Einsendung ${id}: ${name}`,content:data})});
         names.push(name);
       }
@@ -2550,7 +2558,8 @@ async function openInbox(){
     const q = await loadQueue(); const el = $("#ibQueue"); if(!el) return;
     el.innerHTML = q.length ? `<ul class="queue">${q.map(x=>{
       const d = x.created ? new Date(x.created).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}) : x.id;
-      const what = [x.photos&&x.photos.length?`📷 ${x.photos.length} Foto${x.photos.length>1?"s":""}`:"", x.link?"🔗 Link":""].filter(Boolean).join(" · ");
+      const nP=(x.photos||[]).filter(n=>/\.pdf$/i.test(n)).length, nI=(x.photos||[]).length-nP;
+      const what = [nI?`📷 ${nI} Foto${nI>1?"s":""}`:"", nP?`📄 ${nP} PDF`:"", x.link?"🔗 Link":""].filter(Boolean).join(" · ");
       return `<li>${esc(what||"Einsendung")}${x.note?` – ${esc(x.note)}`:""}<br><small>${esc(d)}${x.from?` · von ${esc(x.from)}`:""} · wartet</small></li>`;}).join("")}</ul>`
       : `<p class="ok-text">Nichts offen – alles eingetragen. ✔</p>`;
   }catch(e){ const el = $("#ibQueue"); if(el) el.innerHTML = `<p class="err-text">Warteliste konnte nicht geladen werden.</p>`; }
