@@ -267,6 +267,19 @@ nav.tabs button[aria-selected="true"] .count{background:var(--basil);color:var(-
 .filters button{flex:none;white-space:nowrap;font-weight:600;background:transparent;color:var(--muted)}
 .filters button[aria-pressed="true"]{background:var(--basil-soft);color:var(--basil);border-color:var(--basil)}
 .fcount{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);margin:0 0 10px;min-height:26px}
+.fbar{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.fbar .search{flex:1;min-width:0;margin:0}
+.fbtn{flex:none;font:600 14px var(--body);padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer;white-space:nowrap}
+.fbtn.active{border-color:var(--basil);color:var(--basil)}
+.fbtn .caret{display:inline-block;transition:transform .15s}
+.fbtn.on .caret{transform:rotate(180deg)}
+.fchips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
+.fchips:empty{display:none}
+.fchip{font:600 13px var(--body);padding:5px 10px;border-radius:999px;border:1px solid var(--basil);background:var(--basil-soft);color:var(--basil);cursor:pointer}
+.fpanel{border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:6px 12px 10px;margin:0 0 10px}
+.fgroup h5{margin:8px 0 5px;font:700 11px var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.fpanel .filters{flex-wrap:wrap;overflow:visible;margin:0;padding:0}
+.fpanel-foot{display:flex;justify-content:flex-end;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
 .fcount button{border:0;background:none;color:var(--basil);font:600 13px var(--body);cursor:pointer;padding:2px 4px}
 .ideas{gap:8px}
 .idea{border-radius:12px;padding:12px 14px;gap:2px}
@@ -386,31 +399,7 @@ details.info p{margin:8px 0 0}
       </div>
     </div>
     <div class="bar"><button class="btn primary" id="addRecipe">+ Eigenes Rezept</button><button class="btn" id="inboxBtn">📷 Foto / 🔗 Link einsenden <span class="count" id="inboxCount" hidden>0</span></button><a class="btn ghost" id="guestPage" href="einsenden.html" target="_blank" rel="noopener" style="text-decoration:none">🌐 Einsendeseite öffnen</a></div>
-    <input class="search" id="search" type="search" placeholder="Gericht oder Zutat suchen, z. B. Nudeln, Feta …">
-    <div class="filters" id="filters">
-      <button data-f="alle" aria-pressed="true">Alle</button>
-      <button data-f="like" aria-pressed="false">👍 Mögen wir</button>
-      <button data-f="lange" aria-pressed="false">🕒 Lange nicht gegessen</button>
-      <button data-f="veg" aria-pressed="false">🌱 Vegetarisch</button>
-      <button data-f="fleisch" aria-pressed="false">🥩 Fleisch</button>
-      <button data-f="fisch" aria-pressed="false">🐟 Fisch</button>
-      <button data-f="schnell" aria-pressed="false">Bis 20 Min</button>
-      <button data-f="alltag" aria-pressed="false">Bis 30 Min</button>
-      <button data-f="zeit" aria-pressed="false">Ab 40 Min</button>
-      <button data-f="kinder" aria-pressed="false">👶 Kinderliebling</button>
-      <button data-f="gesund" aria-pressed="false">❤️ Gesund</button>
-      <button data-f="protein" aria-pressed="false">💪 Proteinreich</button>
-      <button data-f="gemuese" aria-pressed="false">🥦 Gemüsereich</button>
-      <button data-f="ballast" aria-pressed="false">🌾 Ballaststoffreich</button>
-      <button data-f="leicht" aria-pressed="false">🥗 Leicht</button>
-      <button data-f="lowcarb" aria-pressed="false">📉 Low-Carb</button>
-      <button data-f="antient" aria-pressed="false">🌿 Antientzündlich</button>
-      <button data-f="glutenfrei" aria-pressed="false"><span class="gfb">GF</span> Glutenfrei</button>
-      <button data-f="asia" aria-pressed="false">🥢 Asiatisch</button>
-      <button data-f="indien" aria-pressed="false">🍛 Indisch</button>
-      <button data-f="eigene" aria-pressed="false">📷 Eigene</button>
-      <button data-f="dislike" aria-pressed="false">👎 Mögen wir nicht</button>
-    </div>
+    <div id="ideaFilterUI"></div>
     <div class="fcount" id="ideaCount"></div>
     <div class="ideas" id="ideas"></div>
   </section>
@@ -2165,6 +2154,47 @@ $("#viewDay").addEventListener("click",()=>{ shopPrefs.view="day"; saveShopPrefs
 
 /* ---------- Render: Ideen ---------- */
 let filterSet = new Set(), query = "", surprise = null;
+/* ---------- Aufklappbarer Filter ---------- */
+const FILTER_GROUPS = [
+  ["Bewertung",[["like","👍 Mögen wir"],["dislike","👎 Mögen wir nicht"],["lange","🕒 Lange nicht gegessen"]]],
+  ["Art",[["veg","🌱 Vegetarisch"],["fleisch","🥩 Fleisch"],["fisch","🐟 Fisch"]]],
+  ["Zeit",[["schnell","Bis 20 Min"],["alltag","Bis 30 Min"],["zeit","Ab 40 Min"]]],
+  ["Gesundheit",[["gesund","❤️ Gesund"],["protein","💪 Proteinreich"],["gemuese","🥦 Gemüsereich"],["ballast","🌾 Ballaststoffreich"],["leicht","🥗 Leicht"],["lowcarb","📉 Low-Carb"]]],
+  ["Ernährung",[["kinder","👶 Kinderliebling"],["antient","🌿 Antientzündlich"],["glutenfrei",'<span class="gfb">GF</span> Glutenfrei']]],
+  ["Küche",[["asia","🥢 Asiatisch"],["indien","🍛 Indisch"]]],
+  ["Herkunft",[["eigene","📷 Eigene"]]],
+];
+const FLABEL = Object.fromEntries(FILTER_GROUPS.flatMap(g=>g[1]));
+function filterUI(id, placeholder){
+  return `<div class="fbar"><input class="search" id="${id}Search" type="search" placeholder="${esc(placeholder)}" autocomplete="off">
+    <button type="button" class="fbtn" id="${id}Toggle" aria-expanded="false" aria-controls="${id}Panel">⚙ Filter<span class="fnum" id="${id}Num"></span> <span class="caret">▾</span></button></div>
+    <div class="fchips" id="${id}Chips"></div>
+    <div class="fpanel" id="${id}Panel" hidden>${FILTER_GROUPS.map(([g,items])=>`<div class="fgroup"><h5>${g}</h5><div class="filters">${items.map(([f,l])=>`<button type="button" data-fv="${f}" aria-pressed="false">${l}</button>`).join("")}</div></div>`).join("")}
+      <div class="fpanel-foot"><button type="button" class="btn small ghost" data-fclear>Zurücksetzen</button><button type="button" class="btn small primary" data-fdone>Fertig</button></div></div>`;
+}
+function bindFilterUI(id, set, onChange){
+  const $$ = x=>document.getElementById(id+x);
+  const panel = $$("Panel"), tog = $$("Toggle");
+  const open = v=>{ panel.hidden=!v; tog.setAttribute("aria-expanded",String(v)); tog.classList.toggle("on",v); };
+  const sync = ()=>{
+    panel.querySelectorAll("[data-fv]").forEach(b=>b.setAttribute("aria-pressed",String(set.has(b.dataset.fv))));
+    $$("Num").textContent = set.size ? ` (${set.size})` : "";
+    tog.classList.toggle("active", set.size>0);
+    $$("Chips").innerHTML = [...set].map(f=>`<button type="button" class="fchip" data-fx="${f}" aria-label="Filter entfernen">${FLABEL[f]||f} <span aria-hidden="true">×</span></button>`).join("");
+  };
+  const changed = ()=>{ sync(); onChange(); };
+  tog.addEventListener("click",e=>{ e.stopPropagation(); open(panel.hidden); });
+  panel.addEventListener("click",e=>{
+    const b = e.target.closest("button"); if(!b) return; e.stopPropagation();
+    if(b.dataset.fv){ toggleFilter(set,b.dataset.fv); changed(); }
+    else if(b.dataset.fclear!==undefined){ set.clear(); changed(); }
+    else if(b.dataset.fdone!==undefined){ open(false); tog.focus(); }
+  });
+  $$("Chips").addEventListener("click",e=>{ const b=e.target.closest("[data-fx]"); if(!b) return; e.stopPropagation(); set.delete(b.dataset.fx); changed(); });
+  $$("Search").addEventListener("input",()=>onChange());
+  sync();
+  return {sync, open};
+}
 function renderIdeas(){
   const q = query.trim().toLowerCase();
   const list = allDishes().filter(d=>matchFilters(d,filterSet) && matchQuery(d,q));
@@ -2287,13 +2317,11 @@ function countHtml(n,set){ return `<span>${n ? `${n} Gericht${n>1?"e":""}` : "Ni
 function matchQuery(d,q){ return !q || d.n.toLowerCase().includes(q) || d.i.some(x=>String(x[2]).toLowerCase().includes(q)); }
 function pickFor(day){
   const opts = allDishes().sort((a,b)=>a.n.localeCompare(b.n,"de"));
-  const cats = [...document.querySelectorAll("#filters button")].map(b=>[b.dataset.f,b.textContent]);
   const pf = new Set();
   openSheet(`<button class="btn small close" data-close>Schließen</button>
     <h2>${DAYS_LONG[day]}</h2>
     <div class="add" style="margin-top:10px"><input id="customDish" type="text" placeholder="Eigenes Gericht, z. B. Resteessen" autocomplete="off"><button class="btn primary" data-custom="${day}">Übernehmen</button></div>
-    <input class="search" id="pickSearch" type="search" placeholder="Gericht oder Zutat suchen …" style="margin:0 0 8px">
-    <div class="filters pick-filters" id="pickFilters">${cats.map(([f,l])=>`<button type="button" data-pf="${f}" aria-pressed="${f==="alle"}">${esc(l)}</button>`).join("")}</div>
+    ${filterUI("pick","Gericht oder Zutat …")}
     <div class="fcount" id="pickCount"></div>
     <div class="pick" id="pickList">${opts.map(d=>`<button data-setday="${day}" data-dish="${d.id}"><span>${esc(d.n)}${metaLine(d)}</span></button>`).join("")}</div>`);
   const byId = Object.fromEntries(opts.map(d=>[d.id,d]));
@@ -2302,14 +2330,8 @@ function pickFor(day){
     document.querySelectorAll("#pickList button").forEach(b=>{ const ok = matchFilters(byId[b.dataset.dish],pf) && matchQuery(byId[b.dataset.dish],q); b.hidden=!ok; if(ok) n++; });
     $("#pickCount").innerHTML = countHtml(n, pf);
   };
-  $("#pickSearch").addEventListener("input",apply);
-  $("#pickFilters").addEventListener("click",e=>{
-    const b = e.target.closest("button[data-pf]"); if(!b) return; e.stopPropagation();
-    toggleFilter(pf, b.dataset.pf);
-    syncFilterButtons("#pickFilters button","pf",pf);
-    apply();
-  });
-  $("#pickCount").addEventListener("click",e=>{ if(e.target.closest("[data-freset]")){ e.stopPropagation(); pf.clear(); syncFilterButtons("#pickFilters button","pf",pf); apply(); } });
+  const pickUI = bindFilterUI("pick", pf, apply);
+  $("#pickCount").addEventListener("click",e=>{ if(e.target.closest("[data-freset]")){ e.stopPropagation(); pf.clear(); pickUI.sync(); apply(); } });
   apply();
 }
 
@@ -2414,12 +2436,9 @@ $("#copyPlan").addEventListener("click",()=>{
     $("#copyArea").select();
   });
 });
-$("#search").addEventListener("input",e=>{ query=e.target.value; renderIdeas(); });
-$("#ideaCount").addEventListener("click",e=>{ if(e.target.closest("[data-freset]")){ filterSet.clear(); syncFilterButtons("#filters button","f",filterSet); renderIdeas(); } });
-$("#filters").addEventListener("click",e=>{
-  const b = e.target.closest("button"); if(!b) return; toggleFilter(filterSet, b.dataset.f);
-  syncFilterButtons("#filters button","f",filterSet); renderIdeas();
-});
+$("#ideaFilterUI").innerHTML = filterUI("idea","Gericht oder Zutat …");
+const ideaUI = bindFilterUI("idea", filterSet, ()=>{ query=$("#ideaSearch").value; renderIdeas(); });
+$("#ideaCount").addEventListener("click",e=>{ if(e.target.closest("[data-freset]")){ filterSet.clear(); ideaUI.sync(); renderIdeas(); } });
 $("#surpriseAgain").addEventListener("click",()=>nextSurprise());
 $("#surpriseUse").addEventListener("click",()=>surprise&&showDish(surprise.id));
 
