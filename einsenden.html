@@ -59,12 +59,14 @@ input:focus-visible,textarea:focus-visible,button:focus-visible,.pickbtn:focus-w
 .done h2{font:700 22px var(--display);margin:0 0 6px}
 .done p{color:var(--muted);margin:0 0 16px}
 .ghost{font:700 15px var(--body);padding:11px 16px;border:1px solid var(--line);border-radius:10px;background:transparent;color:var(--ink);cursor:pointer}
+.back{display:inline-block;margin:0 0 14px;font:700 15px var(--body);color:var(--basil);text-decoration:none;padding:6px 0}
 .foot{margin-top:26px;font-size:12px;color:var(--muted);text-align:center}
 [hidden]{display:none!important}
 </style>
 </head>
 <body>
 <div class="wrap">
+  <a class="back" id="back" href="./" hidden>← Zurück zum Essensplan</a>
   <h1>Rezept <span>einsenden</span></h1>
   <p class="sub">Schick uns dein Lieblingsrezept – als Foto (z. B. Kochbuchseite oder Screenshot), als PDF oder als Link. Wir nehmen es in unseren Familien-Essensplan auf.</p>
 
@@ -98,6 +100,8 @@ input:focus-visible,textarea:focus-visible,button:focus-visible,.pickbtn:focus-w
   <p class="foot">Es werden nur die Fotos/PDFs, der Link, die Notiz und dein Name übertragen.</p>
 </div>
 <script>
+// Zurück-Knopf nur für die Familie (wer die App auf diesem Gerät nutzt), nicht für Gäste
+try { if (Object.keys(localStorage).some(k => /^essensplan-(v1|sync|inbox)$/.test(k))) document.getElementById("back").hidden = false; } catch (e) {}
 const HOOK = "https://hook.eu1.make.com/j73j4cto6mhok5p3tcm829c5slq9956s";
 const MAX_FILES = 5, MAX_BYTES = 4200000;
 const $ = s => document.querySelector(s);
