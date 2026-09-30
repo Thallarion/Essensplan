@@ -2421,7 +2421,7 @@ function metaLine(d){
   const show = rest.slice(0,2), more = rest.length-show.length;
   const ico = ([i,l])=>i==="GF"?`<span class="gfb" title="Glutenfrei" aria-label="Glutenfrei">GF</span>`:`<span title="${esc(l)}" aria-label="${esc(l)}">${i}</span>`;
   const parts = [d.t?`<span>${d.t} Min</span>`:"", kl?`<span class="kind">${esc(kl)}</span>`:"", show.length?`<span class="ic">${show.map(ico).join("")}</span>`:""].filter(Boolean);
-  return `<div class="mline">${parts.join('<span class="dot">·</span>')}${more>0?`<button type="button" class="more" data-tags="${esc(rest.slice(2).map(x=>x[1]).join(", "))}" data-n="+${more}" aria-expanded="false" aria-label="${more} weitere Eigenschaften anzeigen">+${more}</button>`:""}</div>`;
+  return `<div class="mline">${parts.join('<span class="dot">·</span>')}${more>0?`<span role="button" tabindex="0" class="more" data-tags="${esc(rest.slice(2).map(x=>x[1]).join(", "))}" data-n="+${more}" aria-expanded="false" aria-label="${more} weitere Eigenschaften anzeigen">+${more}</span>`:""}</div>`;
 }
 function chips(d, full){
   if(!full) return metaLine(d);
@@ -2588,7 +2588,7 @@ function renderShop(){
 }
 document.addEventListener("click",e=>{
   const m = e.target.closest(".more[data-tags]");
-  if(m){ e.stopImmediatePropagation(); e.preventDefault(); const open = m.getAttribute("aria-expanded")==="true"; m.setAttribute("aria-expanded",String(!open)); m.textContent = open ? m.dataset.n : m.dataset.tags; m.classList.toggle("open",!open); }
+  if(m && !m.closest("button")){ e.stopImmediatePropagation(); e.preventDefault(); const open = m.getAttribute("aria-expanded")==="true"; m.setAttribute("aria-expanded",String(!open)); m.textContent = open ? m.dataset.n : m.dataset.tags; m.classList.toggle("open",!open); }
 },true);
 document.addEventListener("click",e=>{
   const h = e.target.closest("[data-home]"), u = e.target.closest("[data-unhome]");
