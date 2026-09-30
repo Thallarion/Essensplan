@@ -79,6 +79,25 @@ body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);
 .wrap{max-width:760px;margin:0 auto;padding-inline:16px;padding-block:20px 60px}
 header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 16px;margin-bottom:14px}
 .ttl{display:flex;align-items:center;gap:10px}
+.fridge-card{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:14px 16px;margin:0 0 14px;box-shadow:var(--shadow);cursor:pointer;color:var(--ink);font:inherit}
+.fridge-card .fi{font-size:30px;line-height:1}
+.fridge-card b{display:block;font-family:var(--display);font-variation-settings:"SOFT" 100;font-size:19px}
+.fridge-card small{color:var(--muted);font-size:13px}
+.fridge-card .fa{margin-left:auto;font-size:26px;color:var(--muted)}
+.fr-in{display:flex;gap:8px;margin:8px 0}
+.fr-in input{flex:1;min-width:0;font:16px var(--body);padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink)}
+.fr-sug{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
+.fr-sug button{font:600 13px var(--body);padding:5px 10px;border-radius:999px;border:1px dashed var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.fr-have{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.fr-have button{font:700 14px var(--body);padding:6px 12px;border-radius:999px;border:1px solid var(--basil);background:var(--basil-soft);color:var(--basil);cursor:pointer}
+.fr-res{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.fr-item{border:1px solid var(--line);border-radius:16px;padding:12px 14px;background:var(--surface)}
+.fr-item h4{margin:0 0 2px;font-size:16px;cursor:pointer}
+.fr-item .hit{font-size:13px;color:var(--basil);font-weight:700;margin:4px 0 0}
+.fr-item .miss{font-size:13px;color:var(--muted);margin:2px 0 8px}
+.fr-item .bar{margin:0}
+.fr-days{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.fr-days button{font:700 13px var(--body);padding:6px 10px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
 .allergy-warn{margin:10px 0 4px;padding:9px 12px;border-radius:10px;background:var(--tomato-soft,#FBE9E4);color:var(--tomato,#A34A38);font-size:14px}
 .set h3{margin:18px 0 6px}
 .set .filters{flex-wrap:wrap;overflow:visible;margin:0;padding:0}
@@ -534,6 +553,7 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
         <button class="btn primary" id="surpriseUse">Einplanen</button>
       </div>
     </div>
+    <button class="fridge-card" id="fridgeBtn" type="button"><span class="fi" aria-hidden="true">🧊</span><span><b>Was ist noch da?</b><small>Zutaten eingeben – passende Rezepte finden</small></span><span class="fa" aria-hidden="true">›</span></button>
     <div class="bar"><button class="btn primary" id="addRecipe">+ Eigenes Rezept</button><button class="btn" id="inboxBtn">📷 Foto / 🔗 Link einsenden <span class="count" id="inboxCount" hidden>0</span></button><a class="btn ghost" id="guestPage" href="einsenden.html?app=1" style="text-decoration:none">🌐 Einsendeseite öffnen</a></div>
     <div id="ideaFilterUI"></div>
     <div class="fcount" id="ideaCount"></div>
@@ -2448,6 +2468,75 @@ function openSheet(html){
   const f = $("#sheetRoot").querySelector("button"); if(f) f.focus();
 }
 function closeSheet(){ $("#sheetRoot").innerHTML = ""; }
+/* ---------- Was ist noch da? (Resteküche) ---------- */
+const FR_PANTRY = /^(rote |weiße )?zwiebeln?$|knoblauch/i;
+const FR_SYN = {"käse":["käse","gouda","emmentaler","parmesan","mozzarella","feta","bergkäse","cheddar","halloumi","paneer","ricotta","reibekäse"],"nudeln":["nudel","spaghetti","penne","fusilli","makkaroni","tagliatelle","lasagne","bandnudeln","linguine","farfalle","tortellini"],"nudel":["nudel","spaghetti","penne","fusilli"],"hähnchen":["hähnchen","huhn","chicken","hühnchen"],"huhn":["hähnchen","huhn"],"hack":["hack"],"hackfleisch":["hack"],"reis":["reis","basmati","risotto"],"tomate":["tomat"],"paprika":["paprika"],"kartoffel":["kartoffel"],"sahne":["sahne","kochsahne","schmand","crème"],"schinken":["schinken","speck"],"fisch":["lachs","forelle","kabeljau","zander","seelachs","thunfisch","fisch"],"ei":["ei","eier"],"eier":["ei","eier"],"joghurt":["joghurt"],"brot":["brot","brötchen","toast","baguette"]};
+function frStem(t){ t=t.toLowerCase().trim(); if(t.length>5 && /en$/.test(t)) return t.slice(0,-2); if(t.length>4 && /[ns]$/.test(t)) return t.slice(0,-1); return t; }
+function frTerms(t){ const k=t.toLowerCase().trim(); return FR_SYN[k] || FR_SYN[frStem(k)] || [frStem(k)]; }
+function frMatch(term, name){ const n=name.toLowerCase(); return frTerms(term).some(x=> x.length<=2 ? new RegExp("(^|\\s|-)"+x+"(\\s|$|-)").test(n) : n.includes(x)); }
+function frAllNames(){ const set=new Set(); allDishes().forEach(d=>d.i.forEach(x=>set.add(String(x[2])))); return [...set].sort((a,b)=>a.localeCompare(b,"de")); }
+function frScore(d, have){
+  const ing = d.i.filter(x=>!FR_PANTRY.test(String(x[2]).replace(/\s*\(.*\)/,"").trim()));
+  const hits = have.filter(t=>ing.some(x=>frMatch(t,String(x[2]))));
+  const covered = ing.filter(x=>have.some(t=>frMatch(t,String(x[2]))));
+  const missing = ing.filter(x=>!covered.includes(x));
+  return {hits, covered, missing};
+}
+function openFridge(init){
+  const have = init ? [...init.have] : [], fset = new Set(init ? init.f : []);
+  const names = frAllNames();
+  openSheet(`<button class="btn small close" data-close>Schließen</button>
+    <h2>🧊 Was ist noch da?</h2>
+    <p class="sub">Gib ein, was im Kühlschrank ist – z. B. „Zucchini, Feta, Reis“. Salz, Öl, Gewürze, Zwiebeln und Knoblauch zählen als vorhanden.</p>
+    <div class="fr-in"><input id="frInput" type="text" placeholder="Zutat eingeben …" autocomplete="off" enterkeyhint="done"><button class="btn primary" id="frAdd" type="button">+</button></div>
+    <div class="fr-sug" id="frSug"></div>
+    <div class="fr-have" id="frHave"></div>
+    ${filterUI("fr","In den Vorschlägen suchen …")}
+    <div class="fcount" id="frCount"></div>
+    <div class="fr-res" id="frRes"></div>`);
+  const inp = $("#frInput");
+  const addTerms = txt=>{ txt.split(/[,;\n]+/).map(x=>x.trim()).filter(Boolean).forEach(t=>{ if(!have.some(h=>h.toLowerCase()===t.toLowerCase())) have.push(t); }); inp.value=""; $("#frSug").innerHTML=""; render(); };
+  const sug = ()=>{ const q=inp.value.split(",").pop().trim().toLowerCase(); if(q.length<2){ $("#frSug").innerHTML=""; return; }
+    const list = names.filter(n=>n.toLowerCase().includes(q)).slice(0,8);
+    $("#frSug").innerHTML = list.map(n=>`<button type="button" data-frs="${esc(n)}">+ ${esc(n)}</button>`).join(""); };
+  function render(){
+    $("#frHave").innerHTML = have.map((t,i)=>`<button type="button" data-frx="${i}" aria-label="${esc(t)} entfernen">${esc(t)} ×</button>`).join("");
+    const q = ($("#frSearch").value||"").trim().toLowerCase();
+    if(!have.length){ $("#frCount").innerHTML = ""; $("#frRes").innerHTML = `<p class="empty">Noch keine Zutaten eingegeben.</p>`; return; }
+    const res = allDishes().filter(d=>!d.side && matchFilters(d,fset) && matchQuery(d,q)).map(d=>({d, ...frScore(d,have)})).filter(r=>r.hits.length)
+      .sort((a,b)=> b.hits.length-a.hits.length || a.missing.length-b.missing.length || likeOf(b.d.id)-likeOf(a.d.id) || a.d.n.localeCompare(b.d.n,"de")).slice(0,40);
+    $("#frCount").innerHTML = countHtml(res.length, fset);
+    $("#frRes").innerHTML = res.length ? res.map(r=>`<div class="fr-item" data-frid="${r.d.id}">
+      <h4 data-fropen="${r.d.id}">${esc(r.d.n)}</h4>${metaLine(r.d)}
+      <p class="hit">✓ ${r.hits.length} von ${have.length} deiner Zutaten</p>
+      <p class="miss">${r.missing.length ? "Es fehlt: "+r.missing.map(x=>esc(x[2])).join(", ") : "Alles da! 🎉"}</p>
+      <div class="bar"><button class="btn small primary" type="button" data-frplan="${r.d.id}">Einplanen</button>${r.missing.length?`<button class="btn small" type="button" data-frbuy="${r.d.id}">🛒 Fehlendes auf die Liste</button>`:""}</div>
+      <div class="fr-days" hidden></div></div>`).join("") : `<p class="empty">Kein Rezept gefunden – probier andere Zutaten oder weniger Filter.</p>`;
+  }
+  inp.addEventListener("input", sug);
+  inp.addEventListener("keydown", e=>{ if(e.key==="Enter"){ e.preventDefault(); if(inp.value.trim()) addTerms(inp.value); } });
+  $("#frAdd").addEventListener("click", e=>{ e.stopPropagation(); if(inp.value.trim()) addTerms(inp.value); inp.focus(); });
+  $("#frSug").addEventListener("click", e=>{ const b=e.target.closest("[data-frs]"); if(!b) return; e.stopPropagation(); const parts=inp.value.split(","); parts.pop(); addTerms([...parts, b.dataset.frs].join(",")); inp.focus(); });
+  $("#frHave").addEventListener("click", e=>{ const b=e.target.closest("[data-frx]"); if(!b) return; e.stopPropagation(); have.splice(+b.dataset.frx,1); render(); });
+  const frUI = bindFilterUI("fr", fset, render);
+  $("#frCount").addEventListener("click", e=>{ if(e.target.closest("[data-freset]")){ e.stopPropagation(); fset.clear(); frUI.sync(); render(); } });
+  $("#frRes").addEventListener("click", e=>{
+    const h = e.target.closest("[data-fropen]");
+    if(h){ e.stopPropagation(); const back={have:[...have], f:[...fset]}; showDish(h.dataset.fropen);
+      const sh=document.querySelector(".sheet"); if(sh){ const bb=document.createElement("button"); bb.type="button"; bb.className="btn small"; bb.style.marginBottom="8px"; bb.textContent="← Zurück zu den Vorschlägen"; bb.addEventListener("click",ev=>{ ev.stopPropagation(); openFridge(back); }); sh.prepend(bb); } return; }
+    const b = e.target.closest("button"); if(!b) return;
+    const box = b.closest(".fr-item"); const d = dish(box.dataset.frid); if(!d) return;
+    if(b.dataset.frplan){ e.stopPropagation(); const dd=box.querySelector(".fr-days"); dd.hidden=!dd.hidden;
+      dd.innerHTML = DAYS.map((x,i)=>`<button type="button" data-frday="${i}">${x}${state.days[i]?" •":""}</button>`).join(""); return; }
+    if(b.dataset.frday!==undefined){ e.stopPropagation(); const day=+b.dataset.frday; const {covered}=frScore(d,have);
+      state.days[day]=d.id; covered.forEach(x=>{ state.hidden[day+"|"+x[2]+"|"+x[1]]=1; });
+      commit(); toast(`${d.n} für ${DAYS_LONG[day]} eingeplant – Vorhandenes steht nicht auf der Einkaufsliste`); box.querySelector(".fr-days").hidden=true; return; }
+    if(b.dataset.frbuy){ e.stopPropagation(); const {missing}=frScore(d,have); const P=S().persons;
+      missing.forEach(([a,u,n])=>{ const q=fmtQty(scaleQty(a,u,P,n),u); state.extras[Date.now().toString(36)+Math.random().toString(36).slice(2,5)]={text:((q?q+" ":"")+n).trim()}; });
+      commit(); toast(`${missing.length} fehlende Zutat${missing.length>1?"en":""} auf die Einkaufsliste gesetzt`); b.disabled=true; b.textContent="✓ Auf der Liste"; return; }
+  });
+  frUI.sync(); render(); if(!init) setTimeout(()=>inp.focus(),50);
+}
 /* ---------- Einstellungen-Fenster ---------- */
 const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","🥩 Fleisch"],["kinder","👶 Kinderliebling"],["gesund","❤️ Gesund"],["protein","💪 Proteinreich"],["gemuese","🥦 Gemüsereich"],["ballast","🌾 Ballaststoffreich"],["leicht","🥗 Leicht"],["lowcarb","📉 Low-Carb"],["antient","🌿 Antientzündlich"],["glutenfrei",'<span class="gfb">GF</span> Glutenfrei'],["asia","🥢 Asiatisch"],["indien","🍛 Indisch"]];
 function openSettings(){
@@ -2536,6 +2625,15 @@ function openHelp(first){
       <p><b>Die Symbole:</b></p>
       <table class="legend">${leg.map(([i,t])=>`<tr><td>${i}</td><td>${t}</td></tr>`).join("")}</table>
       <p class="sub">Die Gesundheits-Symbole berechnet die App aus den Nährwerten pro Portion.</p>
+    </details>
+    <details><summary>🧊 Was ist noch da?</summary>
+      ${img("reste","Rezepte aus vorhandenen Zutaten")}
+      <ul>
+        <li>Unter <b>Ideen</b> → <b>„🧊 Was ist noch da?“</b> eingeben, was im Kühlschrank ist – tippen oder aus den Vorschlägen antippen.</li>
+        <li>Rezepte mit den <b>meisten Treffern</b> stehen oben, darunter was noch fehlt. Salz, Öl, Gewürze, Zwiebeln und Knoblauch zählen als vorhanden.</li>
+        <li><b>Einplanen</b> → Tag wählen: Was ihr schon habt, erscheint nicht auf der Einkaufsliste.</li>
+        <li><b>🛒 Fehlendes auf die Liste</b> setzt nur die fehlenden Zutaten auf die Einkaufsliste.</li>
+      </ul>
     </details>
     <details><summary>⚙ Einstellungen</summary>
       ${img("einstellungen","Einstellungen")}
@@ -3050,6 +3148,7 @@ render();
 if(recordCooked()) commit();
 $("#helpBtn").addEventListener("click",()=>openHelp(false));
 $("#setBtn").addEventListener("click",openSettings);
+$("#fridgeBtn").addEventListener("click",()=>openFridge());
 try{ if(!local && !sync && !localStorage.getItem("essensplan-hilfe")) setTimeout(()=>openHelp(true),500); }catch(e){}
 startSync().then(()=>{ if(window.__joined) toast("Mit dem Familien-Plan verbunden"); });
 try{ const tab = localStorage.getItem(LS+"-tab"); if(tab && tab!=="woche"){ const b=document.querySelector(`[data-tab="${tab}"]`); b&&b.click(); } }catch(e){}
