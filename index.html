@@ -20,7 +20,24 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232E6A44'/%3E%3Ccircle cx='32' cy='34' r='16' fill='none' stroke='white' stroke-width='5'/%3E%3Cpath d='M14 14v14M50 14v36' stroke='white' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="manifest" href="manifest.webmanifest">
-<title>Familien-Essensplan</title>
+<title>Was essen wir? – Familien-Wochenplan &amp; Einkaufsliste</title>
+<meta name="description" content="Plane das Familienessen für die Woche, entdecke über 160 Rezepte mit Mengen für 3 Personen und bekomme automatisch die Einkaufsliste – kostenlos, ohne Konto, als App installierbar.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://wasessenwir.at/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="de_AT">
+<meta property="og:site_name" content="Was essen wir?">
+<meta property="og:url" content="https://wasessenwir.at/">
+<meta property="og:title" content="Was essen wir? – Familien-Wochenplan &amp; Einkaufsliste">
+<meta property="og:description" content="Ein gemeinsamer Wochenplan für Familien, der aus euren Vorlieben automatisch eine passende Einkaufsliste macht – ohne Konto.">
+<meta property="og:image" content="https://wasessenwir.at/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Was essen wir? – Familien-Wochenplan &amp; Einkaufsliste">
+<meta name="twitter:description" content="Wochenplan, Rezepte und Einkaufsliste für die Familie – kostenlos und ohne Konto.">
+<meta name="twitter:image" content="https://wasessenwir.at/og.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Was essen wir?","alternateName":"Familien-Essensplan","url":"https://wasessenwir.at/","description":"Gemeinsamer Wochenplan für Familien mit über 160 Rezepten und automatischer Einkaufsliste – ohne Konto.","applicationCategory":"LifestyleApplication","operatingSystem":"Alle (Web, als App installierbar)","inLanguage":"de","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"}}</script>
+<noscript><style>#noscriptInfo{display:block!important}</style></noscript>
 <link rel="preload" href="fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin>
 <style>
 :root{
@@ -514,9 +531,37 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
 .item.done .home-btn{display:none}
 .homebox{margin:0 0 12px;color:var(--muted)}
 .homebox summary{cursor:pointer;font:600 14px var(--body);padding:8px 4px}
+
+/* --- Review-Umsetzung --- */
+.weekbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.weekbar #fillWeek{flex:1 1 auto;justify-content:center;font-size:16px;padding:12px 16px}
+.weekbar #newWeek{flex:none;background:transparent;border-color:transparent;color:var(--muted);font-weight:400;text-decoration:underline}
+.weekbar #newWeek[data-confirm]{color:var(--tomato);font-weight:700}
+.pe-row{display:flex;gap:8px}.pe-row .pickempty{text-align:center}
+.rep-hint,.rate-q{font-size:12.5px;color:var(--muted);margin-top:6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.rep-hint button,.rate-q button,.linkbtn{background:transparent;border:1px solid var(--line);border-radius:999px;color:var(--ink);font:600 12.5px var(--body);padding:4px 10px;cursor:pointer}
+.linkbtn{border:0;padding:0;text-decoration:underline;color:var(--basil)}
+.qi{display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;margin:0 -14px 10px;padding:0 14px 2px;scrollbar-width:none}
+.qi::-webkit-scrollbar{display:none}
+.qi button,.qadd button{flex:none;white-space:nowrap;font:600 13px var(--body);padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
+.qi button[aria-pressed="true"]{border-color:var(--basil);background:var(--basil-soft);color:var(--basil)}
+.qi button[aria-pressed="true"]::before{content:"✓ "}
+.qi-lbl{font-size:12px;color:var(--muted);margin:0 0 6px}
+.qadd{display:flex;gap:6px;flex-wrap:wrap;margin:-4px 0 12px}
+.catord{display:flex;align-items:center;gap:6px;margin:4px 0}.catord span{flex:1}
+.catord button{min-width:36px;min-height:36px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
+.datarow{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
+:focus-visible{outline:2px solid var(--basil);outline-offset:2px}
+@media (pointer:coarse){
+  .icon,.home-btn,.rbtn,.rep-hint button,.rate-q button,.fbtn,.qadd button,.qi button,.zh-chips button,.btn.small{min-height:44px}
+  .icon,.rbtn{min-width:44px}
+  .rep-hint button,.rate-q button{min-width:44px}
+}
+#noscriptInfo{display:none;padding:16px;max-width:640px;margin:0 auto}
 </style>
 </head>
 <body>
+<noscript><div id="noscriptInfo"><h1>Was essen wir?</h1><p>Der Familien-Wochenplan mit Rezepten und automatischer Einkaufsliste braucht JavaScript. Mehr Infos: <a href="info.html">Wie funktioniert die App?</a></p></div></noscript>
 <div class="wrap">
   <header class="top">
     <div class="ttl">
@@ -534,11 +579,11 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
   </nav>
 
   <section id="p-woche">
-    <div class="bar">
-      <button class="btn small primary" id="fillWeek">Leere Tage füllen</button>
+    <div class="weekbar">
+      <button class="btn primary" id="fillWeek">✨ Woche planen</button>
       <button class="btn small" id="newWeek">Plan leeren</button>
     </div>
-    <div class="note" id="exampleNote" hidden>Beispielwoche — tausch einfach Gerichte aus, dann wird dein Plan gespeichert.</div>
+    <div class="note" id="exampleNote" hidden>👋 Das ist eine Beispielwoche. <b>Gericht antippen</b> zeigt das Rezept, <b>🎲</b> oder <b>☰</b> tauscht es aus. Sobald du etwas änderst, gehört der Plan dir. <button type="button" class="linkbtn" id="noteHelp">Anleitung ansehen</button></div>
     <div class="week" id="week"></div>
   </section>
 
@@ -555,14 +600,16 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
     <div class="bar shopbar">
       <button class="btn small primary" id="sendKeep">📋 Für Keep</button>
       <button class="btn small" id="copyList">Kopieren</button>
+      <button class="btn small" id="shareList" hidden>📤 Teilen</button>
       <button class="btn small ghost" id="clearDone">Abgehakte ausblenden</button>
     </div>
     <div class="add">
       <input id="extraInput" type="text" placeholder="Noch etwas dazu, z. B. Joghurt, Obst …" autocomplete="off">
       <button class="btn primary" id="extraAdd">Hinzufügen</button>
     </div>
+    <div class="qadd" id="qadd" aria-label="Schnell hinzufügen"></div>
     <div class="shop" id="shop"></div>
-    <p class="pantry">Nicht auf der Liste, weil meist im Haus: Salz, Pfeffer, Öl, Butter, Zucker, Gewürze, Sojasauce, Senf.</p>
+    <p class="pantry">Nicht auf der Liste, weil meist im Haus: Salz, Pfeffer, Öl, Butter, Zucker, Gewürze, Sojasauce, Senf. <button type="button" class="linkbtn" id="pantryEdit">Vorrat anpassen</button></p>
   </section>
 
   <section id="p-ideen" hidden>
@@ -579,6 +626,8 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
       <button class="btn primary zh-go" id="zhGo" type="button" hidden></button>
     </div>
     <div class="bar"><button class="btn primary" id="addRecipe" type="button">＋ Rezept hinzufügen <span class="count" id="inboxCount" hidden>0</span></button></div>
+    <p class="qi-lbl">Schnell zum Ziel</p>
+    <div class="qi" id="quickIdeas" role="group" aria-label="Schnelle Einstiege"></div>
     <div id="ideaFilterUI"></div>
     <div class="fcount" id="ideaCount"></div>
     <div class="ideas" id="ideas"></div>
@@ -2058,7 +2107,9 @@ function ownDish(id){
 }
 function dish(id){ return BY[id] || ownDish(id); }
 function allDishes(){ return [...Object.keys(state.recipes||{}).map(ownDish).filter(Boolean), ...DISHES.filter(d=>d.foto||d.web), ...DISHES.filter(d=>!d.foto&&!d.web)]; }
-const CATS = [["g","Obst & Gemüse"],["b","Brot & Backwaren"],["k","Kühlregal"],["f","Fleisch & Fisch"],["t","Tiefkühl"],["v","Vorrat"],["x","Sonstiges"]];
+const CATS_BASE = [["g","Obst & Gemüse"],["b","Brot & Backwaren"],["k","Kühlregal"],["f","Fleisch & Fisch"],["t","Tiefkühl"],["v","Vorrat"],["x","Sonstiges"]];
+function catsOrdered(){ const o = (state.settings&&state.settings.catOrder)||[]; return [...CATS_BASE].sort((a,b)=>{ const x=o.indexOf(a[0]), y=o.indexOf(b[0]); return (x<0?99:x)-(y<0?99:y) || CATS_BASE.indexOf(a)-CATS_BASE.indexOf(b); }); }
+const CATS = new Proxy([], {get:(_,k)=>{ const c = catsOrdered(); const v = c[k]; return typeof v==="function" ? v.bind(c) : v; }});
 const KIND = {veg:"Vegetarisch",fleisch:"Fleisch",fisch:"Fisch"};
 const DAYS = ["Mo","Di","Mi","Do","Fr","Sa","So"];
 const DAYS_LONG = ["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"];
@@ -2367,13 +2418,23 @@ function randomDish(excludeDay){
 function renderWeek(){
   const dates = weekDates(); const today = (new Date().getDay()+6)%7;
   $("#exampleNote").hidden = !isExample;
+  { const e = DAYS.filter((_,i)=>!(typeof state.days[i]==="string" && dish(state.days[i])) && !(state.days[i]&&state.days[i].custom)).length;
+    $("#fillWeek").classList.toggle("primary", e>0);
+    $("#fillWeek").textContent = e===7 ? "✨ Woche planen" : e>0 ? `✨ ${e} freie${e>1?"":"n"} Tag${e>1?"e":""} füllen` : "✓ Woche ist komplett"; }
+  const STAPLES = [["Nudeln",/nudel|spaghetti|penne|fusilli|makkaroni|tagliatelle|gnocchi|lasagne/i],["Reis",/\breis\b|risotto/i],["Kartoffeln",/kartoffel/i]];
+  const stapleOf = x=>{ const txt = x.n+" "+x.i.map(r=>r[2]).join(" "); return STAPLES.filter(([,re])=>re.test(x.n) || (re.test(txt) && x.i.some(r=>re.test(r[2]) && r[0]>=300))).map(a=>a[0]); };
   $("#week").innerHTML = DAYS.map((d,i)=>{
     const v = state.days[i]; let body;
     if(typeof v==="string" && dish(v)){ const x = dish(v);
       body = `<button class="title" data-open="${x.id}">${esc(x.n)}</button>${chips(x)}`;
     } else if(v && typeof v==="object" && v.custom){
       body = `<span class="title" style="font-weight:700">${esc(v.custom)}</span><div class="meta"><span class="chip">Eigenes Gericht</span></div>`;
-    } else body = `<button class="pickempty" data-pick="${i}">+ Gericht wählen</button>`;
+    } else body = `<div class="pe-row"><button class="pickempty" data-pick="${i}">+ Selbst wählen</button><button class="pickempty" data-roll="${i}">🎲 Zufällig</button></div>`;
+    if(typeof v==="string" && dish(v)){
+      const x = dish(v), prev = i>0 && typeof state.days[i-1]==="string" ? dish(state.days[i-1]) : null;
+      if(prev){ const same = stapleOf(x).filter(a=>stapleOf(prev).includes(a)); if(same.length) body += `<div class="rep-hint">↺ ${same[0]} gab es schon gestern <button type="button" data-roll="${i}">Alternative</button></div>`; }
+      if(!isExample && i<today && !likeOf(v)) body += `<div class="rate-q">Hat es geschmeckt? <button type="button" data-like="${v}" data-v="1" aria-label="Hat geschmeckt">👍</button><button type="button" data-like="${v}" data-v="-1" aria-label="Hat nicht geschmeckt">👎</button></div>`;
+    }
     return `<div class="day${i===today?' today':''}">
       <div class="dhead"><div class="dname" title="${DAYS_LONG[i]}">${d}</div><div class="ddate">${dates[i].toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"})}</div>
         <button class="icon droll" data-roll="${i}" aria-label="${DAYS_LONG[i]}: zufälliges Gericht" title="Würfeln">${ICON.dice}</button></div>
@@ -2542,10 +2603,37 @@ function bindFilterUI(id, set, onChange){
   sync();
   return {sync, open};
 }
+/* Kuratierte Einstiege oberhalb der Ideenliste */
+let quick = null;
+const SEASON = {0:"kohl|wirsing|lauch|rote bete|sellerie|karotte|kartoffel|zwiebel|pastinake|kürbis",1:"kohl|wirsing|lauch|rote bete|sellerie|karotte|kartoffel|zwiebel|pastinake",2:"spinat|lauch|radieschen|bärlauch|karotte|kartoffel|zwiebel|kohl",3:"spinat|radieschen|bärlauch|spargel|lauch|salat|kohlrabi",4:"spargel|radieschen|salat|kohlrabi|spinat|erbsen|rhabarber|erdbeere",5:"spargel|zucchini|salat|kohlrabi|erbsen|erdbeere|karotte|radieschen|gurke",6:"zucchini|tomate|paprika|aubergine|gurke|mais|bohnen|brokkoli|beere|salat",7:"zucchini|tomate|paprika|aubergine|gurke|mais|bohnen|brokkoli|blumenkohl|pilz",8:"kürbis|champignon|pilz|paprika|tomate|zucchini|aubergine|mais|brokkoli|blumenkohl|karotte",9:"kürbis|champignon|pilz|kohl|brokkoli|blumenkohl|karotte|sellerie|lauch|rote bete|kartoffel",10:"kürbis|kohl|rosenkohl|rote bete|sellerie|lauch|pilz|champignon|wirsing|karotte|kartoffel",11:"kohl|wirsing|lauch|rote bete|sellerie|karotte|kartoffel|zwiebel|pastinake|kürbis"};
+function isSeasonal(d){ const re = new RegExp(SEASON[new Date().getMonth()],"i"); return d.i.some(x=>x[3]==="g" && re.test(String(x[2]))); }
+function matchQuick(d){
+  if(!quick) return true;
+  if(quick==="saison") return isSeasonal(d);
+  if(quick==="vorrat"){ const r = frScore(d, frHave([])); return r.hits.length>=1 && r.missing.length<=3; }
+  if(quick==="woche"){
+    if(d.side) return false;
+    const plan = planned().map(id=>dish(id)).filter(Boolean);
+    if(plan.some(x=>x.id===d.id)) return false;
+    const re = /nudel|spaghetti|penne|fusilli|makkaroni|tagliatelle|gnocchi|\breis\b|risotto|kartoffel/i;
+    const tx = x=>x.n+" "+x.i.filter(r=>r[0]>=300).map(r=>r[2]).join(" ");
+    const used = new Set(plan.flatMap(x=>(tx(x).match(re)||[]).map(m=>m.toLowerCase().slice(0,4))));
+    const mine = (tx(d).match(re)||[]).map(m=>m.toLowerCase().slice(0,4));
+    if(mine.some(m=>used.has(m))) return false;
+    const meat = plan.filter(x=>x.k==="fleisch").length;
+    return !(meat>=2 && d.k==="fleisch");
+  }
+  return true;
+}
+const QUICK_BTNS = [["m:woche","🗓 Passt zu deiner Woche"],["f:schnell","⏱ In 20 Min fertig"],["m:vorrat","🥕 Verwendet Vorräte"],["m:saison","🍂 Jetzt saisonal"],["f:like","👍 Von euch bewertet"],["f:veg","🌱 Vegetarisch"],["f:kinder","👶 Familienfreundlich"],["f:glutenfrei","Ohne Gluten"]];
+function renderQuick(){
+  $("#quickIdeas").innerHTML = QUICK_BTNS.map(([k,l])=>{ const [t,v]=k.split(":"); const on = t==="m" ? quick===v : filterSet.has(v); return `<button type="button" data-qi="${k}" aria-pressed="${on}">${l}</button>`; }).join("");
+}
 function renderIdeas(){
   const q = query.trim().toLowerCase();
-  const list = allDishes().filter(d=>matchFilters(d,filterSet) && matchQuery(d,q));
-  $("#ideaCount").innerHTML = countHtml(list.length, filterSet);
+  const list = allDishes().filter(d=>matchFilters(d,filterSet) && matchQuery(d,q) && matchQuick(d));
+  renderQuick();
+  $("#ideaCount").innerHTML = countHtml(list.length, {size: filterSet.size + (quick?1:0)});
   const inPlan = new Set(planned());
   $("#ideas").innerHTML = list.length ? list.map(d=>`<div class="idea">
     <div class="idea-main" data-open="${d.id}"><h4>${esc(d.n)}</h4>${chips(d)}${inPlan.has(d.id)?'<span class="inplan">✓ im Plan</span>':''}</div>
@@ -2556,7 +2644,10 @@ function renderIdeas(){
 function nextSurprise(r=true){
   surprise = randomDish(-1);
   $("#surpriseName").textContent = surprise.n;
-  $("#surpriseMeta").textContent = `${KIND[surprise.k]} · ${surprise.t} Min`;
+  const why = [KIND[surprise.k], `${surprise.t} Min`];
+  if(likeOf(surprise.id)>0) why.push("von euch mit 👍 bewertet"); else if(surprise.kid) why.push("kindertauglich");
+  if(daysSince(lastCooked(surprise.id))>LONG_DAYS) why.push("lange nicht gekocht");
+  $("#surpriseMeta").textContent = why.join(" · ");
 }
 
 function render(){ renderWeek(); renderShop(); renderIdeas(); try{ renderFrChips(); }catch(e){} }
@@ -2636,6 +2727,24 @@ function openFridge(init){
   });
   frUI.sync(); render(); if(!init) setTimeout(()=>inp.focus(),50);
 }
+/* ---------- Sicherung: Export / Import ---------- */
+function exportData(){
+  const blob = new Blob([JSON.stringify({app:"essensplan",version:1,exported:new Date().toISOString(),state},null,1)],{type:"application/json"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+  a.download = "essensplan-sicherung-"+new Date().toISOString().slice(0,10)+".json";
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+  toast("Sicherung gespeichert");
+}
+function importData(file){
+  const r = new FileReader();
+  r.onload = ()=>{
+    let obj; try{ obj = JSON.parse(r.result); }catch(e){ toast("Die Datei ist keine gültige Sicherung"); return; }
+    const st = obj && obj.app==="essensplan" && obj.state; if(!st){ toast("Die Datei ist keine Essensplan-Sicherung"); return; }
+    openSheet(`<button class="btn small close" data-close>Abbrechen</button><h2>Sicherung laden?</h2><p>Der aktuelle Plan, die Einkaufsliste, eigene Rezepte und Einstellungen werden durch die Sicherung${obj.exported?" vom "+new Date(obj.exported).toLocaleDateString("de-DE"):""} ersetzt${sync?" – auch im Familienplan":""}.</p><div class="bar"><button class="btn primary" id="doImport">Ja, Sicherung laden</button></div>`);
+    $("#doImport").addEventListener("click",()=>{ state = normalize(st); closeSheet(); commit(true); toast("Sicherung geladen"); });
+  };
+  r.readAsText(file);
+}
 /* ---------- Einstellungen-Fenster ---------- */
 const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","🥩 Fleisch"],["kinder","👶 Kinderliebling"],["gesund","❤️ Gesund"],["protein","💪 Proteinreich"],["gemuese","🥦 Gemüsereich"],["ballast","🌾 Ballaststoffreich"],["leicht","🥗 Leicht"],["lowcarb","📉 Low-Carb"],["antient","🌿 Antientzündlich"],["glutenfrei",'<span class="gfb">GF</span> Glutenfrei'],["asia","🥢 Asiatisch"],["indien","🍛 Indisch"]];
 function openSettings(){
@@ -2657,12 +2766,24 @@ function openSettings(){
     <p class="sub">Steht nie auf der Einkaufsliste und zählt bei „Was haben wir noch zuhause?“ als vorhanden. Aufnehmen: in der Einkaufsliste bei „🏠 Zuhause“ → „Immer“.</p>
     <div class="filters" id="setPantry"></div>
     <div class="fr-in"><input id="pnInput" type="text" placeholder="Zutat hinzufügen …" autocomplete="off" enterkeyhint="done"><button class="btn primary" id="pnAdd" type="button">+</button></div>
+    <h3>🛒 Reihenfolge im Supermarkt</h3>
+    <p class="sub">So sortiert sich die Einkaufsliste „nach Abteilung“. Mit ▲▼ an euren Laden anpassen.</p>
+    <div id="setCats"></div>
+    <h3>💾 Daten sichern</h3>
+    <p class="sub">Euer Plan liegt auf diesem Gerät${sync?" und im Familienplan":""}. Für einen Handywechsel oder als Sicherung: Plan, eigene Rezepte und Einstellungen als Datei speichern.</p>
+    <div class="datarow"><button type="button" class="btn small" id="dataExport">Sicherung speichern</button><button type="button" class="btn small" id="dataImport">Sicherung laden</button><input type="file" id="dataFile" accept="application/json,.json" hidden></div>
     <h3>⚠️ Allergene ausschließen</h3>
     <p class="sub">Solche Gerichte werden nie gewürfelt und überall mit ⚠️ markiert. Automatisch aus den Zutaten erkannt – ohne Gewähr.</p>
     <div class="filters" id="setAll">${ALLERGENS.map(([k,i,l])=>`<button type="button" data-allg="${k}" aria-pressed="${s.allerg.includes(k)}">${i} ${l}</button>`).join("")}</div>
   </div>`);
   const drawPantry = ()=>{ const ks = Object.keys(state.pantry||{}).sort((a,b)=>a.localeCompare(b,"de")); $("#setPantry").innerHTML = ks.length ? ks.map(k=>`<button type="button" data-pn="${esc(k)}" aria-label="${esc(k)} entfernen">${esc(k)} ×</button>`).join("") : `<span class="sub">Noch nichts im Vorrat.</span>`; };
   drawPantry();
+  const drawCats = ()=>{ $("#setCats").innerHTML = catsOrdered().map(([c,l],i,arr)=>`<div class="catord"><span>${l}</span><button type="button" data-cup="${c}" aria-label="${l} nach oben" ${i===0?"disabled":""}>▲</button><button type="button" data-cdown="${c}" aria-label="${l} nach unten" ${i===arr.length-1?"disabled":""}>▼</button></div>`).join(""); };
+  drawCats();
+  const moveCat = (c,dir)=>{ const o = catsOrdered().map(x=>x[0]); const i=o.indexOf(c), j=i+dir; if(j<0||j>=o.length) return; [o[i],o[j]]=[o[j],o[i]]; setSetting("catOrder",o); drawCats(); };
+  $("#dataExport").addEventListener("click",e=>{ e.stopPropagation(); exportData(); });
+  $("#dataImport").addEventListener("click",e=>{ e.stopPropagation(); $("#dataFile").click(); });
+  $("#dataFile").addEventListener("change",e=>{ const f=e.target.files[0]; if(f) importData(f); });
   const addPantry = ()=>{ const inp = $("#pnInput"); const v = inp.value.trim(); if(!v) return; state.pantry = state.pantry||{}; state.pantry[v]=1; inp.value=""; commit(); drawPantry(); };
   $("#pnAdd").addEventListener("click",e=>{ e.stopPropagation(); addPantry(); });
   $("#pnInput").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); addPantry(); } });
@@ -2670,6 +2791,8 @@ function openSettings(){
   $(".set").addEventListener("click",e=>{
     const b = e.target.closest("button"); if(!b) return; e.stopPropagation();
     const cur = S();
+    if(b.dataset.cup){ moveCat(b.dataset.cup,-1); return; }
+    if(b.dataset.cdown){ moveCat(b.dataset.cdown,1); return; }
     if(b.dataset.pn){ removePantry(b.dataset.pn); commit(); drawPantry(); return; }
     if(b.id==="pnAdd") return;
     if(b.dataset.setp){ const n=Math.min(12,Math.max(1,cur.persons+(+b.dataset.setp))); setSetting("persons",n); $("#setPers").textContent=n; }
@@ -2685,6 +2808,7 @@ function openHelp(first){
   const leg = [["🌱","Vegetarisch"],["🥩","Fleisch"],["🐟","Fisch"],["👶","Kinderliebling – mild und kindertauglich"],["❤️","Gesund – viel Gemüse und Ballaststoffe, nicht zu fett, kein verarbeitetes Fleisch"],["💪","Proteinreich – mind. 25 g Eiweiß pro Portion"],["🥦","Gemüsereich – mind. 250 g Gemüse/Hülsenfrüchte pro Portion"],["🌾","Ballaststoffreich – mind. 10 g pro Portion"],["🥗","Leicht – höchstens 550 kcal pro Portion"],["📉","Low-Carb – höchstens 35 g Kohlenhydrate pro Portion"],["🌿","Antientzündlich – jodarm, viel Gemüse, gute Öle"],['<span class="gfb">GF</span>',"Glutenfrei"],["🥢","Asiatisch"],["🍛","Indisch"],["🥣","Beilage/Dip – wird nicht gewürfelt"],["📷 🔗","Eingesendet (Foto/Link)"],["⭐","Mein Rezept – selbst angelegt"],["👍 👎","Eure Bewertung"],["⚠️","Enthält ein Allergen, das ihr in ⚙ ausgeschlossen habt"]];
   openSheet(`<button class="btn small close" data-close>Schließen</button>
   <div class="help">
+    <p class="sub"><a href="info.html">Was ist „Was essen wir?“ – Überblick &amp; Fragen</a></p>
     <h2>${first?"Willkommen! 👋":"Anleitung"}</h2>
     <p class="intro">Was essen wir? plant eure Woche, schreibt die Einkaufsliste und hat über 150 Rezepte – mit Mengen für 3 Personen. Tipp auf ein Thema:</p>
     <details ${first?"open":""}><summary>👋 Erste Schritte</summary>
@@ -2928,6 +3052,8 @@ document.addEventListener("change",e=>{
 });
 document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeSheet(); if(e.key==="Enter" && e.target.id==="customDish"){ const b=document.querySelector("[data-custom]"); b&&b.click(); } });
 
+$("#noteHelp").addEventListener("click",()=>openHelp(false));
+$("#pantryEdit").addEventListener("click",()=>openSettings());
 $("#fillWeek").addEventListener("click",()=>{
   let n=0; for(let i=0;i<7;i++){ if(!state.days[i]){ state.days[i]=randomDish(i).id; n++; } }
   commit(); toast(n?`${n} Tag${n>1?'e':''} gefüllt`:"Alle Tage sind schon geplant");
@@ -2949,7 +3075,7 @@ $("#clearDone").addEventListener("click",()=>{
   Object.keys(state.extras).forEach(id=>{ if(state.checked["x:"+id]){ delete state.extras[id]; delete state.checked["x:"+id]; } });
   commit(); toast(n?`${n} Einträge ausgeblendet`:"In der Auswahl ist noch nichts abgehakt");
 });
-$("#copyList").addEventListener("click",()=>{
+function shopText(){
   const items = [...groupParts(shopParts()), ...extraItems()].filter(it=>!isDone(it));
   const sel = shopPrefs.days.filter(d=>plannedDays().includes(d));
   const head = sel.length===plannedDays().length ? "Einkaufsliste:\n\n" : "Einkaufsliste für "+sel.map(d=>DAYS[d]).join(", ")+":\n\n";
@@ -2963,13 +3089,19 @@ $("#copyList").addEventListener("click",()=>{
   } else {
     body = CATS.map(([c,l])=>{ const its = items.filter(i=>i.c===c); return its.length? l+":\n"+its.map(line).join("\n") : ""; }).filter(Boolean).join("\n\n");
   }
-  const text = head + body;
-  if(!items.length){ toast("Nichts offen auf der Liste"); return; }
+  return items.length ? head + body : null;
+}
+$("#copyList").addEventListener("click",()=>{
+  const text = shopText(); if(!text){ toast("Nichts offen auf der Liste"); return; }
   navigator.clipboard.writeText(text).then(()=>toast("Einkaufsliste kopiert")).catch(()=>{
     openSheet(`<button class="btn small close" data-close>Schließen</button><h2>Einkaufsliste</h2><p class="sub">Markieren und kopieren:</p><textarea id="copyArea" style="width:100%;height:50vh;font:14px var(--body);background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px">${esc(text)}</textarea>`);
     $("#copyArea").select();
   });
 });
+if(navigator.share){ $("#shareList").hidden = false; $("#shareList").addEventListener("click",()=>{ const text = shopText(); if(!text){ toast("Nichts offen auf der Liste"); return; } navigator.share({title:"Einkaufsliste", text}).catch(()=>{}); }); }
+const QADD = ["Milch","Obst","Brot","Kaffee","Joghurt","Butter","Eier","Toilettenpapier"];
+$("#qadd").innerHTML = QADD.map(t=>`<button type="button" data-qadd="${t}">+ ${t}</button>`).join("");
+$("#qadd").addEventListener("click",e=>{ const b=e.target.closest("[data-qadd]"); if(!b) return; state.extras[Date.now().toString(36)+Math.random().toString(36).slice(2,5)] = {text:b.dataset.qadd}; commit(); toast(b.dataset.qadd+" steht auf der Liste"); });
 // Offene Einträge als einfache Zeilen für eine Google-Keep-Checkliste kopieren (Keep macht beim Einfügen aus jeder Zeile einen Punkt)
 $("#sendKeep").addEventListener("click",()=>{
   const items = [...groupParts(shopParts()), ...extraItems()].filter(it=>!isDone(it));
@@ -2990,7 +3122,16 @@ $("#sendKeep").addEventListener("click",()=>{
 });
 $("#ideaFilterUI").innerHTML = filterUI("idea","Gericht oder Zutat …");
 const ideaUI = bindFilterUI("idea", filterSet, ()=>{ query=$("#ideaSearch").value; renderIdeas(); });
-$("#ideaCount").addEventListener("click",e=>{ if(e.target.closest("[data-freset]")){ filterSet.clear(); ideaUI.sync(); renderIdeas(); } });
+$("#ideaCount").addEventListener("click",e=>{ if(e.target.closest("[data-freset]")){ filterSet.clear(); quick=null; ideaUI.sync(); renderIdeas(); } });
+$("#quickIdeas").addEventListener("click",e=>{
+  const b = e.target.closest("[data-qi]"); if(!b) return;
+  const [t,v] = b.dataset.qi.split(":");
+  if(t==="m"){
+    if(v==="vorrat" && !Object.keys(state.pantry||{}).length && quick!=="vorrat"){ openFridge({have:[...frSel], f:[]}); return; }
+    quick = quick===v ? null : v;
+  } else { toggleFilter(filterSet, v); ideaUI.sync(); }
+  renderIdeas();
+});
 $("#surpriseAgain").addEventListener("click",()=>nextSurprise());
 $("#surpriseUse").addEventListener("click",()=>surprise&&showDish(surprise.id));
 
@@ -3204,7 +3345,7 @@ function openSyncSheet(){
     const link = joinLink();
     openSheet(`<button class="btn small close" data-close>Schließen</button>
       <h2>Familienplan</h2>
-      <p class="sub">Alle Änderungen werden automatisch synchronisiert.</p>
+      <p class="sub">Alle Änderungen werden automatisch synchronisiert. Ein Handy-Wechsel ist einfach: Link öffnen, fertig. Zusätzlich könnt ihr unter ⚙ Einstellungen eine Sicherung speichern.</p>
       <p>Öffne diesen Link auf jedem Handy, das mitplanen soll. Danach sehen alle denselben Wochenplan und dieselbe Einkaufsliste.</p>
       <pre class="code" id="joinLinkText">${esc(link)}</pre>
       <div class="bar"><button class="btn primary" id="copyJoin">Familien-Link kopieren</button></div>
@@ -3222,6 +3363,7 @@ function openSyncSheet(){
     <p><b>Hast du schon einen Familien-Link bekommen?</b> Dann öffne einfach den Link – fertig.</p>
     <div class="bar" style="margin:14px 0"><button class="btn primary" id="quickShare">Gemeinsamen Plan starten</button></div>
     <p class="sub">Dein aktueller Plan wird übernommen. Danach bekommst du einen Einladungslink für die anderen Handys. Jede Familie hat ihren eigenen, privaten Plan.</p>
+    <p class="sub"><b>Ohne gemeinsamen Plan</b> bleibt dein Plan nur auf diesem Handy. Bei einem Handy-Wechsel oder gelöschten Browserdaten geht er verloren – speichere dann vorher unter ⚙ Einstellungen eine Sicherung.</p>
     <details class="info" style="margin-top:18px"><summary>Für Technik-Fans: eigene Firebase-Datenbank verwenden</summary>
     <p>Zum Einrichten (einmalig, ca. 10 Minuten, kostenlos):</p>
     <ol class="steps">
@@ -3297,7 +3439,8 @@ $("#zhChips").addEventListener("click",e=>{
 $("#zhGo").addEventListener("click",()=>openFridge({have:[...frSel], f:[]}));
 renderFrChips();
 $("#fridgeBtn").addEventListener("click",()=>openFridge({have:[...frSel], f:[]}));
-try{ if(!local && !sync && !localStorage.getItem("essensplan-hilfe")) setTimeout(()=>openHelp(true),500); }catch(e){}
+try{ localStorage.setItem("essensplan-hilfe","1"); }catch(e){}
+$("#tab-einkauf").addEventListener("click",()=>{ try{ if(!localStorage.getItem("essensplan-tipp-einkauf")){ localStorage.setItem("essensplan-tipp-einkauf","1"); setTimeout(()=>toast("Tipp: Beim Einkaufen abhaken – „🏠 Zuhause“ für alles, was ihr schon habt"),400); } }catch(e){} });
 startSync().then(()=>{ if(window.__joined) toast("Mit dem Familien-Plan verbunden"); });
 try{ const tab = localStorage.getItem(LS+"-tab"); if(tab && tab!=="woche"){ const b=document.querySelector(`[data-tab="${tab}"]`); b&&b.click(); } }catch(e){}
 </script>
