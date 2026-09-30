@@ -656,6 +656,9 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
 .k-tabs{display:flex;gap:6px;overflow-x:auto;margin:10px 0 12px;padding-bottom:2px}
 .k-tabs button{flex:none;font:600 14px var(--body);padding:9px 12px;min-height:44px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);cursor:pointer}
 .k-tabs button[aria-pressed="true"]{background:var(--basil-soft);border-color:var(--basil);color:var(--basil)}
+.k-tabs button .k-n{display:inline-block;min-width:20px;margin-left:4px;padding:1px 6px;border-radius:999px;background:var(--sunk);font-size:12px;text-align:center}
+.k-tabs button[aria-pressed="true"] .k-n{background:var(--surface)}
+.sheet .k-tabs{overflow:visible}.sheet .k-tabs{gap:4px}.sheet .k-tabs button{flex:1 1 auto;padding:9px 5px;font-size:13px;white-space:nowrap}.sheet .k-tabs .k-n{margin-left:2px;min-width:18px;padding:1px 5px}
 .k-head{display:flex;align-items:center;gap:10px;margin-top:4px}
 .k-head h2{font:700 20px var(--display);margin:0}
 </style>
@@ -3366,7 +3369,7 @@ function deleteRecipe(id, btn){
 }
 $("#addRecipe").addEventListener("click",()=>openAddSheet());
 /* ---------- Meine Küche ---------- */
-const KUECHE_V = "A";
+const KUECHE_V = "C";
 const KGROUPS = [["like","👍 Mögen wir","Noch nichts bewertet – im Rezept kannst du 👍 vergeben."],["own","⭐ Meine Rezepte","Noch keine eigenen Rezepte – über „Rezept hinzufügen“ → „Selbst eingeben“."],["cooked","🕒 Zuletzt gekocht","Noch nichts gekocht – hier erscheinen Gerichte, sobald eine Woche vorbei ist."]];
 function kitchenList(k){
   const all = allDishes();
@@ -3381,7 +3384,15 @@ function kitchenRow(d){
   return `<div class="idea"><div class="idea-main" data-open="${d.id}"><h4>${esc(d.n)}</h4>${chips(d)}${when}</div><button class="btn small ghost plan-btn" data-assign="${d.id}" aria-label="${esc(d.n)} einplanen">＋ Einplanen</button></div>`;
 }
 let kOpen = {}, kTab = "like";
+const KSHORT = {like:"👍 Mögen wir",own:"⭐ Eigene",cooked:"🕒 Zuletzt"};
+function kitchenTabsHtml(){
+  const list = kitchenList(kTab), g = KGROUPS.find(x=>x[0]===kTab);
+  return `<button class="btn small close" data-close>Schließen</button><h2>🍽 Meine Küche</h2><p class="sub">Was eure Familie mag, selbst eingetragen und zuletzt gekocht hat.</p>
+    <div class="k-tabs" role="tablist">${KGROUPS.map(([k,l])=>`<button type="button" data-ktab="${k}" aria-pressed="${k===kTab}">${KSHORT[k]} <span class="k-n">${kitchenList(k).length}</span></button>`).join("")}</div>
+    ${list.length ? `<div class="k-list">${list.map(kitchenRow).join("")}</div>` : `<div class="k-empty">${g[2]}</div>`}`;
+}
 function kitchenSheetHtml(){
+  if(KUECHE_V==="C") return kitchenTabsHtml();
   return `<button class="btn small close" data-close>Schließen</button><h2>🍽 Meine Küche</h2><p class="sub">Was eure Familie mag, selbst eingetragen und zuletzt gekocht hat.</p>` +
     KGROUPS.map(([k,l,empty])=>{ const list = kitchenList(k), open = !!kOpen[k], show = open ? list : list.slice(0,3);
       return `<div class="k-sec"><h3>${l}<small>${list.length}</small></h3>` + (list.length ? `<div class="k-list">${show.map(kitchenRow).join("")}</div>${list.length>3?`<button type="button" class="k-all" data-kall="${k}">${open?"Weniger anzeigen":"Alle "+list.length+" anzeigen"}</button>`:""}` : `<div class="k-empty">${empty}</div>`) + `</div>`; }).join("");
@@ -3398,7 +3409,7 @@ function openKitchen(){
 }
 document.addEventListener("click",e=>{
   const a = e.target.closest("[data-kall]"); if(a){ kOpen[a.dataset.kall] = !kOpen[a.dataset.kall]; const sh = document.querySelector(".sheet"); if(sh){ const y = sh.scrollTop; sh.innerHTML = kitchenSheetHtml(); sh.scrollTop = y; } return; }
-  const t = e.target.closest("[data-ktab]"); if(t){ kTab = t.dataset.ktab; $("#kitchenView").innerHTML = kitchenViewHtml(); return; }
+  const t = e.target.closest("[data-ktab]"); if(t){ kTab = t.dataset.ktab; const sh = document.querySelector(".sheet"); if(sh && KUECHE_V==="C"){ const y = sh.scrollTop; sh.innerHTML = kitchenTabsHtml(); sh.scrollTop = y; } else $("#kitchenView").innerHTML = kitchenViewHtml(); return; }
   if(e.target.closest("[data-kback]")){ $("#p-ideen").classList.remove("kmode"); $("#kitchenView").hidden=true; return; }
 });
 $("#kitchenBtn").addEventListener("click",openKitchen);
