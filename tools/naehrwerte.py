@@ -85,7 +85,7 @@ TAB = {
  "Wurst (z. B. Mettwurst oder Fleischwurst)":(None,300,14,27,1,0,0,1), "Ziegenfrischkäse (oder Feta)":(None,250,12,21,1,0,0,0),
  "Zitrone (Bio)":(40,30,0.5,0.2,7,0.5,0,0), "Zitrone":(40,30,0.5,0.2,7,0.5,0,0), "Zucchini":(250,20,1.5,0.4,2,1.1,1,0),
  "Zwiebel":(100,30,1.2,0.2,5,1.8,1,0),
- "Zanderfilet (mit Haut)":(None,85,19,0.7,0,0,0,0), "Mandelmus (hell)":(None,620,24,53,6,12,0,0), "Thymian":(2,100,5,2,10,14,0,0), "Schwarze Bohnen":(240,110,8,0.5,14,7,1,0), "Grüne Peperoni":(40,30,1.5,0.3,4,2,1,0),
+ "Zanderfilet (mit Haut)":(None,85,19,0.7,0,0,0,0), "Mandelmus (hell)":(None,620,24,53,6,12,0,0), "Thymian":(2,100,5,2,10,14,0,0), "Weißkohl":(None,25,1.4,0.2,4,3,1,0), "Kochschinken":(None,110,20,3,1,0,0,1), "Bergkäse gerieben":(None,400,28,32,0,0,0,0), "Veggie-Hack (Erbsenprotein)":(None,190,20,10,4,5,1,0), "Wirsing (klein)":(700,30,3,0.4,3,3,1,0), "Schwarze Bohnen":(240,110,8,0.5,14,7,1,0), "Grüne Peperoni":(40,30,1.5,0.3,4,2,1,0),
  "Gemüsebrühe (glutenfrei)":(None,3,0.2,0.2,0.4,0,0,0), "Tamari (glutenfreie Sojasauce)":(30,70,10,0,6,0,0,0),
  "Linsennudeln (glutenfrei)":(None,340,25,2,50,11,1,0), "Buchweizenmehl":(None,340,12,2.5,70,4,0,0),
  "Mais-Tortillas (glutenfrei)":(30,220,5,3,45,5,0,0), "Mais-Reis-Nudeln (glutenfrei)":(None,355,7,1.5,79,2,0,0),
