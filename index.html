@@ -582,7 +582,7 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
       <button class="btn primary" id="fillWeek">✨ Woche planen</button>
       <button class="btn small" id="newWeek">Plan leeren</button>
     </div>
-    <div class="note" id="exampleNote" hidden>👋 Das ist eine Beispielwoche. <b>Gericht antippen</b> zeigt das Rezept, <b>🎲</b> oder <b>☰</b> tauscht es aus. Sobald du etwas änderst, gehört der Plan dir. <button type="button" class="linkbtn" id="noteHelp">Anleitung ansehen</button></div>
+    <div class="note" id="exampleNote" hidden>👋 Das ist eine Beispielwoche. <b>Gericht antippen</b> zeigt das Rezept, <b>🎲</b> tauscht es aus. Sobald du etwas änderst, gehört der Plan dir. <button type="button" class="linkbtn" id="noteHelp">Anleitung ansehen</button></div>
     <div class="week" id="week"></div>
   </section>
 
@@ -2446,7 +2446,6 @@ function renderWeek(){
         <button class="icon droll" data-roll="${i}" aria-label="${DAYS_LONG[i]}: zufälliges Gericht" title="Würfeln">${ICON.dice}</button></div>
       <div class="dish">${body}</div>
       <div class="acts">
-        <button class="icon" data-pick="${i}" aria-label="${DAYS_LONG[i]}: Gericht auswählen" title="Auswählen">${ICON.list}</button>
         ${v?`<button class="icon" data-clear="${i}" aria-label="${DAYS_LONG[i]} leeren" title="Leeren">${ICON.x}</button>`:''}
       </div></div>`;
   }).join("");
@@ -2826,7 +2825,7 @@ function openHelp(first){
       ${img("woche","Wochenplan mit Gerichten")}
       <ul>
         <li><b>🎲 unter dem Tag</b> würfelt ein passendes Gericht.</li>
-        <li><b>☰</b> öffnet die Auswahl mit Suche und Filtern, <b>×</b> leert den Tag.</li>
+        <li><b>+ Selbst wählen</b> öffnet die Auswahl mit Suche und Filtern, <b>×</b> leert den Tag.</li>
         <li><b>Leere Tage füllen</b> würfelt alle freien Tage – unter der Woche nur schnelle Gerichte (Kochzeit in ⚙ einstellbar), bevorzugt vegetarisch und eure Lieblingskategorien.</li>
         <li><b>Plan leeren</b> leert Wochenplan und Einkaufsliste (zur Sicherheit zweimal tippen). Bewertungen, eigene Rezepte und Einstellungen bleiben erhalten.</li>
         <li>Tipp auf ein Gericht öffnet das Rezept.</li>
