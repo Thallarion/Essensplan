@@ -3502,13 +3502,11 @@ function openAddSheet(){
     <h2>Rezept hinzufügen</h2>
     <p class="sub">Wie möchtest du es hinzufügen?</p>
     <div class="add-opts">
-      <button type="button" class="add-opt" id="aoPhoto"><span aria-hidden="true">📷</span><b>Foto oder PDF</b><small>Kochbuchseite oder Screenshot – wird aufbereitet und für alle eingetragen</small></button>
-      <button type="button" class="add-opt" id="aoLink"><span aria-hidden="true">🔗</span><b>Link einfügen</b><small>z. B. von Chefkoch – wird aufbereitet und für alle eingetragen</small></button>
+      <button type="button" class="add-opt" id="aoPhoto"><span aria-hidden="true">📷</span><b>Foto, PDF oder Link</b><small>Kochbuchseite, Screenshot oder Webseite – wird aufbereitet und für alle eingetragen</small></button>
       <button type="button" class="add-opt" id="aoOwn"><span aria-hidden="true">✍️</span><b>Selbst eingeben</b><small>Bleibt nur in eurem Plan (Filter „⭐ Meine Rezepte“)</small></button>
     </div>
     <p><a class="btn small ghost" href="einsenden.html?app=1" style="text-decoration:none">🌐 Einsendeseite für Gäste öffnen</a></p>`);
-  $("#aoPhoto").addEventListener("click",()=>{ openInbox(); const f=$("#ibFiles"); if(f) f.click(); });
-  $("#aoLink").addEventListener("click",()=>{ openInbox(); setTimeout(()=>{ const l=$("#ibLink"); if(l) l.focus(); },60); });
+  $("#aoPhoto").addEventListener("click",()=>openInbox());
   $("#aoOwn").addEventListener("click",()=>{ closeSheet(); openRecipeForm(); });
 }
 /* ---------- "Was haben wir noch zuhause?": Zutaten-Chips direkt auf der Ideen-Seite ---------- */
