@@ -3376,7 +3376,7 @@ function kitchenList(k){
   if(k==="like") return all.filter(d=>likeOf(d.id)>0);
   if(k==="own") return all.filter(d=>d.own);
   const seen = new Set();
-  return Object.entries(state.cooked||{}).sort((a,b)=>b[0].localeCompare(a[0])).filter(([,id])=>!seen.has(id)&&seen.add(id)).map(([day,id])=>{ const d=dish(id); return d?Object.assign({},d,{_when:day}):null; }).filter(Boolean);
+  return Object.entries(state.cooked||{}).sort((a,b)=>b[0].localeCompare(a[0])).filter(([,id])=>!seen.has(id)&&seen.add(id)).map(([day,id])=>{ const d=dish(id); return d?Object.assign({},d,{_when:day}):null; }).filter(Boolean).slice(0,10);
 }
 function kitchenRow(d){
   const w = d._when ? daysSince(d._when) : null;
