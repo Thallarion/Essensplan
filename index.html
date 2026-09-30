@@ -619,7 +619,7 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
       <button class="btn primary" id="fillWeek">✨ Woche planen</button>
       <span class="wk-status" id="wkStatus" hidden>✓ Woche ist komplett</span>
     </div>
-    <div class="note" id="exampleNote" hidden>👋 Das ist eine Beispielwoche. <b>Gericht antippen</b> zeigt das Rezept, <b>🎲</b> oder <b>☰</b> tauscht es aus. Sobald du etwas änderst, gehört der Plan dir. <button type="button" class="linkbtn" id="noteHelp">Anleitung ansehen</button></div>
+    <div class="note" id="exampleNote" hidden>👋 Das ist eine Beispielwoche. <b>Gericht antippen</b> zeigt das Rezept, <b>🎲 Tauschen</b> wechselt das Gericht, <b>×</b> leert den Tag zum Neuwählen. Sobald du etwas änderst, gehört der Plan dir. <button type="button" class="linkbtn" id="noteHelp">Anleitung ansehen</button></div>
     <div class="week" id="week"></div>
   </section>
 
@@ -2500,7 +2500,6 @@ function renderWeek(){
       <div class="dhead"><div class="dname" title="${DAYS_LONG[i]}">${DAYS[i]}</div><div class="ddate">${dates[i].toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"})}</div></div>
       <div class="dish">${body}${stapleHint(i,v)}</div>
       <div class="acts">
-        <button class="icon" data-pick="${i}" aria-label="${DAYS_LONG[i]}: Gericht auswählen" title="Auswählen">${ICON.list}</button>
         ${v?`<button class="icon" data-clear="${i}" aria-label="${DAYS_LONG[i]} leeren" title="Leeren">${ICON.x}</button>`:''}
       </div></div>`;
   };
@@ -2886,8 +2885,8 @@ function openHelp(first){
     <details><summary>📅 Wochenplan</summary>
       ${img("woche","Wochenplan mit Gerichten")}
       <ul>
-        <li><b>🎲 unter dem Tag</b> würfelt ein passendes Gericht.</li>
-        <li><b>☰</b> öffnet die Auswahl mit Suche und Filtern, <b>×</b> leert den Tag.</li>
+        <li><b>🎲 Tauschen</b> würfelt ein anderes, passendes Gericht.</li>
+        <li><b>×</b> leert den Tag. Danach könnt ihr „Selbst wählen“ (ganze Liste mit Suche und Filtern) oder „Zufällig“ antippen.</li>
         <li><b>Leere Tage füllen</b> würfelt alle freien Tage – unter der Woche nur schnelle Gerichte (Kochzeit in ⚙ einstellbar), bevorzugt vegetarisch und eure Lieblingskategorien.</li>
         <li><b>Plan leeren</b> leert Wochenplan und Einkaufsliste (zur Sicherheit zweimal tippen). Bewertungen, eigene Rezepte und Einstellungen bleiben erhalten.</li>
         <li>Tipp auf ein Gericht öffnet das Rezept.</li>
