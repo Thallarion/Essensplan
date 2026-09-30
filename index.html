@@ -2097,6 +2097,8 @@ const ALLERGENS = [
   ["lupine","🌼","Lupinen", /lupine/],
   ["weich","🦑","Weichtiere", /muschel|tintenfisch|calamar|oktopus/],
 ];
+const _alg = new WeakMap();
+function allergenKeys(d){ let r=_alg.get(d); if(!r){ r=new Set(allergensOf(d).map(a=>a[0])); _alg.set(d,r); } return r; }
 function allergensOf(d){
   const st = STEPS[d.id];
   const texts = d.i.map(x=>String(x[2]).toLowerCase());
@@ -2345,6 +2347,7 @@ const FILTER_GROUPS = [
   ["Ernährung",[["kinder","👶 Kinderliebling"],["antient","🌿 Antientzündlich"],["glutenfrei",'<span class="gfb">GF</span> Glutenfrei']]],
   ["Küche",[["asia","🥢 Asiatisch"],["indien","🍛 Indisch"]]],
   ["Herkunft",[["eingesendet","📷 Eingesendet"],["meine","⭐ Meine Rezepte"]]],
+  ["Ohne Allergene",ALLERGENS.map(([k,i,l])=>["no-"+k,`${i} ohne ${l}`])],
 ];
 const FLABEL = Object.fromEntries(FILTER_GROUPS.flatMap(g=>g[1]));
 function filterUI(id, placeholder){
@@ -2485,6 +2488,7 @@ function openHelp(first){
         <li><b>Keine Idee?</b> zeigt oben einen Zufallsvorschlag.</li>
         <li>Suche nach Gericht oder Zutat, z. B. „Feta“ oder „Nudeln“.</li>
         <li><b>⚙ Filter</b> öffnet alle Filter in Gruppen. Mehrere lassen sich kombinieren, z. B. „Vegetarisch“ + „Bis 30 Min“. Aktive Filter stehen als Chips darunter – mit × entfernen.</li>
+        <li><b>Ohne Allergene</b>: z. B. „ohne Gluten“ + „ohne Milch“ zeigt nur Gerichte, in denen beides nicht vorkommt.</li>
       </ul>
       <p><b>Die Symbole:</b></p>
       <table class="legend">${leg.map(([i,t])=>`<tr><td>${i}</td><td>${t}</td></tr>`).join("")}</table>
@@ -2597,6 +2601,7 @@ function matchFilter(d,f){
   if(f==="eigene"&&!d.own&&!d.foto&&!d.web) return false;
   if(f==="eingesendet"&&!d.foto&&!d.web) return false;
   if(f==="meine"&&!d.own) return false;
+  if(f.startsWith("no-") && allergenKeys(d).has(f.slice(3))) return false;
   if(f==="antient"&&!d.ai) return false;
   if(f==="glutenfrei"&&!d.gf) return false;
   if(f==="like"&&likeOf(d.id)<=0) return false;
