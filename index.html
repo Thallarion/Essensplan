@@ -533,6 +533,11 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
 .add-opt b{font-size:16px}
 .add-opt small{color:var(--muted);font-size:13px}
 .add-opt:hover,.add-opt:focus-visible{border-color:var(--basil)}
+.home-btn{flex:none;font:600 12px var(--body);padding:5px 9px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer;white-space:nowrap}
+.home-btn:hover,.home-btn:focus-visible{border-color:var(--basil);color:var(--basil)}
+.item.done .home-btn{display:none}
+.homebox{margin:0 0 12px;color:var(--muted)}
+.homebox summary{cursor:pointer;font:600 14px var(--body);padding:8px 4px}
 </style>
 </head>
 <body>
@@ -2412,7 +2417,7 @@ function saveShopPrefs(){ lsSet(shopPrefs, LS_SHOP); }
 function plannedDays(){ return DAYS.map((_,i)=>i).filter(i=>typeof state.days[i]==="string" && dish(state.days[i])); }
 
 // Jede Zutat pro Tag ist ein eigener Eintrag ("Teil"), damit Abhaken pro Einkauf funktioniert
-function shopParts(){
+function shopPartsAll(){
   const sel = new Set(shopPrefs.days);
   const parts = [];
   plannedDays().filter(d=>sel.has(d)).forEach(day=>{
@@ -2422,8 +2427,9 @@ function shopParts(){
     const P = S().persons;
     merged.forEach((v,k)=>parts.push({key:day+"|"+k, day, dishName:x.n, ...v, a:scaleQty(v.a,v.u,P,v.n)}));
   });
-  return parts.filter(pt=>!state.hidden[pt.key]);
+  return parts;
 }
+function shopParts(){ return shopPartsAll().filter(pt=>!state.hidden[pt.key]); }
 function groupParts(parts){
   const map = new Map();
   parts.forEach(pt=>{
@@ -2435,14 +2441,14 @@ function groupParts(parts){
 }
 function extraItems(){ return Object.entries(state.extras).map(([id,e])=>({n:e.text,c:"x",extra:id,keys:["x:"+id]})).filter(it=>!state.hidden[it.keys[0]]); }
 function isDone(it){ return it.keys.every(k=>state.checked[k]); }
-let shopItems = [];
+let shopItems = [], homeList = [];
 function itemHtml(it, showDays){
   const idx = shopItems.push(it)-1;
   const done = isDone(it);
   return `<div class="item${done?' done':''}">
     <input type="checkbox" id="si_${idx}" data-item="${idx}" ${done?'checked':''}>
     <label for="si_${idx}">${it.extra?'':`<span class="qty">${fmtQty(it.a,it.u)}</span>`}<span>${esc(it.n)}</span>${showDays&&it.days?`<span class="for">für ${it.days.map(d=>DAYS[d]).join(", ")}</span>`:''}</label>
-    ${it.extra?`<button class="rm" data-rmextra="${it.extra}" aria-label="${esc(it.n)} entfernen">×</button>`:''}
+    ${it.extra?`<button class="rm" data-rmextra="${it.extra}" aria-label="${esc(it.n)} entfernen">×</button>`:`<button class="home-btn" type="button" data-home="${idx}" aria-label="${esc(it.n)}: haben wir zu Hause" title="Haben wir zu Hause – von der Liste nehmen">🏠 Zuhause</button>`}
   </div>`;
 }
 function renderShopControls(){
@@ -2458,8 +2464,10 @@ function renderShop(){
   const grouped = groupParts(parts);
   const open = grouped.filter(it=>!isDone(it)).length + extras.filter(it=>!isDone(it)).length;
   $("#shopCount").textContent = open;
+  homeList = groupParts(shopPartsAll().filter(pt=>state.hidden[pt.key]==="home")).sort((a,b)=>a.n.localeCompare(b.n,"de"));
+  const homeHtml = homeList.length ? `<details class="homebox"><summary>🏠 Schon zuhause (${homeList.length})</summary>${homeList.map((it,i)=>`<div class="item"><label style="cursor:default"><span class="qty">${fmtQty(it.a,it.u)}</span><span>${esc(it.n)}</span></label><button class="home-btn" type="button" data-unhome="${i}">Zurück auf die Liste</button></div>`).join("")}</details>` : "";
   if(!grouped.length && !extras.length){
-    $("#shop").innerHTML = `<p class="empty" style="padding:14px 0">${plannedDays().length?'Für die ausgewählten Tage ist nichts mehr offen. Wähl oben andere Tage aus.':'Die Liste ist leer. Plane ein paar Gerichte, dann erscheinen die Zutaten hier.'}</p>`;
+    $("#shop").innerHTML = `<p class="empty" style="padding:14px 0">${plannedDays().length?'Für die ausgewählten Tage ist nichts mehr offen. Wähl oben andere Tage aus.':'Die Liste ist leer. Plane ein paar Gerichte, dann erscheinen die Zutaten hier.'}</p>` + homeHtml;
     return;
   }
   let html = "";
@@ -2477,8 +2485,13 @@ function renderShop(){
       return its.length ? `<div class="cat"><h3>${({g:"🥕",b:"🥖",k:"🧀",f:"🥩",t:"🧊",v:"🥫",x:"🧺"})[c]||""} ${label}</h3>${its.map(it=>itemHtml(it,true)).join("")}</div>` : "";
     }).join("");
   }
-  $("#shop").innerHTML = html;
+  $("#shop").innerHTML = html + homeHtml;
 }
+document.addEventListener("click",e=>{
+  const h = e.target.closest("[data-home]"), u = e.target.closest("[data-unhome]");
+  if(h){ const it = shopItems[+h.dataset.home]; if(!it) return; it.keys.forEach(k=>{ state.hidden[k]="home"; }); commit(); toast(`${it.n}: haben wir zu Hause`); }
+  else if(u){ const it = homeList[+u.dataset.unhome]; if(!it) return; it.keys.forEach(k=>{ delete state.hidden[k]; }); commit(); toast(`${it.n} steht wieder auf der Liste`); }
+});
 function setShopDays(days){ shopPrefs.days = days; saveShopPrefs(); renderShop(); }
 document.addEventListener("click",e=>{
   const b = e.target.closest("[data-shopday]"); if(!b) return;
@@ -2704,6 +2717,7 @@ function openHelp(first){
         <li>Oben wählst du, <b>für welche Tage</b> du einkaufst (z. B. „Heute + morgen“).</li>
         <li>Sortiert <b>nach Supermarkt-Abteilung</b> oder nach Tagen. Abhaken beim Einkaufen.</li>
         <li><b>Noch etwas dazu</b>: eigene Artikel wie Joghurt oder Obst ergänzen.</li>
+        <li><b>🏠 Zuhause</b> hinter einer Zutat: haben wir schon – sie verschwindet von der Liste. Unten unter „Schon zuhause“ kannst du sie wieder zurückholen.</li>
         <li><b>📋 Für Keep kopieren</b> und in Google Keep oder eine andere Listen-App einfügen.</li>
         <li>Salz, Öl, Gewürze & Co. stehen nicht drauf – die hat man meist im Haus.</li>
       </ul>
