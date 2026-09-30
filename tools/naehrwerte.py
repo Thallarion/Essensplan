@@ -89,7 +89,7 @@ TAB = {
  "Gemüsebrühe (glutenfrei)":(None,3,0.2,0.2,0.4,0,0,0), "Tamari (glutenfreie Sojasauce)":(30,70,10,0,6,0,0,0),
  "Linsennudeln (glutenfrei)":(None,340,25,2,50,11,1,0), "Buchweizenmehl":(None,340,12,2.5,70,4,0,0),
  "Mais-Tortillas (glutenfrei)":(30,220,5,3,45,5,0,0), "Mais-Reis-Nudeln (glutenfrei)":(None,355,7,1.5,79,2,0,0),
- "Gemüsebrühe (ohne Jodsalz)":(None,3,0.2,0.2,0.4,0,0,0), "Quinoa":(None,360,14,6,58,7,0,0), "Tahin (Sesammus)":(60,600,24,53,10,9,0,0),
+ "Gemüsebrühe (ohne Jodsalz)":(None,3,0.2,0.2,0.4,0,0,0), "Quinoa":(None,360,14,6,58,7,0,0), "Tahin (Sesammus)":(60,600,24,53,10,9,0,0), "Cranberrys (getrocknet)":(None,330,0.2,1,80,5,0,0), "Linsen (Dose)":(265,100,8,0.6,14,5,1,0), "Pistazien":(None,600,20,50,17,10,0,0), "Radieschen":(150,15,1,0.1,2,1.6,1,0), "Stangensellerie":(50,15,1,0.2,2,1.6,1,0),
  "Forellenfilet":(None,110,20,3,0,0,0,0), "Buchweizen":(None,340,10,1.7,70,4,0,0), "Rindersteak (Hüfte)":(None,120,22,4,0,0,0,0),
  "Hirse":(None,355,11,4,69,4,0,0), "Grünkohl":(None,45,4.3,0.9,2.5,4.2,1,0), "Haferdrink (ohne Jodzusatz)":(None,45,0.5,1.5,7,0.8,0,0),
  "Leinsamen (geschrotet)":(None,450,24,31,2,30,0,0), "Minze":(25,45,3.5,0.7,5,7,0,0), "Kürbiskerne":(None,570,30,46,8,9,0,0),
@@ -104,6 +104,7 @@ BUCH = {
  "k01":(470,11,31,39), "k02":(465,40,27,12), "k03":(425,29,18,33),
  "k04":(335,17,13,29), "k05":(685,32,43,41), "k06":(500,52,22,24),
  "k10":(515,31,22,44),
+ "k28":(310,18,12,30), "k29":(510,7,20,70), "k30":(690,18,31,84), "k31":(550,17,36,35),
  "k11":(470,36,27,20), "k12":(350,1,37,2),
 }
 
