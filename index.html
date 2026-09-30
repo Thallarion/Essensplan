@@ -619,7 +619,7 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
       <button class="btn primary" id="fillWeek">✨ Woche planen</button>
       <span class="wk-status" id="wkStatus" hidden>✓ Woche ist komplett</span>
     </div>
-    <div class="note" id="exampleNote" hidden>👋 Das ist eine Beispielwoche. <b>Gericht antippen</b> zeigt das Rezept, <b>🎲 Tauschen</b> wechselt das Gericht, <b>×</b> leert den Tag zum Neuwählen. Sobald du etwas änderst, gehört der Plan dir. <button type="button" class="linkbtn" id="noteHelp">Anleitung ansehen</button></div>
+    <div class="note" id="exampleNote" hidden>👋 Das ist eine Beispielwoche. <b>Gericht antippen</b> zeigt das Rezept, <b>🎲</b> unter dem Datum tauscht das Gericht, <b>×</b> leert den Tag zum Neuwählen. Sobald du etwas änderst, gehört der Plan dir. <button type="button" class="linkbtn" id="noteHelp">Anleitung ansehen</button></div>
     <div class="week" id="week"></div>
   </section>
 
@@ -2492,12 +2492,13 @@ function renderWeek(){
   const compact = i=>{
     const v = state.days[i]; let body;
     if(typeof v==="string" && dish(v)){ const x = dish(v);
-      body = `<button class="title" data-open="${x.id}">${esc(x.n)}</button>${chips(x)}<button type="button" class="swap" data-roll="${i}">🎲 Tauschen</button>`;
+      body = `<button class="title" data-open="${x.id}">${esc(x.n)}</button>${chips(x)}`;
     } else if(v && typeof v==="object" && v.custom){
       body = `<span class="title" style="font-weight:700">${esc(v.custom)}</span><div class="meta"><span class="chip">Eigenes Gericht</span></div>`;
     } else body = emptyRow(i);
     return `<div class="day${i===today?' today':''}${i<today?' past':''}">
-      <div class="dhead"><div class="dname" title="${DAYS_LONG[i]}">${DAYS[i]}</div><div class="ddate">${dates[i].toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"})}</div></div>
+      <div class="dhead"><div class="dname" title="${DAYS_LONG[i]}">${DAYS[i]}</div><div class="ddate">${dates[i].toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"})}</div>
+        <button class="icon droll" data-roll="${i}" aria-label="${DAYS_LONG[i]}: Gericht tauschen (würfeln)" title="Tauschen (würfeln)">${ICON.dice}</button></div>
       <div class="dish">${body}${stapleHint(i,v)}</div>
       <div class="acts">
         ${v?`<button class="icon" data-clear="${i}" aria-label="${DAYS_LONG[i]} leeren" title="Leeren">${ICON.x}</button>`:''}
@@ -2885,7 +2886,7 @@ function openHelp(first){
     <details><summary>📅 Wochenplan</summary>
       ${img("woche","Wochenplan mit Gerichten")}
       <ul>
-        <li><b>🎲 Tauschen</b> würfelt ein anderes, passendes Gericht.</li>
+        <li><b>🎲</b> (unter dem Datum) würfelt ein anderes, passendes Gericht.</li>
         <li><b>×</b> leert den Tag. Danach könnt ihr „Selbst wählen“ (ganze Liste mit Suche und Filtern) oder „Zufällig“ antippen.</li>
         <li><b>Leere Tage füllen</b> würfelt alle freien Tage – unter der Woche nur schnelle Gerichte (Kochzeit in ⚙ einstellbar), bevorzugt vegetarisch und eure Lieblingskategorien.</li>
         <li><b>Plan leeren</b> leert Wochenplan und Einkaufsliste (zur Sicherheit zweimal tippen). Bewertungen, eigene Rezepte und Einstellungen bleiben erhalten.</li>
