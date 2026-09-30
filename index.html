@@ -493,8 +493,7 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
   <section id="p-woche">
     <div class="bar">
       <button class="btn small primary" id="fillWeek">Leere Tage füllen</button>
-      <button class="btn small" id="copyPlan">Plan kopieren</button>
-      <button class="btn small" id="newWeek">Neue Woche</button>
+      <button class="btn small" id="newWeek">Plan leeren</button>
     </div>
     <div class="note" id="exampleNote" hidden>Beispielwoche — tausch einfach Gerichte aus, dann wird dein Plan gespeichert.</div>
     <div class="week" id="week"></div>
@@ -2456,7 +2455,7 @@ function openHelp(first){
         <li><b>🎲 unter dem Tag</b> würfelt ein passendes Gericht.</li>
         <li><b>☰</b> öffnet die Auswahl mit Suche und Filtern, <b>×</b> leert den Tag.</li>
         <li><b>Leere Tage füllen</b> würfelt alle freien Tage – unter der Woche nur schnelle Gerichte (Kochzeit in ⚙ einstellbar), bevorzugt vegetarisch und eure Lieblingskategorien.</li>
-        <li><b>Plan kopieren</b> z. B. für WhatsApp, <b>Neue Woche</b> leert Plan und Einkaufsliste.</li>
+        <li><b>Plan leeren</b> leert Wochenplan und Einkaufsliste (zur Sicherheit zweimal tippen). Bewertungen, eigene Rezepte und Einstellungen bleiben erhalten.</li>
         <li>Tipp auf ein Gericht öffnet das Rezept.</li>
       </ul>
     </details>
@@ -2682,9 +2681,9 @@ $("#fillWeek").addEventListener("click",()=>{
 });
 $("#newWeek").addEventListener("click",()=>{
   const b = $("#newWeek");
-  if(b.dataset.confirm){ recordCooked(); state = {days:{},checked:{},hidden:{},extras:{},recipes:state.recipes||{},likes:state.likes||{},cooked:state.cooked||{},settings:state.settings||{}}; delete b.dataset.confirm; b.textContent="Neue Woche"; commit(true); toast("Plan und Einkaufsliste geleert"); return; }
+  if(b.dataset.confirm){ recordCooked(); state = {days:{},checked:{},hidden:{},extras:{},recipes:state.recipes||{},likes:state.likes||{},cooked:state.cooked||{},settings:state.settings||{}}; delete b.dataset.confirm; b.textContent="Plan leeren"; commit(true); toast("Plan und Einkaufsliste geleert"); return; }
   b.dataset.confirm="1"; b.textContent="Wirklich alles leeren?";
-  setTimeout(()=>{ if(b.dataset.confirm){ delete b.dataset.confirm; b.textContent="Neue Woche"; } },4000);
+  setTimeout(()=>{ if(b.dataset.confirm){ delete b.dataset.confirm; b.textContent="Plan leeren"; } },4000);
 });
 function addExtra(){
   const inp = $("#extraInput"); const v = inp.value.trim(); if(!v) return;
@@ -2733,13 +2732,6 @@ $("#sendKeep").addEventListener("click",()=>{
     <div class="bar" style="margin-top:12px"><a class="btn primary" href="https://keep.google.com/" target="_blank" rel="noopener">Google Keep öffnen</a></div>`);
   navigator.clipboard.writeText(text).then(done).catch(()=>{
     openSheet(`<button class="btn small close" data-close>Schließen</button><h2>Für Keep kopieren</h2><p class="sub">Markieren und kopieren, dann in Keep einfügen:</p><textarea id="copyArea" style="width:100%;height:50vh;font:14px var(--body);background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px">${esc(text)}</textarea>`);
-    $("#copyArea").select();
-  });
-});
-$("#copyPlan").addEventListener("click",()=>{
-  const text = "Essensplan diese Woche:\n"+DAYS_LONG.map((d,i)=>{ const v=state.days[i]; const name = typeof v==="string"&&dish(v)?dish(v).n:(v&&v.custom)||"–"; return d+": "+name; }).join("\n");
-  navigator.clipboard.writeText(text).then(()=>toast("Plan kopiert – z. B. in WhatsApp einfügen")).catch(()=>{
-    openSheet(`<button class="btn small close" data-close>Schließen</button><h2>Wochenplan</h2><textarea id="copyArea" style="width:100%;height:40vh;font:14px var(--body);background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px">${esc(text)}</textarea>`);
     $("#copyArea").select();
   });
 });
