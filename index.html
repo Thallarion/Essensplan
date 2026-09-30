@@ -638,6 +638,26 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
 .day{grid-template-columns:52px 1fr auto}
 .day:not(.today):not(.past){border-left:3px solid color-mix(in srgb,var(--basil) 25%,var(--line))}
 .day.past:not(.today){opacity:.6;background:transparent}
+
+/* ===== Meine Küche ===== */
+#p-ideen .bar{flex-wrap:nowrap}
+#p-ideen .bar>.btn{flex:1 1 0;justify-content:center;white-space:nowrap;padding-left:10px;padding-right:10px}
+#p-ideen.kmode>:not(#kitchenView){display:none}
+.k-sec{margin:14px 0 6px}
+.k-sec h3{display:flex;align-items:baseline;justify-content:space-between;gap:8px;font:700 16px var(--display);margin:0 0 8px}
+.k-sec h3 small{font:600 13px var(--body);color:var(--muted)}
+.k-list{display:flex;flex-direction:column;gap:8px}
+.k-list .idea{flex-direction:row;align-items:center;justify-content:space-between;gap:10px}
+.k-list .idea-main{flex:1;min-width:0}
+.k-list .idea h4{font-size:15.5px}
+.k-all{background:transparent;border:0;color:var(--basil);font:600 14px var(--body);padding:10px 0;min-height:44px;cursor:pointer}
+.k-empty{color:var(--muted);font-size:14px;padding:10px 12px;border:1px dashed var(--line);border-radius:12px}
+.k-when{font-size:12.5px;color:var(--muted)}
+.k-tabs{display:flex;gap:6px;overflow-x:auto;margin:10px 0 12px;padding-bottom:2px}
+.k-tabs button{flex:none;font:600 14px var(--body);padding:9px 12px;min-height:44px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);cursor:pointer}
+.k-tabs button[aria-pressed="true"]{background:var(--basil-soft);border-color:var(--basil);color:var(--basil)}
+.k-head{display:flex;align-items:center;gap:10px;margin-top:4px}
+.k-head h2{font:700 20px var(--display);margin:0}
 </style>
 </head>
 <body>
@@ -706,7 +726,8 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
       <div class="zh-chips" id="zhChips"></div>
       <button class="btn primary zh-go" id="zhGo" type="button" hidden></button>
     </div>
-    <div class="bar"><button class="btn primary" id="addRecipe" type="button">＋ Rezept hinzufügen <span class="count" id="inboxCount" hidden>0</span></button></div>
+    <div class="bar"><button class="btn primary" id="addRecipe" type="button">＋ Rezept hinzufügen <span class="count" id="inboxCount" hidden>0</span></button><button class="btn" id="kitchenBtn" type="button">🍽 Meine Küche</button></div>
+    <div id="kitchenView" hidden></div>
     <p class="qi-lbl">Schnell zum Ziel</p>
     <div class="qi" id="quickIdeas" role="group" aria-label="Schnelle Einstiege"></div>
     <div id="ideaFilterUI"></div>
@@ -3344,6 +3365,44 @@ function deleteRecipe(id, btn){
   closeSheet(); commit(); toast("Rezept gelöscht");
 }
 $("#addRecipe").addEventListener("click",()=>openAddSheet());
+/* ---------- Meine Küche ---------- */
+const KUECHE_V = "A";
+const KGROUPS = [["like","👍 Mögen wir","Noch nichts bewertet – im Rezept kannst du 👍 vergeben."],["own","⭐ Meine Rezepte","Noch keine eigenen Rezepte – über „Rezept hinzufügen“ → „Selbst eingeben“."],["cooked","🕒 Zuletzt gekocht","Noch nichts gekocht – hier erscheinen Gerichte, sobald eine Woche vorbei ist."]];
+function kitchenList(k){
+  const all = allDishes();
+  if(k==="like") return all.filter(d=>likeOf(d.id)>0);
+  if(k==="own") return all.filter(d=>d.own);
+  const seen = new Set();
+  return Object.entries(state.cooked||{}).sort((a,b)=>b[0].localeCompare(a[0])).filter(([,id])=>!seen.has(id)&&seen.add(id)).map(([day,id])=>{ const d=dish(id); return d?Object.assign({},d,{_when:day}):null; }).filter(Boolean);
+}
+function kitchenRow(d){
+  const w = d._when ? daysSince(d._when) : null;
+  const when = w===null ? "" : `<span class="k-when">${w<=0?"heute":w===1?"gestern":"vor "+w+" Tagen"}</span>`;
+  return `<div class="idea"><div class="idea-main" data-open="${d.id}"><h4>${esc(d.n)}</h4>${chips(d)}${when}</div><button class="btn small ghost plan-btn" data-assign="${d.id}" aria-label="${esc(d.n)} einplanen">＋ Einplanen</button></div>`;
+}
+let kOpen = {}, kTab = "like";
+function kitchenSheetHtml(){
+  return `<button class="btn small close" data-close>Schließen</button><h2>🍽 Meine Küche</h2><p class="sub">Was eure Familie mag, selbst eingetragen und zuletzt gekocht hat.</p>` +
+    KGROUPS.map(([k,l,empty])=>{ const list = kitchenList(k), open = !!kOpen[k], show = open ? list : list.slice(0,3);
+      return `<div class="k-sec"><h3>${l}<small>${list.length}</small></h3>` + (list.length ? `<div class="k-list">${show.map(kitchenRow).join("")}</div>${list.length>3?`<button type="button" class="k-all" data-kall="${k}">${open?"Weniger anzeigen":"Alle "+list.length+" anzeigen"}</button>`:""}` : `<div class="k-empty">${empty}</div>`) + `</div>`; }).join("");
+}
+function kitchenViewHtml(){
+  const list = kitchenList(kTab), g = KGROUPS.find(x=>x[0]===kTab);
+  return `<div class="k-head"><button class="btn small" data-kback>← Zurück</button><h2>🍽 Meine Küche</h2></div>
+    <div class="k-tabs" role="tablist">${KGROUPS.map(([k,l])=>`<button type="button" data-ktab="${k}" aria-pressed="${k===kTab}">${l} · ${kitchenList(k).length}</button>`).join("")}</div>
+    ${list.length ? `<div class="k-list">${list.map(kitchenRow).join("")}</div>` : `<div class="k-empty">${g[2]}</div>`}`;
+}
+function openKitchen(){
+  if(KUECHE_V==="B"){ $("#p-ideen").classList.add("kmode"); $("#kitchenView").hidden=false; $("#kitchenView").innerHTML = kitchenViewHtml(); window.scrollTo(0,0); }
+  else openSheet(kitchenSheetHtml());
+}
+document.addEventListener("click",e=>{
+  const a = e.target.closest("[data-kall]"); if(a){ kOpen[a.dataset.kall] = !kOpen[a.dataset.kall]; const sh = document.querySelector(".sheet"); if(sh){ const y = sh.scrollTop; sh.innerHTML = kitchenSheetHtml(); sh.scrollTop = y; } return; }
+  const t = e.target.closest("[data-ktab]"); if(t){ kTab = t.dataset.ktab; $("#kitchenView").innerHTML = kitchenViewHtml(); return; }
+  if(e.target.closest("[data-kback]")){ $("#p-ideen").classList.remove("kmode"); $("#kitchenView").hidden=true; return; }
+});
+$("#kitchenBtn").addEventListener("click",openKitchen);
+
 
 /* ---------- Rezept-Eingang (Warteliste auf GitHub) ---------- */
 const INBOX_REPO = "Thallarion/Essensplan-Inbox";
