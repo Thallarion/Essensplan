@@ -543,17 +543,16 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
 .linkbtn{border:0;padding:0;text-decoration:underline;color:var(--basil)}
 .qi{display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;margin:0 -14px 10px;padding:0 14px 2px;scrollbar-width:none}
 .qi::-webkit-scrollbar{display:none}
-.qi button,.qadd button{flex:none;white-space:nowrap;font:600 13px var(--body);padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
+.qi button{flex:none;white-space:nowrap;font:600 13px var(--body);padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
 .qi button[aria-pressed="true"]{border-color:var(--basil);background:var(--basil-soft);color:var(--basil)}
 .qi button[aria-pressed="true"]::before{content:"✓ "}
 .qi-lbl{font-size:12px;color:var(--muted);margin:0 0 6px}
-.qadd{display:flex;gap:6px;flex-wrap:wrap;margin:-4px 0 12px}
 .catord{display:flex;align-items:center;gap:6px;margin:4px 0}.catord span{flex:1}
 .catord button{min-width:36px;min-height:36px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
 .datarow{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
 :focus-visible{outline:2px solid var(--basil);outline-offset:2px}
 @media (pointer:coarse){
-  .icon,.home-btn,.rbtn,.rep-hint button,.rate-q button,.fbtn,.qadd button,.qi button,.zh-chips button,.btn.small{min-height:44px}
+  .icon,.home-btn,.rbtn,.rep-hint button,.rate-q button,.fbtn,.qi button,.zh-chips button,.btn.small{min-height:44px}
   .icon,.rbtn{min-width:44px}
   .rep-hint button,.rate-q button{min-width:44px}
 }
@@ -607,7 +606,6 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
       <input id="extraInput" type="text" placeholder="Noch etwas dazu, z. B. Joghurt, Obst …" autocomplete="off">
       <button class="btn primary" id="extraAdd">Hinzufügen</button>
     </div>
-    <div class="qadd" id="qadd" aria-label="Schnell hinzufügen"></div>
     <div class="shop" id="shop"></div>
     <p class="pantry">Nicht auf der Liste, weil meist im Haus: Salz, Pfeffer, Öl, Butter, Zucker, Gewürze, Sojasauce, Senf. <button type="button" class="linkbtn" id="pantryEdit">Vorrat anpassen</button></p>
   </section>
@@ -3099,9 +3097,6 @@ $("#copyList").addEventListener("click",()=>{
   });
 });
 if(navigator.share){ $("#shareList").hidden = false; $("#shareList").addEventListener("click",()=>{ const text = shopText(); if(!text){ toast("Nichts offen auf der Liste"); return; } navigator.share({title:"Einkaufsliste", text}).catch(()=>{}); }); }
-const QADD = ["Milch","Obst","Brot","Kaffee","Joghurt","Butter","Eier","Toilettenpapier"];
-$("#qadd").innerHTML = QADD.map(t=>`<button type="button" data-qadd="${t}">+ ${t}</button>`).join("");
-$("#qadd").addEventListener("click",e=>{ const b=e.target.closest("[data-qadd]"); if(!b) return; state.extras[Date.now().toString(36)+Math.random().toString(36).slice(2,5)] = {text:b.dataset.qadd}; commit(); toast(b.dataset.qadd+" steht auf der Liste"); });
 // Offene Einträge als einfache Zeilen für eine Google-Keep-Checkliste kopieren (Keep macht beim Einfügen aus jeder Zeile einen Punkt)
 $("#sendKeep").addEventListener("click",()=>{
   const items = [...groupParts(shopParts()), ...extraItems()].filter(it=>!isDone(it));
