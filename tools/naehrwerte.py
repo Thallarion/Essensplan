@@ -94,6 +94,7 @@ TAB = {
  "Hirse":(None,355,11,4,69,4,0,0), "Grünkohl":(None,45,4.3,0.9,2.5,4.2,1,0), "Haferdrink (ohne Jodzusatz)":(None,45,0.5,1.5,7,0.8,0,0),
  "Leinsamen (geschrotet)":(None,450,24,31,2,30,0,0), "Minze":(25,45,3.5,0.7,5,7,0,0), "Kürbiskerne":(None,570,30,46,8,9,0,0),
  "Bananen":(120,90,1.1,0.2,20,2,0,0),
+ "Grünkernschrot":(None,330,11.5,2.7,63,9,0,0),
 }
 # Einheiten, die als Gramm/ml zählen
 GRAM = {"g":1, "ml":1, "l":1000, "kg":1000}
