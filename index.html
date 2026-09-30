@@ -592,6 +592,8 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
 #week .day{margin-top:8px}
 .daybig{position:relative}.db-x{position:absolute;top:8px;right:8px}
 #week .daybig{margin-top:8px}
+.nothing{color:var(--muted);font-size:14px}
+.day.past .dish{padding:2px 0}
 </style>
 </head>
 <body>
@@ -2461,7 +2463,7 @@ function randomDish(excludeDay){
 function renderWeek(){
   const dates = weekDates(); const today = (new Date().getDay()+6)%7;
   $("#exampleNote").hidden = !isExample;
-  { const e = DAYS.filter((_,i)=>!(typeof state.days[i]==="string" && dish(state.days[i])) && !(state.days[i]&&state.days[i].custom)).length;
+  { const e = DAYS.filter((_,i)=>i>=today && !(typeof state.days[i]==="string" && dish(state.days[i])) && !(state.days[i]&&state.days[i].custom)).length;
     $("#fillWeek").hidden = e===0; $("#wkStatus").hidden = e>0;
     $("#fillWeek").textContent = e===7 ? "✨ Woche planen" : `✨ ${e} freie${e>1?"":"n"} Tag${e>1?"e":""} füllen`;
     const f = x=>x.toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"});
@@ -2495,14 +2497,15 @@ function renderWeek(){
       body = `<button class="title" data-open="${x.id}">${esc(x.n)}</button>${chips(x)}`;
     } else if(v && typeof v==="object" && v.custom){
       body = `<span class="title" style="font-weight:700">${esc(v.custom)}</span><div class="meta"><span class="chip">Eigenes Gericht</span></div>`;
-    } else body = emptyRow(i);
-    return `<div class="day${i===today?' today':''}${i<today?' past':''}">
+    } else body = i<today ? `<span class="nothing">Nichts geplant</span>` : emptyRow(i);
+    const past = i<today;
+    return `<div class="day${i===today?' today':''}${past?' past':''}">
       <div class="dhead"><div class="dname" title="${DAYS_LONG[i]}">${DAYS[i]}</div><div class="ddate">${dates[i].toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"})}</div>
-        <button class="icon droll" data-roll="${i}" aria-label="${DAYS_LONG[i]}: Gericht tauschen (würfeln)" title="Tauschen (würfeln)">${ICON.dice}</button></div>
+        ${past?'':`<button class="icon droll" data-roll="${i}" aria-label="${DAYS_LONG[i]}: Gericht tauschen (würfeln)" title="Tauschen (würfeln)">${ICON.dice}</button>`}</div>
       <div class="dish">${body}${stapleHint(i,v)}</div>
-      <div class="acts">
+      ${past?'':`<div class="acts">
         ${v?`<button class="icon" data-clear="${i}" aria-label="${DAYS_LONG[i]} leeren" title="Leeren">${ICON.x}</button>`:''}
-      </div></div>`;
+      </div>`}</div>`;
   };
   $("#week").innerHTML = DAYS.map((_,i)=> i===today ? bigCard(i,"HEUTE") : compact(i)).join("");
 }
@@ -3124,7 +3127,7 @@ $("#newWeek").addEventListener("click",()=>setTimeout(()=>{ if(!$("#newWeek").da
 document.addEventListener("click",e=>{ const m=$("#wkMenu"); if(m && m.open && !e.target.closest("#wkMenu")) m.open=false; });
 $("#pantryEdit").addEventListener("click",()=>openSettings());
 $("#fillWeek").addEventListener("click",()=>{
-  let n=0; for(let i=0;i<7;i++){ if(!state.days[i]){ state.days[i]=randomDish(i).id; n++; } }
+  let n=0; const t0=(new Date().getDay()+6)%7; for(let i=t0;i<7;i++){ if(!state.days[i]){ state.days[i]=randomDish(i).id; n++; } }
   commit(); toast(n?`${n} Tag${n>1?'e':''} gefüllt`:"Alle Tage sind schon geplant");
 });
 $("#newWeek").addEventListener("click",()=>{
