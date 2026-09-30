@@ -3,35 +3,11 @@
 <head>
 <meta charset="utf-8">
 <script>
-/* Umzug von thallarion.github.io/Essensplan nach wasessenwir.at:
-   Die alten Browser-Daten holt die Umzugsseite (liegt noch unter thallarion.github.io) und gibt sie per #umzug=… zurück. */
+/* Alte http-Aufrufe der Domain auf https umleiten */
 (function(){
-  var MIG = "https://thallarion.github.io/Portfolio/essensplan-umzug.html", NEW = "wasessenwir.at", FLAG = "essensplan-umzug";
   try{
-    var m = location.hash.match(/^#umzug=([A-Za-z0-9_\-]+)$/);
-    if(m){
-      if(m[1] !== "leer"){
-        var data = JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g,"+").replace(/_/g,"/")))));
-        Object.keys(data).forEach(function(k){
-          if((/^essensplan/.test(k) || k === "einsenden-name") && k !== FLAG && localStorage.getItem(k) === null) localStorage.setItem(k, data[k]);
-        });
-      }
-      localStorage.setItem(FLAG, "1");
-      history.replaceState(null, "", location.pathname + location.search);
-      return;
-    }
-    var h = location.hostname;
-    if((h === NEW || h === "www." + NEW) && location.protocol === "http:"){
-      // HTTPS ist aktiv – alte/gemerkte http-Aufrufe auf https umleiten
-      location.replace("https://" + NEW + location.pathname + location.search + location.hash);
-      return;
-    }
-    if((h === NEW || h === "www." + NEW) && !localStorage.getItem(FLAG)){
-      var has = false;
-      for(var i = 0; i < localStorage.length; i++) if(/^essensplan/.test(localStorage.key(i))){ has = true; break; }
-      localStorage.setItem(FLAG, has ? "1" : "pending");
-      if(!has && !/#join=/.test(location.hash)) location.replace(MIG);
-    }
+    var h = location.hostname, NEW = "wasessenwir.at";
+    if((h === NEW || h === "www." + NEW) && location.protocol === "http:") location.replace("https://" + NEW + location.pathname + location.search + location.hash);
   }catch(e){}
 })();
 </script>
