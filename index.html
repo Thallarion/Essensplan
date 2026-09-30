@@ -563,12 +563,34 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
 .weekhead h2{font:700 20px var(--display);margin:0}
 .weekhead span{color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
 .wk-status{flex:1;color:var(--basil);font-weight:700;font-size:15px;padding:10px 4px}
-#newWeek{color:var(--tomato)!important;text-decoration:none!important;border:1px solid var(--tomato)!important;background:transparent!important;font-weight:600!important}
+#newWeek{color:var(--tomato)!important;background:transparent!important;border:0!important;font-weight:600!important;text-decoration:none!important;padding:10px 12px!important;min-height:44px}
 .weekbar #newWeek{margin-left:auto}
 .day.past:not(.today){opacity:.72}
 .plan-btn{width:auto!important;height:auto!important;min-height:40px;border-radius:999px!important;padding:8px 14px!important;font:700 14px var(--body)!important;white-space:nowrap}
 .more{background:transparent;border:0;padding:2px 4px;font:inherit;color:var(--muted);cursor:pointer;text-decoration:underline dotted}
 .more.open{color:var(--ink);text-decoration:none}
+
+.wkmenu{margin-left:auto;position:relative}
+.wkmenu summary{list-style:none;cursor:pointer;width:40px;height:40px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--line);font-size:20px;line-height:1;color:var(--muted)}
+.wkmenu summary::-webkit-details-marker{display:none}
+.wkmenu-pop{position:absolute;right:0;top:46px;z-index:5;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:6px;min-width:170px}
+.wkmenu-pop button{width:100%;text-align:left}
+.weektop{display:flex;flex-direction:column;gap:12px;margin-bottom:12px}
+.daybig{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:16px}
+.daybig.today{border:2px solid var(--mustard)}
+.daybig .db-label{font-size:13px;color:var(--muted);margin-bottom:6px}
+.daybig .db-label b{letter-spacing:.06em;color:var(--mustard)}
+.daybig .dish button.title{font-size:20px;line-height:1.25}
+.db-acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+.wk-sub{font:700 13px var(--body);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:14px 2px 8px}
+.wk-more{margin-top:10px}
+.wk-more>summary{cursor:pointer;font-weight:700;color:var(--muted);padding:10px 4px;list-style:none;min-height:44px;display:flex;align-items:center}
+.wk-more>summary::before{content:"▸ ";margin-right:6px}
+.wk-more[open]>summary::before{content:"▾ "}
+.wk-more .day{margin-top:8px}
+.swap{background:transparent;border:0;color:var(--basil);font:600 13px var(--body);padding:6px 0;cursor:pointer}
+#week .day{margin-top:8px}
+.daybig{position:relative}.db-x{position:absolute;top:8px;right:8px}
 </style>
 </head>
 <body>
@@ -590,13 +612,14 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
   </nav>
 
   <section id="p-woche">
-    <div class="weekhead"><h2 id="weekTitle">Diese Woche</h2><span id="weekRange"></span></div>
+    <div class="weekhead"><h2 id="weekTitle">Diese Woche</h2><span id="weekRange"></span>
+      <details class="wkmenu" id="wkMenu"><summary aria-label="Weitere Aktionen" title="Weitere Aktionen">⋯</summary><div class="wkmenu-pop"><button type="button" id="newWeek">Plan leeren</button></div></details></div>
+    <div class="note" id="exampleNote" hidden>👋 Das ist eine Beispielwoche. <b>Gericht antippen</b> zeigt das Rezept, <b>🎲</b> oder <b>☰</b> tauscht es aus. Sobald du etwas änderst, gehört der Plan dir. <button type="button" class="linkbtn" id="noteHelp">Anleitung ansehen</button></div>
+    <div class="week weektop" id="weekTop"></div>
     <div class="weekbar">
       <button class="btn primary" id="fillWeek">✨ Woche planen</button>
       <span class="wk-status" id="wkStatus" hidden>✓ Woche ist komplett</span>
-      <button class="btn small" id="newWeek">Plan leeren</button>
     </div>
-    <div class="note" id="exampleNote" hidden>👋 Das ist eine Beispielwoche. <b>Gericht antippen</b> zeigt das Rezept, <b>🎲</b> oder <b>☰</b> tauscht es aus. Sobald du etwas änderst, gehört der Plan dir. <button type="button" class="linkbtn" id="noteHelp">Anleitung ansehen</button></div>
     <div class="week" id="week"></div>
   </section>
 
@@ -2445,27 +2468,48 @@ function renderWeek(){
     $("#weekRange").textContent = f(dates[0])+" – "+f(dates[6]); }
   const STAPLES = [["Nudeln",/nudel|spaghetti|penne|fusilli|makkaroni|tagliatelle|gnocchi|lasagne/i],["Reis",/\breis\b|risotto/i],["Kartoffeln",/kartoffel/i]];
   const stapleOf = x=>{ const txt = x.n+" "+x.i.map(r=>r[2]).join(" "); return STAPLES.filter(([,re])=>re.test(x.n) || (re.test(txt) && x.i.some(r=>re.test(r[2]) && r[0]>=300))).map(a=>a[0]); };
-  $("#week").innerHTML = DAYS.map((d,i)=>{
-    const v = state.days[i]; let body;
+  const stapleHint = (i,v)=>{
+    if(!(typeof v==="string" && dish(v))) return "";
+    let h = "";
+    const x = dish(v), prev = i>0 && typeof state.days[i-1]==="string" ? dish(state.days[i-1]) : null;
+    if(prev){ const same = stapleOf(x).filter(a=>stapleOf(prev).includes(a)); if(same.length) h += `<div class="rep-hint">↺ ${same[0]} gab es schon gestern <button type="button" data-roll="${i}">Alternative</button></div>`; }
+    if(!isExample && i<today && !likeOf(v)) h += `<div class="rate-q">Hat es geschmeckt? <button type="button" data-like="${v}" data-v="1" aria-label="Hat geschmeckt">👍</button><button type="button" data-like="${v}" data-v="-1" aria-label="Hat nicht geschmeckt">👎</button></div>`;
+    return h;
+  };
+  const emptyRow = i=>`<div class="pe-row"><button class="pickempty" data-pick="${i}">+ Selbst wählen</button><button class="pickempty" data-roll="${i}">🎲 Zufällig</button></div>`;
+  const bigCard = (i,label)=>{
+    const v = state.days[i]; let body, acts = "";
     if(typeof v==="string" && dish(v)){ const x = dish(v);
       body = `<button class="title" data-open="${x.id}">${esc(x.n)}</button>${chips(x)}`;
+      acts = `<div class="db-acts"><button type="button" class="btn small" data-open="${x.id}">Rezept ansehen</button><button type="button" class="btn small" data-roll="${i}">🎲 Tauschen</button><button type="button" class="btn small ghost" data-pick="${i}">Auswählen</button></div><button type="button" class="icon db-x" data-clear="${i}" aria-label="${DAYS_LONG[i]} leeren" title="Leeren">${ICON.x}</button>`;
     } else if(v && typeof v==="object" && v.custom){
       body = `<span class="title" style="font-weight:700">${esc(v.custom)}</span><div class="meta"><span class="chip">Eigenes Gericht</span></div>`;
-    } else body = `<div class="pe-row"><button class="pickempty" data-pick="${i}">+ Selbst wählen</button><button class="pickempty" data-roll="${i}">🎲 Zufällig</button></div>`;
-    if(typeof v==="string" && dish(v)){
-      const x = dish(v), prev = i>0 && typeof state.days[i-1]==="string" ? dish(state.days[i-1]) : null;
-      if(prev){ const same = stapleOf(x).filter(a=>stapleOf(prev).includes(a)); if(same.length) body += `<div class="rep-hint">↺ ${same[0]} gab es schon gestern <button type="button" data-roll="${i}">Alternative</button></div>`; }
-      if(!isExample && i<today && !likeOf(v)) body += `<div class="rate-q">Hat es geschmeckt? <button type="button" data-like="${v}" data-v="1" aria-label="Hat geschmeckt">👍</button><button type="button" data-like="${v}" data-v="-1" aria-label="Hat nicht geschmeckt">👎</button></div>`;
-    }
+      acts = `<div class="db-acts"><button type="button" class="btn small" data-pick="${i}">Ändern</button></div><button type="button" class="icon db-x" data-clear="${i}" aria-label="${DAYS_LONG[i]} leeren" title="Leeren">${ICON.x}</button>`;
+    } else body = emptyRow(i);
+    const dl = dates[i].toLocaleDateString("de-DE",{weekday:"long",day:"numeric",month:"short"});
+    return `<div class="daybig${i===today?' today':''}"><div class="db-label"><b>${label}</b> · ${dl}</div><div class="dish">${body}${stapleHint(i,v)}</div>${acts}</div>`;
+  };
+  const compact = i=>{
+    const v = state.days[i]; let body;
+    if(typeof v==="string" && dish(v)){ const x = dish(v);
+      body = `<button class="title" data-open="${x.id}">${esc(x.n)}</button>${chips(x)}<button type="button" class="swap" data-roll="${i}">🎲 Tauschen</button>`;
+    } else if(v && typeof v==="object" && v.custom){
+      body = `<span class="title" style="font-weight:700">${esc(v.custom)}</span><div class="meta"><span class="chip">Eigenes Gericht</span></div>`;
+    } else body = emptyRow(i);
     return `<div class="day${i===today?' today':''}${i<today?' past':''}">
-      <div class="dhead"><div class="dname" title="${DAYS_LONG[i]}">${d}</div><div class="ddate">${dates[i].toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"})}</div>
-        <button class="icon droll" data-roll="${i}" aria-label="${DAYS_LONG[i]}: zufälliges Gericht" title="Würfeln">${ICON.dice}</button></div>
-      <div class="dish">${body}</div>
+      <div class="dhead"><div class="dname" title="${DAYS_LONG[i]}">${DAYS[i]}</div><div class="ddate">${dates[i].toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"})}</div></div>
+      <div class="dish">${body}${stapleHint(i,v)}</div>
       <div class="acts">
         <button class="icon" data-pick="${i}" aria-label="${DAYS_LONG[i]}: Gericht auswählen" title="Auswählen">${ICON.list}</button>
         ${v?`<button class="icon" data-clear="${i}" aria-label="${DAYS_LONG[i]} leeren" title="Leeren">${ICON.x}</button>`:''}
       </div></div>`;
-  }).join("");
+  };
+  $("#weekTop").innerHTML = [today<=6 ? bigCard(today,"HEUTE") : "", today+1<=6 ? bigCard(today+1,"MORGEN") : ""].join("");
+  const next = [], later = [], past = [];
+  DAYS.forEach((_,i)=>{ if(i<today) past.push(i); else if(i>today+1) (next.length<3?next:later).push(i); });
+  $("#week").innerHTML = (next.length?`<h3 class="wk-sub">Die nächsten Tage</h3>`:"") + next.map(compact).join("")
+    + (later.length?`<details class="wk-more"><summary>Weitere Tage (${later.length})</summary>${later.map(compact).join("")}</details>`:"")
+    + (past.length?`<details class="wk-more"><summary>Vergangene Tage (${past.length})</summary>${past.map(compact).join("")}</details>`:"");
 }
 
 /* ---------- Render: Einkauf ---------- */
@@ -3081,6 +3125,8 @@ document.addEventListener("change",e=>{
 document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeSheet(); if(e.key==="Enter" && e.target.id==="customDish"){ const b=document.querySelector("[data-custom]"); b&&b.click(); } });
 
 $("#noteHelp").addEventListener("click",()=>openHelp(false));
+$("#newWeek").addEventListener("click",()=>setTimeout(()=>{ if(!$("#newWeek").dataset.confirm) $("#wkMenu").open=false; },0));
+document.addEventListener("click",e=>{ const m=$("#wkMenu"); if(m && m.open && !e.target.closest("#wkMenu")) m.open=false; });
 $("#pantryEdit").addEventListener("click",()=>openSettings());
 $("#fillWeek").addEventListener("click",()=>{
   let n=0; for(let i=0;i<7;i++){ if(!state.days[i]){ state.days[i]=randomDish(i).id; n++; } }
