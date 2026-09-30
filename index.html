@@ -3032,7 +3032,7 @@ function openHelp(first){
         <li>Sortiert <b>nach Supermarkt-Abteilung</b> oder nach Tagen. Abhaken beim Einkaufen.</li>
         <li><b>Noch etwas dazu</b>: eigene Artikel wie Joghurt oder Obst ergänzen.</li>
         <li><b>🏠 Zuhause</b> hinter einer Zutat: haben wir schon – sie verschwindet von der Liste. Unten unter „Schon zuhause“ kannst du sie wieder zurückholen.</li>
-        <li><b>📋 Für Keep kopieren</b> und in Google Keep oder eine andere Listen-App einfügen.</li>
+        <li><b>📋 Zutaten kopieren</b> (im Rezept) und in eine Listen-App einfügen, z. B. Google Keep.</li>
         <li>Salz, Öl, Gewürze & Co. stehen nicht drauf – die hat man meist im Haus.</li>
       </ul>
     </details>
@@ -3122,9 +3122,9 @@ function copyDishForKeep(id){
   const lines = d.i.map(([a,u,n])=>{ const q=fmtQty(scaleQty(a,u,curPersons,n),u); return ((q?q+" ":"")+n).trim(); }).filter(Boolean);
   const text = lines.join("\n");
   const ok = ()=>{ const el=$("#keepOk"); if(!el) return toast(`${lines.length} Zutaten kopiert`);
-    el.innerHTML = `<span>✔ ${lines.length} Zutaten kopiert – in Keep lange ins neue Listenelement tippen → Einfügen.</span> <a class="btn small primary" href="https://keep.google.com/" target="_blank" rel="noopener">Google Keep öffnen</a>`; el.hidden=false; };
+    el.innerHTML = `<span>✔ ${lines.length} Zutaten kopiert – jetzt in eine Listen-App oder Notiz einfügen.</span>`; el.hidden=false; };
   navigator.clipboard.writeText(text).then(ok).catch(()=>{
-    openSheet(`<button class="btn small close" data-close>Schließen</button><h2>Zutaten: ${esc(d.n)}</h2><p class="sub">Markieren und kopieren, dann in Keep einfügen:</p><textarea id="copyArea" style="width:100%;height:40vh;font:14px var(--body);background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px">${esc(text)}</textarea>`);
+    openSheet(`<button class="btn small close" data-close>Schließen</button><h2>Zutaten: ${esc(d.n)}</h2><p class="sub">Markieren und kopieren, dann einfügen:</p><textarea id="copyArea" style="width:100%;height:40vh;font:14px var(--body);background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px">${esc(text)}</textarea>`);
     $("#copyArea").select();
   });
 }
@@ -3149,7 +3149,7 @@ function showDish(id){
       <div class="stepper" role="group" aria-label="Personen"><button type="button" data-pers="-1" aria-label="Eine Person weniger">−</button><span id="persN">${curPersons}</span><button type="button" data-pers="1" aria-label="Eine Person mehr">+</button></div></div>
     <p class="pers-hint" id="persHint" ${curPersons===3?"hidden":""}>Mengen in den Kochschritten gelten für 3 Personen.</p>
     <ul id="ingList">${ingItems(d,curPersons)}</ul>
-    <div class="bar" style="margin:10px 0 0"><button class="btn small" data-keepcopy="${d.id}">📋 Zutaten für Keep kopieren</button></div><div class="keep-ok" id="keepOk" hidden></div>
+    <div class="bar" style="margin:10px 0 0"><button class="btn small" data-keepcopy="${d.id}">📋 Zutaten kopieren</button></div><div class="keep-ok" id="keepOk" hidden></div>
     ${methodHtml(d)}
     <div class="note-box"><label for="noteInput">📝 Unsere Notiz</label><textarea id="noteInput" data-note="${d.id}" maxlength="300" rows="2" placeholder="z. B. weniger Salz, Kinder mögen es mit Mais">${esc(noteOf(d.id))}</textarea><span class="note-ok" id="noteOk" hidden>✓ Gespeichert</span></div>
     <h3>An welchem Tag?</h3><div class="days">${DAYS.map((x,i)=>`<button data-setday="${i}" data-dish="${d.id}">${x}</button>`).join("")}</div>`);
