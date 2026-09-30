@@ -2089,10 +2089,10 @@ const DAYS_LONG = ["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samsta
 const EXAMPLE = {"0":"d07","1":"d02","2":"d05","3":"d25","4":"d19","5":"d24","6":"d04"};
 
 /* ---------- State ---------- */
-let state = {days:{...EXAMPLE}, checked:{}, hidden:{}, extras:{}, recipes:{}, likes:{}, cooked:{}};
+let state = {days:{...EXAMPLE}, checked:{}, hidden:{}, extras:{}, recipes:{}, likes:{}, cooked:{}, pantry:{}};
 let isExample = true;
 const LS = "essensplan-v1", LS_SYNC = "essensplan-sync";
-const MAPS = ["days","checked","hidden","extras","recipes","likes","cooked","settings"];
+const MAPS = ["days","checked","hidden","extras","recipes","likes","cooked","settings","pantry"];
 
 function lsGet(k=LS){ try{ const s = localStorage.getItem(k); return s ? JSON.parse(s) : null; }catch(e){ return null; } }
 function lsSet(v,k=LS){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
@@ -2102,7 +2102,7 @@ function normalize(s){
   s = s || {};
   let extras = s.extras || {};
   if(Array.isArray(extras)){ const m={}; extras.forEach(e=>{ if(e&&e.id) m[e.id]={text:e.text}; }); extras=m; }
-  return {days:s.days||{}, checked:s.checked||{}, hidden:s.hidden||{}, extras, recipes:s.recipes||{}, likes:s.likes||{}, cooked:s.cooked||{}, settings:s.settings||{}};
+  return {days:s.days||{}, checked:s.checked||{}, hidden:s.hidden||{}, extras, recipes:s.recipes||{}, likes:s.likes||{}, cooked:s.cooked||{}, settings:s.settings||{}, pantry:s.pantry||{}};
 }
 
 const local = lsGet();
@@ -2429,7 +2429,8 @@ function shopPartsAll(){
   });
   return parts;
 }
-function shopParts(){ return shopPartsAll().filter(pt=>!state.hidden[pt.key]); }
+function pantryHas(n){ const p = state.pantry||{}; if(p[n]) return true; const l = String(n).toLowerCase(); return Object.keys(p).some(k=>k.toLowerCase()===l); }
+function shopParts(){ return shopPartsAll().filter(pt=>!state.hidden[pt.key] && !pantryHas(pt.n)); }
 function groupParts(parts){
   const map = new Map();
   parts.forEach(pt=>{
@@ -2464,8 +2465,8 @@ function renderShop(){
   const grouped = groupParts(parts);
   const open = grouped.filter(it=>!isDone(it)).length + extras.filter(it=>!isDone(it)).length;
   $("#shopCount").textContent = open;
-  homeList = groupParts(shopPartsAll().filter(pt=>state.hidden[pt.key]==="home")).sort((a,b)=>a.n.localeCompare(b.n,"de"));
-  const homeHtml = homeList.length ? `<details class="homebox"><summary>🏠 Schon zuhause (${homeList.length})</summary>${homeList.map((it,i)=>`<div class="item"><label style="cursor:default"><span class="qty">${fmtQty(it.a,it.u)}</span><span>${esc(it.n)}</span></label><button class="home-btn" type="button" data-unhome="${i}">Zurück auf die Liste</button></div>`).join("")}</details>` : "";
+  homeList = groupParts(shopPartsAll().filter(pt=>pantryHas(pt.n) || state.hidden[pt.key]==="home")).map(it=>({...it, pantry:pantryHas(it.n)})).sort((a,b)=>a.n.localeCompare(b.n,"de"));
+  const homeHtml = homeList.length ? `<details class="homebox"><summary>🏠 Schon zuhause (${homeList.length})</summary>${homeList.map((it,i)=>`<div class="item"><label style="cursor:default"><span class="qty">${fmtQty(it.a,it.u)}</span><span>${esc(it.n)}${it.pantry?" <small class=\"for\">Vorrat</small>":""}</span></label><button class="home-btn" type="button" data-unhome="${i}">${it.pantry?"Aus Vorrat nehmen":"Zurück auf die Liste"}</button></div>`).join("")}</details>` : "";
   if(!grouped.length && !extras.length){
     $("#shop").innerHTML = `<p class="empty" style="padding:14px 0">${plannedDays().length?'Für die ausgewählten Tage ist nichts mehr offen. Wähl oben andere Tage aus.':'Die Liste ist leer. Plane ein paar Gerichte, dann erscheinen die Zutaten hier.'}</p>` + homeHtml;
     return;
@@ -2489,9 +2490,24 @@ function renderShop(){
 }
 document.addEventListener("click",e=>{
   const h = e.target.closest("[data-home]"), u = e.target.closest("[data-unhome]");
-  if(h){ const it = shopItems[+h.dataset.home]; if(!it) return; it.keys.forEach(k=>{ state.hidden[k]="home"; }); commit(); toast(`${it.n}: haben wir zu Hause`); }
-  else if(u){ const it = homeList[+u.dataset.unhome]; if(!it) return; it.keys.forEach(k=>{ delete state.hidden[k]; }); commit(); toast(`${it.n} steht wieder auf der Liste`); }
+  if(h){ const it = shopItems[+h.dataset.home]; if(!it) return; askHome(it); }
+  else if(u){ const it = homeList[+u.dataset.unhome]; if(!it) return;
+    it.keys.forEach(k=>{ delete state.hidden[k]; });
+    if(it.pantry){ removePantry(it.n); }
+    commit(); toast(it.pantry?`${it.n} ist nicht mehr im Vorrat`:`${it.n} steht wieder auf der Liste`); }
 });
+function removePantry(n){ const l = String(n).toLowerCase(); Object.keys(state.pantry||{}).forEach(k=>{ if(k.toLowerCase()===l) delete state.pantry[k]; }); }
+function askHome(it){
+  openSheet(`<button class="btn small close" data-close>Schließen</button>
+    <h2>🏠 ${esc(it.n)} – haben wir zu Hause</h2>
+    <p class="sub">Soll das nur für diesen Einkauf gelten oder immer?</p>
+    <div class="add-opts">
+      <button type="button" class="add-opt" id="ahOnce"><span aria-hidden="true">1×</span><b>Nur diesmal</b><small>Kommt bei der nächsten Planung wieder auf die Liste</small></button>
+      <button type="button" class="add-opt" id="ahAlways"><span aria-hidden="true">♾️</span><b>Immer</b><small>Steht nie mehr auf der Einkaufsliste – in ⚙ Einstellungen wieder entfernbar</small></button>
+    </div>`);
+  $("#ahOnce").addEventListener("click",()=>{ it.keys.forEach(k=>{ state.hidden[k]="home"; }); closeSheet(); commit(); toast(`${it.n}: haben wir zu Hause`); });
+  $("#ahAlways").addEventListener("click",()=>{ state.pantry = state.pantry||{}; state.pantry[it.n] = 1; closeSheet(); commit(); toast(`${it.n} ist jetzt im Vorrat`); });
+}
 function setShopDays(days){ shopPrefs.days = days; saveShopPrefs(); renderShop(); }
 document.addEventListener("click",e=>{
   const b = e.target.closest("[data-shopday]"); if(!b) return;
@@ -2567,7 +2583,7 @@ function nextSurprise(r=true){
   $("#surpriseMeta").textContent = `${KIND[surprise.k]} · ${surprise.t} Min`;
 }
 
-function render(){ renderWeek(); renderShop(); renderIdeas(); }
+function render(){ renderWeek(); renderShop(); renderIdeas(); try{ renderFrChips(); }catch(e){} }
 
 /* ---------- Sheets ---------- */
 function openSheet(html){
@@ -2590,7 +2606,7 @@ function frScore(d, have){
   return {hits, covered, missing};
 }
 function openFridge(init){
-  const have = init ? [...init.have] : [], fset = new Set(init ? init.f : []);
+  const have = frHave(init ? init.have : []), fset = new Set(init ? init.f : []);
   const names = frAllNames();
   openSheet(`<button class="btn small close" data-close>Schließen</button>
     <h2>🧊 Was haben wir noch zuhause?</h2>
@@ -2661,14 +2677,25 @@ function openSettings(){
     <h3>⏱️ Kochzeit Mo–Fr</h3>
     <p class="sub">Höchstens so lange dürfen gewürfelte Gerichte unter der Woche dauern.</p>
     <div class="filters" id="setTime">${[[20,"Bis 20 Min"],[30,"Bis 30 Min"],[45,"Bis 45 Min"],[0,"Egal"]].map(([v,l])=>`<button type="button" data-maxt="${v}" aria-pressed="${s.maxT===v}">${l}</button>`).join("")}</div>
+    <h3>🏠 Vorrat zuhause</h3>
+    <p class="sub">Steht nie auf der Einkaufsliste und zählt bei „Was haben wir noch zuhause?“ als vorhanden. Aufnehmen: in der Einkaufsliste bei „🏠 Zuhause“ → „Immer“.</p>
+    <div class="filters" id="setPantry"></div>
+    <div class="fr-in"><input id="pnInput" type="text" placeholder="Zutat hinzufügen …" autocomplete="off" enterkeyhint="done"><button class="btn primary" id="pnAdd" type="button">+</button></div>
     <h3>⚠️ Allergene ausschließen</h3>
     <p class="sub">Solche Gerichte werden nie gewürfelt und überall mit ⚠️ markiert. Automatisch aus den Zutaten erkannt – ohne Gewähr.</p>
     <div class="filters" id="setAll">${ALLERGENS.map(([k,i,l])=>`<button type="button" data-allg="${k}" aria-pressed="${s.allerg.includes(k)}">${i} ${l}</button>`).join("")}</div>
   </div>`);
+  const drawPantry = ()=>{ const ks = Object.keys(state.pantry||{}).sort((a,b)=>a.localeCompare(b,"de")); $("#setPantry").innerHTML = ks.length ? ks.map(k=>`<button type="button" data-pn="${esc(k)}" aria-label="${esc(k)} entfernen">${esc(k)} ×</button>`).join("") : `<span class="sub">Noch nichts im Vorrat.</span>`; };
+  drawPantry();
+  const addPantry = ()=>{ const inp = $("#pnInput"); const v = inp.value.trim(); if(!v) return; state.pantry = state.pantry||{}; state.pantry[v]=1; inp.value=""; commit(); drawPantry(); };
+  $("#pnAdd").addEventListener("click",e=>{ e.stopPropagation(); addPantry(); });
+  $("#pnInput").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); addPantry(); } });
   const tog = (list,k)=> list.includes(k) ? list.filter(x=>x!==k) : [...list,k];
   $(".set").addEventListener("click",e=>{
     const b = e.target.closest("button"); if(!b) return; e.stopPropagation();
     const cur = S();
+    if(b.dataset.pn){ removePantry(b.dataset.pn); commit(); drawPantry(); return; }
+    if(b.id==="pnAdd") return;
     if(b.dataset.setp){ const n=Math.min(12,Math.max(1,cur.persons+(+b.dataset.setp))); setSetting("persons",n); $("#setPers").textContent=n; }
     else if(b.dataset.fav){ const v=tog(cur.fav,b.dataset.fav); setSetting("fav",v); b.setAttribute("aria-pressed",String(v.includes(b.dataset.fav))); }
     else if(b.dataset.maxt!==undefined){ setSetting("maxT",+b.dataset.maxt); document.querySelectorAll("#setTime button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); }
@@ -2931,7 +2958,7 @@ $("#fillWeek").addEventListener("click",()=>{
 });
 $("#newWeek").addEventListener("click",()=>{
   const b = $("#newWeek");
-  if(b.dataset.confirm){ recordCooked(); state = {days:{},checked:{},hidden:{},extras:{},recipes:state.recipes||{},likes:state.likes||{},cooked:state.cooked||{},settings:state.settings||{}}; delete b.dataset.confirm; b.textContent="Plan leeren"; commit(true); toast("Plan und Einkaufsliste geleert"); return; }
+  if(b.dataset.confirm){ recordCooked(); state = {days:{},checked:{},hidden:{},extras:{},recipes:state.recipes||{},likes:state.likes||{},cooked:state.cooked||{},settings:state.settings||{},pantry:state.pantry||{}}; delete b.dataset.confirm; b.textContent="Plan leeren"; commit(true); toast("Plan und Einkaufsliste geleert"); return; }
   b.dataset.confirm="1"; b.textContent="Wirklich alles leeren?";
   setTimeout(()=>{ if(b.dataset.confirm){ delete b.dataset.confirm; b.textContent="Plan leeren"; } },4000);
 });
@@ -3274,11 +3301,12 @@ function openAddSheet(){
 /* ---------- "Was haben wir noch zuhause?": Zutaten-Chips direkt auf der Ideen-Seite ---------- */
 const FR_QUICK = ["Eier","Käse","Tomaten","Nudeln","Reis","Kartoffeln","Zucchini","Karotten","Paprika","Sahne"];
 let frSel = [];
-function frNearCount(){ return allDishes().filter(d=>{ if(d.side) return false; const r=frScore(d,frSel); return r.hits.length && r.missing.length<=3; }).length; }
+function frHave(l){ return [...new Set([...(l||[]), ...Object.keys(state.pantry||{})])]; }
+function frNearCount(){ const hv=frHave(frSel); return allDishes().filter(d=>{ if(d.side) return false; const r=frScore(d,hv); return r.hits.length && r.missing.length<=3; }).length; }
 function renderFrChips(){
   $("#zhChips").innerHTML = FR_QUICK.map(t=>`<button type="button" data-frq="${esc(t)}" aria-pressed="${frSel.includes(t)}">${esc(t)}</button>`).join("") + `<button type="button" data-frq-more>＋ weitere</button>`;
   const go = $("#zhGo");
-  if(!frSel.length){ go.hidden = true; return; }
+  if(!frSel.length && !Object.keys(state.pantry||{}).length){ go.hidden = true; return; }
   const n = frNearCount();
   go.hidden = false;
   go.innerHTML = n ? `→ ${n} passende Gerichte anzeigen<small>Es fehlen höchstens 3 Zutaten</small>` : `→ Vorschläge anzeigen<small>Kein Gericht fast komplett – Teil-Treffer ansehen</small>`;
