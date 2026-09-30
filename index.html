@@ -591,6 +591,7 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
 .swap{background:transparent;border:0;color:var(--basil);font:600 13px var(--body);padding:6px 0;cursor:pointer}
 #week .day{margin-top:8px}
 .daybig{position:relative}.db-x{position:absolute;top:8px;right:8px}
+#week .daybig{margin-top:8px}
 </style>
 </head>
 <body>
@@ -614,12 +615,11 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
   <section id="p-woche">
     <div class="weekhead"><h2 id="weekTitle">Diese Woche</h2><span id="weekRange"></span>
       <details class="wkmenu" id="wkMenu"><summary aria-label="Weitere Aktionen" title="Weitere Aktionen">⋯</summary><div class="wkmenu-pop"><button type="button" id="newWeek">Plan leeren</button></div></details></div>
-    <div class="note" id="exampleNote" hidden>👋 Das ist eine Beispielwoche. <b>Gericht antippen</b> zeigt das Rezept, <b>🎲</b> oder <b>☰</b> tauscht es aus. Sobald du etwas änderst, gehört der Plan dir. <button type="button" class="linkbtn" id="noteHelp">Anleitung ansehen</button></div>
-    <div class="week weektop" id="weekTop"></div>
     <div class="weekbar">
       <button class="btn primary" id="fillWeek">✨ Woche planen</button>
       <span class="wk-status" id="wkStatus" hidden>✓ Woche ist komplett</span>
     </div>
+    <div class="note" id="exampleNote" hidden>👋 Das ist eine Beispielwoche. <b>Gericht antippen</b> zeigt das Rezept, <b>🎲</b> oder <b>☰</b> tauscht es aus. Sobald du etwas änderst, gehört der Plan dir. <button type="button" class="linkbtn" id="noteHelp">Anleitung ansehen</button></div>
     <div class="week" id="week"></div>
   </section>
 
@@ -2504,12 +2504,7 @@ function renderWeek(){
         ${v?`<button class="icon" data-clear="${i}" aria-label="${DAYS_LONG[i]} leeren" title="Leeren">${ICON.x}</button>`:''}
       </div></div>`;
   };
-  $("#weekTop").innerHTML = [today<=6 ? bigCard(today,"HEUTE") : "", today+1<=6 ? bigCard(today+1,"MORGEN") : ""].join("");
-  const next = [], later = [], past = [];
-  DAYS.forEach((_,i)=>{ if(i<today) past.push(i); else if(i>today+1) (next.length<3?next:later).push(i); });
-  $("#week").innerHTML = (next.length?`<h3 class="wk-sub">Die nächsten Tage</h3>`:"") + next.map(compact).join("")
-    + (later.length?`<details class="wk-more"><summary>Weitere Tage (${later.length})</summary>${later.map(compact).join("")}</details>`:"")
-    + (past.length?`<details class="wk-more"><summary>Vergangene Tage (${past.length})</summary>${past.map(compact).join("")}</details>`:"");
+  $("#week").innerHTML = DAYS.map((_,i)=> i===today ? bigCard(i,"HEUTE") : compact(i)).join("");
 }
 
 /* ---------- Render: Einkauf ---------- */
