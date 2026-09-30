@@ -639,6 +639,9 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
 .day:not(.today):not(.past){border-left:3px solid color-mix(in srgb,var(--basil) 25%,var(--line))}
 .day.past:not(.today){opacity:.6;background:transparent}
 
+/* ===== Einkauf: Buttonleiste in einer Zeile ===== */
+.shopbar{flex-wrap:nowrap;gap:6px}
+.shopbar .btn{flex:0 1 auto;white-space:nowrap;padding:8px 10px;font-size:13px;min-width:0}
 /* ===== Meine Küche ===== */
 #p-ideen .bar{flex-wrap:nowrap}
 #p-ideen .bar>.btn{flex:1 1 0;justify-content:center;white-space:nowrap;padding-left:10px;padding-right:10px}
