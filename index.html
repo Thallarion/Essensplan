@@ -644,6 +644,16 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
 .shopbar .btn{flex:0 1 auto;white-space:nowrap;padding:8px 10px;font-size:13px;min-width:0}
 .fridge-card .fa{flex:none;background:var(--basil);color:#fff;border-radius:999px;padding:9px 14px;font:700 14px var(--body);display:flex;align-items:center;min-height:40px}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .fridge-card .fa{color:#16120E}}
+
+/* ===== Notizen & eigene Rezepte ===== */
+.own-bar{display:flex;gap:8px;margin:10px 0 4px}
+.own-bar .btn{min-height:40px}
+.own-bar .btn.danger{background:transparent;border-color:transparent;color:var(--tomato);font-weight:600}
+.note-box{margin:14px 0 4px;display:flex;flex-direction:column;gap:6px}
+.note-box label{font:700 15px var(--body)}
+.note-box textarea{width:100%;font:inherit;font-size:15px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);resize:vertical;min-height:64px}
+.note-ok{font-size:13px;color:var(--basil);font-weight:600}
+.k-note{display:block;margin-top:4px;font-size:13px;color:var(--muted)}
 /* ===== Meine Küche ===== */
 #p-ideen .bar{flex-wrap:nowrap}
 #p-ideen .bar>.btn{flex:1 1 0;justify-content:center;white-space:nowrap;padding-left:10px;padding-right:10px}
@@ -2266,10 +2276,10 @@ const DAYS_LONG = ["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samsta
 const EXAMPLE = {"0":"d07","1":"d02","2":"d05","3":"d25","4":"d19","5":"d24","6":"d04"};
 
 /* ---------- State ---------- */
-let state = {days:{...EXAMPLE}, checked:{}, hidden:{}, extras:{}, recipes:{}, likes:{}, cooked:{}, pantry:{}};
+let state = {days:{...EXAMPLE}, checked:{}, hidden:{}, extras:{}, recipes:{}, likes:{}, cooked:{}, notes:{}, pantry:{}};
 let isExample = true;
 const LS = "essensplan-v1", LS_SYNC = "essensplan-sync";
-const MAPS = ["days","checked","hidden","extras","recipes","likes","cooked","settings","pantry"];
+const MAPS = ["days","checked","hidden","extras","recipes","likes","cooked","notes","settings","pantry"];
 
 function lsGet(k=LS){ try{ const s = localStorage.getItem(k); return s ? JSON.parse(s) : null; }catch(e){ return null; } }
 function lsSet(v,k=LS){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
@@ -2279,7 +2289,7 @@ function normalize(s){
   s = s || {};
   let extras = s.extras || {};
   if(Array.isArray(extras)){ const m={}; extras.forEach(e=>{ if(e&&e.id) m[e.id]={text:e.text}; }); extras=m; }
-  return {days:s.days||{}, checked:s.checked||{}, hidden:s.hidden||{}, extras, recipes:s.recipes||{}, likes:s.likes||{}, cooked:s.cooked||{}, settings:s.settings||{}, pantry:s.pantry||{}};
+  return {days:s.days||{}, checked:s.checked||{}, hidden:s.hidden||{}, extras, recipes:s.recipes||{}, likes:s.likes||{}, cooked:s.cooked||{}, notes:s.notes||{}, settings:s.settings||{}, pantry:s.pantry||{}};
 }
 
 const local = lsGet();
@@ -2485,6 +2495,8 @@ function tagList(d){
 }
 /* ---------- Bewertung & zuletzt gekocht ---------- */
 const LONG_DAYS = 42, RECENT_DAYS = 21;
+function noteOf(id){ return (state.notes||{})[id]||""; }
+function setNote(id,t){ t=(t||"").trim().slice(0,300); state.notes = state.notes||{}; if(t) state.notes[id]=t; else delete state.notes[id]; commit(); }
 function likeOf(id){ return (state.likes||{})[id]||0; }
 /* ---------- Einstellungen (gelten für die ganze Familie, im gemeinsamen Plan gespeichert) ---------- */
 const SET_DEF = {persons:3, fav:[], maxT:30, allerg:[]};
@@ -3122,6 +3134,7 @@ function showDish(id){
   const bl = blockedAllergens(d);
   openSheet(`<button class="btn small close" data-close>Schließen</button>
     <h2>${esc(d.n)}</h2>${chips(d,true)}
+    ${d.own?`<div class="own-bar"><button type="button" class="btn small" data-editrecipe="${d.id}">✏️ Bearbeiten</button><button type="button" class="btn small danger" data-delrecipe="${d.id}">Löschen</button></div>`:''}
     ${bl.length?`<div class="allergy-warn">⚠️ Enthält <b>${bl.map(x=>x[1]+" "+x[2]).join(", ")}</b> – laut euren Einstellungen ausgeschlossen.</div>`:""}
     <div class="rate"><button type="button" class="rbtn" data-like="${d.id}" data-v="1" aria-pressed="${likeOf(d.id)>0}" aria-label="Mögen wir">👍</button><button type="button" class="rbtn" data-like="${d.id}" data-v="-1" aria-pressed="${likeOf(d.id)<0}" aria-label="Mögen wir nicht">👎</button><span class="cooked">🕒 ${esc(cookedText(d.id))}</span></div>
     ${nutriHtml(d)}
@@ -3138,8 +3151,8 @@ function showDish(id){
     <ul id="ingList">${ingItems(d,curPersons)}</ul>
     <div class="bar" style="margin:10px 0 0"><button class="btn small" data-keepcopy="${d.id}">📋 Zutaten für Keep kopieren</button></div><div class="keep-ok" id="keepOk" hidden></div>
     ${methodHtml(d)}
-    <h3>An welchem Tag?</h3><div class="days">${DAYS.map((x,i)=>`<button data-setday="${i}" data-dish="${d.id}">${x}</button>`).join("")}</div>
-    ${d.own?`<h3>Eigenes Rezept</h3><div class="bar"><button class="btn" data-editrecipe="${d.id}">Bearbeiten</button><button class="btn ghost" data-delrecipe="${d.id}">Löschen</button></div>`:''}`);
+    <div class="note-box"><label for="noteInput">📝 Unsere Notiz</label><textarea id="noteInput" data-note="${d.id}" maxlength="300" rows="2" placeholder="z. B. weniger Salz, Kinder mögen es mit Mais">${esc(noteOf(d.id))}</textarea><span class="note-ok" id="noteOk" hidden>✓ Gespeichert</span></div>
+    <h3>An welchem Tag?</h3><div class="days">${DAYS.map((x,i)=>`<button data-setday="${i}" data-dish="${d.id}">${x}</button>`).join("")}</div>`);
 }
 function matchFilter(d,f){
   if(f==="veg"&&d.k!=="veg") return false;
@@ -3237,7 +3250,7 @@ $("#fillWeek").addEventListener("click",()=>{
 });
 $("#newWeek").addEventListener("click",()=>{
   const b = $("#newWeek");
-  if(b.dataset.confirm){ recordCooked(); state = {days:{},checked:{},hidden:{},extras:{},recipes:state.recipes||{},likes:state.likes||{},cooked:state.cooked||{},settings:state.settings||{},pantry:state.pantry||{}}; delete b.dataset.confirm; b.textContent="Plan leeren"; commit(true); toast("Plan und Einkaufsliste geleert"); return; }
+  if(b.dataset.confirm){ recordCooked(); state = {days:{},checked:{},hidden:{},extras:{},recipes:state.recipes||{},likes:state.likes||{},cooked:state.cooked||{},notes:state.notes||{},settings:state.settings||{},pantry:state.pantry||{}}; delete b.dataset.confirm; b.textContent="Plan leeren"; commit(true); toast("Plan und Einkaufsliste geleert"); return; }
   b.dataset.confirm="1"; b.textContent="Wirklich alles leeren?";
   setTimeout(()=>{ if(b.dataset.confirm){ delete b.dataset.confirm; b.textContent="Plan leeren"; } },4000);
 });
@@ -3368,7 +3381,7 @@ function openRecipeForm(id){
 }
 function deleteRecipe(id, btn){
   if(!btn.dataset.confirm){ btn.dataset.confirm="1"; btn.textContent="Wirklich löschen?"; setTimeout(()=>{ if(btn.isConnected){ delete btn.dataset.confirm; btn.textContent="Löschen"; } },4000); return; }
-  delete state.recipes[id];
+  delete state.recipes[id]; if(state.notes) delete state.notes[id];
   Object.keys(state.days).forEach(k=>{ if(state.days[k]===id) delete state.days[k]; });
   closeSheet(); commit(); toast("Rezept gelöscht");
 }
@@ -3386,7 +3399,7 @@ function kitchenList(k){
 function kitchenRow(d){
   const w = d._when ? daysSince(d._when) : null;
   const when = w===null ? "" : `<span class="k-when">${w<=0?"heute":w===1?"gestern":"vor "+w+" Tagen"}</span>`;
-  return `<div class="idea"><div class="idea-main" data-open="${d.id}"><h4>${esc(d.n)}</h4>${chips(d)}${when}</div><button class="btn small ghost plan-btn" data-assign="${d.id}" aria-label="${esc(d.n)} einplanen">＋ Einplanen</button></div>`;
+  return `<div class="idea"><div class="idea-main" data-open="${d.id}"><h4>${esc(d.n)}</h4>${chips(d)}${when}${noteOf(d.id)?`<span class="k-note">📝 ${esc(noteOf(d.id))}</span>`:""}</div><button class="btn small ghost plan-btn" data-assign="${d.id}" aria-label="${esc(d.n)} einplanen">＋ Einplanen</button></div>`;
 }
 let kOpen = {}, kTab = "like";
 const KSHORT = {like:"👍 Mögen wir",own:"⭐ Eigene",cooked:"🕒 Zuletzt"};
@@ -3418,6 +3431,10 @@ document.addEventListener("click",e=>{
   if(e.target.closest("[data-kback]")){ $("#p-ideen").classList.remove("kmode"); $("#kitchenView").hidden=true; return; }
 });
 $("#kitchenBtn").addEventListener("click",openKitchen);
+document.addEventListener("change",e=>{
+  const n = e.target.closest && e.target.closest("[data-note]"); if(!n) return;
+  setNote(n.dataset.note, n.value); const ok = $("#noteOk"); if(ok){ ok.hidden = false; setTimeout(()=>{ if(ok.isConnected) ok.hidden = true; },2000); }
+});
 
 
 /* ---------- Rezept-Eingang (Warteliste auf GitHub) ---------- */
