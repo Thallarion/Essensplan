@@ -3,39 +3,41 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#FAFAF7" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#111412" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F7F1E6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A1612" media="(prefers-color-scheme: dark)">
 <meta name="robots" content="noindex">
 <title>Rezept einsenden</title>
 <link rel="icon" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
 <style>
+@font-face{font-family:"Fraunces";src:url("fonts/fraunces.woff2") format("woff2");font-weight:100 900;font-display:swap}
+@font-face{font-family:"Atkinson Hyperlegible";src:url("fonts/atkinson-400.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Atkinson Hyperlegible";src:url("fonts/atkinson-700.woff2") format("woff2");font-weight:700;font-display:swap}
 :root{
-  --ground:#FAFAF7; --surface:#FFFFFF; --sunk:#F1F2EE; --ink:#1E2420; --muted:#6A716C; --line:#E4E7E2;
-  --basil:#2F6B47; --basil-ink:#FFFFFF; --basil-soft:#EAF2EC; --tomato:#A34A38;
-  --display:"Bricolage Grotesque","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --ground:#F7F1E6; --surface:#FFFDF8; --sunk:#EFE6D6; --ink:#2B2620; --muted:#77695A; --line:#E6DAC6;
+  --basil:#2F6A45; --basil-ink:#FFFFFF; --basil-soft:#E1EDDD; --tomato:#C0492F; --mustard-soft:#FBEBC4;
+  --display:"Fraunces",Georgia,serif;
   --body:"Atkinson Hyperlegible","Segoe UI",system-ui,-apple-system,sans-serif;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     color-scheme:dark;
-    --ground:#111412; --surface:#171B18; --sunk:#1F2420; --ink:#E7EBE8; --muted:#98A19B; --line:#2A302C;
-    --basil:#86C79D; --basil-ink:#0F1A12; --basil-soft:#1C2A21; --tomato:#E0907C;
+    --ground:#1A1612; --surface:#241F19; --sunk:#2E2720; --ink:#F1E8DA; --muted:#B3A28C; --line:#3A3128;
+    --basil:#8FCB9F; --basil-ink:#13200F; --basil-soft:#27362A; --tomato:#F0927B; --mustard-soft:#3D321C;
   }
 }
 :root[data-theme="dark"]{
   color-scheme:dark;
-  --ground:#111412; --surface:#171B18; --sunk:#1F2420; --ink:#E7EBE8; --muted:#98A19B; --line:#2A302C;
-  --basil:#86C79D; --basil-ink:#0F1A12; --basil-soft:#1C2A21; --tomato:#E0907C;
+  --ground:#1A1612; --surface:#241F19; --sunk:#2E2720; --ink:#F1E8DA; --muted:#B3A28C; --line:#3A3128;
+  --basil:#8FCB9F; --basil-ink:#13200F; --basil-soft:#27362A; --tomato:#F0927B; --mustard-soft:#3D321C;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--ground);color:var(--ink);font:16px/1.5 var(--body)}
 .wrap{max-width:520px;margin:0 auto;padding:calc(28px + env(safe-area-inset-top,0px)) 16px calc(48px + env(safe-area-inset-bottom,0px))}
 h1{font:700 clamp(26px,7vw,32px)/1.1 var(--display);letter-spacing:-.02em;margin:0 0 8px}
-h1 span{color:var(--basil)}
+h1 span{color:inherit;background:linear-gradient(transparent 58%, var(--mustard-soft) 58%, var(--mustard-soft) 92%, transparent 92%);padding:0 .08em}
+h1,.done h2{font-variation-settings:"SOFT" 100}
 .sub{color:var(--muted);font-size:15px;margin:0 0 22px}
 form{display:flex;flex-direction:column;gap:16px}
 label{display:flex;flex-direction:column;gap:6px;font-weight:700;font-size:14px}
