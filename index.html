@@ -541,8 +541,8 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
 .rep-hint,.rate-q{font-size:12.5px;color:var(--muted);margin-top:6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .rep-hint button,.rate-q button,.linkbtn{background:transparent;border:1px solid var(--line);border-radius:999px;color:var(--ink);font:600 12.5px var(--body);padding:4px 10px;cursor:pointer}
 .linkbtn{border:0;padding:0;text-decoration:underline;color:var(--basil)}
-.qi{display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;margin:0 -14px 10px;padding:0 14px 2px;scrollbar-width:none}
-.qi::-webkit-scrollbar{display:none}
+.qi{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.qi [data-qi-more]{border-style:dashed;color:var(--muted)}
 .qi button{flex:none;white-space:nowrap;font:600 13px var(--body);padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
 .qi button[aria-pressed="true"]{border-color:var(--basil);background:var(--basil-soft);color:var(--basil)}
 .qi button[aria-pressed="true"]::before{content:"✓ "}
@@ -557,6 +557,18 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
   .rep-hint button,.rate-q button{min-width:44px}
 }
 #noscriptInfo{display:none;padding:16px;max-width:640px;margin:0 auto}
+
+.weekbar{margin-bottom:12px}
+.weekhead{display:flex;align-items:baseline;gap:10px;margin:2px 0 10px}
+.weekhead h2{font:700 20px var(--display);margin:0}
+.weekhead span{color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
+.wk-status{flex:1;color:var(--basil);font-weight:700;font-size:15px;padding:10px 4px}
+#newWeek{color:var(--tomato)!important;text-decoration:none!important;border:1px solid var(--tomato)!important;background:transparent!important;font-weight:600!important}
+.weekbar #newWeek{margin-left:auto}
+.day.past:not(.today){opacity:.72}
+.plan-btn{width:auto!important;height:auto!important;min-height:40px;border-radius:999px!important;padding:8px 14px!important;font:700 14px var(--body)!important;white-space:nowrap}
+.more{background:transparent;border:0;padding:2px 4px;font:inherit;color:var(--muted);cursor:pointer;text-decoration:underline dotted}
+.more.open{color:var(--ink);text-decoration:none}
 </style>
 </head>
 <body>
@@ -568,7 +580,7 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
       <button class="helpbtn" id="helpBtn" type="button" aria-label="Anleitung öffnen" title="Anleitung">?</button>
       <button class="helpbtn" id="setBtn" type="button" aria-label="Einstellungen" title="Einstellungen">⚙</button>
     </div>
-    <button class="sync" id="sync" type="button"><i></i><span>Nur auf diesem Handy</span></button>
+    <button class="sync" id="sync" type="button"><i></i><span>Nur dieses Handy · Familie einladen</span></button>
   </header>
 
   <nav class="tabs" role="tablist">
@@ -578,8 +590,10 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
   </nav>
 
   <section id="p-woche">
+    <div class="weekhead"><h2 id="weekTitle">Diese Woche</h2><span id="weekRange"></span></div>
     <div class="weekbar">
       <button class="btn primary" id="fillWeek">✨ Woche planen</button>
+      <span class="wk-status" id="wkStatus" hidden>✓ Woche ist komplett</span>
       <button class="btn small" id="newWeek">Plan leeren</button>
     </div>
     <div class="note" id="exampleNote" hidden>👋 Das ist eine Beispielwoche. <b>Gericht antippen</b> zeigt das Rezept, <b>🎲</b> oder <b>☰</b> tauscht es aus. Sobald du etwas änderst, gehört der Plan dir. <button type="button" class="linkbtn" id="noteHelp">Anleitung ansehen</button></div>
@@ -614,7 +628,7 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
     <div class="surprise">
       <div><small>Keine Idee?</small><strong id="surpriseName">…</strong><small id="surpriseMeta"></small></div>
       <div class="bar" style="margin:0">
-        <button class="btn" id="surpriseAgain">Noch eine</button>
+        <button class="btn" id="surpriseAgain">Neuer Vorschlag</button>
         <button class="btn primary" id="surpriseUse">Einplanen</button>
       </div>
     </div>
@@ -2180,7 +2194,7 @@ function setSync(kind, text){
   el.querySelector("span").textContent = text;
 }
 function syncLabel(){
-  if(!sync) setSync("", "Nur auf diesem Handy · Gemeinsam nutzen");
+  if(!sync) setSync("", "Nur dieses Handy · Familie einladen");
   else if(online) setSync("ok", "Mit Familie geteilt");
   else setSync("warn", "Familienplan · offline");
 }
@@ -2384,7 +2398,7 @@ function metaLine(d){
   const show = rest.slice(0,2), more = rest.length-show.length;
   const ico = ([i,l])=>i==="GF"?`<span class="gfb" title="Glutenfrei" aria-label="Glutenfrei">GF</span>`:`<span title="${esc(l)}" aria-label="${esc(l)}">${i}</span>`;
   const parts = [d.t?`<span>${d.t} Min</span>`:"", kl?`<span class="kind">${esc(kl)}</span>`:"", show.length?`<span class="ic">${show.map(ico).join("")}</span>`:""].filter(Boolean);
-  return `<div class="mline">${parts.join('<span class="dot">·</span>')}${more>0?`<span class="more">+${more}</span>`:""}</div>`;
+  return `<div class="mline">${parts.join('<span class="dot">·</span>')}${more>0?`<button type="button" class="more" data-tags="${esc(rest.slice(2).map(x=>x[1]).join(", "))}" data-n="+${more}" aria-expanded="false" aria-label="${more} weitere Eigenschaften anzeigen">+${more}</button>`:""}</div>`;
 }
 function chips(d, full){
   if(!full) return metaLine(d);
@@ -2425,8 +2439,10 @@ function renderWeek(){
   const dates = weekDates(); const today = (new Date().getDay()+6)%7;
   $("#exampleNote").hidden = !isExample;
   { const e = DAYS.filter((_,i)=>!(typeof state.days[i]==="string" && dish(state.days[i])) && !(state.days[i]&&state.days[i].custom)).length;
-    $("#fillWeek").classList.toggle("primary", e>0);
-    $("#fillWeek").textContent = e===7 ? "✨ Woche planen" : e>0 ? `✨ ${e} freie${e>1?"":"n"} Tag${e>1?"e":""} füllen` : "✓ Woche ist komplett"; }
+    $("#fillWeek").hidden = e===0; $("#wkStatus").hidden = e>0;
+    $("#fillWeek").textContent = e===7 ? "✨ Woche planen" : `✨ ${e} freie${e>1?"":"n"} Tag${e>1?"e":""} füllen`;
+    const f = x=>x.toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"});
+    $("#weekRange").textContent = f(dates[0])+" – "+f(dates[6]); }
   const STAPLES = [["Nudeln",/nudel|spaghetti|penne|fusilli|makkaroni|tagliatelle|gnocchi|lasagne/i],["Reis",/\breis\b|risotto/i],["Kartoffeln",/kartoffel/i]];
   const stapleOf = x=>{ const txt = x.n+" "+x.i.map(r=>r[2]).join(" "); return STAPLES.filter(([,re])=>re.test(x.n) || (re.test(txt) && x.i.some(r=>re.test(r[2]) && r[0]>=300))).map(a=>a[0]); };
   $("#week").innerHTML = DAYS.map((d,i)=>{
@@ -2441,7 +2457,7 @@ function renderWeek(){
       if(prev){ const same = stapleOf(x).filter(a=>stapleOf(prev).includes(a)); if(same.length) body += `<div class="rep-hint">↺ ${same[0]} gab es schon gestern <button type="button" data-roll="${i}">Alternative</button></div>`; }
       if(!isExample && i<today && !likeOf(v)) body += `<div class="rate-q">Hat es geschmeckt? <button type="button" data-like="${v}" data-v="1" aria-label="Hat geschmeckt">👍</button><button type="button" data-like="${v}" data-v="-1" aria-label="Hat nicht geschmeckt">👎</button></div>`;
     }
-    return `<div class="day${i===today?' today':''}">
+    return `<div class="day${i===today?' today':''}${i<today?' past':''}">
       <div class="dhead"><div class="dname" title="${DAYS_LONG[i]}">${d}</div><div class="ddate">${dates[i].toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"})}</div>
         <button class="icon droll" data-roll="${i}" aria-label="${DAYS_LONG[i]}: zufälliges Gericht" title="Würfeln">${ICON.dice}</button></div>
       <div class="dish">${body}</div>
@@ -2532,6 +2548,10 @@ function renderShop(){
   $("#shop").innerHTML = html + homeHtml;
 }
 document.addEventListener("click",e=>{
+  const m = e.target.closest(".more[data-tags]");
+  if(m){ e.stopImmediatePropagation(); e.preventDefault(); const open = m.getAttribute("aria-expanded")==="true"; m.setAttribute("aria-expanded",String(!open)); m.textContent = open ? m.dataset.n : m.dataset.tags; m.classList.toggle("open",!open); }
+},true);
+document.addEventListener("click",e=>{
   const h = e.target.closest("[data-home]"), u = e.target.closest("[data-unhome]");
   if(h){ const it = shopItems[+h.dataset.home]; if(!it) return; askHome(it); }
   else if(u){ const it = homeList[+u.dataset.unhome]; if(!it) return;
@@ -2610,7 +2630,7 @@ function bindFilterUI(id, set, onChange){
   return {sync, open};
 }
 /* Kuratierte Einstiege oberhalb der Ideenliste */
-let quick = null;
+let quick = null, quickMore = false;
 const SEASON = {0:"kohl|wirsing|lauch|rote bete|sellerie|karotte|kartoffel|zwiebel|pastinake|kürbis",1:"kohl|wirsing|lauch|rote bete|sellerie|karotte|kartoffel|zwiebel|pastinake",2:"spinat|lauch|radieschen|bärlauch|karotte|kartoffel|zwiebel|kohl",3:"spinat|radieschen|bärlauch|spargel|lauch|salat|kohlrabi",4:"spargel|radieschen|salat|kohlrabi|spinat|erbsen|rhabarber|erdbeere",5:"spargel|zucchini|salat|kohlrabi|erbsen|erdbeere|karotte|radieschen|gurke",6:"zucchini|tomate|paprika|aubergine|gurke|mais|bohnen|brokkoli|beere|salat",7:"zucchini|tomate|paprika|aubergine|gurke|mais|bohnen|brokkoli|blumenkohl|pilz",8:"kürbis|champignon|pilz|paprika|tomate|zucchini|aubergine|mais|brokkoli|blumenkohl|karotte",9:"kürbis|champignon|pilz|kohl|brokkoli|blumenkohl|karotte|sellerie|lauch|rote bete|kartoffel",10:"kürbis|kohl|rosenkohl|rote bete|sellerie|lauch|pilz|champignon|wirsing|karotte|kartoffel",11:"kohl|wirsing|lauch|rote bete|sellerie|karotte|kartoffel|zwiebel|pastinake|kürbis"};
 function isSeasonal(d){ const re = new RegExp(SEASON[new Date().getMonth()],"i"); return d.i.some(x=>x[3]==="g" && re.test(String(x[2]))); }
 function matchQuick(d){
@@ -2631,9 +2651,11 @@ function matchQuick(d){
   }
   return true;
 }
-const QUICK_BTNS = [["m:woche","🗓 Passt zu deiner Woche"],["f:schnell","⏱ In 20 Min fertig"],["m:vorrat","🥕 Verwendet Vorräte"],["m:saison","🍂 Jetzt saisonal"],["f:like","👍 Von euch bewertet"],["f:veg","🌱 Vegetarisch"],["f:kinder","👶 Familienfreundlich"],["f:glutenfrei","Ohne Gluten"]];
+const QUICK_BTNS = [["m:woche","🗓 Passt zu deiner Woche"],["f:schnell","⏱ In 20 Min fertig"],["m:vorrat","🥕 Verwendet Vorräte"],["f:veg","🌱 Vegetarisch"],["m:saison","🍂 Jetzt saisonal"],["f:like","👍 Von euch bewertet"],["f:kinder","👶 Familienfreundlich"],["f:glutenfrei","Ohne Gluten"]];
 function renderQuick(){
-  $("#quickIdeas").innerHTML = QUICK_BTNS.map(([k,l])=>{ const [t,v]=k.split(":"); const on = t==="m" ? quick===v : filterSet.has(v); return `<button type="button" data-qi="${k}" aria-pressed="${on}">${l}</button>`; }).join("");
+  const html = (k,l)=>{ const [t,v]=k.split(":"); const on = t==="m" ? quick===v : filterSet.has(v); return `<button type="button" data-qi="${k}" aria-pressed="${on}">${l}</button>`; };
+  const hidden = QUICK_BTNS.slice(4), anyOn = hidden.some(([k])=>{ const [t,v]=k.split(":"); return t==="m" ? quick===v : filterSet.has(v); });
+  $("#quickIdeas").innerHTML = QUICK_BTNS.slice(0,4).map(([k,l])=>html(k,l)).join("") + `<button type="button" data-qi-more aria-expanded="${quickMore||anyOn}">${quickMore||anyOn?"Weniger":"Alle Filter ▾"}</button>` + ((quickMore||anyOn)?hidden.map(([k,l])=>html(k,l)).join(""):"");
 }
 function renderIdeas(){
   const q = query.trim().toLowerCase();
@@ -2643,7 +2665,7 @@ function renderIdeas(){
   const inPlan = new Set(planned());
   $("#ideas").innerHTML = list.length ? list.map(d=>`<div class="idea">
     <div class="idea-main" data-open="${d.id}"><h4>${esc(d.n)}</h4>${chips(d)}${inPlan.has(d.id)?'<span class="inplan">✓ im Plan</span>':''}</div>
-    <button class="btn small ghost plan-btn" data-assign="${d.id}" aria-label="${esc(d.n)} einplanen" title="Einplanen"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+    <button class="btn small ghost plan-btn" data-assign="${d.id}" aria-label="${esc(d.n)} einplanen" title="Einplanen">＋ Einplanen</button>
   </div>`).join("") : `<p class="empty">Nichts gefunden. Probier einen anderen Suchbegriff.</p>`;
   if(!surprise) nextSurprise(false);
 }
@@ -3104,7 +3126,7 @@ $("#copyList").addEventListener("click",()=>{
     $("#copyArea").select();
   });
 });
-if(navigator.share){ $("#shareList").hidden = false; $("#shareList").addEventListener("click",()=>{ const text = shopText(); if(!text){ toast("Nichts offen auf der Liste"); return; } navigator.share({title:"Einkaufsliste", text}).catch(()=>{}); }); }
+if(navigator.share){ $("#shareList").hidden = false; $("#sendKeep").hidden = true; $("#shareList").classList.add("primary"); $("#shareList").addEventListener("click",()=>{ const text = shopText(); if(!text){ toast("Nichts offen auf der Liste"); return; } navigator.share({title:"Einkaufsliste", text}).catch(()=>{}); }); }
 // Offene Einträge als einfache Zeilen für eine Google-Keep-Checkliste kopieren (Keep macht beim Einfügen aus jeder Zeile einen Punkt)
 $("#sendKeep").addEventListener("click",()=>{
   const items = [...groupParts(shopParts()), ...extraItems()].filter(it=>!isDone(it));
@@ -3127,6 +3149,7 @@ $("#ideaFilterUI").innerHTML = filterUI("idea","Gericht oder Zutat …");
 const ideaUI = bindFilterUI("idea", filterSet, ()=>{ query=$("#ideaSearch").value; renderIdeas(); });
 $("#ideaCount").addEventListener("click",e=>{ if(e.target.closest("[data-freset]")){ filterSet.clear(); quick=null; ideaUI.sync(); renderIdeas(); } });
 $("#quickIdeas").addEventListener("click",e=>{
+  if(e.target.closest("[data-qi-more]")){ quickMore = !quickMore; renderQuick(); return; }
   const b = e.target.closest("[data-qi]"); if(!b) return;
   const [t,v] = b.dataset.qi.split(":");
   if(t==="m"){
