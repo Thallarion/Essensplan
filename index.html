@@ -444,7 +444,7 @@ details.info p{margin:8px 0 0}
 }
 h1,.sheet h2,.dname,.surprise strong,.help summary,.set h3{font-family:var(--display);font-variation-settings:"SOFT" 100}
 h1{font-weight:700;font-size:clamp(30px,8vw,40px);letter-spacing:-.015em}
-h1 span{color:inherit;background:linear-gradient(transparent 58%, var(--mustard-soft) 58%, var(--mustard-soft) 92%, transparent 92%);padding:0 .08em;font-style:normal}
+h1 span{color:inherit;font-style:normal}
 .sheet h2{font-weight:700;font-size:26px}
 .wrap{padding-block:18px calc(var(--nav-h) + 30px + env(safe-area-inset-bottom,0px))}
 header.top{margin-bottom:10px}
@@ -503,6 +503,36 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
 .fridge-card b{font-size:16px}
 .fridge-card small{font-size:12px}
 .fridge-card .fa{font-size:22px}
+/* ---- Umbau: ruhiger & kompakter ---- */
+.shop{background:transparent;border:0;box-shadow:none;padding:0}
+.shopdays{padding:10px 12px;gap:8px;margin-bottom:8px}
+.sd-top .lbl{font-size:11px;letter-spacing:.05em}
+.sd-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:2px 8px}
+.sd-quick{display:flex;gap:0}
+.sd-quick .btn{padding:4px 6px;font-size:12px;border-color:transparent;background:transparent;color:var(--basil)}
+.daychips{gap:4px}
+.daychips button{padding:5px 0 4px;font-size:13px;border-radius:9px}
+.daychips button small{font-size:9.5px}
+.seg{margin-bottom:8px}
+.shopbar{gap:6px;margin-bottom:8px}
+.shopbar .btn{padding:7px 11px;font-size:13px}
+.mline .kind{color:var(--ink);opacity:.8}
+.fridge-wrap{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:10px 14px 12px;margin:0 0 10px}
+.fridge-wrap .fridge-card{background:none;border:0;box-shadow:none;padding:0;margin:0 0 8px;border-radius:0}
+.zh-chips{display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;margin:0 -14px;padding:0 14px 2px;scrollbar-width:none}
+.zh-chips::-webkit-scrollbar{display:none}
+.zh-chips button{flex:none;white-space:nowrap}
+.zh-chips button{font:600 13px var(--body);padding:6px 11px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
+.zh-chips button[aria-pressed="true"]{border-color:var(--basil);background:var(--basil-soft);color:var(--basil)}
+.zh-chips button[data-frq-more]{border-style:dashed;color:var(--muted)}
+.zh-go{display:block;width:100%;margin-top:10px;text-align:left}
+.zh-go small{display:block;font-weight:400;font-size:12px;opacity:.85}
+.add-opts{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.add-opt{display:grid;grid-template-columns:40px 1fr;column-gap:12px;align-items:center;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px;color:var(--ink);cursor:pointer;font:inherit}
+.add-opt span{grid-row:span 2;font-size:26px;text-align:center}
+.add-opt b{font-size:16px}
+.add-opt small{color:var(--muted);font-size:13px}
+.add-opt:hover,.add-opt:focus-visible{border-color:var(--basil)}
 </style>
 </head>
 <body>
@@ -533,21 +563,17 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
 
   <section id="p-einkauf" hidden>
     <div class="shopdays">
-      <div class="lbl">Einkaufen für</div>
+      <div class="sd-top"><span class="lbl">Einkaufen für</span>
+        <span class="sd-quick"><button class="btn small" id="selToday">Ab heute</button><button class="btn small" id="selNext2">Heute + morgen</button><button class="btn small ghost" id="selAll">Alle</button></span></div>
       <div class="daychips" id="dayChips"></div>
-      <div class="bar" style="margin:0">
-        <button class="btn small" id="selToday">Ab heute</button>
-        <button class="btn small" id="selNext2">Heute + morgen</button>
-        <button class="btn small ghost" id="selAll">Alle</button>
-      </div>
     </div>
     <div class="seg" role="group" aria-label="Sortierung">
       <button id="viewCat" aria-pressed="true">Nach Abteilung</button>
       <button id="viewDay" aria-pressed="false">Nach Tagen</button>
     </div>
-    <div class="bar">
-      <button class="btn small" id="copyList">Liste kopieren</button>
-      <button class="btn small primary" id="sendKeep">📋 Für Keep kopieren</button>
+    <div class="bar shopbar">
+      <button class="btn small primary" id="sendKeep">📋 Für Keep</button>
+      <button class="btn small" id="copyList">Kopieren</button>
       <button class="btn small ghost" id="clearDone">Abgehakte ausblenden</button>
     </div>
     <div class="add">
@@ -566,8 +592,12 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
         <button class="btn primary" id="surpriseUse">Einplanen</button>
       </div>
     </div>
-    <button class="fridge-card" id="fridgeBtn" type="button"><span class="fi" aria-hidden="true">🧊</span><span><b>Was ist noch da?</b><small>Zutaten eingeben – passende Rezepte finden</small></span><span class="fa" aria-hidden="true">›</span></button>
-    <div class="bar"><button class="btn primary" id="addRecipe">+ Eigenes Rezept</button><button class="btn" id="inboxBtn">📷 Foto / 🔗 Link einsenden <span class="count" id="inboxCount" hidden>0</span></button><a class="btn ghost" id="guestPage" href="einsenden.html?app=1" style="text-decoration:none">🌐 Einsendeseite öffnen</a></div>
+    <div class="fridge-wrap">
+      <button class="fridge-card" id="fridgeBtn" type="button"><span class="fi" aria-hidden="true">🧊</span><span><b>Was haben wir noch zuhause?</b><small>Tippe an, was da ist – wir suchen passende Gerichte</small></span><span class="fa" aria-hidden="true">›</span></button>
+      <div class="zh-chips" id="zhChips"></div>
+      <button class="btn primary zh-go" id="zhGo" type="button" hidden></button>
+    </div>
+    <div class="bar"><button class="btn primary" id="addRecipe" type="button">＋ Rezept hinzufügen <span class="count" id="inboxCount" hidden>0</span></button></div>
     <div id="ideaFilterUI"></div>
     <div class="fcount" id="ideaCount"></div>
     <div class="ideas" id="ideas"></div>
@@ -2113,8 +2143,8 @@ function setSync(kind, text){
 }
 function syncLabel(){
   if(!sync) setSync("", "Nur auf diesem Handy · Gemeinsam nutzen");
-  else if(online) setSync("ok", "Gemeinsamer Plan · verbunden");
-  else setSync("warn", "Gemeinsamer Plan · offline");
+  else if(online) setSync("ok", "Mit Familie geteilt");
+  else setSync("warn", "Familienplan · offline");
 }
 
 async function startSync(){
@@ -2150,7 +2180,7 @@ async function startSync(){
 }
 function syncError(e){
   online = false;
-  const msg = e && e.code === "permission-denied" ? "Keine Berechtigung – Regeln prüfen" : "Gemeinsamer Plan · nicht erreichbar";
+  const msg = e && e.code === "permission-denied" ? "Keine Berechtigung – Regeln prüfen" : "Familienplan · nicht erreichbar";
   setSync("err", msg);
 }
 
@@ -2309,8 +2339,14 @@ function cookedText(id){
   return `Zuletzt gekocht: ${rel} (${d}.${m}.${n>300?y:""})`;
 }
 function metaLine(d){
-  const t = tagList(d);
-  return `<div class="mline">${d.t?`<span>${d.t} Min</span><span class="dot">·</span>`:""}<span class="ic">${t.slice(0,5).map(([i,l])=>i==="GF"?`<span class="gfb" title="Glutenfrei" aria-label="Glutenfrei">GF</span>`:`<span title="${esc(l)}" aria-label="${esc(l)}">${i}</span>`).join("")}</span>${t.length>5?`<span class="more">+${t.length-5}</span>`:""}</div>`;
+  // Zeit · Art als Wort · höchstens 2 Symbole (Wichtiges zuerst) · "+N" für den Rest
+  const t = tagList(d), kl = KIND[d.k];
+  const prio = x=>({"⚠️":0,"👎":1,"👍":1,"🥣":2})[x[0]] ?? 3;
+  const rest = t.filter(x=>x[1]!==kl && !["📷","🔗","⭐"].includes(x[0])).map((x,i)=>[x,i]).sort((a,b)=>prio(a[0])-prio(b[0])||a[1]-b[1]).map(a=>a[0]);
+  const show = rest.slice(0,2), more = rest.length-show.length;
+  const ico = ([i,l])=>i==="GF"?`<span class="gfb" title="Glutenfrei" aria-label="Glutenfrei">GF</span>`:`<span title="${esc(l)}" aria-label="${esc(l)}">${i}</span>`;
+  const parts = [d.t?`<span>${d.t} Min</span>`:"", kl?`<span class="kind">${esc(kl)}</span>`:"", show.length?`<span class="ic">${show.map(ico).join("")}</span>`:""].filter(Boolean);
+  return `<div class="mline">${parts.join('<span class="dot">·</span>')}${more>0?`<span class="more">+${more}</span>`:""}</div>`;
 }
 function chips(d, full){
   if(!full) return metaLine(d);
@@ -2544,7 +2580,7 @@ function openFridge(init){
   const have = init ? [...init.have] : [], fset = new Set(init ? init.f : []);
   const names = frAllNames();
   openSheet(`<button class="btn small close" data-close>Schließen</button>
-    <h2>🧊 Was ist noch da?</h2>
+    <h2>🧊 Was haben wir noch zuhause?</h2>
     <p class="sub">Gib ein, was im Kühlschrank ist – z. B. „Zucchini, Feta, Reis“. Salz, Öl, Gewürze, Zwiebeln und Knoblauch zählen als vorhanden.</p>
     <div class="fr-in"><input id="frInput" type="text" placeholder="Zutat eingeben …" autocomplete="off" enterkeyhint="done"><button class="btn primary" id="frAdd" type="button">+</button></div>
     <div class="fr-sug" id="frSug"></div>
@@ -2684,10 +2720,10 @@ function openHelp(first){
       <table class="legend">${leg.map(([i,t])=>`<tr><td>${i}</td><td>${t}</td></tr>`).join("")}</table>
       <p class="sub">Die Gesundheits-Symbole berechnet die App aus den Nährwerten pro Portion.</p>
     </details>
-    <details><summary>🧊 Was ist noch da?</summary>
+    <details><summary>🧊 Was haben wir noch zuhause?</summary>
       ${img("reste","Rezepte aus vorhandenen Zutaten")}
       <ul>
-        <li>Unter <b>Ideen</b> → <b>„🧊 Was ist noch da?“</b> eingeben, was im Kühlschrank ist – tippen oder aus den Vorschlägen antippen.</li>
+        <li>Unter <b>Ideen</b> → <b>„🧊 Was haben wir noch zuhause?“</b> die Zutaten antippen, die da sind (oder mit „＋ weitere“ eigene eingeben). Darunter steht, wie viele Gerichte damit fast fertig sind.</li>
         <li>Rezepte mit den <b>meisten Treffern</b> stehen oben, darunter was noch fehlt. Salz, Öl, Gewürze, Zwiebeln und Knoblauch zählen als vorhanden.</li>
         <li><b>Einplanen</b> → Tag wählen: Was ihr schon habt, erscheint nicht auf der Einkaufsliste.</li>
         <li><b>🛒 Fehlendes auf die Liste</b> setzt nur die fehlenden Zutaten auf die Einkaufsliste.</li>
@@ -2714,8 +2750,8 @@ function openHelp(first){
     <details><summary>📷 Rezepte einsenden & eigene Rezepte</summary>
       ${img("einsenden","Rezept einsenden")}
       <ul>
-        <li><b>📷 Foto / 🔗 Link einsenden</b> (unter Ideen): Kochbuchseite fotografieren, Screenshot, PDF oder Link schicken. Das Rezept wird aufbereitet, auf 3 Personen umgerechnet und kommt für alle in die App.</li>
-        <li><b>+ Eigenes Rezept</b>: selbst eintippen – bleibt nur in deinem bzw. eurem Plan (Filter „⭐ Meine Rezepte“).</li>
+        <li><b>＋ Rezept hinzufügen</b> (unter Ideen) → <b>Foto oder PDF / Link</b>: Kochbuchseite fotografieren, Screenshot, PDF oder Link schicken. Das Rezept wird aufbereitet, auf 3 Personen umgerechnet und kommt für alle in die App.</li>
+        <li><b>＋ Rezept hinzufügen</b> → <b>Selbst eingeben</b>: selbst eintippen – bleibt nur in deinem bzw. eurem Plan (Filter „⭐ Meine Rezepte“).</li>
       </ul>
     </details>
     <p class="sub" style="margin-top:14px">Diese Anleitung findest du jederzeit oben über das <b>?</b> neben dem Titel.</p>
@@ -3003,7 +3039,7 @@ function deleteRecipe(id, btn){
   Object.keys(state.days).forEach(k=>{ if(state.days[k]===id) delete state.days[k]; });
   closeSheet(); commit(); toast("Rezept gelöscht");
 }
-$("#addRecipe").addEventListener("click",()=>openRecipeForm());
+$("#addRecipe").addEventListener("click",()=>openAddSheet());
 
 /* ---------- Rezept-Eingang (Warteliste auf GitHub) ---------- */
 const INBOX_REPO = "Thallarion/Essensplan-Inbox";
@@ -3131,7 +3167,6 @@ async function openInbox(){
       : `<p class="ok-text">Nichts offen – alles eingetragen. ✔</p>`;
   }catch(e){ const el = $("#ibQueue"); if(el) el.innerHTML = `<p class="err-text">Warteliste konnte nicht geladen werden.</p>`; }
 }
-$("#inboxBtn").addEventListener("click",openInbox);
 refreshInboxCount();
 
 /* ---------- Einrichtung ---------- */
@@ -3151,7 +3186,8 @@ function openSyncSheet(){
   if(sync){
     const link = joinLink();
     openSheet(`<button class="btn small close" data-close>Schließen</button>
-      <h2>Gemeinsamer Plan</h2>
+      <h2>Familienplan</h2>
+      <p class="sub">Alle Änderungen werden automatisch synchronisiert.</p>
       <p>Öffne diesen Link auf jedem Handy, das mitplanen soll. Danach sehen alle denselben Wochenplan und dieselbe Einkaufsliste.</p>
       <pre class="code" id="joinLinkText">${esc(link)}</pre>
       <div class="bar"><button class="btn primary" id="copyJoin">Familien-Link kopieren</button></div>
@@ -3206,7 +3242,43 @@ render();
 if(recordCooked()) commit();
 $("#helpBtn").addEventListener("click",()=>openHelp(false));
 $("#setBtn").addEventListener("click",openSettings);
-$("#fridgeBtn").addEventListener("click",()=>openFridge());
+/* ---------- Rezept hinzufügen (eine Auswahl statt drei Buttons) ---------- */
+function openAddSheet(){
+  openSheet(`<button class="btn small close" data-close>Schließen</button>
+    <h2>Rezept hinzufügen</h2>
+    <p class="sub">Wie möchtest du es hinzufügen?</p>
+    <div class="add-opts">
+      <button type="button" class="add-opt" id="aoPhoto"><span aria-hidden="true">📷</span><b>Foto oder PDF</b><small>Kochbuchseite oder Screenshot – wird aufbereitet und für alle eingetragen</small></button>
+      <button type="button" class="add-opt" id="aoLink"><span aria-hidden="true">🔗</span><b>Link einfügen</b><small>z. B. von Chefkoch – wird aufbereitet und für alle eingetragen</small></button>
+      <button type="button" class="add-opt" id="aoOwn"><span aria-hidden="true">✍️</span><b>Selbst eingeben</b><small>Bleibt nur in eurem Plan (Filter „⭐ Meine Rezepte“)</small></button>
+    </div>
+    <p><a class="btn small ghost" href="einsenden.html?app=1" style="text-decoration:none">🌐 Einsendeseite für Gäste öffnen</a></p>`);
+  $("#aoPhoto").addEventListener("click",()=>{ openInbox(); const f=$("#ibFiles"); if(f) f.click(); });
+  $("#aoLink").addEventListener("click",()=>{ openInbox(); setTimeout(()=>{ const l=$("#ibLink"); if(l) l.focus(); },60); });
+  $("#aoOwn").addEventListener("click",()=>{ closeSheet(); openRecipeForm(); });
+}
+/* ---------- "Was haben wir noch zuhause?": Zutaten-Chips direkt auf der Ideen-Seite ---------- */
+const FR_QUICK = ["Eier","Käse","Tomaten","Nudeln","Reis","Kartoffeln","Zucchini","Karotten","Paprika","Sahne"];
+let frSel = [];
+function frNearCount(){ return allDishes().filter(d=>{ if(d.side) return false; const r=frScore(d,frSel); return r.hits.length && r.missing.length<=3; }).length; }
+function renderFrChips(){
+  $("#zhChips").innerHTML = FR_QUICK.map(t=>`<button type="button" data-frq="${esc(t)}" aria-pressed="${frSel.includes(t)}">${esc(t)}</button>`).join("") + `<button type="button" data-frq-more>＋ weitere</button>`;
+  const go = $("#zhGo");
+  if(!frSel.length){ go.hidden = true; return; }
+  const n = frNearCount();
+  go.hidden = false;
+  go.innerHTML = n ? `→ ${n} passende Gerichte anzeigen<small>Es fehlen höchstens 3 Zutaten</small>` : `→ Vorschläge anzeigen<small>Kein Gericht fast komplett – Teil-Treffer ansehen</small>`;
+}
+$("#zhChips").addEventListener("click",e=>{
+  const b = e.target.closest("button"); if(!b) return;
+  if(b.hasAttribute("data-frq-more")){ openFridge({have:[...frSel], f:[]}); return; }
+  const t = b.dataset.frq; if(!t) return;
+  frSel = frSel.includes(t) ? frSel.filter(x=>x!==t) : [...frSel, t];
+  renderFrChips();
+});
+$("#zhGo").addEventListener("click",()=>openFridge({have:[...frSel], f:[]}));
+renderFrChips();
+$("#fridgeBtn").addEventListener("click",()=>openFridge({have:[...frSel], f:[]}));
 try{ if(!local && !sync && !localStorage.getItem("essensplan-hilfe")) setTimeout(()=>openHelp(true),500); }catch(e){}
 startSync().then(()=>{ if(window.__joined) toast("Mit dem Familien-Plan verbunden"); });
 try{ const tab = localStorage.getItem(LS+"-tab"); if(tab && tab!=="woche"){ const b=document.querySelector(`[data-tab="${tab}"]`); b&&b.click(); } }catch(e){}
