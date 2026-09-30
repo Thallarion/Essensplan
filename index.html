@@ -36,8 +36,8 @@
 })();
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#FAFAF7" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#111412" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F7F1E6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A1612" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Essensplan">
@@ -45,8 +45,7 @@
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="manifest" href="manifest.webmanifest">
 <title>Familien-Essensplan</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="preload" href="fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin>
 <style>
 :root{
   --ground:#F4F6F0; --surface:#FFFFFF; --sunk:#E9EDE4; --ink:#1D2820; --muted:#5E6B61; --line:#D8DFD2;
@@ -398,6 +397,80 @@ details.info p{margin:8px 0 0}
 .stepper span{min-width:28px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums}
 .pers-hint{font-size:12px;color:var(--muted);margin:-2px 0 6px}
 @media (prefers-reduced-motion:no-preference){.sheet{animation:up .18s ease-out}@keyframes up{from{transform:translateY(16px);opacity:.6}}}
+
+/* ===================== Warmes Design (Fraunces) ===================== */
+@font-face{font-family:"Fraunces";src:url("fonts/fraunces.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
+@font-face{font-family:"Atkinson Hyperlegible";src:url("fonts/atkinson-400.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Atkinson Hyperlegible";src:url("fonts/atkinson-700.woff2") format("woff2");font-weight:700;font-display:swap}
+:root{
+  --ground:#F7F1E6; --surface:#FFFDF8; --sunk:#EFE6D6; --ink:#2B2620; --muted:#77695A; --line:#E6DAC6;
+  --basil:#2F6A45; --basil-ink:#FFFFFF; --basil-soft:#E1EDDD; --mustard:#C98E12; --mustard-soft:#FBEBC4;
+  --tomato:#C0492F; --tomato-soft:#F8DDD4;
+  --shadow:0 1px 2px rgba(80,55,20,.06),0 8px 24px rgba(80,55,20,.08);
+  --display:"Fraunces",Georgia,"Times New Roman",serif;
+  --body:"Atkinson Hyperlegible","Segoe UI",system-ui,-apple-system,sans-serif;
+  --nav-h:64px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#1A1612; --surface:#241F19; --sunk:#2E2720; --ink:#F1E8DA; --muted:#B3A28C; --line:#3A3128;
+    --basil:#8FCB9F; --basil-ink:#13200F; --basil-soft:#27362A; --mustard:#EBC060; --mustard-soft:#3D321C;
+    --tomato:#F0927B; --tomato-soft:#44271F; --shadow:0 1px 2px rgba(0,0,0,.35),0 8px 24px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#1A1612; --surface:#241F19; --sunk:#2E2720; --ink:#F1E8DA; --muted:#B3A28C; --line:#3A3128;
+  --basil:#8FCB9F; --basil-ink:#13200F; --basil-soft:#27362A; --mustard:#EBC060; --mustard-soft:#3D321C;
+  --tomato:#F0927B; --tomato-soft:#44271F; --shadow:0 1px 2px rgba(0,0,0,.35),0 8px 24px rgba(0,0,0,.3);
+}
+h1,.sheet h2,.dname,.surprise strong,.help summary,.set h3{font-family:var(--display);font-variation-settings:"SOFT" 100}
+h1{font-weight:700;font-size:clamp(30px,8vw,40px);letter-spacing:-.015em}
+h1 span{color:inherit;background:linear-gradient(transparent 58%, var(--mustard-soft) 58%, var(--mustard-soft) 92%, transparent 92%);padding:0 .08em;font-style:normal}
+.sheet h2{font-weight:700;font-size:26px}
+.wrap{padding-block:18px calc(var(--nav-h) + 30px + env(safe-area-inset-bottom,0px))}
+header.top{margin-bottom:10px}
+.helpbtn{background:var(--surface);border-color:var(--line);box-shadow:var(--shadow)}
+/* Navigation unten */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:20;margin:0;padding:6px 10px calc(6px + env(safe-area-inset-bottom,0px));background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -6px 20px rgba(80,55,20,.07);display:flex;gap:4px;justify-content:center}
+nav.tabs::before{display:none}
+nav.tabs button{max-width:180px;flex-direction:column;gap:1px;font:700 12px var(--body);padding:6px 4px;border-radius:14px;margin:0;color:var(--muted);position:relative}
+nav.tabs button .ti{font-size:22px;line-height:1.1;filter:grayscale(.6);opacity:.8}
+nav.tabs button[aria-selected="true"]{background:var(--basil-soft);color:var(--basil);box-shadow:none}
+nav.tabs button[aria-selected="true"] .ti{filter:none;opacity:1}
+nav.tabs .count{position:absolute;top:2px;left:calc(50% + 10px);font-size:11px;min-width:18px;padding:0 5px;background:var(--tomato);color:#fff;border-radius:999px}
+nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff}
+/* Buttons */
+.btn{border-radius:12px}
+.btn.primary{box-shadow:0 2px 0 rgba(0,0,0,.08)}
+#newWeek{color:var(--tomato)}
+/* Wochenplan als Karten */
+.week{background:transparent;border:0;box-shadow:none;border-radius:0;gap:10px;overflow:visible}
+.day{background:var(--surface);border:1px solid var(--line);border-top:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.day.today{box-shadow:var(--shadow);border:2px solid var(--mustard);background:var(--surface)}
+.day.today .dname{color:var(--mustard)}
+.day.today .ddate::after{content:"Heute";display:block;margin-top:3px;font:700 10px var(--body);text-transform:uppercase;letter-spacing:.06em;color:var(--mustard)}
+.dname{font-weight:700}
+.day .title{font-family:var(--body)}
+.day .empty{font-style:normal}
+.pickempty{border:1.5px dashed var(--line);background:transparent;color:var(--muted);font:700 14px var(--body);padding:10px 14px;border-radius:12px;cursor:pointer;width:100%;text-align:left}
+.pickempty:hover{border-color:var(--basil);color:var(--basil)}
+.note{background:var(--mustard-soft);color:var(--ink)}
+/* Einkauf */
+.shop .cat{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:4px 14px 6px;margin-bottom:12px;box-shadow:var(--shadow)}
+.cat h3{font:700 13px var(--body);letter-spacing:.05em;color:var(--ink);margin:12px 0 4px}
+.item input{appearance:none;-webkit-appearance:none;width:24px;height:24px;border:2px solid var(--line);border-radius:50%;background:var(--surface);display:grid;place-items:center;transition:background .15s,border-color .15s,transform .15s}
+.item input:checked{background:var(--basil);border-color:var(--basil);transform:scale(1.05)}
+.item input:checked::after{content:"";width:6px;height:11px;border:solid var(--basil-ink);border-width:0 2.5px 2.5px 0;transform:translateY(-1px) rotate(45deg)}
+.shopdays,.seg{border-radius:16px}
+/* Ideen */
+.surprise{background:var(--mustard-soft);border:0;border-radius:20px;padding:16px 18px;box-shadow:var(--shadow)}
+.surprise strong{font-weight:700;font-size:22px}
+.idea{border-radius:18px;box-shadow:var(--shadow);padding:14px 16px}
+.idea h4{font-size:17px}
+/* Fenster */
+.sheet{background:var(--surface);border-radius:24px 24px 0 0}
+.scrim{background:rgba(40,28,15,.35)}
+.fpanel,.shop .cat,.idea{border-color:var(--line)}
 </style>
 </head>
 <body>
@@ -412,9 +485,9 @@ details.info p{margin:8px 0 0}
   </header>
 
   <nav class="tabs" role="tablist">
-    <button role="tab" id="tab-woche" aria-selected="true" data-tab="woche">Woche</button>
-    <button role="tab" id="tab-einkauf" aria-selected="false" data-tab="einkauf">Einkauf <span class="count" id="shopCount">0</span></button>
-    <button role="tab" id="tab-ideen" aria-selected="false" data-tab="ideen">Ideen</button>
+    <button role="tab" id="tab-woche" aria-selected="true" data-tab="woche"><span class="ti" aria-hidden="true">📅</span>Woche</button>
+    <button role="tab" id="tab-einkauf" aria-selected="false" data-tab="einkauf"><span class="ti" aria-hidden="true">🛒</span>Einkauf <span class="count" id="shopCount">0</span></button>
+    <button role="tab" id="tab-ideen" aria-selected="false" data-tab="ideen"><span class="ti" aria-hidden="true">💡</span>Ideen</button>
   </nav>
 
   <section id="p-woche">
@@ -2160,7 +2233,7 @@ function renderWeek(){
       body = `<button class="title" data-open="${x.id}">${esc(x.n)}</button>${chips(x)}`;
     } else if(v && typeof v==="object" && v.custom){
       body = `<span class="title" style="font-weight:700">${esc(v.custom)}</span><div class="meta"><span class="chip">Eigenes Gericht</span></div>`;
-    } else body = `<span class="empty">Noch nichts geplant</span>`;
+    } else body = `<button class="pickempty" data-pick="${i}">+ Gericht wählen</button>`;
     return `<div class="day${i===today?' today':''}">
       <div class="dhead"><div class="dname" title="${DAYS_LONG[i]}">${d}</div><div class="ddate">${dates[i].toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"})}</div>
         <button class="icon droll" data-roll="${i}" aria-label="${DAYS_LONG[i]}: zufälliges Gericht" title="Würfeln">${ICON.dice}</button></div>
@@ -2242,7 +2315,7 @@ function renderShop(){
     const all = [...grouped, ...extras];
     html = CATS.map(([c,label])=>{
       const its = all.filter(it=>it.c===c).sort((a,b)=>a.n.localeCompare(b.n,"de"));
-      return its.length ? `<div class="cat"><h3>${label}</h3>${its.map(it=>itemHtml(it,true)).join("")}</div>` : "";
+      return its.length ? `<div class="cat"><h3>${({g:"🥕",b:"🥖",k:"🧀",f:"🥩",t:"🧊",v:"🥫",x:"🧺"})[c]||""} ${label}</h3>${its.map(it=>itemHtml(it,true)).join("")}</div>` : "";
     }).join("");
   }
   $("#shop").innerHTML = html;
