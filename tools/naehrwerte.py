@@ -95,6 +95,11 @@ TAB = {
  "Leinsamen (geschrotet)":(None,450,24,31,2,30,0,0), "Minze":(25,45,3.5,0.7,5,7,0,0), "Kürbiskerne":(None,570,30,46,8,9,0,0),
  "Bananen":(120,90,1.1,0.2,20,2,0,0),
  "Grünkernschrot":(None,330,11.5,2.7,63,9,0,0),
+ "Apfelsaft":(None,45,0.1,0.1,11,0,0,0), "Banane":(120,90,1.1,0.3,20,2,0,0), "Edamame (TK)":(None,120,11,5,9,5,1,0), "Ei":(60,140,12.5,10,0.7,0,0,0),
+ "Gewürzgurken":(350,15,0.5,0.1,2.5,1,0,0), "Griechischer Joghurt":(None,130,5,10,4,0,0,0), "Halloumi":(None,320,22,25,2,0,0,0), "Hüttenkäse":(None,100,12,4.3,3,0,0,0),
+ "Kabeljaufilet":(None,82,18,0.7,0,0,0,0), "Knollensellerie (klein)":(400,42,1.6,0.3,7,4.2,1,0), "Magerquark":(None,67,12,0.3,4,0,0,0), "Putenhackfleisch":(None,150,22,6,0,0,0,0),
+ "Rote Zwiebel":(100,40,1.2,0.1,8,1.7,0,0), "Rotkohl":(None,28,1.4,0.2,4,2.5,1,0), "Räucherlachs":(None,180,22,10,0,0,0,0), "Tellerlinsen":(None,340,24,1.5,50,11,1,0),
+ "Thunfisch im eigenen Saft":(150,110,25,1,0,0,0,0), "Tofu natur":(None,120,13,7,1,1,0,0), "Äpfel":(180,52,0.3,0.2,12,2,0,0),
 }
 # Einheiten, die als Gramm/ml zählen
 GRAM = {"g":1, "ml":1, "l":1000, "kg":1000}
