@@ -543,6 +543,15 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
 
 /* --- Review-Umsetzung --- */
 .weekbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.hints{display:flex;flex-direction:column;gap:8px;margin:0 0 12px}
+.hint{display:flex;align-items:center;gap:10px;padding:10px 8px 10px 14px;border:1px solid var(--line);border-left:3px solid var(--basil);border-radius:12px;background:var(--surface);font-size:14px;line-height:1.35}
+.hint .h-t{flex:1;min-width:0}
+.hint .h-t b{display:block;font-weight:700}
+.hint .h-t small{color:var(--muted);font-size:12px;overflow-wrap:anywhere}
+.hint .btn{flex:none}
+.hint .h-x{flex:none;min-width:44px;min-height:44px;border:0;background:none;color:var(--muted);font-size:18px;cursor:pointer}
+.hint .h-r{flex:none;display:flex}
+.hint .h-r button{min-width:44px;min-height:44px;border:0;background:none;font-size:20px;cursor:pointer}
 .balance{margin:14px 0 0;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);font-size:14px;line-height:1.45}
 .balance h4{display:flex;align-items:center;gap:8px;margin:0 0 6px;font:700 13px var(--body);letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
 .balance h4 button{margin-left:auto;font:600 12px var(--body);text-transform:none;letter-spacing:0}
@@ -805,6 +814,7 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
     <div class="weekhead"><h2 id="weekTitle">Diese Woche</h2><span id="weekRange"></span>
       <details class="wkmenu" id="wkMenu"><summary aria-label="Weitere Aktionen" title="Weitere Aktionen">⋯</summary><div class="wkmenu-pop"><button type="button" id="newWeek">Plan leeren</button></div></details></div>
     <div class="seg wk-switch" role="group" aria-label="Woche wählen"><button type="button" id="wkThis" aria-pressed="true">Diese Woche</button><button type="button" id="wkNext" aria-pressed="false">Nächste Woche</button></div>
+    <div class="hints" id="hints" hidden></div>
     <div class="weekbar">
       <button class="btn primary" id="fillWeek">✨ Woche planen</button>
       <span class="wk-status" id="wkStatus" hidden>✓ Woche ist komplett</span>
@@ -3007,7 +3017,7 @@ function renderWeek(){
       </div>`}</div>`;
   };
   $("#week").innerHTML = DAYS.map((_,i)=> i===today ? bigCard(i,"HEUTE") : compact(i)).join("");
-  renderBalance();
+  renderBalance(); renderHints();
 }
 
 /* ---------- Render: Einkauf ---------- */
@@ -3346,6 +3356,10 @@ function openSettings(){
     <p class="sub">Steht nie auf der Einkaufsliste und zählt bei „Was haben wir noch zuhause?“ als vorhanden. Aufnehmen: in der Einkaufsliste bei „🏠 Zuhause“ → „Immer“.</p>
     <div class="filters" id="setPantry"></div>
     <div class="fr-in"><input id="pnInput" type="text" placeholder="Zutat hinzufügen …" autocomplete="off" enterkeyhint="done"><button class="btn primary" id="pnAdd" type="button">+</button></div>
+    <h3>🔔 Hinweise in der App</h3>
+    <p class="sub">Dezente Karten oben im Plan – keine Push-Nachrichten. Jede Art lässt sich einzeln abschalten (gilt nur für dieses Gerät).</p>
+    <div class="filters" id="setHints">${HINT_TYPES.map(([k,l,d])=>`<button type="button" data-hintset="${k}" aria-pressed="${!hintPrefs().off[k]}" title="${esc(d)}">${l}</button>`).join("")}</div>
+    <p class="sub">${HINT_TYPES.map(([,l,d])=>`${l.replace(/^\S+\s/,"")}: ${d}.`).join(" ")}</p>
     <h3>🛒 Reihenfolge im Supermarkt</h3>
     <p class="sub">So sortiert sich die Einkaufsliste „nach Abteilung“. Mit ▲▼ an euren Laden anpassen.</p>
     <div id="setCats"></div>
@@ -3378,6 +3392,7 @@ function openSettings(){
     if(b.id==="pnAdd") return;
     if(b.dataset.setp){ const n=Math.min(12,Math.max(1,cur.persons+(+b.dataset.setp))); setSetting("persons",n); $("#setPers").textContent=n; }
     else if(b.dataset.fav){ const v=tog(cur.fav,b.dataset.fav); setSetting("fav",v); b.setAttribute("aria-pressed",String(v.includes(b.dataset.fav))); }
+    else if(b.dataset.hintset!==undefined){ const p=hintPrefs(), k=b.dataset.hintset; if(p.off[k]) delete p.off[k]; else p.off[k]=1; hintSave(p); b.setAttribute("aria-pressed",String(!p.off[k])); renderHints(); }
     else if(b.dataset.maxt!==undefined){ setSetting("maxT",+b.dataset.maxt); document.querySelectorAll("#setTime button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); }
     else if(b.dataset.allg){ const v=tog(cur.allerg,b.dataset.allg); setSetting("allerg",v); b.setAttribute("aria-pressed",String(v.includes(b.dataset.allg))); }
   });
@@ -3643,6 +3658,44 @@ $("#pantryEdit").addEventListener("click",()=>openSettings());
 $("#wkThis").addEventListener("click",()=>{ viewWeek=0; render(); centerToday(); updateTodayBtn(); });
 $("#wkNext").addEventListener("click",()=>{ viewWeek=1; render(); updateTodayBtn(); });
 $("#fillWeek").addEventListener("click",()=>openPlanAssistant());
+
+/* ---------- Dezente Hinweise in der App (je Art abschaltbar, nur auf diesem Gerät) ---------- */
+const LS_HINTS = "essensplan-hinweise";
+const HINT_TYPES = [["plan","📅 Nächste Woche planen","Ab Freitag, wenn die nächste Woche noch leer ist"],["shop","🛒 Einkauf für morgen","Am späten Nachmittag, wenn morgen etwas geplant ist"],["rate","👍 Wie hat es geschmeckt?","Nach dem Essen, wenn das Gericht noch nicht bewertet ist"]];
+function hintPrefs(){ const v = lsGet(LS_HINTS) || {}; return {off: v.off||{}, done: v.done||{}}; }
+function hintSave(p){ lsSet(p, LS_HINTS); }
+function hintList(){
+  if(isExample) return [];
+  const p = hintPrefs(), now = new Date(), iso = isoDate(now), dow = (now.getDay()+6)%7, hr = now.getHours(), out = [];
+  const seen = k=>p.done[k]===iso;
+  const dishAt = g=>{ const v=state.days[g]; return typeof v==="string" ? dish(v) : null; };
+  if(!p.off.rate){
+    const cand = [dow>0?dow-1:null, hr>=18?dow:null].filter(g=>g!==null);
+    for(const g of cand){ const x = dishAt(g); if(x && !likeOf(x.id) && !seen("rate:"+x.id)){ out.push({k:"rate:"+x.id, html:`<div class="h-t"><b>Wie hat euch das Gericht gefallen?</b><small>${esc(x.n)}</small></div><div class="h-r"><button type="button" data-like="${x.id}" data-v="1" aria-label="Hat geschmeckt">👍</button><button type="button" data-like="${x.id}" data-v="-1" aria-label="Hat nicht geschmeckt">👎</button></div>`}); break; }
+    }
+  }
+  if(!p.off.shop && hr>=16 && !seen("shop")){
+    const g = dow<6 ? dow+1 : 7, x = dishAt(g);
+    if(x) out.push({k:"shop", html:`<div class="h-t"><b>Die Einkaufsliste für morgen ist bereit</b><small>Morgen: ${esc(x.n)}</small></div><button type="button" class="btn small primary" data-hint="shop" data-g="${g}">Ansehen</button>`});
+  }
+  if(!p.off.plan && [4,5,6].includes(dow) && !seen("plan") && ![7,8,9,10,11,12,13].some(g=>state.days[g]!==undefined))
+    out.push({k:"plan", html:`<div class="h-t"><b>Zeit, die nächste Woche zu planen</b><small>Noch nichts eingetragen</small></div><button type="button" class="btn small primary" data-hint="plan">Planen</button>`});
+  return out.slice(0,2);
+}
+function renderHints(){
+  const el = $("#hints"); if(!el) return;
+  const l = viewWeek ? [] : hintList();
+  if(!l.length){ el.hidden = true; el.innerHTML = ""; return; }
+  el.hidden = false;
+  el.innerHTML = l.map(h=>`<div class="hint">${h.html}<button type="button" class="h-x" data-hint="x" data-k="${esc(h.k)}" aria-label="Hinweis ausblenden">×</button></div>`).join("");
+}
+$("#hints").addEventListener("click",e=>{
+  const b = e.target.closest("[data-hint]"); if(!b) return; e.stopPropagation();
+  const a = b.dataset.hint;
+  if(a==="x"){ const p=hintPrefs(); p.done[b.dataset.k]=isoDate(new Date()); hintSave(p); renderHints(); }
+  else if(a==="plan"){ viewWeek=1; render(); openPlanAssistant(); }
+  else if(a==="shop"){ const g=+b.dataset.g; document.querySelector('nav.tabs [data-tab="einkauf"]').click(); setShopDays([g]); const p=hintPrefs(); p.done.shop=isoDate(new Date()); hintSave(p); renderHints(); }
+});
 
 /* ---------- Plan aus Vorschlägen (Assistent) ---------- */
 const PA_OPTS = [["schnell","⚡ Schnell","Alle Tage bis 30 Min"],["guenstig","💶 Günstig","Bis ca. 9 € pro Gericht"],["veg","🌱 Vegetarisch","Nur ohne Fleisch und Fisch"],["kid","👶 Familienfreundlich","Kinderlieblinge zuerst"],["vorrat","🧊 Vorräte verwenden","Was im Vorrat ist, zählt"],["abwechslung","🎨 Abwechslungsreich","Verschiedene Beilagen, Küchen, Arten"]];
