@@ -543,6 +543,26 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
 
 /* --- Review-Umsetzung --- */
 .weekbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.balance{margin:14px 0 0;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);font-size:14px;line-height:1.45}
+.balance h4{display:flex;align-items:center;gap:8px;margin:0 0 6px;font:700 13px var(--body);letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.balance h4 button{margin-left:auto;font:600 12px var(--body);text-transform:none;letter-spacing:0}
+.balance ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+.balance li{padding-left:2px}
+.balance .bal-sum{color:var(--muted)}
+.balance-off{margin:10px 0 0;text-align:center}
+.pa-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.pa-opt{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;min-height:64px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);font:600 15px var(--body);cursor:pointer}
+.pa-opt small{font:400 12px var(--body);color:var(--muted)}
+.pa-opt[aria-pressed="true"]{border-color:var(--basil);background:var(--basil-soft);box-shadow:inset 0 0 0 1px var(--basil)}
+.pa-list{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.pa-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.pa-row .pa-d{flex:none;width:34px;font-weight:700}
+.pa-row .pa-n{flex:1;min-width:0}
+.pa-row .pa-n b{display:block;font-weight:700;overflow-wrap:anywhere}
+.pa-row .pa-n small{color:var(--muted);font-size:12px}
+.pa-row button{flex:none;min-width:44px;min-height:44px;border:0;background:none;font-size:18px;cursor:pointer;color:var(--ink)}
+.pa-sum{color:var(--muted);font-size:13px;margin:0 0 6px}
+.pa-foot{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;margin-top:12px}
 .weekbar #fillWeek{flex:1 1 auto;justify-content:center;font-size:16px;padding:12px 16px}
 .weekbar #newWeek{flex:none;background:transparent;border-color:transparent;color:var(--muted);font-weight:400;text-decoration:underline}
 .weekbar #newWeek[data-confirm]{color:var(--tomato);font-weight:700}
@@ -799,6 +819,7 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
     </div>
     <div class="note" id="exampleNote" hidden>👋 Beispielwoche · Antippen = Rezept · 🎲 = tauschen · × = Tag leeren · <button type="button" class="linkbtn" id="noteHelp">Anleitung ansehen</button></div>
     <div class="week" id="week"></div>
+    <div class="balance" id="balance" hidden></div>
   </section>
 
   <section id="p-einkauf" hidden>
@@ -2994,6 +3015,7 @@ function renderWeek(){
       </div>`}</div>`;
   };
   $("#week").innerHTML = DAYS.map((_,i)=> i===today ? bigCard(i,"HEUTE") : compact(i)).join("");
+  renderBalance();
 }
 
 /* ---------- Render: Einkauf ---------- */
@@ -3628,10 +3650,123 @@ document.addEventListener("click",e=>{ const m=$("#wkMenu"); if(m && m.open && !
 $("#pantryEdit").addEventListener("click",()=>openSettings());
 $("#wkThis").addEventListener("click",()=>{ viewWeek=0; render(); centerToday(); updateTodayBtn(); });
 $("#wkNext").addEventListener("click",()=>{ viewWeek=1; render(); updateTodayBtn(); });
-$("#fillWeek").addEventListener("click",()=>{
-  let n=0; const O=viewWeek*7, t0=viewWeek?0:(new Date().getDay()+6)%7; for(let i=t0;i<7;i++){ if(!state.days[i+O]){ state.days[i+O]=randomDish(i+O).id; n++; } }
-  commit(); toast(n?`${n} Tag${n>1?'e':''} gefüllt`:"Alle Tage sind schon geplant");
+$("#fillWeek").addEventListener("click",()=>openPlanAssistant());
+
+/* ---------- Plan aus Vorschlägen (Assistent) ---------- */
+const PA_OPTS = [["schnell","⚡ Schnell","Alle Tage bis 30 Min"],["guenstig","💶 Günstig","Bis ca. 9 € pro Gericht"],["veg","🌱 Vegetarisch","Nur ohne Fleisch und Fisch"],["kid","👶 Familienfreundlich","Kinderlieblinge zuerst"],["vorrat","🧊 Vorräte verwenden","Was im Vorrat ist, zählt"],["abwechslung","🎨 Abwechslungsreich","Verschiedene Beilagen, Küchen, Arten"]];
+const PA_STAPLES = [["Nudeln",/nudel|spaghetti|penne|fusilli|makkaroni|tagliatelle|gnocchi|lasagne|spätzle|tortellini/i],["Reis",/\breis\b|risotto/i],["Kartoffeln",/kartoffel/i]];
+function paStaple(x){ const txt = x.n+" "+x.i.map(r=>r[2]).join(" "); return PA_STAPLES.filter(([,re])=>re.test(x.n) || (re.test(txt) && x.i.some(r=>re.test(r[2]) && r[0]>=300))).map(a=>a[0]); }
+let paSel = new Set(), paPlan = {}, paWeek = 0;
+function paFreeDays(){ const O=paWeek*7, t0=paWeek?0:(new Date().getDay()+6)%7, out=[]; for(let i=t0;i<7;i++){ const v=state.days[i+O]; if(!(typeof v==="string"&&dish(v)) && !(v&&v.custom)) out.push(i+O); } return out; }
+function paPick(g, plan){
+  const O=paWeek*7, i=g-O, opt=paSel, maxT=S().maxT;
+  const at = k=>{ const id = plan[k]!==undefined ? plan[k] : state.days[k]; return typeof id==="string" ? dish(id) : null; };
+  const week = []; for(let k=O;k<O+7;k++){ if(k!==g){ const x=at(k); if(x) week.push(x); } }
+  const used = new Set(week.map(x=>x.id));
+  const nonVeg = week.filter(x=>x.k!=="veg").length, fish = week.filter(x=>x.k==="fisch").length;
+  const neighbors = [i>0?at(g-1):null, i<6?at(g+1):null].filter(Boolean).flatMap(paStaple);
+  const have = opt.has("vorrat") ? frHave([]) : [];
+  const weekday = i<=4;
+  const base = allDishes().filter(d=>!d.side && likeOf(d.id)>=0 && !blockedAllergens(d).length && !used.has(d.id));
+  const tryPool = (rel)=>base.filter(d=>{
+    if(!rel.has("veg") && opt.has("veg") && d.k!=="veg") return false;
+    if(!rel.has("schnell") && opt.has("schnell") && d.t>30) return false;
+    if(!rel.has("guenstig") && opt.has("guenstig") && budgetTier(d)===3) return false;
+    if(!rel.has("zeit") && weekday && maxT && d.t && d.t>maxT && !opt.has("schnell")) return false;
+    if(!rel.has("kette") && paStaple(d).some(a=>neighbors.includes(a))) return false;
+    if(!rel.has("fleisch") && d.k!=="veg" && nonVeg>=2) return false;
+    if(!rel.has("fisch") && opt.has("abwechslung") && d.k==="fisch" && fish>=1) return false;
+    return true;
+  });
+  let pool=[]; for(const rel of [[],["fisch"],["fisch","fleisch"],["fisch","fleisch","kette"],["fisch","fleisch","kette","zeit"],["fisch","fleisch","kette","zeit","guenstig"],["fisch","fleisch","kette","zeit","guenstig","schnell"],["fisch","fleisch","kette","zeit","guenstig","schnell","veg"]]){ pool = tryPool(new Set(rel)); if(pool.length) break; }
+  if(!pool.length) return null;
+  const cus = new Set(week.map(x=>x.cu).filter(Boolean));
+  const weighted = pool.flatMap(d=>{
+    let w = (d.k==="veg"?3:1)*(likeOf(d.id)>0?2:1)*(isFav(d)?2:1)*3;
+    if(opt.has("kid")) w *= d.kid?4:1;
+    if(opt.has("guenstig")) w *= budgetTier(d)===1?3:1;
+    if(have.length) w *= 1+Math.min(4,frScore(d,have).hits.length)*2;
+    if(!weekday && !opt.has("schnell") && d.t>=40) w *= 2;
+    if(opt.has("abwechslung") && d.cu && cus.has(d.cu)) w = Math.max(1,Math.round(w/3));
+    if(daysSince(lastCooked(d.id))<=RECENT_DAYS) w = Math.max(1,Math.round(w/3));
+    return Array(Math.max(1,Math.round(w))).fill(d);
+  });
+  return weighted[Math.floor(Math.random()*weighted.length)];
+}
+function paGenerate(){
+  paPlan = {}; const free = paFreeDays();
+  free.forEach(g=>{ const d = paPick(g, paPlan); if(d) paPlan[g]=d.id; });
+}
+function paMeta(d){ return `⏱ ${d.t} Min${typeof d.P==="number"?` · 💶 ca. ${String(d.P).replace(".",",")} €`:""}${d.k==="veg"?" · 🌱":d.k==="fisch"?" · 🐟":" · 🥩"}`; }
+function openPlanAssistant(){
+  paWeek = viewWeek; paSel = new Set();
+  const free = paFreeDays();
+  if(!free.length){ toast("Alle Tage sind schon geplant"); return; }
+  paRenderOpts();
+}
+function paRenderOpts(){
+  const free = paFreeDays();
+  openSheet(`<button class="btn small close" data-close>Schließen</button>
+    <h2>Wie soll ${paWeek?"nächste":"diese"} Woche werden?</h2>
+    <p class="sub">${free.length} freie${free.length>1?"":"r"} Tag${free.length>1?"e":""} – bereits geplante Tage bleiben unverändert. Du bekommst einen Vorschlag, den du noch ändern kannst. Ohne Auswahl wird gemischt.</p>
+    <div class="pa-opts">${PA_OPTS.map(([k,l,s])=>`<button type="button" class="pa-opt" data-pa-opt="${k}" aria-pressed="${paSel.has(k)}">${l}<small>${s}</small></button>`).join("")}</div>
+    <div class="pa-foot"><button type="button" class="btn primary" data-pa="go">Vorschlag erstellen</button></div>`);
+}
+function paRenderPlan(){
+  const O=paWeek*7, gs = Object.keys(paPlan).map(Number).sort((a,b)=>a-b);
+  const sum = gs.reduce((a,g)=>a+(dish(paPlan[g])&&typeof dish(paPlan[g]).P==="number"?dish(paPlan[g]).P:0),0);
+  const free = paFreeDays();
+  openSheet(`<button class="btn small close" data-close>Schließen</button>
+    <h2>Dein Vorschlag</h2>
+    <p class="sub">Tausche einzelne Tage mit 🎲 oder lass sie mit × weg. Erst mit „Übernehmen“ landet es im Plan.</p>
+    <div class="pa-list">${free.map(g=>{ const id=paPlan[g], d=id&&dish(id), i=g-O;
+      return `<div class="pa-row"><div class="pa-d">${DAYS[i]}</div>${d?`<div class="pa-n"><b>${esc(d.n)}</b><small>${paMeta(d)}</small></div><button type="button" data-pa="roll" data-g="${g}" aria-label="${DAYS_LONG[i]}: anderes Gericht">🎲</button><button type="button" data-pa="drop" data-g="${g}" aria-label="${DAYS_LONG[i]}: weglassen">×</button>`:`<div class="pa-n"><small>Kein Gericht – bleibt frei</small></div><button type="button" data-pa="roll" data-g="${g}" aria-label="${DAYS_LONG[i]}: Gericht suchen">🎲</button>`}</div>`; }).join("")}</div>
+    ${sum?`<p class="pa-sum">Zutaten zusammen ca. ${String(Math.round(sum*2)/2).replace(".",",")} € (geschätzt)</p>`:""}
+    <div class="pa-foot"><button type="button" class="btn ghost" data-pa="back">Zurück</button><button type="button" class="btn" data-pa="again">Neu mischen</button><button type="button" class="btn primary" data-pa="apply"${gs.length?"":" disabled"}>Übernehmen</button></div>`);
+}
+$("#sheetRoot").addEventListener("click",e=>{
+  const o = e.target.closest("[data-pa-opt]");
+  if(o){ const k=o.dataset.paOpt; if(paSel.has(k)) paSel.delete(k); else paSel.add(k); o.setAttribute("aria-pressed",String(paSel.has(k))); return; }
+  const b = e.target.closest("[data-pa]"); if(!b) return;
+  const a = b.dataset.pa, g = +b.dataset.g;
+  if(a==="go"||a==="again"){ paGenerate(); paRenderPlan(); }
+  else if(a==="back") paRenderOpts();
+  else if(a==="roll"){ const old = paPlan[g]; delete paPlan[g]; const d = paPick(g, paPlan); if(d) paPlan[g]=d.id; else if(old) paPlan[g]=old; paRenderPlan(); }
+  else if(a==="drop"){ delete paPlan[g]; paRenderPlan(); }
+  else if(a==="apply"){ const gs=Object.keys(paPlan); gs.forEach(k=>{ if(!state.days[k]) state.days[k]=paPlan[k]; }); const n=gs.length; paPlan={}; closeSheet(); commit(); toast(`${n} Tag${n>1?"e":""} geplant`); }
 });
+
+/* ---------- Wochenbalance (sanfte Hinweise unter dem Plan) ---------- */
+const BAL_SKIP = /zwiebel|knoblauch|zitrone|limette|ingwer|petersilie|schnittlauch|dill|basilikum|koriander|minze|thymian|kresse|eier?$/i;
+function balanceHints(O, t0){
+  const items = []; for(let i=t0;i<7;i++){ const v=state.days[i+O]; if(typeof v==="string" && dish(v)) items.push({i, d:dish(v)}); }
+  if(items.length<2) return null;
+  const out = [], n = k=>items.filter(x=>x.d.k===k).length;
+  const veg=n("veg"), fl=n("fleisch"), fi=n("fisch");
+  out.push(`<span class="bal-sum">📊 ${[veg&&`${veg}× vegetarisch`,fl&&`${fl}× Fleisch`,fi&&`${fi}× Fisch`].filter(Boolean).join(" · ")}</span>`);
+  if(fl>=3) out.push(`🥩 ${fl}× Fleisch in dieser Woche – vielleicht ein Tag vegetarisch zum Tauschen?`);
+  const maxT = S().maxT;
+  if(maxT){ items.filter(x=>x.i<=4 && x.d.t>maxT).slice(0,2).forEach(x=>out.push(`⏱ ${DAYS[x.i]}: „${esc(x.d.n)}“ braucht ${x.d.t} Min – unter der Woche eher zügig? Das passt vielleicht besser aufs Wochenende.`)); }
+  const sa = items.find(x=>x.i===5), so = items.find(x=>x.i===6);
+  if(sa && so && sa.d.t<=20 && so.d.t<=20) out.push("🍳 Am Wochenende ist Zeit für etwas Aufwendigeres, falls ihr Lust habt.");
+  const names = x=>new Set(x.d.i.filter(r=>"gkf".includes(r[3]) && !BAL_SKIP.test(String(r[2]))).map(r=>String(r[2]).toLowerCase()));
+  const pairs = [];
+  for(let a=0;a<items.length;a++) for(let b=a+1;b<items.length;b++){ if(items[b].i-items[a].i>2) continue; const na=names(items[a]), nb=names(items[b]); const shared=[...na].filter(z=>nb.has(z)); if(shared.length>=2) pairs.push([items[a].i,items[b].i,shared]); }
+  pairs.sort((p,q)=>q[2].length-p[2].length).slice(0,2).forEach(([a,b,sh])=>out.push(`♻️ ${DAYS[a]} und ${DAYS[b]} nutzen gemeinsame Zutaten (${sh.slice(0,3).map(z=>esc(z.charAt(0).toUpperCase()+z.slice(1))).join(", ")}${sh.length>3?" …":""}) – so bleibt weniger übrig.`));
+  return out;
+}
+function renderBalance(){
+  const el = $("#balance"); if(!el) return;
+  const O = viewWeek*7, t0 = viewWeek?0:(new Date().getDay()+6)%7;
+  const hints = isExample ? null : balanceHints(O,t0);
+  if(!hints){ el.hidden = true; return; }
+  el.hidden = false;
+  if((state.settings||{}).balanceOff){ el.innerHTML = `<div class="balance-off"><button type="button" class="linkbtn" data-bal="on">💡 Wochenbalance anzeigen</button></div>`; el.style.cssText="border:0;background:none;padding:0"; return; }
+  el.style.cssText = "";
+  el.innerHTML = `<h4>💡 Wochenbalance<button type="button" class="linkbtn" data-bal="off">Ausblenden</button></h4><ul>${hints.map(h=>`<li>${h}</li>`).join("")}</ul>`;
+}
+$("#balance").addEventListener("click",e=>{ const b=e.target.closest("[data-bal]"); if(!b) return; setSetting("balanceOff", b.dataset.bal==="off"); });
+
 $("#newWeek").addEventListener("click",()=>{
   const b = $("#newWeek");
   if(b.dataset.confirm){ recordCooked();
