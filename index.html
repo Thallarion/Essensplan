@@ -711,7 +711,6 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
   #week .daybig .db-acts{flex-direction:column;align-items:stretch;gap:4px}
   #week .daybig .db-acts .btn{flex:none;width:100%;justify-content:center}
   #week .pe-row{flex-direction:column;align-items:stretch}
-  #toToday{display:none!important}
   /* Einkauf: Steuerung links, Liste rechts */
   #p-einkauf:not([hidden]){display:grid;grid-template-columns:minmax(300px,380px) 1fr;column-gap:28px;align-items:start}
   #p-einkauf>.shopdays,#p-einkauf>.seg,#p-einkauf>.shopbar,#p-einkauf>.add,#p-einkauf>.pantry{grid-column:1}
@@ -2690,7 +2689,7 @@ function renderWeek(){
   const O = viewWeek*7, dates = weekDates(viewWeek); const today = viewWeek ? -1 : (new Date().getDay()+6)%7;
   $("#wkThis").setAttribute("aria-pressed",String(!viewWeek)); $("#wkNext").setAttribute("aria-pressed",String(!!viewWeek));
   $("#wkThis").textContent = "Diese Woche"; $("#wkNext").textContent = "Nächste Woche";
-  $("#exampleNote").hidden = !isExample;
+  $("#exampleNote").hidden = !isExample || !!viewWeek;
   { const e = DAYS.filter((_,i)=>i>=today && !(typeof state.days[i+O]==="string" && dish(state.days[i+O])) && !(state.days[i+O]&&state.days[i+O].custom)).length;
     $("#fillWeek").hidden = e===0; $("#wkStatus").hidden = e>0;
     $("#fillWeek").textContent = e===7 ? "✨ Woche planen" : `✨ ${e} freie${e>1?"":"n"} Tag${e>1?"e":""} füllen`;
@@ -3359,8 +3358,8 @@ $("#noteHelp").addEventListener("click",()=>openHelp(false));
 $("#newWeek").addEventListener("click",()=>setTimeout(()=>{ if(!$("#newWeek").dataset.confirm) $("#wkMenu").open=false; },0));
 document.addEventListener("click",e=>{ const m=$("#wkMenu"); if(m && m.open && !e.target.closest("#wkMenu")) m.open=false; });
 $("#pantryEdit").addEventListener("click",()=>openSettings());
-$("#wkThis").addEventListener("click",()=>{ viewWeek=0; render(); });
-$("#wkNext").addEventListener("click",()=>{ viewWeek=1; render(); });
+$("#wkThis").addEventListener("click",()=>{ viewWeek=0; render(); centerToday(); updateTodayBtn(); });
+$("#wkNext").addEventListener("click",()=>{ viewWeek=1; render(); updateTodayBtn(); });
 $("#fillWeek").addEventListener("click",()=>{
   let n=0; const O=viewWeek*7, t0=viewWeek?0:(new Date().getDay()+6)%7; for(let i=t0;i<7;i++){ if(!state.days[i+O]){ state.days[i+O]=randomDish(i+O).id; n++; } }
   commit(); toast(n?`${n} Tag${n>1?'e':''} gefüllt`:"Alle Tage sind schon geplant");
@@ -3813,15 +3812,16 @@ const toToday = document.createElement("button");
 toToday.type = "button"; toToday.id = "toToday"; toToday.hidden = true; document.body.appendChild(toToday);
 function updateTodayBtn(){
   const wk = $("#p-woche"), el = todayEl();
+  if(wk && !wk.hidden && viewWeek){ toToday.hidden = false; toToday.textContent = "← Heute"; return; }
   if(WIDE.matches || !el || !wk || wk.hidden){ toToday.hidden = true; return; }
   const r = el.getBoundingClientRect(), off = (r.top + r.height/2) - window.innerHeight/2;
   const far = r.top < 40 || r.bottom > window.innerHeight - 70;
   toToday.hidden = !far; if(far) toToday.textContent = off < 0 ? "↑ Heute" : "↓ Heute";
 }
-toToday.addEventListener("click",centerToday);
+toToday.addEventListener("click",()=>{ if(viewWeek){ viewWeek=0; render(); } centerToday(); updateTodayBtn(); });
 window.addEventListener("scroll",updateTodayBtn,{passive:true});
 window.addEventListener("resize",updateTodayBtn);
-document.addEventListener("click",e=>{ const t = e.target.closest("[data-tab]"); if(t){ requestAnimationFrame(()=>{ if(t.dataset.tab==="woche") centerToday(); else toToday.hidden = true; }); } });
+document.addEventListener("click",e=>{ const t = e.target.closest("[data-tab]"); if(t){ requestAnimationFrame(()=>{ if(t.dataset.tab==="woche"){ centerToday(); updateTodayBtn(); } else toToday.hidden = true; }); } });
 $("#printList").addEventListener("click",()=>window.print());
 window.addEventListener("beforeprint",()=>{ const h=$("#printHead"); if(h){ const d=$("#weekRange"); h.innerHTML="Einkaufsliste<small>"+(d?d.textContent+" · ":"")+"Stand "+new Date().toLocaleDateString("de-DE")+"</small>"; } });
 requestAnimationFrame(centerToday);
