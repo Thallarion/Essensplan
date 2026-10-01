@@ -3044,6 +3044,7 @@ function openSettings(){
     <h3>⚠️ Allergene ausschließen</h3>
     <p class="sub">Solche Gerichte werden nie gewürfelt und überall mit ⚠️ markiert. Automatisch aus den Zutaten erkannt – ohne Gewähr.</p>
     <div class="filters" id="setAll">${ALLERGENS.map(([k,i,l])=>`<button type="button" data-allg="${k}" aria-pressed="${s.allerg.includes(k)}">${i} ${l}</button>`).join("")}</div>
+    <p class="sub"><a href="datenschutz.html" target="_blank" rel="noopener">Datenschutz</a></p>
   </div>`);
   const drawPantry = ()=>{ const ks = Object.keys(state.pantry||{}).sort((a,b)=>a.localeCompare(b,"de")); $("#setPantry").innerHTML = ks.length ? ks.map(k=>`<button type="button" data-pn="${esc(k)}" aria-label="${esc(k)} entfernen">${esc(k)} ×</button>`).join("") : `<span class="sub">Noch nichts im Vorrat.</span>`; };
   drawPantry();
