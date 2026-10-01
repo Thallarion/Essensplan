@@ -654,6 +654,10 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
 .note-box textarea{width:100%;font:inherit;font-size:15px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);resize:vertical;min-height:64px}
 .note-ok{font-size:13px;color:var(--basil);font-weight:600}
 .k-note{display:block;margin-top:4px;font-size:13px;color:var(--muted)}
+
+/* ===== Heute-Knopf ===== */
+#toToday{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:15;background:var(--basil);color:var(--basil-ink,#fff);border:0;border-radius:999px;padding:10px 18px;min-height:44px;font:700 14px var(--body);box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #toToday{color:#16120E}}
 /* ===== Meine Küche ===== */
 #p-ideen .bar{flex-wrap:nowrap}
 #p-ideen .bar>.btn{flex:1 1 0;justify-content:center;white-space:nowrap;padding-left:10px;padding-right:10px}
@@ -3679,6 +3683,30 @@ try{ localStorage.setItem("essensplan-hilfe","1"); }catch(e){}
 $("#tab-einkauf").addEventListener("click",()=>{ try{ if(!localStorage.getItem("essensplan-tipp-einkauf")){ localStorage.setItem("essensplan-tipp-einkauf","1"); setTimeout(()=>toast("Tipp: Beim Einkaufen abhaken – „🏠 Zuhause“ für alles, was ihr schon habt"),400); } }catch(e){} });
 startSync().then(()=>{ if(window.__joined) toast("Mit dem Familien-Plan verbunden"); });
 try{ const tab = localStorage.getItem(LS+"-tab"); if(tab && tab!=="woche"){ const b=document.querySelector(`[data-tab="${tab}"]`); b&&b.click(); } }catch(e){}
+/* ---------- Wochenseite: heutigen Tag in die Mitte ---------- */
+let autoPos = null;
+function todayEl(){ return document.querySelector("#week .daybig.today, #week .day.today"); }
+function centerToday(){
+  const wk = $("#p-woche"); const el = todayEl(); if(!el || !wk || wk.hidden) return;
+  const r = el.getBoundingClientRect();
+  const top = Math.max(0, Math.round(window.scrollY + r.top - (window.innerHeight - r.height)/2));
+  window.scrollTo({top, behavior:"instant"}); autoPos = window.scrollY; updateTodayBtn();
+}
+const toToday = document.createElement("button");
+toToday.type = "button"; toToday.id = "toToday"; toToday.hidden = true; document.body.appendChild(toToday);
+function updateTodayBtn(){
+  const wk = $("#p-woche"), el = todayEl();
+  if(!el || !wk || wk.hidden){ toToday.hidden = true; return; }
+  const r = el.getBoundingClientRect(), off = (r.top + r.height/2) - window.innerHeight/2;
+  const far = r.top < 40 || r.bottom > window.innerHeight - 70;
+  toToday.hidden = !far; if(far) toToday.textContent = off < 0 ? "↑ Heute" : "↓ Heute";
+}
+toToday.addEventListener("click",centerToday);
+window.addEventListener("scroll",updateTodayBtn,{passive:true});
+window.addEventListener("resize",updateTodayBtn);
+document.addEventListener("click",e=>{ const t = e.target.closest("[data-tab]"); if(t){ requestAnimationFrame(()=>{ if(t.dataset.tab==="woche") centerToday(); else toToday.hidden = true; }); } });
+requestAnimationFrame(centerToday);
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(()=>{ if(autoPos!==null && Math.abs(window.scrollY-autoPos)<3) centerToday(); });
 </script>
 
 </body>
