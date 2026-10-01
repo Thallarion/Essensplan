@@ -554,14 +554,6 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
 .pa-opt{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;min-height:64px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);font:600 15px var(--body);cursor:pointer}
 .pa-opt small{font:400 12px var(--body);color:var(--muted)}
 .pa-opt[aria-pressed="true"]{border-color:var(--basil);background:var(--basil-soft);box-shadow:inset 0 0 0 1px var(--basil)}
-.pa-list{display:flex;flex-direction:column;gap:8px;margin:12px 0}
-.pa-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
-.pa-row .pa-d{flex:none;width:34px;font-weight:700}
-.pa-row .pa-n{flex:1;min-width:0}
-.pa-row .pa-n b{display:block;font-weight:700;overflow-wrap:anywhere}
-.pa-row .pa-n small{color:var(--muted);font-size:12px}
-.pa-row button{flex:none;min-width:44px;min-height:44px;border:0;background:none;font-size:18px;cursor:pointer;color:var(--ink)}
-.pa-sum{color:var(--muted);font-size:13px;margin:0 0 6px}
 .pa-foot{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;margin-top:12px}
 .weekbar #fillWeek{flex:1 1 auto;justify-content:center;font-size:16px;padding:12px 16px}
 .weekbar #newWeek{flex:none;background:transparent;border-color:transparent;color:var(--muted);font-weight:400;text-decoration:underline}
@@ -3697,7 +3689,6 @@ function paGenerate(){
   paPlan = {}; const free = paFreeDays();
   free.forEach(g=>{ const d = paPick(g, paPlan); if(d) paPlan[g]=d.id; });
 }
-function paMeta(d){ return `⏱ ${d.t} Min${typeof d.P==="number"?` · 💶 ca. ${String(d.P).replace(".",",")} €`:""}${d.k==="veg"?" · 🌱":d.k==="fisch"?" · 🐟":" · 🥩"}`; }
 function openPlanAssistant(){
   paWeek = viewWeek; paSel = new Set();
   const free = paFreeDays();
@@ -3708,32 +3699,19 @@ function paRenderOpts(){
   const free = paFreeDays();
   openSheet(`<button class="btn small close" data-close>Schließen</button>
     <h2>Wie soll ${paWeek?"nächste":"diese"} Woche werden?</h2>
-    <p class="sub">${free.length} freie${free.length>1?"":"r"} Tag${free.length>1?"e":""} – bereits geplante Tage bleiben unverändert. Du bekommst einen Vorschlag, den du noch ändern kannst. Ohne Auswahl wird gemischt.</p>
+    <p class="sub">${free.length} freie${free.length>1?"":"r"} Tag${free.length>1?"e":""} – bereits geplante Tage bleiben unverändert. Danach kannst du einzelne Tage mit 🎲 tauschen oder mit × leeren. Ohne Auswahl wird gemischt.</p>
     <div class="pa-opts">${PA_OPTS.map(([k,l,s])=>`<button type="button" class="pa-opt" data-pa-opt="${k}" aria-pressed="${paSel.has(k)}">${l}<small>${s}</small></button>`).join("")}</div>
-    <div class="pa-foot"><button type="button" class="btn primary" data-pa="go">Vorschlag erstellen</button></div>`);
-}
-function paRenderPlan(){
-  const O=paWeek*7, gs = Object.keys(paPlan).map(Number).sort((a,b)=>a-b);
-  const sum = gs.reduce((a,g)=>a+(dish(paPlan[g])&&typeof dish(paPlan[g]).P==="number"?dish(paPlan[g]).P:0),0);
-  const free = paFreeDays();
-  openSheet(`<button class="btn small close" data-close>Schließen</button>
-    <h2>Dein Vorschlag</h2>
-    <p class="sub">Tausche einzelne Tage mit 🎲 oder lass sie mit × weg. Erst mit „Übernehmen“ landet es im Plan.</p>
-    <div class="pa-list">${free.map(g=>{ const id=paPlan[g], d=id&&dish(id), i=g-O;
-      return `<div class="pa-row"><div class="pa-d">${DAYS[i]}</div>${d?`<div class="pa-n"><b>${esc(d.n)}</b><small>${paMeta(d)}</small></div><button type="button" data-pa="roll" data-g="${g}" aria-label="${DAYS_LONG[i]}: anderes Gericht">🎲</button><button type="button" data-pa="drop" data-g="${g}" aria-label="${DAYS_LONG[i]}: weglassen">×</button>`:`<div class="pa-n"><small>Kein Gericht – bleibt frei</small></div><button type="button" data-pa="roll" data-g="${g}" aria-label="${DAYS_LONG[i]}: Gericht suchen">🎲</button>`}</div>`; }).join("")}</div>
-    ${sum?`<p class="pa-sum">Zutaten zusammen ca. ${String(Math.round(sum*2)/2).replace(".",",")} € (geschätzt)</p>`:""}
-    <div class="pa-foot"><button type="button" class="btn ghost" data-pa="back">Zurück</button><button type="button" class="btn" data-pa="again">Neu mischen</button><button type="button" class="btn primary" data-pa="apply"${gs.length?"":" disabled"}>Übernehmen</button></div>`);
+    <div class="pa-foot"><button type="button" class="btn primary" data-pa="go">Woche planen</button></div>`);
 }
 $("#sheetRoot").addEventListener("click",e=>{
   const o = e.target.closest("[data-pa-opt]");
   if(o){ const k=o.dataset.paOpt; if(paSel.has(k)) paSel.delete(k); else paSel.add(k); o.setAttribute("aria-pressed",String(paSel.has(k))); return; }
   const b = e.target.closest("[data-pa]"); if(!b) return;
-  const a = b.dataset.pa, g = +b.dataset.g;
-  if(a==="go"||a==="again"){ paGenerate(); paRenderPlan(); }
-  else if(a==="back") paRenderOpts();
-  else if(a==="roll"){ const old = paPlan[g]; delete paPlan[g]; const d = paPick(g, paPlan); if(d) paPlan[g]=d.id; else if(old) paPlan[g]=old; paRenderPlan(); }
-  else if(a==="drop"){ delete paPlan[g]; paRenderPlan(); }
-  else if(a==="apply"){ const gs=Object.keys(paPlan); gs.forEach(k=>{ if(!state.days[k]) state.days[k]=paPlan[k]; }); const n=gs.length; paPlan={}; closeSheet(); commit(); toast(`${n} Tag${n>1?"e":""} geplant`); }
+  if(b.dataset.pa==="go"){
+    paGenerate(); const gs=Object.keys(paPlan);
+    gs.forEach(k=>{ if(!state.days[k]) state.days[k]=paPlan[k]; }); paPlan={};
+    closeSheet(); commit(); toast(gs.length?`${gs.length} Tag${gs.length>1?"e":""} geplant – mit 🎲 kannst du einzelne tauschen`:"Kein passendes Gericht gefunden");
+  }
 });
 
 /* ---------- Wochenbalance (sanfte Hinweise unter dem Plan) ---------- */
