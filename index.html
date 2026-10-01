@@ -550,6 +550,15 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
 .season-info .regs button{min-height:36px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--ink);font:600 13px var(--body);cursor:pointer}
 .season-info .regs button[aria-pressed="true"]{border-color:var(--basil);background:var(--basil-soft)}
 .why-s{margin:4px 0 0;font-size:12px;color:var(--basil);font-weight:600}
+.syncinfo{display:flex;flex-direction:column;gap:6px;margin:10px 0 14px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);font-size:14px}
+.syncinfo div{display:flex;flex-direction:column}
+.syncinfo span{font-size:12px;color:var(--muted)}
+.cp-src{display:block;width:100%;text-align:left;margin:0 0 8px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);font:600 15px var(--body);cursor:pointer}
+.cp-src small{display:block;margin-top:2px;font:400 12px var(--body);color:var(--muted);overflow-wrap:anywhere}
+.cp-day{display:flex;gap:10px;width:100%;text-align:left;padding:10px 12px;margin:0 0 6px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:400 14px var(--body);cursor:pointer}
+.cp-day b{flex:none;width:30px}
+details.cp-wk{margin:0 0 8px}
+details.cp-wk summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:700}
 .hints{display:flex;flex-direction:column;gap:8px;margin:0 0 12px}
 .hint{display:flex;align-items:center;gap:10px;padding:10px 8px 10px 14px;border:1px solid var(--line);border-left:3px solid var(--basil);border-radius:12px;background:var(--surface);font-size:14px;line-height:1.35}
 .hint .h-t{flex:1;min-width:0}
@@ -819,7 +828,7 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
 
   <section id="p-woche">
     <div class="weekhead"><h2 id="weekTitle">Diese Woche</h2><span id="weekRange"></span>
-      <details class="wkmenu" id="wkMenu"><summary aria-label="Weitere Aktionen" title="Weitere Aktionen">⋯</summary><div class="wkmenu-pop"><button type="button" id="newWeek">Plan leeren</button></div></details></div>
+      <details class="wkmenu" id="wkMenu"><summary aria-label="Weitere Aktionen" title="Weitere Aktionen">⋯</summary><div class="wkmenu-pop"><button type="button" id="copyWeek">Woche kopieren …</button><button type="button" id="newWeek">Plan leeren</button></div></details></div>
     <div class="seg wk-switch" role="group" aria-label="Woche wählen"><button type="button" id="wkThis" aria-pressed="true">Diese Woche</button><button type="button" id="wkNext" aria-pressed="false">Nächste Woche</button></div>
     <div class="hints" id="hints" hidden></div>
     <div class="weekbar">
@@ -2714,6 +2723,14 @@ function setSync(kind, text){
   el.className = "sync " + kind;
   el.querySelector("span").textContent = text;
 }
+let lastSyncAt = +(localStorage.getItem("essensplan-lastsync")||0) || 0;
+function markSynced(){ lastSyncAt = Date.now(); try{ localStorage.setItem("essensplan-lastsync", String(lastSyncAt)); }catch(e){} }
+function syncAgo(){
+  if(!lastSyncAt) return "noch nicht in dieser Sitzung";
+  const d = new Date(lastSyncAt), t = d.toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"});
+  if(isoDate(d)===isoDate(new Date())) return "heute, "+t+" Uhr";
+  return d.toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"})+", "+t+" Uhr";
+}
 function syncLabel(){
   if(!sync) setSync("", "Nur dieses Handy · Familie einladen");
   else if(online) setSync("ok", "Mit Familie geteilt");
@@ -2736,6 +2753,7 @@ async function startSync(){
     fsDoc = fs.collection("plaene").doc(sync.p);
     fsDoc.onSnapshot({includeMetadataChanges:true}, snap=>{
       online = !snap.metadata.fromCache; syncLabel();
+      if(online && !snap.metadata.hasPendingWrites) markSynced();
       if(snap.metadata.hasPendingWrites) return;
       if(snap.exists){
         docExists = true;
@@ -2893,13 +2911,15 @@ function isFav(d){ return S().fav.some(f=>matchFilter(d,f)); }
 function setLike(id,v){ state.likes = state.likes||{}; if(likeOf(id)===v) delete state.likes[id]; else state.likes[id]=v; commit(); }
 function isoDate(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; }
 // Vergangene Tage dieser Woche als „gekocht“ merken – je Datum nur einmal, damit spätere Planänderungen nichts verfälschen
+// Angebrochene Zutaten (Vorrat = 2) verlassen den Vorrat, sobald ein Gericht damit gekocht wurde
+function useUp(id){ const d = dish(id); if(!d||!state.pantry) return; Object.keys(state.pantry).forEach(k=>{ if(state.pantry[k]===2 && d.i.some(x=>frMatch(k,String(x[2])))) delete state.pantry[k]; }); }
 function recordCooked(){
   if(isExample) return false;
   state.cooked = state.cooked||{};
   const dates = weekDates(), today = (new Date().getDay()+6)%7; let changed = false;
   for(let i=0;i<today;i++){
     const v = state.days[i], key = isoDate(dates[i]);
-    if(typeof v==="string" && dish(v) && !state.cooked[key]){ state.cooked[key]=v; changed=true; }
+    if(typeof v==="string" && dish(v) && !state.cooked[key]){ state.cooked[key]=v; changed=true; useUp(v); }
   }
   const cut = isoDate(new Date(Date.now()-400*864e5));
   Object.keys(state.cooked).forEach(k=>{ if(k<cut){ delete state.cooked[k]; changed=true; } });
@@ -2913,7 +2933,7 @@ function rollWeek(){
   if(!was){ state.settings.weekOf = cur; return true; }
   if(was >= cur) return false;
   const [y,m,d] = was.split("-").map(Number), passed = Math.round((new Date(cur+"T12:00")-new Date(y,m-1,d,12))/(7*864e5));
-  for(let i=0;i<7;i++){ const v = state.days[i], k = isoDate(new Date(y,m-1,d+i)); if(typeof v==="string" && dish(v) && !state.cooked[k]) state.cooked[k]=v; }
+  for(let i=0;i<7;i++){ const v = state.days[i], k = isoDate(new Date(y,m-1,d+i)); if(typeof v==="string" && dish(v) && !state.cooked[k]){ state.cooked[k]=v; useUp(v); } }
   const nextKeys = Object.keys(state.days).filter(k=>+k>=7);
   if(passed===1 && nextKeys.length){
     [state.checked,state.hidden].forEach(mp=>{ Object.keys(mp).forEach(k=>{ const n=parseInt(k,10); if(n>=0 && n<7) delete mp[k]; }); Object.keys(mp).forEach(k=>{ const n=parseInt(k,10); if(n>=7 && n<14 && /^\d+\|/.test(k)){ mp[(n-7)+k.slice(String(n).length)] = mp[k]; delete mp[k]; } }); });
@@ -3130,8 +3150,10 @@ function askHome(it){
     <div class="add-opts">
       <button type="button" class="add-opt" id="ahOnce"><span aria-hidden="true">1×</span><b>Nur diesmal</b><small>Kommt bei der nächsten Planung wieder auf die Liste</small></button>
       <button type="button" class="add-opt" id="ahAlways"><span aria-hidden="true">♾️</span><b>Immer</b><small>Steht nie mehr auf der Einkaufsliste – in ⚙ Einstellungen wieder entfernbar</small></button>
+      <button type="button" class="add-opt" id="ahOpen"><span aria-hidden="true">🥫</span><b>Angebrochen – bald verbrauchen</b><small>Steht nicht auf der Liste, bis ein Gericht damit gekocht wurde; wir schlagen passende Gerichte vor</small></button>
     </div>`);
   $("#ahOnce").addEventListener("click",()=>{ it.keys.forEach(k=>{ state.hidden[k]="home"; }); closeSheet(); commit(); toast(`${it.n}: haben wir zu Hause`); });
+  $("#ahOpen").addEventListener("click",()=>{ state.pantry = state.pantry||{}; state.pantry[it.n] = 2; closeSheet(); commit(); toast(`${it.n} ist angebrochen – wir schlagen Gerichte vor`); });
   $("#ahAlways").addEventListener("click",()=>{ state.pantry = state.pantry||{}; state.pantry[it.n] = 1; closeSheet(); commit(); toast(`${it.n} ist jetzt im Vorrat`); });
 }
 function setShopDays(days){ shopPrefs.days = days; saveShopPrefs(); renderShop(); }
@@ -3404,7 +3426,7 @@ function openSettings(){
     <p class="sub">Höchstens so lange dürfen gewürfelte Gerichte unter der Woche dauern.</p>
     <div class="filters" id="setTime">${[[20,"Bis 20 Min"],[30,"Bis 30 Min"],[45,"Bis 45 Min"],[0,"Egal"]].map(([v,l])=>`<button type="button" data-maxt="${v}" aria-pressed="${s.maxT===v}">${l}</button>`).join("")}</div>
     <h3>🏠 Vorrat zuhause</h3>
-    <p class="sub">Steht nie auf der Einkaufsliste und zählt bei „Was haben wir noch zuhause?“ als vorhanden. Aufnehmen: in der Einkaufsliste bei „🏠 Zuhause“ → „Immer“.</p>
+    <p class="sub">Steht nie auf der Einkaufsliste und zählt bei „Was haben wir noch zuhause?“ als vorhanden. Aufnehmen: in der Einkaufsliste bei „🏠 Zuhause“ → „Immer“. Mit 🥫 markiert: angebrochen – fällt aus dem Vorrat, sobald ein Gericht damit gekocht wurde.</p>
     <div class="filters" id="setPantry"></div>
     <div class="fr-in"><input id="pnInput" type="text" placeholder="Zutat hinzufügen …" autocomplete="off" enterkeyhint="done"><button class="btn primary" id="pnAdd" type="button">+</button></div>
     <h3>🌍 Region</h3>
@@ -3425,7 +3447,7 @@ function openSettings(){
     <div class="filters" id="setAll">${ALLERGENS.map(([k,i,l])=>`<button type="button" data-allg="${k}" aria-pressed="${s.allerg.includes(k)}">${i} ${l}</button>`).join("")}</div>
     <p class="sub"><a href="datenschutz.html" target="_blank" rel="noopener">Datenschutz</a></p>
   </div>`);
-  const drawPantry = ()=>{ const ks = Object.keys(state.pantry||{}).sort((a,b)=>a.localeCompare(b,"de")); $("#setPantry").innerHTML = ks.length ? ks.map(k=>`<button type="button" data-pn="${esc(k)}" aria-label="${esc(k)} entfernen">${esc(k)} ×</button>`).join("") : `<span class="sub">Noch nichts im Vorrat.</span>`; };
+  const drawPantry = ()=>{ const ks = Object.keys(state.pantry||{}).sort((a,b)=>a.localeCompare(b,"de")); $("#setPantry").innerHTML = ks.length ? ks.map(k=>`<button type="button" data-pn="${esc(k)}" aria-label="${esc(k)} entfernen">${state.pantry[k]===2?"🥫 ":""}${esc(k)} ×</button>`).join("") : `<span class="sub">Noch nichts im Vorrat.</span>`; };
   drawPantry();
   const drawCats = ()=>{ $("#setCats").innerHTML = catsOrdered().map(([c,l],i,arr)=>`<div class="catord"><span>${l}</span><button type="button" data-cup="${c}" aria-label="${l} nach oben" ${i===0?"disabled":""}>▲</button><button type="button" data-cdown="${c}" aria-label="${l} nach unten" ${i===arr.length-1?"disabled":""}>▼</button></div>`).join(""); };
   drawCats();
@@ -3658,6 +3680,7 @@ function pickFor(day){
   openSheet(`<button class="btn small close" data-close>Schließen</button>
     <h2>${dlong(day)}</h2>
     <div class="add" style="margin-top:10px"><input id="customDish" type="text" placeholder="Eigenes Gericht, z. B. Resteessen" autocomplete="off"><button class="btn primary" data-custom="${day}">Übernehmen</button></div>
+    <button type="button" class="btn small" data-cp="day" data-g="${day}" style="margin-bottom:10px">📋 Aus einer anderen Woche übernehmen</button>
     ${filterUI("pick","Gericht oder Zutat …")}
     <div class="fcount" id="pickCount"></div>
     <div class="pick" id="pickList">${opts.map(d=>`<button data-setday="${day}" data-dish="${d.id}"><span>${esc(d.n)}${metaLine(d)}</span></button>`).join("")}</div>`);
@@ -3716,7 +3739,7 @@ $("#fillWeek").addEventListener("click",()=>openPlanAssistant());
 
 /* ---------- Dezente Hinweise in der App (je Art abschaltbar, nur auf diesem Gerät) ---------- */
 const LS_HINTS = "essensplan-hinweise";
-const HINT_TYPES = [["plan","📅 Nächste Woche planen","Ab Freitag, wenn die nächste Woche noch leer ist"],["shop","🛒 Einkauf für morgen","Am späten Nachmittag, wenn morgen etwas geplant ist"],["rate","👍 Wie hat es geschmeckt?","Nach dem Essen, wenn das Gericht noch nicht bewertet ist"]];
+const HINT_TYPES = [["plan","📅 Nächste Woche planen","Ab Freitag, wenn die nächste Woche noch leer ist"],["use","🥫 Angebrochenes verbrauchen","Wenn Zutaten als „angebrochen“ markiert sind"],["shop","🛒 Einkauf für morgen","Am späten Nachmittag, wenn morgen etwas geplant ist"],["rate","👍 Wie hat es geschmeckt?","Nach dem Essen, wenn das Gericht noch nicht bewertet ist"]];
 function hintPrefs(){ const v = lsGet(LS_HINTS) || {}; return {off: v.off||{}, done: v.done||{}}; }
 function hintSave(p){ lsSet(p, LS_HINTS); }
 function hintList(){
@@ -3729,6 +3752,9 @@ function hintList(){
     for(const g of cand){ const x = dishAt(g); if(x && !likeOf(x.id) && !seen("rate:"+x.id)){ out.push({k:"rate:"+x.id, html:`<div class="h-t"><b>Wie hat euch das Gericht gefallen?</b><small>${esc(x.n)}</small></div><div class="h-r"><button type="button" data-like="${x.id}" data-v="1" aria-label="Hat geschmeckt">👍</button><button type="button" data-like="${x.id}" data-v="-1" aria-label="Hat nicht geschmeckt">👎</button></div>`}); break; }
     }
   }
+  const opened = Object.keys(state.pantry||{}).filter(k=>state.pantry[k]===2);
+  if(!p.off.use && opened.length && !seen("use"))
+    out.push({k:"use", html:`<div class="h-t"><b>Angebrochen: ${esc(opened.slice(0,3).join(", "))}${opened.length>3?" …":""}</b><small>Passende Gerichte zum Verbrauchen ansehen</small></div><button type="button" class="btn small primary" data-hint="use">Ansehen</button>`});
   if(!p.off.shop && hr>=16 && !seen("shop")){
     const g = dow<6 ? dow+1 : 7, x = dishAt(g);
     if(x) out.push({k:"shop", html:`<div class="h-t"><b>Die Einkaufsliste für morgen ist bereit</b><small>Morgen: ${esc(x.n)}</small></div><button type="button" class="btn small primary" data-hint="shop" data-g="${g}">Ansehen</button>`});
@@ -3748,8 +3774,71 @@ $("#hints").addEventListener("click",e=>{
   const b = e.target.closest("[data-hint]"); if(!b) return; e.stopPropagation();
   const a = b.dataset.hint;
   if(a==="x"){ const p=hintPrefs(); p.done[b.dataset.k]=isoDate(new Date()); hintSave(p); renderHints(); }
+  else if(a==="use"){ openFridge({have:Object.keys(state.pantry||{}).filter(k=>state.pantry[k]===2), f:[]}); }
   else if(a==="plan"){ viewWeek=1; render(); openPlanAssistant(); }
   else if(a==="shop"){ const g=+b.dataset.g; document.querySelector('nav.tabs [data-tab="einkauf"]').click(); setShopDays([g]); const p=hintPrefs(); p.done.shop=isoDate(new Date()); hintSave(p); renderHints(); }
+});
+
+/* ---------- Wochen kopieren / Tage aus anderer Woche übernehmen ---------- */
+function copySources(target){
+  const out = [], fmt = d=>d.toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"});
+  const fromDays = O=>{ const m={}; for(let i=0;i<7;i++){ const v=state.days[O+i]; if(typeof v==="string" && dish(v)) m[i]=v; } return m; };
+  [[0,"Diese Woche"],[1,"Nächste Woche"]].forEach(([w,l])=>{ if(w===target) return; const d=fromDays(w*7); if(Object.keys(d).length){ const dt=weekDates(w); out.push({label:`${l} (${fmt(dt[0])}–${fmt(dt[6])})`, days:d}); } });
+  const mon0 = isoDate(weekDates(0)[0]), byWk = {};
+  Object.entries(state.cooked||{}).forEach(([iso,id])=>{
+    if(!dish(id)) return;
+    const [y,m,dd]=iso.split("-").map(Number), dt=new Date(y,m-1,dd), dow=(dt.getDay()+6)%7, mon=new Date(y,m-1,dd-dow), mk=isoDate(mon);
+    if(mk>=mon0) return;
+    if(!byWk[mk]) byWk[mk]={days:{},mon};
+    byWk[mk].days[dow]=id;
+  });
+  Object.keys(byWk).sort().reverse().slice(0,8).forEach(mk=>{ const w=byWk[mk], e=new Date(w.mon.getFullYear(),w.mon.getMonth(),w.mon.getDate()+6); out.push({label:`Zuletzt gekocht: ${fmt(w.mon)}–${fmt(e)}`, days:w.days}); });
+  return out;
+}
+let cpSrc = [], cpWeek = 0;
+function cpNames(days){ return Object.keys(days).sort().map(i=>`${DAYS[i]} ${dish(days[i]).n}`).join(" · "); }
+function openCopyWeek(){
+  cpWeek = viewWeek; cpSrc = copySources(cpWeek);
+  openSheet(`<button class="btn small close" data-close>Schließen</button>
+    <h2>${cpWeek?"Nächste":"Diese"} Woche aus einer anderen Woche füllen</h2>
+    <p class="sub">Wähle eine Woche zum Kopieren. Auch die zuletzt gekochten Wochen stehen zur Auswahl.</p>
+    ${cpSrc.length ? cpSrc.map((x,i)=>`<button type="button" class="cp-src" data-cp="week" data-i="${i}">${esc(x.label)}<small>${Object.keys(x.days).length} Gerichte: ${esc(cpNames(x.days))}</small></button>`).join("") : `<p class="empty">Noch keine andere Woche mit Gerichten vorhanden.</p>`}`);
+}
+function cpApply(i, mode){
+  const src = cpSrc[i]; if(!src) return;
+  const O = cpWeek*7, t0 = cpWeek ? 0 : (new Date().getDay()+6)%7; let n=0;
+  for(let k=t0;k<7;k++){
+    const g=O+k, ex=state.days[g];
+    if(mode==="replace"){ delete state.days[g]; [state.checked,state.hidden].forEach(mp=>Object.keys(mp).forEach(key=>{ if(key.startsWith(g+"|")) delete mp[key]; })); }
+    else if(ex!==undefined) continue;
+    if(src.days[k]){ state.days[g]=src.days[k]; n++; }
+  }
+  closeSheet(); commit(); toast(n?`${n} Tag${n>1?"e":""} übernommen`:"Nichts zu übernehmen");
+}
+function openDayFrom(g){
+  const srcs = copySources(Math.floor(g/7));
+  openSheet(`<button class="btn small close" data-close>Schließen</button>
+    <h2>${dlong(g)}: Tag übernehmen</h2>
+    <p class="sub">Tippe auf einen Tag, dessen Gericht du übernehmen möchtest.</p>
+    ${srcs.length ? srcs.map(x=>`<details class="cp-wk"><summary>${esc(x.label)}</summary>${Object.keys(x.days).sort().map(i=>`<button type="button" class="cp-day" data-setday="${g}" data-dish="${x.days[i]}"><b>${DAYS[i]}</b><span>${esc(dish(x.days[i]).n)}</span></button>`).join("")}</details>`).join("") : `<p class="empty">Noch keine andere Woche mit Gerichten vorhanden.</p>`}`);
+}
+$("#copyWeek").addEventListener("click",()=>{ $("#wkMenu").open=false; openCopyWeek(); });
+$("#sheetRoot").addEventListener("click",e=>{
+  const b = e.target.closest("[data-cp]"); if(!b) return;
+  const a=b.dataset.cp;
+  if(a==="day"){ openDayFrom(+b.dataset.g); return; }
+  if(a==="week"){
+    const i=+b.dataset.i, O=cpWeek*7, t0=cpWeek?0:(new Date().getDay()+6)%7;
+    const have=[]; for(let k=t0;k<7;k++) if(state.days[O+k]!==undefined) have.push(k);
+    if(!have.length){ cpApply(i,"free"); return; }
+    openSheet(`<button class="btn small close" data-close>Schließen</button>
+      <h2>Es sind schon Tage belegt</h2>
+      <p class="sub">${have.length} Tag${have.length>1?"e":""} in dieser Woche ${have.length>1?"haben":"hat"} schon ein Gericht.</p>
+      <button type="button" class="cp-src" data-cp="go" data-i="${i}" data-m="free">Nur freie Tage füllen<small>Belegte Tage bleiben wie sie sind</small></button>
+      <button type="button" class="cp-src" data-cp="go" data-i="${i}" data-m="replace">Alles ersetzen<small>Auch belegte Tage werden überschrieben</small></button>`);
+    return;
+  }
+  if(a==="go") cpApply(+b.dataset.i, b.dataset.m);
 });
 
 /* ---------- Plan aus Vorschlägen (Assistent) ---------- */
@@ -4190,6 +4279,11 @@ function openSyncSheet(){
     const link = joinLink();
     openSheet(`<button class="btn small close" data-close>Schließen</button>
       <h2>Familienplan</h2>
+      <div class="syncinfo">
+        <div><span>Status</span><b>${online?"✅ Verbunden – gemeinsamer Plan aktiv":"⚠️ Offline – Änderungen werden nachgeholt"}</b></div>
+        <div><span>Zuletzt synchronisiert</span><b>${esc(syncAgo())}</b></div>
+        <div><span>Zugriff</span><b>Alle, die den Familien-Link haben (Sehen und Ändern)</b></div>
+      </div>
       <p class="sub">Alle Änderungen werden automatisch synchronisiert. Ein Handy-Wechsel ist einfach: Link öffnen, fertig. Zusätzlich könnt ihr unter ⚙ Einstellungen eine Sicherung speichern.</p>
       <p>Öffne diesen Link auf jedem Handy, das mitplanen soll. Danach sehen alle denselben Wochenplan und dieselbe Einkaufsliste.</p>
       <pre class="code" id="joinLinkText">${esc(link)}</pre>
@@ -4197,13 +4291,18 @@ function openSyncSheet(){
       <p class="sub">Wer den Link hat, kann den Plan sehen und ändern. Schick ihn nur an die Familie.</p>
       <h3>Dieses Handy trennen</h3>
       <p class="sub">Der Plan bleibt online erhalten, dieses Handy plant dann wieder nur für sich.</p>
-      <button class="btn" id="disconnect">Trennen</button>`);
+      <button class="btn" id="disconnect">Trennen</button>
+      <h3>Freigabe beenden</h3>
+      <p class="sub">Du bekommst einen neuen, privaten Plan mit deinen aktuellen Daten und einen neuen Link. Alle anderen Handys bleiben auf dem alten Plan und sind dann nicht mehr mit deinem verbunden. Der alte Plan lässt sich technisch nicht löschen, ist aber nur über den alten Link erreichbar.</p>
+      <button class="btn" id="endShare">Freigabe beenden …</button>`);
     $("#copyJoin").addEventListener("click",()=>copyText(link,"Familien-Link kopiert"));
     $("#disconnect").addEventListener("click",()=>{ lsDel(LS_SYNC); location.reload(); });
+    $("#endShare").addEventListener("click",e=>{ const b=e.currentTarget; if(!b.dataset.sure){ b.dataset.sure="1"; b.textContent="Wirklich beenden – neuer Plan, neuer Link"; b.classList.add("primary"); return; } sync = {c:sync.c, p:newPlanId()}; lsSet(sync, LS_SYNC); location.reload(); });
     return;
   }
   openSheet(`<button class="btn small close" data-close>Schließen</button>
     <h2>Gemeinsam planen</h2>
+    <div class="syncinfo"><div><span>Status</span><b>Nur auf diesem Handy gespeichert</b></div><div><span>Zugriff</span><b>Nur du auf diesem Gerät</b></div></div>
     <p>Plant zu zweit oder als Familie: Alle sehen denselben Wochenplan, dieselbe Einkaufsliste und dieselben 👍/👎.</p>
     <p><b>Hast du schon einen Familien-Link bekommen?</b> Dann öffne einfach den Link – fertig.</p>
     <div class="bar" style="margin:14px 0"><button class="btn primary" id="quickShare">Gemeinsamen Plan starten</button></div>
