@@ -543,6 +543,13 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
 
 /* --- Review-Umsetzung --- */
 .weekbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.season-info{margin:0 0 10px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);font-size:14px;line-height:1.5}
+.season-info h4{margin:0 0 6px;font:700 13px var(--body);letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.season-info p{margin:0 0 4px}
+.season-info .regs{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.season-info .regs button{min-height:36px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--ink);font:600 13px var(--body);cursor:pointer}
+.season-info .regs button[aria-pressed="true"]{border-color:var(--basil);background:var(--basil-soft)}
+.why-s{margin:4px 0 0;font-size:12px;color:var(--basil);font-weight:600}
 .hints{display:flex;flex-direction:column;gap:8px;margin:0 0 12px}
 .hint{display:flex;align-items:center;gap:10px;padding:10px 8px 10px 14px;border:1px solid var(--line);border-left:3px solid var(--basil);border-radius:12px;background:var(--surface);font-size:14px;line-height:1.35}
 .hint .h-t{flex:1;min-width:0}
@@ -867,6 +874,7 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
     <div id="kitchenView" hidden></div>
     <p class="qi-lbl">Schnell zum Ziel</p>
     <div class="qi" id="quickIdeas" role="group" aria-label="Schnelle Einstiege"></div>
+    <div class="season-info" id="seasonInfo" hidden></div>
     <div id="ideaFilterUI"></div>
     <div class="fcount" id="ideaCount"></div>
     <div class="ideas" id="ideas"></div>
@@ -2873,7 +2881,7 @@ function setNote(id,t){ t=(t||"").trim().slice(0,300); state.notes = state.notes
 function likeOf(id){ return (state.likes||{})[id]||0; }
 /* ---------- Einstellungen (gelten für die ganze Familie, im gemeinsamen Plan gespeichert) ---------- */
 const SET_DEF = {persons:3, fav:[], maxT:30, allerg:[]};
-function S(){ const v = state.settings||{}; return {persons: +v.persons||3, fav: Array.isArray(v.fav)?v.fav:[], maxT: v.maxT===0?0:(+v.maxT||30), allerg: Array.isArray(v.allerg)?v.allerg:[]}; }
+function S(){ const v = state.settings||{}; return {persons: +v.persons||3, fav: Array.isArray(v.fav)?v.fav:[], maxT: v.maxT===0?0:(+v.maxT||30), allerg: Array.isArray(v.allerg)?v.allerg:[], region: ["DE","AT","CH"].includes(v.region)?v.region:"DE"}; }
 function setSetting(k,v){ state.settings = {...(state.settings||{}), [k]:v}; commit(); }
 const _blk = new Map();
 function blockedAllergens(d){
@@ -2933,7 +2941,8 @@ function metaLine(d){
 }
 function chips(d, full){
   if(!full) return metaLine(d);
-  const parts = [d.t?`${d.t} Min`:null, ...tagList(d).map(([i,l])=>i==="GF"?l:`${i} ${l}`)].filter(Boolean);
+  const sm = seasonMatches(d);
+  const parts = [d.t?`${d.t} Min`:null, ...tagList(d).map(([i,l])=>i==="GF"?l:`${i} ${l}`), sm.length?`🍂 Jetzt saisonal: ${sm.slice(0,3).join(", ")}`:null].filter(Boolean);
   return `<p class="tags">${parts.map(x=>`<span class="tg">${esc(x)}</span>`).join('<span class="dot">·</span>')}</p>`;
 }
 function toast(msg){
@@ -3193,8 +3202,38 @@ function bindFilterUI(id, set, onChange){
 }
 /* Kuratierte Einstiege oberhalb der Ideenliste */
 let quick = null, quickMore = false;
-const SEASON = {0:"kohl|wirsing|lauch|rote bete|sellerie|karotte|kartoffel|zwiebel|pastinake|kürbis",1:"kohl|wirsing|lauch|rote bete|sellerie|karotte|kartoffel|zwiebel|pastinake",2:"spinat|lauch|radieschen|bärlauch|karotte|kartoffel|zwiebel|kohl",3:"spinat|radieschen|bärlauch|spargel|lauch|salat|kohlrabi",4:"spargel|radieschen|salat|kohlrabi|spinat|erbsen|rhabarber|erdbeere",5:"spargel|zucchini|salat|kohlrabi|erbsen|erdbeere|karotte|radieschen|gurke",6:"zucchini|tomate|paprika|aubergine|gurke|mais|bohnen|brokkoli|beere|salat",7:"zucchini|tomate|paprika|aubergine|gurke|mais|bohnen|brokkoli|blumenkohl|pilz",8:"kürbis|champignon|pilz|paprika|tomate|zucchini|aubergine|mais|brokkoli|blumenkohl|karotte",9:"kürbis|champignon|pilz|kohl|brokkoli|blumenkohl|karotte|sellerie|lauch|rote bete|kartoffel",10:"kürbis|kohl|rosenkohl|rote bete|sellerie|lauch|pilz|champignon|wirsing|karotte|kartoffel",11:"kohl|wirsing|lauch|rote bete|sellerie|karotte|kartoffel|zwiebel|pastinake|kürbis"};
-function isSeasonal(d){ const re = new RegExp(SEASON[new Date().getMonth()],"i"); return d.i.some(x=>x[3]==="g" && re.test(String(x[2]))); }
+/* Saisonkalender (Freiland und Lager, grob). Gemüse und Obst je Monat; Muster passen auf Zutaten der Kategorie „Obst & Gemüse“. */
+const SEASON_PAT = {"Kohl":"(?<!rosen|grün)kohl(?!rabi)","Kohlrabi":"kohlrabi","Pilze":"pilz|champignon","Äpfel":"äpfel|apfel|äpfeln","Birnen":"birne","Zwetschgen":"zwetsch|pflaume","Beeren":"beere","Kürbis":"kürbis","Rote Bete":"rote bete","Kartoffeln":"kartoffel","Karotten":"karotte|möhre|rüebli","Tomaten":"tomate","Gurke":"gurke","Salat":"salat|rucola","Feldsalat":"feldsalat","Mais":"mais\\b","Bohnen":"bohnen","Erbsen":"erbsen","Pfirsiche":"pfirsich","Kirschen":"kirsch","Trauben":"trauben","Quitten":"quitte","Aprikosen":"aprikose|marille","Meerrettich":"kren|meerrettich"};
+const SEASON_CAL = [
+ [["Grünkohl","Rosenkohl","Wirsing","Kohl","Lauch","Rote Bete","Sellerie","Pastinaken","Feldsalat","Kürbis"],["Äpfel","Birnen"]],
+ [["Grünkohl","Rosenkohl","Wirsing","Kohl","Lauch","Rote Bete","Sellerie","Pastinaken","Feldsalat"],["Äpfel","Birnen"]],
+ [["Spinat","Lauch","Radieschen","Bärlauch","Rote Bete","Sellerie","Kohl","Feldsalat"],["Äpfel"]],
+ [["Spinat","Radieschen","Bärlauch","Spargel","Lauch","Salat","Kohlrabi"],["Rhabarber"]],
+ [["Spargel","Radieschen","Salat","Kohlrabi","Spinat","Erbsen","Mangold"],["Rhabarber","Erdbeeren"]],
+ [["Spargel","Zucchini","Salat","Kohlrabi","Erbsen","Karotten","Radieschen","Gurke","Blumenkohl","Brokkoli","Bohnen"],["Erdbeeren","Kirschen","Himbeeren","Rhabarber"]],
+ [["Zucchini","Tomaten","Paprika","Gurke","Aubergine","Mais","Bohnen","Brokkoli","Blumenkohl","Mangold","Salat"],["Himbeeren","Heidelbeeren","Kirschen","Aprikosen","Pfirsiche"]],
+ [["Tomaten","Paprika","Zucchini","Aubergine","Gurke","Mais","Bohnen","Brokkoli","Blumenkohl","Kürbis","Pilze","Karotten"],["Zwetschgen","Pfirsiche","Äpfel","Birnen","Beeren"]],
+ [["Kürbis","Pilze","Kohl","Brokkoli","Blumenkohl","Sellerie","Lauch","Rote Bete","Paprika","Tomaten","Mais"],["Äpfel","Birnen","Zwetschgen","Trauben"]],
+ [["Kürbis","Pilze","Kohl","Rosenkohl","Brokkoli","Blumenkohl","Sellerie","Lauch","Rote Bete","Feldsalat"],["Äpfel","Birnen","Trauben","Quitten","Zwetschgen"]],
+ [["Kürbis","Pilze","Kohl","Rosenkohl","Wirsing","Lauch","Rote Bete","Sellerie","Feldsalat"],["Äpfel","Birnen","Quitten"]],
+ [["Kohl","Grünkohl","Wirsing","Lauch","Rote Bete","Sellerie","Pastinaken","Kürbis","Feldsalat"],["Äpfel","Birnen"]],
+];
+const REGIONS = [["DE","🇩🇪 Deutschland"],["AT","🇦🇹 Österreich"],["CH","🇨🇭 Schweiz"]];
+const SEASON_ADD = {AT:{6:[[],["Aprikosen"]],7:[[],["Aprikosen"]],9:[["Meerrettich"],[]],10:[["Meerrettich"],[]],11:[["Meerrettich"],[]],0:[["Meerrettich"],[]],1:[["Meerrettich"],[]],2:[["Meerrettich"],[]]},CH:{}};
+const SEASON_NAME = {AT:{"Blumenkohl":"Karfiol","Tomaten":"Paradeiser","Kartoffeln":"Erdäpfel","Rosenkohl":"Kohlsprossen","Rote Bete":"Rote Rüben","Aprikosen":"Marillen","Zwetschgen":"Zwetschken","Feldsalat":"Vogerlsalat","Meerrettich":"Kren"},CH:{"Karotten":"Rüebli","Rote Bete":"Randen","Feldsalat":"Nüsslisalat","Zucchini":"Zucchetti","Pilze":"Pilze"}};
+const sName = (l,r)=> (SEASON_NAME[r]||{})[l] || l;
+function seasonItems(m, r){
+  const base = SEASON_CAL[m], add = ((SEASON_ADD[r]||{})[m]) || [[],[]];
+  const u = (a,b)=>[...new Set([...a,...b])];
+  return {g:u(base[0],add[0]), o:u(base[1],add[1])};
+}
+function seasonMatches(d){
+  const r = S().region, it = seasonItems(new Date().getMonth(), r), out = [];
+  const gs = d.i.filter(x=>x[3]==="g").map(x=>String(x[2]));
+  [...it.g,...it.o].forEach(l=>{ const re = new RegExp(SEASON_PAT[l]||l.toLowerCase(),"i"); if(gs.some(n=>re.test(n))) out.push(sName(l,r)); });
+  return out;
+}
+function isSeasonal(d){ return seasonMatches(d).length>0; }
 function matchQuick(d){
   if(!quick) return true;
   if(quick==="saison") return isSeasonal(d);
@@ -3214,6 +3253,18 @@ function matchQuick(d){
   return true;
 }
 const QUICK_BTNS = [["m:woche","🗓 Passt zu deiner Woche"],["f:schnell","⏱ In 20 Min fertig"],["m:vorrat","🥕 Verwendet Vorräte"],["f:veg","🌱 Vegetarisch"],["m:saison","🍂 Jetzt saisonal"],["f:like","👍 Von euch bewertet"],["f:kinder","👶 Familienfreundlich"],["f:glutenfrei","Ohne Gluten"]];
+function renderSeasonInfo(){
+  const el = $("#seasonInfo"); if(!el) return;
+  if(quick!=="saison"){ el.hidden = true; return; }
+  const r = S().region, m = new Date().getMonth(), it = seasonItems(m,r), MON = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+  el.hidden = false;
+  el.innerHTML = `<h4>🍂 Jetzt saisonal · ${MON[m]}</h4>
+    <p><b>Gemüse:</b> ${it.g.map(l=>esc(sName(l,r))).join(", ")}</p>
+    <p><b>Obst:</b> ${it.o.map(l=>esc(sName(l,r))).join(", ")}</p>
+    <p class="sub" style="margin:4px 0 0;font-size:12px;color:var(--muted)">Ein Gericht gilt als saisonal, wenn es mindestens eine dieser Zutaten enthält. Grobe Übersicht für Freiland und Lagerware.</p>
+    <div class="regs" role="group" aria-label="Region">${REGIONS.map(([k,l])=>`<button type="button" data-region="${k}" aria-pressed="${r===k}">${l}</button>`).join("")}</div>`;
+}
+$("#seasonInfo").addEventListener("click",e=>{ const b=e.target.closest("[data-region]"); if(!b) return; e.stopPropagation(); setSetting("region",b.dataset.region); renderIdeas(); });
 function renderQuick(){
   const html = (k,l)=>{ const [t,v]=k.split(":"); const on = t==="m" ? quick===v : filterSet.has(v); return `<button type="button" data-qi="${k}" aria-pressed="${on}">${l}</button>`; };
   const hidden = QUICK_BTNS.slice(4), anyOn = hidden.some(([k])=>{ const [t,v]=k.split(":"); return t==="m" ? quick===v : filterSet.has(v); });
@@ -3222,11 +3273,11 @@ function renderQuick(){
 function renderIdeas(){
   const q = query.trim().toLowerCase();
   const list = allDishes().filter(d=>matchFilters(d,filterSet) && matchQuery(d,q) && matchQuick(d));
-  renderQuick();
+  renderQuick(); renderSeasonInfo();
   $("#ideaCount").innerHTML = countHtml(list.length, {size: filterSet.size + (quick?1:0)});
   const inPlan = new Set(planned());
   $("#ideas").innerHTML = list.length ? list.map(d=>`<div class="idea">
-    <div class="idea-main" data-open="${d.id}"><h4>${esc(d.n)}</h4>${chips(d)}${inPlan.has(d.id)?'<span class="inplan">✓ im Plan</span>':''}</div>
+    <div class="idea-main" data-open="${d.id}"><h4>${esc(d.n)}</h4>${chips(d)}${quick==="saison"?`<p class="why-s">🍂 ${esc(seasonMatches(d).slice(0,3).join(", "))}</p>`:""}${inPlan.has(d.id)?'<span class="inplan">✓ im Plan</span>':''}</div>
     <button class="btn small ghost plan-btn" data-assign="${d.id}" aria-label="${esc(d.n)} einplanen" title="Einplanen">＋ Einplanen</button>
   </div>`).join("") : `<p class="empty">Nichts gefunden. Probier einen anderen Suchbegriff.</p>`;
   if(!surprise) nextSurprise(false);
@@ -3356,6 +3407,9 @@ function openSettings(){
     <p class="sub">Steht nie auf der Einkaufsliste und zählt bei „Was haben wir noch zuhause?“ als vorhanden. Aufnehmen: in der Einkaufsliste bei „🏠 Zuhause“ → „Immer“.</p>
     <div class="filters" id="setPantry"></div>
     <div class="fr-in"><input id="pnInput" type="text" placeholder="Zutat hinzufügen …" autocomplete="off" enterkeyhint="done"><button class="btn primary" id="pnAdd" type="button">+</button></div>
+    <h3>🌍 Region</h3>
+    <p class="sub">Bestimmt den Saisonkalender („Jetzt saisonal“) und die landestypischen Namen (z. B. Karfiol, Rüebli).</p>
+    <div class="filters" id="setRegion">${REGIONS.map(([k,l])=>`<button type="button" data-setregion="${k}" aria-pressed="${s.region===k}">${l}</button>`).join("")}</div>
     <h3>🔔 Hinweise in der App</h3>
     <p class="sub">Dezente Karten oben im Plan – keine Push-Nachrichten. Jede Art lässt sich einzeln abschalten (gilt nur für dieses Gerät).</p>
     <div class="filters" id="setHints">${HINT_TYPES.map(([k,l,d])=>`<button type="button" data-hintset="${k}" aria-pressed="${!hintPrefs().off[k]}" title="${esc(d)}">${l}</button>`).join("")}</div>
@@ -3392,6 +3446,7 @@ function openSettings(){
     if(b.id==="pnAdd") return;
     if(b.dataset.setp){ const n=Math.min(12,Math.max(1,cur.persons+(+b.dataset.setp))); setSetting("persons",n); $("#setPers").textContent=n; }
     else if(b.dataset.fav){ const v=tog(cur.fav,b.dataset.fav); setSetting("fav",v); b.setAttribute("aria-pressed",String(v.includes(b.dataset.fav))); }
+    else if(b.dataset.setregion!==undefined){ setSetting("region",b.dataset.setregion); document.querySelectorAll("#setRegion button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); }
     else if(b.dataset.hintset!==undefined){ const p=hintPrefs(), k=b.dataset.hintset; if(p.off[k]) delete p.off[k]; else p.off[k]=1; hintSave(p); b.setAttribute("aria-pressed",String(!p.off[k])); renderHints(); }
     else if(b.dataset.maxt!==undefined){ setSetting("maxT",+b.dataset.maxt); document.querySelectorAll("#setTime button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); }
     else if(b.dataset.allg){ const v=tog(cur.allerg,b.dataset.allg); setSetting("allerg",v); b.setAttribute("aria-pressed",String(v.includes(b.dataset.allg))); }
