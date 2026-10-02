@@ -3717,6 +3717,7 @@ function cookSteps(d){
 function cookIng(d,n){
   return d.i.map(([a,u,nm])=>{ const q=fmtQty(scaleQty(a,u,n,nm),u); return `<li><button type="button" data-ci>${q?`<b>${q}</b>`:""} ${esc(nm)}</button></li>`; }).join("");
 }
+function cookScroll(el){ if(el) setTimeout(()=>el.scrollIntoView({behavior:"smooth",block:"center"}),120); }
 function cookNext(){
   const root = $("#cookRoot"), bs = [...root.querySelectorAll(".ck-steps button")];
   bs.forEach(b=>b.classList.remove("next"));
@@ -3764,8 +3765,24 @@ $("#cookRoot").addEventListener("click",e=>{
     $("#ckSteps").querySelectorAll("button[data-o]").forEach(b=>{ b.textContent = scaleText(b.dataset.o, curPersons); });
     return;
   }
-  if(t.hasAttribute("data-ci")){ t.classList.toggle("done"); return; }
-  if(t.hasAttribute("data-cs")){ t.classList.toggle("done"); cookNext(); return; }
+  if(t.hasAttribute("data-ci")){
+    t.classList.toggle("done");
+    if(t.classList.contains("done")){
+      const all = [...$("#ckIng").querySelectorAll("button")], i = all.indexOf(t);
+      const nx = all.slice(i+1).find(b=>!b.classList.contains("done")) || all.find(b=>!b.classList.contains("done"));
+      cookScroll(nx || $("#ckStepsH"));
+    }
+    return;
+  }
+  if(t.hasAttribute("data-cs")){
+    t.classList.toggle("done"); cookNext();
+    if(t.classList.contains("done")){
+      const all = [...$("#ckSteps").querySelectorAll("button")], i = all.indexOf(t);
+      const nx = all.slice(i+1).find(b=>!b.classList.contains("done")) || all.find(b=>!b.classList.contains("done"));
+      cookScroll(nx || $("#ckFin"));
+    }
+    return;
+  }
   if(t.hasAttribute("data-ckfab")){ const nx = $("#cookRoot").querySelector(".ck-steps button.next"); if(nx) nx.scrollIntoView({behavior:"smooth",block:"center"}); }
 });
 document.addEventListener("keydown",e=>{ if(e.key==="Escape" && !$("#cookRoot").hidden) closeCook(); });
