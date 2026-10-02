@@ -418,7 +418,6 @@ details.info p{margin:8px 0 0}
 .stepper button{width:36px;height:34px;border:0;background:transparent;color:var(--ink);font:600 18px var(--body);cursor:pointer}
 .stepper button:hover{background:var(--sunk)}
 .stepper span{min-width:28px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums}
-.pers-hint{font-size:12px;color:var(--muted);margin:-2px 0 6px}
 @media (prefers-reduced-motion:no-preference){.sheet{animation:up .18s ease-out}@keyframes up{from{transform:translateY(16px);opacity:.6}}}
 
 /* ===================== Warmes Design (Fraunces) ===================== */
@@ -3581,7 +3580,37 @@ function methodHtml(d){
   if(!list || (!st && list.length<2)) return d.m ? `<h3>So geht's</h3><p style="margin:0;white-space:pre-line">${esc(d.m)}</p>` : "";
   return `${st&&st.v?`<h3>Aus dem Vorrat</h3><p class="pantry-need">${esc(st.v)}</p>`:""}
     <h3>So geht's <span class="hint">– Schritt antippen zum Abhaken</span></h3>
-    <ol class="steps-list">${list.map(x=>`<li tabindex="0">${esc(x)}</li>`).join("")}</ol>`;
+    <ol class="steps-list">${list.map(x=>`<li tabindex="0" data-o="${esc(x)}">${esc(scaleText(x,curPersons))}</li>`).join("")}</ol>`;
+}
+/* Mengen im Schritt-Text (Rezepte gelten für 3 Personen) auf die gewählte Personenzahl umrechnen */
+const _NUM = "(?:\\d+(?:[.,]\\d+)?[½¼¾]?|[½¼¾])";
+const _UN = "ml|kg|g|l|EL|TL|Dosen|Dose|Knoblauchzehen|Knoblauchzehe|Zehen|Zehe|Eier|Ei|Zwiebeln|Zwiebel|Auberginen|Aubergine|Zitronen|Zitrone|Limetten|Limette|Chilischoten|Chilischote|Hokkaido-Kürbisse|Hokkaido-Kürbis|Möhren|Möhre|Karotten|Karotte|Packungen|Packung|Thymianzweigen|Thymianzweig|Blumenkohl|Brokkoli";
+const SCALE_RE = new RegExp("(?<![\\w.,/°–-])("+_NUM+")(?:\\s?[–-]\\s?("+_NUM+"))?(\\s(?:(?:kleine|kleinen|große|großen|mittelgroße|mittelgroßen)\\s)?)("+_UN+")(?![\\wäöüßÄÖÜ-])","g");
+const SING_PL = {Dose:"Dosen",Knoblauchzehe:"Knoblauchzehen",Zehe:"Zehen",Ei:"Eier",Zwiebel:"Zwiebeln",Aubergine:"Auberginen",Zitrone:"Zitronen",Limette:"Limetten",Chilischote:"Chilischoten","Hokkaido-Kürbis":"Hokkaido-Kürbisse",Möhre:"Möhren",Karotte:"Karotten",Packung:"Packungen",Thymianzweig:"Thymianzweigen"};
+const PL_SING = Object.fromEntries(Object.entries(SING_PL).map(([a,b])=>[b,a]));
+function _parseNum(t){ let v=0, m=t.match(/^(\d+(?:[.,]\d+)?)/); if(m) v=parseFloat(m[1].replace(",",".")); const f={"½":.5,"¼":.25,"¾":.75}[t.slice(-1)]; if(f) v+=f; return v; }
+function _fmtNum(x,frac){ if(frac){ const w=Math.floor(x), r=x-w, h=r>=.75?"¾":r>=.5?"½":r>=.25?"¼":""; return (w?String(w):"")+h||"0"; } return String(x).replace(".",","); }
+function scaleText(txt,n){
+  if(n===3) return txt;
+  return txt.replace(SCALE_RE,(m,a,b,gap,unit)=>{
+    const sing = PL_SING[unit]||unit, isCount = !!SING_PL[sing] || sing==="Ei" || unit==="Eier" || unit==="Blumenkohl" || unit==="Brokkoli" || unit==="Zehen";
+    const f = v=>{
+      if(unit==="g"||unit==="ml"||unit==="l"||unit==="kg") return scaleQty(v,unit,n);
+      const x = v*n/3;
+      if(unit==="EL"||unit==="TL"){ if(unit==="EL"&&v>=1) return Math.max(1, Math.round(x*2)/2); return x<1 ? Math.max(.25, Math.round(x*4)/4) : Math.round(x*2)/2; }
+      if(sing==="Zwiebel"||sing==="Zitrone"||sing==="Limette"||v<1) return Math.max(.5, Math.round(x*2)/2);
+      if(sing==="Ei"||sing==="Dose"||sing==="Packung") return Math.max(1, Math.ceil(x-.05));
+      return Math.max(1, Math.round(x));
+    };
+    const half = unit==="EL"||unit==="TL"||sing==="Zwiebel"||sing==="Zitrone"||sing==="Limette"||_parseNum(a)<1;
+    const A = f(_parseNum(a)), B = b ? f(_parseNum(b)) : null;
+    const fm = v=> (unit==="l"||unit==="kg") ? _fmtNum(v,false) : _fmtNum(v,half||false);
+    const last = B!==null && B!==A ? B : A;
+    let u = unit;
+    if(unit==="l" && last<1){ const g=v=>Math.round(v*1000); return (B!==null && B!==A ? g(A)+"–"+g(B) : g(A))+gap+"ml"; }
+    if(SING_PL[sing]) u = last<=1 ? sing : SING_PL[sing];
+    return (B!==null && B!==A ? fm(A)+"–"+fm(B) : fm(A))+gap+u;
+  });
 }
 const CEIL_UNITS = new Set(["Dose","Dosen","Glas","Pck","Packung","Bund","Kopf","Beet","Flasche","Laib","Becher","Tube","Kugeln"]);
 function scaleQty(a,u,n,name){
@@ -3604,7 +3633,7 @@ function setPersons(id,n){
   $("#persN").textContent = curPersons;
   $("#ingTitle").textContent = `Zutaten für ${curPersons} Person${curPersons>1?"en":""}`;
   $("#ingList").innerHTML = ingItems(d, curPersons);
-  $("#persHint").hidden = curPersons===3;
+  document.querySelectorAll(".steps-list li[data-o]").forEach(li=>{ li.textContent = scaleText(li.dataset.o, curPersons); });
   const ok=$("#keepOk"); if(ok) ok.hidden=true;
 }
 function copyDishForKeep(id){
@@ -3637,7 +3666,6 @@ function showDish(id){
       return notes.length?`<details class="info"><summary>ⓘ Hinweise &amp; Allergene${d.src?" · Quelle":""}</summary>${notes.map(n=>`<p>${n}</p>`).join("")}</details>`:""; })()}
     <div class="ing-head"><h3 id="ingTitle">Zutaten für ${curPersons} Person${curPersons>1?"en":""}</h3>
       <div class="stepper" role="group" aria-label="Personen"><button type="button" data-pers="-1" aria-label="Eine Person weniger">−</button><span id="persN">${curPersons}</span><button type="button" data-pers="1" aria-label="Eine Person mehr">+</button></div></div>
-    <p class="pers-hint" id="persHint" ${curPersons===3?"hidden":""}>Mengen in den Kochschritten gelten für 3 Personen.</p>
     <ul id="ingList">${ingItems(d,curPersons)}</ul>
     <div class="bar" style="margin:10px 0 0"><button class="btn small" data-keepcopy="${d.id}">📋 Zutaten kopieren</button></div><div class="keep-ok" id="keepOk" hidden></div>
     ${methodHtml(d)}
