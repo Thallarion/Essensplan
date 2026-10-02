@@ -211,11 +211,12 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--mustard);outlin
 .item{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px dashed var(--line)}
 .item:last-child{border-bottom:0}
 .item input{width:22px;height:22px;accent-color:var(--basil);flex:none;cursor:pointer}
-.item label{flex:1;min-width:0;cursor:pointer;display:grid;grid-template-columns:auto minmax(0,1fr);overflow-wrap:break-word;column-gap:10px;align-items:baseline}
+.item label{flex:1;min-width:0;cursor:pointer;display:grid;grid-template-columns:auto minmax(0,1fr);overflow-wrap:break-word;hyphens:auto;-webkit-hyphens:auto;column-gap:10px;align-items:baseline}
 .qty{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
 .item label>span:only-child{grid-column:1/-1}
 .for{font-size:12px;color:var(--muted);grid-column:1/-1}
 .item.done label{color:var(--muted);text-decoration:line-through}
+@media (max-width:340px){.item{gap:8px}.item label{font-size:14px;column-gap:8px}.home-btn{width:40px;height:40px}}
 .item .rm{border:0;background:none;color:var(--muted);cursor:pointer;font-size:18px;padding:0 4px}
 .add{display:flex;gap:8px;margin:12px 0 4px}
 .add input{flex:1;min-width:0;font:16px var(--body);padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
@@ -541,7 +542,7 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
 .add-opt b{font-size:16px}
 .add-opt small{color:var(--muted);font-size:13px}
 .add-opt:hover,.add-opt:focus-visible{border-color:var(--basil)}
-.home-btn{flex:none;font:600 12px var(--body);padding:5px 9px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer;white-space:nowrap}
+.home-btn{flex:none;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;font:18px/1 var(--body);padding:0;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer;white-space:nowrap}
 .home-btn:hover,.home-btn:focus-visible{border-color:var(--basil);color:var(--basil)}
 .item.done .home-btn{display:none}
 .homebox{margin:0 0 12px;color:var(--muted)}
@@ -3196,7 +3197,7 @@ function itemHtml(it, showDays){
   return `<div class="item${done?' done':''}">
     <input type="checkbox" id="si_${idx}" data-item="${idx}" ${done?'checked':''}>
     <label for="si_${idx}">${it.extra?'':`<span class="qty">${fmtQty(it.a,it.u)}</span>`}<span>${esc(it.n)}</span>${showDays&&it.days?`<span class="for">für ${daysText(it.days)}</span>`:''}</label>
-    ${it.extra?`<button class="rm" data-rmextra="${it.extra}" aria-label="${esc(it.n)} entfernen">×</button>`:`<button class="home-btn" type="button" data-home="${idx}" aria-label="${esc(it.n)}: haben wir zu Hause" title="Haben wir zu Hause – von der Liste nehmen">🏠 Zuhause</button>`}
+    ${it.extra?`<button class="rm" data-rmextra="${it.extra}" aria-label="${esc(it.n)} entfernen">×</button>`:`<button class="home-btn" type="button" data-home="${idx}" aria-label="${esc(it.n)}: haben wir zu Hause" title="Haben wir zu Hause – von der Liste nehmen"><span aria-hidden="true">🏠</span></button>`}
   </div>`;
 }
 function renderShopControls(){
