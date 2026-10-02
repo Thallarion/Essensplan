@@ -24,7 +24,7 @@ TAB = {
  "Apfelmus":(360,75,0.2,0.1,17,1.5,0,0), "Aubergine":(300,24,1.2,0.2,3,2.8,1,0), "Aufbackbrötchen":(60,250,8,1.5,50,3,0,0),
  "Avocados (reif)":(150,200,2,20,4,6.5,1,0), "Avocado":(150,200,2,20,4,6.5,1,0), "Babyspinat":(None,23,2.9,0.4,1.4,2.2,1,0),
  "Orzo (Risoni)":(None,355,12.5,1.5,71,3,0,0), "Baguette":(250,260,8.5,1.5,52,2.5,0,0), "Bandnudeln":(None,360,13,2.5,70,3,0,0), "Basilikum":(20,30,3,0.6,3,3,0,0),
- "Basmatireis":(None,350,8,0.6,77,1.4,0,0), "Beerenmischung":(None,40,1,0.3,7,4,0,0), "Blattspinat":(None,20,2.5,0.3,1,2,1,0),
+ "Basmatireis":(None,350,8,0.6,77,1.4,0,0), "Beerenmischung":(None,40,1,0.3,7,4,0,0), "Blattspinat":(None,20,2.5,0.3,1,2,1,0), "Blattspinat (frisch)":(None,23,2.9,0.4,0.6,2.2,1,0), "Rahmspinat (TK)":(None,65,2.6,4,4,1.8,1,0),
  "Blumenkohl":(600,25,2,0.3,2.5,2.5,1,0), "Blätterteig":(275,390,5.5,25,36,1.5,0,0), "Brokkoli (TK)":(None,34,3.5,0.4,3,3,1,0),
  "Brokkoli":(400,34,3.5,0.4,3,3,1,0), "Bulgur":(None,350,12,1.5,70,9,0,0), "Burgerbrötchen":(75,270,9,4.5,48,2.5,0,0),
  "Bärlauch (oder Schnittlauch / fertiges grünes Pesto)":(50,25,2.5,0.5,2,2,0,0), "Cashewkerne":(None,580,18,44,26,3,0,0),

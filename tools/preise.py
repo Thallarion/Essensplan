@@ -16,7 +16,7 @@ import naehrwerte as nw
 VORRAT_EUR = 1.0
 PREIS = {
  "Apfelmus":2.5,"Apfelsaft":1.2,"Aubergine":3.5,"Aufbackbrötchen":5,"Avocado":8,"Avocados (reif)":8,"Babyspinat":9,"Baguette":4.5,"Banane":1.8,"Bananen":1.8,
- "Bandnudeln":3,"Basilikum":40,"Basmatireis":3.5,"Beerenmischung":6,"Bergkäse gerieben":16,"Blattspinat":4,"Blumenkohl":3,"Blätterteig":5,"Brokkoli":4,"Brokkoli (TK)":3.5,
+ "Bandnudeln":3,"Basilikum":40,"Basmatireis":3.5,"Beerenmischung":6,"Bergkäse gerieben":16,"Blattspinat":4,"Blattspinat (frisch)":6,"Rahmspinat (TK)":3.5,"Blumenkohl":3,"Blätterteig":5,"Brokkoli":4,"Brokkoli (TK)":3.5,
  "Buchweizen":4,"Buchweizenmehl":4.5,"Bulgur":3,"Burgerbrötchen":5,"Buttergemüse (TK)":4,"Bärlauch (oder Schnittlauch / fertiges grünes Pesto)":20,"Cashewkerne":18,
  "Champignons":6,"Cheddar gerieben":12,"Cornflakes (ungezuckert)":4,"Couscous":3,"Cranberrys (getrocknet)":14,"Crème fraîche":6,"Dill":40,"Dinkelmehl":2,"Edamame":8,"Edamame (TK)":8,
  "Ei":4,"Eier":4,"Emmentaler gerieben":12,"Erbsen":3,"Erdnusskerne (ungesalzen)":8,"Erdnussmus":9,"Erdnüsse (geröstet)":8,"Falafel (fertig)":9,"Feldsalat":20,"Feta":10,
