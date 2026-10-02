@@ -3931,6 +3931,7 @@ document.addEventListener("click",e=>{
     document.querySelectorAll("nav.tabs button").forEach(b=>b.setAttribute("aria-selected", String(b===t)));
     ["woche","einkauf","ideen"].forEach(p=>$("#p-"+p).hidden = p!==t.dataset.tab);
     try{ localStorage.removeItem(LS+"-tab"); sessionStorage.setItem(LS+"-tab", t.dataset.tab); }catch(err){}
+    if(t.dataset.tab!=="woche") window.scrollTo({top:0, behavior:"instant"}); /* Einkauf und Ideen starten immer ganz oben */
     return;
   }
   if(t.dataset.open){ showDish(t.dataset.open); return; }
