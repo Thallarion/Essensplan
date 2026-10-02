@@ -839,6 +839,33 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
 .ck-fab{position:fixed;left:16px;right:16px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:3;min-height:68px;border:0;border-radius:18px;background:var(--basil);color:var(--basil-ink);font:700 22px var(--body);cursor:pointer;box-shadow:var(--shadow)}
 .ck-fab[hidden]{display:none}
 .ck-fin{margin:22px 0 0;padding:18px;border-radius:16px;background:var(--basil-soft);color:var(--basil);font:700 22px var(--body);text-align:center}
+
+/* ---------- Chat „Frag mich“ (Vorschau) ---------- */
+.chat-open-btn{width:100%}
+#chatRoot{position:fixed;inset:0;z-index:30;background:var(--ground);color:var(--ink);display:flex;flex-direction:column}
+#chatRoot[hidden]{display:none}
+body.chat-open .scrim{z-index:40}
+.ch-top{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.ch-top h2{flex:1;margin:0;font:700 22px var(--display)}
+.ch-close{min-height:44px;padding:0 16px;border-radius:12px;border:2px solid var(--basil);background:transparent;color:var(--basil);font:700 16px var(--body);cursor:pointer}
+.ch-demo{margin:0;padding:8px 16px;background:var(--mustard-soft);color:var(--ink);font-size:13px}
+.ch-msgs{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+.ch-m{max-width:88%;padding:10px 14px;border-radius:16px;line-height:1.45;font-size:16px;overflow-wrap:anywhere}
+.ch-m.me{align-self:flex-end;background:var(--basil);color:var(--basil-ink);border-bottom-right-radius:4px}
+.ch-m.bot{align-self:flex-start;background:var(--surface);border:1px solid var(--line);border-bottom-left-radius:4px}
+.ch-cards{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.ch-card{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--ground);color:var(--ink);text-align:left;font:600 15px var(--body);cursor:pointer}
+.ch-card small{display:block;font:400 12px var(--body);color:var(--muted)}
+.ch-card span.go{margin-left:auto;color:var(--basil);font-weight:700;white-space:nowrap}
+.ch-plan{margin-top:8px;display:flex;flex-direction:column;gap:4px;font-size:15px}
+.ch-plan div{display:flex;gap:8px}.ch-plan b{width:28px;flex:none}
+.ch-act{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.ch-chips{display:flex;gap:8px;overflow-x:auto;padding:8px 16px 0;scrollbar-width:none}
+.ch-chips button{flex:none;padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:600 14px var(--body);cursor:pointer}
+.ch-in{display:flex;gap:8px;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+.ch-in input{flex:1;min-width:0;min-height:48px;padding:0 14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);font:16px var(--body)}
+.ch-in button{min-height:48px;padding:0 18px;border-radius:14px;border:0;background:var(--basil);color:var(--basil-ink);font:700 16px var(--body);cursor:pointer}
+.ch-left{margin:0;padding:0 16px 4px;font-size:12px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -913,6 +940,7 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
       <button class="btn primary zh-go" id="zhGo" type="button" hidden></button>
     </div>
     <div class="bar"><button class="btn primary" id="addRecipe" type="button">＋ Rezept hinzufügen <span class="count" id="inboxCount" hidden>0</span></button><button class="btn" id="kitchenBtn" type="button">🍽 Meine Küche</button></div>
+    <div class="bar" style="margin-top:8px"><button class="btn chat-open-btn" id="chatBtn" type="button">💬 Frag mich – Rezepte, Wochenplan, Reste</button></div>
     <div id="kitchenView" hidden></div>
     <p class="qi-lbl">Schnell zum Ziel</p>
     <div class="qi" id="quickIdeas" role="group" aria-label="Schnelle Einstiege"></div>
@@ -925,6 +953,7 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
 
 <div id="sheetRoot"></div>
 <div id="cookRoot" hidden></div>
+<div id="chatRoot" hidden></div>
 <div id="toastRoot"></div>
 
 <script>
@@ -3798,6 +3827,73 @@ const CU_KEYS = ["italien","deutsch","med","mexiko","asia","indien","bowl"];
 const AZ_LABEL = {o:"🔥 Ofengericht",t:"🍲 Ein Topf",f:"❄️ Gut einzufrieren",v:"🍱 Vorkochen",m:"🧸 Zum Mitnehmen",k:"👶 Kind kann helfen"};
 const freshCount = d=>d.i.filter(x=>"gkfb".includes(x[3])).length;
 function azTags(d){ return [...(d.az||"")].map(c=>AZ_LABEL[c]).filter(Boolean).concat(d.i.length<=6?["⏱️ Wenige Zutaten"]:[], freshCount(d)<=2?["🛍️ Mit Vorrat machbar"]:[]); }
+
+/* ---------- Chat „Frag mich“ – VORSCHAU mit einfacher Stichwort-Suche statt KI ---------- */
+const CH_EXAMPLES = ["Etwas Schnelles ohne Fleisch","Ofengericht, während ich die Kinder ins Bett bringe","Ein Topf, wenig Abwasch","Plane mir die Woche","Ich habe Zucchini, Feta und Reis"];
+const CH_KEYS = [[/vegetar|ohne fleisch|veggie/,"veg"],[/\bfisch/,"fisch"],[/schnell|20 min|kurz/,"schnell"],[/30 min|unter der woche|feierabend/,"alltag"],[/ofen|backt/,"az-o"],[/ein topf|eine pfanne|abwasch|spül/,"az-t"],[/einfrier|gefrier/,"az-f"],[/vorkoch|meal prep|aufwärm/,"az-v"],[/mitnehm|lunch|büro|kalt essen/,"az-m"],[/kind/,"az-k"],[/wenig zutaten|wenige zutaten/,"az-wenig"],[/vorrat/,"az-vorrat"],[/günstig|billig|sparen/,"b1"],[/italien|pizza|risotto/,"italien"],[/mexik|tacos?|wraps?/,"mexiko"],[/asia/,"asia"],[/indisch|curry/,"indien"],[/gesund/,"gesund"],[/protein|eiweiß/,"protein"]];
+let chLeft = 20;
+function chAdd(cls,html){ const m=document.createElement("div"); m.className="ch-m "+cls; m.innerHTML=html; $("#chMsgs").appendChild(m); $("#chMsgs").scrollTop=1e6; return m; }
+function chPool(keys){
+  const set = new Set(keys), bl = S().allerg;
+  return DISHES.filter(d=>!d.side && !blockedAllergens(d).length && matchFilters(d,set));
+}
+function chPick(pool,n){ const a=pool.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a.slice(0,n); }
+function chCards(list){ return `<div class="ch-cards">${list.map(d=>`<button type="button" class="ch-card" data-chdish="${d.id}"><div>${esc(d.n)}<small>${esc(timeShort(d))} · ${esc(KIND[d.k]||"")}</small></div><span class="go">Ansehen ›</span></button>`).join("")}</div>`; }
+function chAnswer(q){
+  const t = q.toLowerCase();
+  if(/woche|wochenplan|plane/.test(t)){
+    const t0 = (new Date().getDay()+6)%7, free=[]; for(let i=t0;i<5;i++) if(state.days[i]===undefined) free.push(i);
+    if(!free.length) return {html:"Diese Woche (Mo–Fr) ist schon komplett geplant. Du kannst unter ⋯ „Woche kopieren“ nutzen oder Tage mit × leeren."};
+    const maxT = S().maxT, keys = CH_KEYS.filter(([re])=>re.test(t)).map(k=>k[1]);
+    let pool = chPool(keys).filter(d=>!maxT || act(d)<=maxT); if(pool.length<free.length) pool = chPool([]);
+    const pick = chPick(pool, free.length);
+    return {html:`Hier ein Vorschlag für ${free.length} freie Tag${free.length>1?"e":""}:<div class="ch-plan">${free.map((d,i)=>`<div><b>${DAYS[d]}</b><span>${esc(pick[i].n)}</span></div>`).join("")}</div><div class="ch-act"><button type="button" class="btn small primary" data-chplan="${free.map((d,i)=>d+":"+pick[i].id).join(",")}">Übernehmen</button><button type="button" class="btn small" data-chno>Verwerfen</button></div>`};
+  }
+  const hm = t.match(/\b(?:habe?|hab|noch|übrig)\b\s+(.+)/);
+  if(hm && /(,|\bund\b)/.test(hm[1]) || /reste|übrig/.test(t)){
+    const have = (hm?hm[1]:"").split(/,|\bund\b/).map(x=>x.replace(/[.!?]/g,"").trim()).filter(Boolean).map(x=>x.charAt(0).toUpperCase()+x.slice(1));
+    if(have.length) return {html:`Mit ${esc(have.join(", "))} finde ich passende Gerichte.<div class="ch-act"><button type="button" class="btn small primary" data-chfridge="${esc(have.join("|"))}">Gerichte ansehen</button></div>`};
+  }
+  const keys = CH_KEYS.filter(([re])=>re.test(t)).map(k=>k[1]), pool = chPool(keys);
+  if(!pool.length) return {html:"Dazu habe ich in euren Rezepten nichts gefunden. Versuch es mit weniger Wünschen auf einmal."};
+  const pick = chPick(pool,3);
+  return {html:`${keys.length?`${pool.length} Gericht${pool.length>1?"e passen":" passt"} zu deinem Wunsch.`:"Ein paar Ideen:"} Hier ${pick.length>1?"sind "+pick.length+" Vorschläge":"ein Vorschlag"}:${chCards(pick)}`};
+}
+function chSend(q){
+  q = (q||"").trim(); if(!q) return;
+  if(chLeft<=0){ chAdd("bot","Für heute sind die Fragen aufgebraucht – morgen geht es weiter."); return; }
+  chLeft--; $("#chLeft").textContent = `Heute noch ${chLeft} Fragen`;
+  chAdd("me",esc(q)); $("#chIn").value="";
+  const w = chAdd("bot","…");
+  setTimeout(()=>{ w.innerHTML = chAnswer(q).html; $("#chMsgs").scrollTop=1e6; }, 500);
+}
+function openChat(){
+  const root=$("#chatRoot");
+  root.innerHTML = `<div class="ch-top"><h2>💬 Frag mich</h2><button type="button" class="ch-close" data-chclose>Schließen</button></div>
+    <p class="ch-demo">🧪 Vorschau: Die Antworten kommen noch aus einer einfachen Stichwort-Suche in euren Rezepten – die echte KI wird erst später angeschlossen.</p>
+    <div class="ch-msgs" id="chMsgs"></div>
+    <div class="ch-chips">${CH_EXAMPLES.map(x=>`<button type="button" data-chq="${esc(x)}">${esc(x)}</button>`).join("")}</div>
+    <p class="ch-left" id="chLeft" style="padding-top:6px">Heute noch ${chLeft} Fragen</p>
+    <form class="ch-in" id="chForm"><input id="chIn" type="text" placeholder="Was möchtest du wissen?" autocomplete="off" enterkeyhint="send" maxlength="200"><button type="submit">Senden</button></form>`;
+  root.hidden=false; document.body.classList.add("chat-open"); document.body.style.overflow="hidden";
+  chAdd("bot","Hallo! Ich schlage Rezepte vor, plane Tage und finde Gerichte für das, was ihr noch zuhause habt. Was möchtest du heute essen?");
+}
+function closeChat(){ $("#chatRoot").hidden=true; $("#chatRoot").innerHTML=""; document.body.classList.remove("chat-open"); document.body.style.overflow=""; }
+$("#chatBtn").addEventListener("click",openChat);
+$("#chatRoot").addEventListener("submit",e=>{ e.preventDefault(); chSend($("#chIn").value); });
+$("#chatRoot").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  if(b.hasAttribute("data-chclose")) return closeChat();
+  if(b.dataset.chq) return chSend(b.dataset.chq);
+  if(b.dataset.chdish) return showDish(b.dataset.chdish);
+  if(b.dataset.chfridge) return openFridge({have:b.dataset.chfridge.split("|"), f:[]});
+  if(b.hasAttribute("data-chno")){ b.closest(".ch-m").insertAdjacentHTML("beforeend",'<p class="sub" style="margin:8px 0 0">Verworfen.</p>'); b.closest(".ch-act").remove(); return; }
+  if(b.dataset.chplan){
+    b.dataset.chplan.split(",").forEach(p=>{ const [d,id]=p.split(":"); if(state.days[+d]===undefined) state.days[+d]=id; });
+    const act=b.closest(".ch-act"); act.insertAdjacentHTML("afterend",'<p class="sub" style="margin:8px 0 0">✔ Übernommen – im Wochenplan eingetragen.</p>'); act.remove(); commit();
+  }
+});
+document.addEventListener("keydown",e=>{ if(e.key==="Escape" && !$("#chatRoot").hidden && $("#sheetRoot").innerHTML==="") closeChat(); });
 function matchFilter(d,f){
   if(f==="az-wenig") return d.i.length<=6;
   if(f==="az-vorrat") return freshCount(d)<=2;
