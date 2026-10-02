@@ -2950,6 +2950,7 @@ function cookedText(id){
   return `Zuletzt gekocht: ${rel} (${d}.${m}.${n>300?y:""})`;
 }
 /* Zeitangabe: Gesamtzeit; ta = davon aktive Zeit (Rest = Garen/Backen/Warten) */
+function act(d){ return d.ta || d.t || 0; }
 function hasWait(d){ return !!(d.ta && d.t && d.ta<d.t); }
 function timeShort(d){ return hasWait(d) ? `${d.t} Min (${d.ta} aktiv)` : `${d.t} Min`; }
 function timeLong(d){ return hasWait(d) ? `${d.t} Min · davon ${d.ta} Min aktiv, ${d.t-d.ta} Min Garen/Warten` : `${d.t} Min`; }
@@ -2989,7 +2990,7 @@ function randomDish(excludeDay){
   // Mo–Fr nur schnelle Gerichte (bis 30 Min), am Wochenende alles
   const weekday = +excludeDay>=0 && (+excludeDay%7)<=4;
   const maxT = S().maxT;
-  const fits = d=>!weekday || !maxT || !d.t || d.t<=maxT;
+  const fits = d=>!weekday || !maxT || !act(d) || act(d)<=maxT;
   let pool = ALL.filter(d=>!used.has(d.id) && (d.k==="veg" || nonVeg<2) && fits(d));
   if(!pool.length) pool = ALL.filter(d=>!used.has(d.id) && fits(d));
   if(!pool.length) pool = ALL;
@@ -3428,7 +3429,7 @@ function openSettings(){
     <p class="sub">Kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran.</p>
     <div class="filters" id="setFav">${FAV_OPTS.map(([k,l])=>`<button type="button" data-fav="${k}" aria-pressed="${s.fav.includes(k)}">${l}</button>`).join("")}</div>
     <h3>⏱️ Kochzeit Mo–Fr</h3>
-    <p class="sub">Höchstens so lange dürfen gewürfelte Gerichte unter der Woche dauern.</p>
+    <p class="sub">So lange darfst du unter der Woche höchstens aktiv am Herd stehen (ohne Garen, Backen und Warten). Gilt für Würfeln und den Plan-Assistenten.</p>
     <div class="filters" id="setTime">${[[20,"Bis 20 Min"],[30,"Bis 30 Min"],[45,"Bis 45 Min"],[0,"Egal"]].map(([v,l])=>`<button type="button" data-maxt="${v}" aria-pressed="${s.maxT===v}">${l}</button>`).join("")}</div>
     <h3>🏠 Vorrat zuhause</h3>
     <p class="sub">Steht nie auf der Einkaufsliste und zählt bei „Was haben wir noch zuhause?“ als vorhanden. Aufnehmen: in der Einkaufsliste bei „🏠 Zuhause“ → „Immer“. Mit 🥫 markiert: angebrochen – fällt aus dem Vorrat, sobald ein Gericht damit gekocht wurde.</p>
@@ -3849,7 +3850,7 @@ $("#sheetRoot").addEventListener("click",e=>{
 });
 
 /* ---------- Plan aus Vorschlägen (Assistent) ---------- */
-const PA_OPTS = [["schnell","⚡ Schnell","Alle Tage bis 30 Min"],["guenstig","💶 Günstig","Bis ca. 9 € pro Gericht"],["veg","🌱 Vegetarisch","Nur ohne Fleisch und Fisch"],["kid","👶 Familienfreundlich","Kinderlieblinge zuerst"],["vorrat","🧊 Vorräte verwenden","Was im Vorrat ist, zählt"],["abwechslung","🎨 Abwechslungsreich","Verschiedene Beilagen, Küchen, Arten"]];
+const PA_OPTS = [["schnell","⚡ Wenig Aufwand","Aktiv höchstens 30 Min am Herd"],["guenstig","💶 Günstig","Bis ca. 9 € pro Gericht"],["veg","🌱 Vegetarisch","Nur ohne Fleisch und Fisch"],["kid","👶 Familienfreundlich","Kinderlieblinge zuerst"],["vorrat","🧊 Vorräte verwenden","Was im Vorrat ist, zählt"],["abwechslung","🎨 Abwechslungsreich","Verschiedene Beilagen, Küchen, Arten"]];
 const PA_STAPLES = [["Nudeln",/nudel|spaghetti|penne|fusilli|makkaroni|tagliatelle|gnocchi|lasagne|spätzle|tortellini/i],["Reis",/\breis\b|risotto/i],["Kartoffeln",/kartoffel/i]];
 function paStaple(x){ const txt = x.n+" "+x.i.map(r=>r[2]).join(" "); return PA_STAPLES.filter(([,re])=>re.test(x.n) || (re.test(txt) && x.i.some(r=>re.test(r[2]) && r[0]>=300))).map(a=>a[0]); }
 let paSel = new Set(), paPlan = {}, paWeek = 0;
@@ -3866,9 +3867,9 @@ function paPick(g, plan){
   const base = allDishes().filter(d=>!d.side && likeOf(d.id)>=0 && !blockedAllergens(d).length && !used.has(d.id));
   const tryPool = (rel)=>base.filter(d=>{
     if(!rel.has("veg") && opt.has("veg") && d.k!=="veg") return false;
-    if(!rel.has("schnell") && opt.has("schnell") && d.t>30) return false;
+    if(!rel.has("schnell") && opt.has("schnell") && act(d)>30) return false;
     if(!rel.has("guenstig") && opt.has("guenstig") && budgetTier(d)===3) return false;
-    if(!rel.has("zeit") && weekday && maxT && d.t && d.t>maxT && !opt.has("schnell")) return false;
+    if(!rel.has("zeit") && weekday && maxT && act(d) && act(d)>maxT && !opt.has("schnell")) return false;
     if(!rel.has("kette") && paStaple(d).some(a=>neighbors.includes(a))) return false;
     if(!rel.has("fleisch") && d.k!=="veg" && nonVeg>=2) return false;
     if(!rel.has("fisch") && opt.has("abwechslung") && d.k==="fisch" && fish>=1) return false;
@@ -3882,7 +3883,7 @@ function paPick(g, plan){
     if(opt.has("kid")) w *= d.kid?4:1;
     if(opt.has("guenstig")) w *= budgetTier(d)===1?3:1;
     if(have.length) w *= 1+Math.min(4,frScore(d,have).hits.length)*2;
-    if(!weekday && !opt.has("schnell") && d.t>=40) w *= 2;
+    if(!weekday && !opt.has("schnell") && act(d)>=25) w *= 2;
     if(opt.has("abwechslung") && d.cu && cus.has(d.cu)) w = Math.max(1,Math.round(w/3));
     if(daysSince(lastCooked(d.id))<=RECENT_DAYS) w = Math.max(1,Math.round(w/3));
     return Array(Math.max(1,Math.round(w))).fill(d);
@@ -3928,9 +3929,9 @@ function balanceHints(O, t0){
   out.push(`<span class="bal-sum">📊 ${[veg&&`${veg}× vegetarisch`,fl&&`${fl}× Fleisch`,fi&&`${fi}× Fisch`].filter(Boolean).join(" · ")}</span>`);
   if(fl>=3) out.push(`🥩 ${fl}× Fleisch in dieser Woche – vielleicht ein Tag vegetarisch zum Tauschen?`);
   const maxT = S().maxT;
-  if(maxT){ items.filter(x=>x.i<=4 && x.d.t>maxT).slice(0,2).forEach(x=>out.push(`⏱ ${DAYS[x.i]}: „${esc(x.d.n)}“ braucht ${x.d.t} Min – unter der Woche eher zügig? Das passt vielleicht besser aufs Wochenende.`)); }
+  if(maxT){ items.filter(x=>x.i<=4 && act(x.d)>maxT).slice(0,2).forEach(x=>out.push(`⏱ ${DAYS[x.i]}: „${esc(x.d.n)}“ braucht ${act(x.d)} Min aktive Zeit – unter der Woche eher zügig? Das passt vielleicht besser aufs Wochenende.`)); }
   const sa = items.find(x=>x.i===5), so = items.find(x=>x.i===6);
-  if(sa && so && sa.d.t<=20 && so.d.t<=20) out.push("🍳 Am Wochenende ist Zeit für etwas Aufwendigeres, falls ihr Lust habt.");
+  if(sa && so && act(sa.d)<=20 && act(so.d)<=20) out.push("🍳 Am Wochenende ist Zeit für etwas Aufwendigeres, falls ihr Lust habt.");
   const names = x=>new Set(x.d.i.filter(r=>"gkf".includes(r[3]) && !BAL_SKIP.test(String(r[2]))).map(r=>String(r[2]).toLowerCase()));
   const pairs = [];
   for(let a=0;a<items.length;a++) for(let b=a+1;b<items.length;b++){ if(items[b].i-items[a].i>2) continue; const na=names(items[a]), nb=names(items[b]); const shared=[...na].filter(z=>nb.has(z)); if(shared.length>=2) pairs.push([items[a].i,items[b].i,shared]); }
