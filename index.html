@@ -3424,8 +3424,26 @@ function render(){ renderWeek(); renderShop(); renderIdeas(); try{ renderFrChips
 function openSheet(html){
   $("#sheetRoot").innerHTML = `<div class="scrim" data-scrim><div class="sheet" role="dialog" aria-modal="true">${html}</div></div>`;
   const f = $("#sheetRoot").querySelector("button"); if(f) f.focus();
+  const m = /data-cook="([^"]+)"/.exec(html); setRecipeHash(m ? m[1] : null);
 }
-function closeSheet(){ $("#sheetRoot").innerHTML = ""; }
+function closeSheet(){ $("#sheetRoot").innerHTML = ""; setRecipeHash(null); }
+/* Rezept-Links: wasessenwir.at/#/rezept/<id> öffnet das Rezept (Adresszeile folgt dem geöffneten Rezept) */
+const RZ_HASH = /^#\/rezept\/([A-Za-z0-9_-]+)$/;
+function setRecipeHash(id){
+  try{
+    const h = location.hash;
+    if(id){ if(!h || RZ_HASH.test(h)) history.replaceState(null, "", location.pathname + location.search + "#/rezept/" + id); }
+    else if(RZ_HASH.test(h)) history.replaceState(null, "", location.pathname + location.search);
+  }catch(e){}
+}
+function openRecipeFromHash(){
+  const m = RZ_HASH.exec(location.hash); if(!m) return;
+  const id = m[1];
+  if(!dish(id)){ try{ history.replaceState(null, "", location.pathname + location.search); }catch(e){} return; }
+  if(document.querySelector("#sheetRoot [data-cook=\""+id+"\"]")) return;
+  showDish(id);
+}
+window.addEventListener("hashchange", openRecipeFromHash);
 /* ---------- Was ist noch da? (Resteküche) ---------- */
 const FR_PANTRY = /^(rote |weiße )?zwiebeln?$|knoblauch/i;
 const FR_SYN = {"käse":["käse","gouda","emmentaler","parmesan","mozzarella","feta","bergkäse","cheddar","halloumi","paneer","ricotta","reibekäse"],"nudeln":["nudel","spaghetti","penne","fusilli","makkaroni","tagliatelle","lasagne","bandnudeln","linguine","farfalle","tortellini"],"nudel":["nudel","spaghetti","penne","fusilli"],"hähnchen":["hähnchen","huhn","chicken","hühnchen"],"huhn":["hähnchen","huhn"],"hack":["hack"],"hackfleisch":["hack"],"reis":["reis","basmati","risotto"],"tomate":["tomat"],"paprika":["paprika"],"kartoffel":["kartoffel"],"sahne":["sahne","kochsahne","schmand","crème"],"schinken":["schinken","speck"],"fisch":["lachs","forelle","kabeljau","zander","seelachs","thunfisch","fisch"],"ei":["ei","eier"],"eier":["ei","eier"],"joghurt":["joghurt"],"brot":["brot","brötchen","toast","baguette"]};
@@ -4642,6 +4660,7 @@ $("#tab-einkauf").addEventListener("click",()=>{ try{ if(!localStorage.getItem("
 startSync().then(()=>{ if(window.__joined) toast("Mit dem Familien-Plan verbunden"); });
 /* Frischer Start (Link, App-Start, Neuladen) = immer Woche; nur beim Zurückkehren in dieselbe Sitzung bleibt der Reiter */
 try{ const nav = (performance.getEntriesByType("navigation")[0]||{}).type; const tab = nav==="reload" ? null : sessionStorage.getItem(LS+"-tab"); if(tab && tab!=="woche"){ const b=document.querySelector(`[data-tab="${tab}"]`); b&&b.click(); } }catch(e){}
+openRecipeFromHash();
 /* ---------- Wochenseite: heutigen Tag in die Mitte ---------- */
 let autoPos = null;
 const WIDE = window.matchMedia("(min-width:1000px)");
