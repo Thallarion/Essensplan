@@ -3923,15 +3923,19 @@ function pickFor(day){
 }
 
 /* ---------- Events ---------- */
+const TAB_SCROLL = {};
 document.addEventListener("click",e=>{
   const li = e.target.closest(".steps-list li"); if(li){ li.classList.toggle("done"); return; }
   const t = e.target.closest("button,[data-open],[data-scrim]"); if(!t) return;
   if(t.dataset.scrim!==undefined && e.target===t){ closeSheet(); return; }
   if(t.dataset.tab){
+    /* Scroll-Position je Reiter merken (nur solange die App offen ist) und beim Zurückkehren wiederherstellen */
+    const prev = document.querySelector('nav.tabs button[aria-selected="true"]');
+    if(prev && prev!==t) TAB_SCROLL[prev.dataset.tab] = window.scrollY;
     document.querySelectorAll("nav.tabs button").forEach(b=>b.setAttribute("aria-selected", String(b===t)));
     ["woche","einkauf","ideen"].forEach(p=>$("#p-"+p).hidden = p!==t.dataset.tab);
     try{ localStorage.removeItem(LS+"-tab"); sessionStorage.setItem(LS+"-tab", t.dataset.tab); }catch(err){}
-    if(t.dataset.tab!=="woche") window.scrollTo({top:0, behavior:"instant"}); /* Einkauf und Ideen starten immer ganz oben */
+    if(prev!==t){ const y = TAB_SCROLL[t.dataset.tab]; if(y!==undefined) window.scrollTo({top:y, behavior:"instant"}); else if(t.dataset.tab!=="woche") window.scrollTo({top:0, behavior:"instant"}); }
     return;
   }
   if(t.dataset.open){ showDish(t.dataset.open); return; }
@@ -4643,7 +4647,7 @@ function updateTodayBtn(){
 toToday.addEventListener("click",()=>{ if(viewWeek){ viewWeek=0; render(); } centerToday(); updateTodayBtn(); });
 window.addEventListener("scroll",updateTodayBtn,{passive:true});
 window.addEventListener("resize",updateTodayBtn);
-document.addEventListener("click",e=>{ const t = e.target.closest("[data-tab]"); if(t){ requestAnimationFrame(()=>{ if(t.dataset.tab==="woche"){ centerToday(); updateTodayBtn(); } else toToday.hidden = true; }); } });
+document.addEventListener("click",e=>{ const t = e.target.closest("[data-tab]"); if(t){ requestAnimationFrame(()=>{ if(t.dataset.tab==="woche"){ if(TAB_SCROLL.woche===undefined) centerToday(); updateTodayBtn(); } else toToday.hidden = true; }); } });
 $("#printList").addEventListener("click",()=>window.print());
 window.addEventListener("beforeprint",()=>{ const h=$("#printHead"); if(h){ const d=$("#weekRange"); h.innerHTML="Einkaufsliste<small>"+(d?d.textContent+" · ":"")+"Stand "+new Date().toLocaleDateString("de-DE")+"</small>"; } });
 requestAnimationFrame(centerToday);
