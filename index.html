@@ -3785,6 +3785,12 @@ function copyDishForKeep(id){
     $("#copyArea").select();
   });
 }
+function shareDishLink(id){
+  const d = dish(id); if(!d) return;
+  const url = "https://wasessenwir.at/#/rezept/" + id;
+  if(navigator.share){ navigator.share({title:d.n, text:"Rezept: "+d.n, url}).catch(()=>{}); return; }
+  navigator.clipboard.writeText(url).then(()=>toast("Link kopiert")).catch(()=>toast(url));
+}
 function showDish(id){
   const d = dish(id); if(!d) return;
   curPersons = S().persons;
@@ -3806,7 +3812,7 @@ function showDish(id){
     <div class="ing-head"><h3 id="ingTitle">Zutaten für ${curPersons} Person${curPersons>1?"en":""}</h3>
       <div class="stepper" role="group" aria-label="Personen"><button type="button" data-pers="-1" aria-label="Eine Person weniger">−</button><span id="persN">${curPersons}</span><button type="button" data-pers="1" aria-label="Eine Person mehr">+</button></div></div>
     <ul id="ingList">${ingItems(d,curPersons)}</ul>
-    <div class="bar" style="margin:10px 0 0"><button class="btn small" data-keepcopy="${d.id}">📋 Zutaten kopieren</button></div><div class="keep-ok" id="keepOk" hidden></div>
+    <div class="bar" style="margin:10px 0 0"><button class="btn small" data-keepcopy="${d.id}">📋 Zutaten kopieren</button>${BY[d.id]?` <button class="btn small" data-sharedish="${d.id}">🔗 Link teilen</button>`:""}</div><div class="keep-ok" id="keepOk" hidden></div>
     ${methodHtml(d)}
     <div class="note-box"><label for="noteInput">📝 Unsere Notiz</label><textarea id="noteInput" data-note="${d.id}" maxlength="300" rows="2" placeholder="z. B. weniger Salz, Kinder mögen es mit Mais">${esc(noteOf(d.id))}</textarea><span class="note-ok" id="noteOk" hidden>✓ Gespeichert</span></div>
     <h3>An welchem Tag?</h3><div class="days">${DAYS.map((x,i)=>`<button data-setday="${i}" data-dish="${d.id}">${x}</button>`).join("")}</div>
@@ -3985,6 +3991,7 @@ document.addEventListener("click",e=>{
   if(t.dataset.like){ const id=t.dataset.like; setLike(id,+t.dataset.v); document.querySelectorAll(`[data-like="${id}"]`).forEach(b=>b.setAttribute("aria-pressed",String(likeOf(id)===+b.dataset.v))); const h=document.querySelector(".sheet .tags"); if(h) h.outerHTML=chips(dish(id),true); toast(likeOf(id)>0?"👍 Gemerkt – kommt öfter dran":likeOf(id)<0?"👎 Gemerkt – wird nicht mehr gewürfelt":"Bewertung entfernt"); return; }
   if(t.dataset.cook){ openCook(t.dataset.cook); return; }
   if(t.dataset.keepcopy){ copyDishForKeep(t.dataset.keepcopy); return; }
+  if(t.dataset.sharedish){ shareDishLink(t.dataset.sharedish); return; }
   if(t.dataset.pers){ const id = document.querySelector("[data-keepcopy]")?.dataset.keepcopy; setPersons(id, curPersons + (+t.dataset.pers)); return; }
   if(t.dataset.editrecipe){ openRecipeForm(t.dataset.editrecipe); return; }
   if(t.dataset.delrecipe){ deleteRecipe(t.dataset.delrecipe, t); return; }
