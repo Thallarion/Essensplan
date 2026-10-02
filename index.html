@@ -3420,7 +3420,12 @@ function openSheet(html){
   $("#sheetRoot").innerHTML = `<div class="scrim" data-scrim><div class="sheet" role="dialog" aria-modal="true">${html}</div></div>`;
   const f = $("#sheetRoot").querySelector("button"); if(f) f.focus();
 }
-function closeSheet(){ $("#sheetRoot").innerHTML = ""; }
+function closeSheet(){
+  const wasDish = !!document.querySelector("#sheetRoot [data-cook]");
+  $("#sheetRoot").innerHTML = "";
+  /* Rezept in Einkauf/Ideen geschlossen: Liste beginnt wieder ganz oben */
+  if(wasDish && $("#p-woche").hidden) window.scrollTo({top:0, behavior:"instant"});
+}
 /* ---------- Was ist noch da? (Resteküche) ---------- */
 const FR_PANTRY = /^(rote |weiße )?zwiebeln?$|knoblauch/i;
 const FR_SYN = {"käse":["käse","gouda","emmentaler","parmesan","mozzarella","feta","bergkäse","cheddar","halloumi","paneer","ricotta","reibekäse"],"nudeln":["nudel","spaghetti","penne","fusilli","makkaroni","tagliatelle","lasagne","bandnudeln","linguine","farfalle","tortellini"],"nudel":["nudel","spaghetti","penne","fusilli"],"hähnchen":["hähnchen","huhn","chicken","hühnchen"],"huhn":["hähnchen","huhn"],"hack":["hack"],"hackfleisch":["hack"],"reis":["reis","basmati","risotto"],"tomate":["tomat"],"paprika":["paprika"],"kartoffel":["kartoffel"],"sahne":["sahne","kochsahne","schmand","crème"],"schinken":["schinken","speck"],"fisch":["lachs","forelle","kabeljau","zander","seelachs","thunfisch","fisch"],"ei":["ei","eier"],"eier":["ei","eier"],"joghurt":["joghurt"],"brot":["brot","brötchen","toast","baguette"]};
