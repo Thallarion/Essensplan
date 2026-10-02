@@ -3990,14 +3990,18 @@ $("#copyList").addEventListener("click",()=>{
     $("#copyArea").select();
   });
 });
-if(navigator.share){ $("#shareList").hidden = false; $("#sendKeep").hidden = true; $("#shareList").classList.add("primary"); $("#shareList").addEventListener("click",()=>{ const text = shopText(); if(!text){ toast("Nichts offen auf der Liste"); return; } navigator.share({title:"Einkaufsliste", text}).catch(()=>{}); }); }
+// Offene Einträge als flache Zeilen (eine pro Artikel, nach Abteilung sortiert, ohne Überschriften) – passt für Keep-Checklisten und das Teilen-Menü
+function keepLines(){
+  const items = [...groupParts(shopParts()), ...extraItems()].filter(it=>!isDone(it));
+  const order = Object.fromEntries(CATS.map(([c],i)=>[c,i]));
+  return items.slice().sort((x,y)=>(order[x.c]??99)-(order[y.c]??99) || x.n.localeCompare(y.n,"de"))
+    .map(i=>((i.extra?"":fmtQty(i.a,i.u)+" ")+i.n).trim());
+}
+if(navigator.share){ $("#shareList").hidden = false; $("#sendKeep").hidden = true; $("#shareList").classList.add("primary"); $("#shareList").addEventListener("click",()=>{ const lines = keepLines(); if(!lines.length){ toast("Nichts offen auf der Liste"); return; } navigator.share({title:"Einkaufsliste", text:lines.join("\n")}).catch(()=>{}); }); }
 // Offene Einträge als einfache Zeilen für eine Google-Keep-Checkliste kopieren (Keep macht beim Einfügen aus jeder Zeile einen Punkt)
 $("#sendKeep").addEventListener("click",()=>{
-  const items = [...groupParts(shopParts()), ...extraItems()].filter(it=>!isDone(it));
-  if(!items.length){ toast("Nichts offen auf der Liste"); return; }
-  const order = Object.fromEntries(CATS.map(([c],i)=>[c,i]));
-  const lines = items.slice().sort((x,y)=>(order[x.c]??99)-(order[y.c]??99) || x.n.localeCompare(y.n,"de"))
-    .map(i=>((i.extra?"":fmtQty(i.a,i.u)+" ")+i.n).trim());
+  const lines = keepLines();
+  if(!lines.length){ toast("Nichts offen auf der Liste"); return; }
   const text = lines.join("\n");
   const done = ()=>openSheet(`<button class="btn small close" data-close>Schließen</button>
     <h2>${lines.length} Einträge kopiert ✔</h2>
