@@ -3445,7 +3445,9 @@ function importData(file){
   r.readAsText(file);
 }
 /* ---------- Einstellungen-Fenster ---------- */
-const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","🥩 Fleisch"],["kinder","👶 Kinderliebling"],["gesund","❤️ Gesund"],["protein","💪 Proteinreich"],["gemuese","🥦 Gemüsereich"],["ballast","🌾 Ballaststoffreich"],["leicht","🥗 Leicht"],["lowcarb","📉 Low-Carb"],["antient","🌿 Antientzündlich"],["glutenfrei",'<span class="gfb">GF</span> Glutenfrei'],["asia","🥢 Asiatisch"],["indien","🍛 Indisch"]];
+const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","🥩 Fleisch"],["kinder","👶 Kinderliebling"],["gesund","❤️ Gesund"],["protein","💪 Proteinreich"],["gemuese","🥦 Gemüsereich"],["ballast","🌾 Ballaststoffreich"],["leicht","🥗 Leicht"],["lowcarb","📉 Low-Carb"],["antient","🌿 Antientzündlich"],["glutenfrei",'<span class="gfb">GF</span> Glutenfrei'],["b1","💶 Günstig"],
+  ["#","Küche"],["italien","🇮🇹 Italienisch"],["deutsch","🇩🇪🇦🇹 Deutsch / Österreichisch"],["med","🧆 Mediterran / Orientalisch"],["mexiko","🇲🇽 Mexikanisch"],["asia","🥢 Asiatisch"],["indien","🍛 Indisch"],["alltag-k","🍳 Alltagsküche"],["bowl","🥗 Salate & Bowls"],
+  ["#","Alltag"],["az-o","🔥 Ofengericht"],["az-t","🍲 Ein Topf / eine Pfanne"],["az-f","❄️ Gut einzufrieren"],["az-v","🍱 Vorkochen"],["az-m","🧸 Zum Mitnehmen"],["az-k","👶 Kind kann helfen"],["az-wenig","⏱️ Wenige Zutaten"],["az-vorrat","🛍️ Mit Vorrat machbar"]];
 function openSettings(){
   const s = S();
   openSheet(`<button class="btn small close" data-close>Schließen</button>
@@ -3457,7 +3459,7 @@ function openSettings(){
     <div class="stepper" role="group" aria-label="Personen"><button type="button" data-setp="-1" aria-label="Eine Person weniger">−</button><span id="setPers">${s.persons}</span><button type="button" data-setp="1" aria-label="Eine Person mehr">+</button></div>
     <h3>❤️ Lieblingskategorien</h3>
     <p class="sub">Kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran.</p>
-    <div class="filters" id="setFav">${FAV_OPTS.map(([k,l])=>`<button type="button" data-fav="${k}" aria-pressed="${s.fav.includes(k)}">${l}</button>`).join("")}</div>
+    <div class="filters" id="setFav">${FAV_OPTS.map(([k,l])=>k==="#"?`<span class="fsub">${l}</span>`:`<button type="button" data-fav="${k}" aria-pressed="${s.fav.includes(k)}">${l}</button>`).join("")}</div>
     <h3>⏱️ Kochzeit Mo–Fr</h3>
     <p class="sub">So lange darfst du unter der Woche höchstens aktiv am Herd stehen (ohne Garen, Backen und Warten). Gilt für Würfeln und den Plan-Assistenten.</p>
     <div class="filters" id="setTime">${[[20,"Bis 20 Min"],[30,"Bis 30 Min"],[45,"Bis 45 Min"],[0,"Egal"]].map(([v,l])=>`<button type="button" data-maxt="${v}" aria-pressed="${s.maxT===v}">${l}</button>`).join("")}</div>
