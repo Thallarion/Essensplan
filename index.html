@@ -346,6 +346,8 @@ nav.tabs button[aria-selected="true"] .count{background:var(--basil);color:var(-
 .fgroup{border-bottom:1px solid var(--line)}
 .fgroup:last-of-type{border-bottom:0}
 .fghead{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;padding:8px 2px;background:none;border:0;color:var(--ink);font:700 12px var(--body);letter-spacing:.06em;text-transform:uppercase;text-align:left;cursor:pointer}
+.fsub{flex-basis:100%;margin:6px 0 0;font:700 11px var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.fsub:first-child{margin-top:0}
 .fghead .fgn{color:var(--muted)}
 .fghead .fgc{color:var(--basil);font-weight:700}
 .fghead .caret{margin-left:auto;color:var(--muted);transition:transform .15s}
@@ -3182,23 +3184,19 @@ let filterSet = new Set(), query = "", surprise = null;
 const BUDGET = [6.5, 9];
 function budgetTier(d){ return typeof d.P!=="number" ? 0 : d.P<=BUDGET[0] ? 1 : d.P<=BUDGET[1] ? 2 : 3; }
 const FILTER_GROUPS = [
-  ["Bewertung",[["like","👍 Mögen wir"],["dislike","👎 Mögen wir nicht"],["lange","🕒 Lange nicht gegessen"]]],
-  ["Art",[["veg","🌱 Vegetarisch"],["fleisch","🥩 Fleisch"],["fisch","🐟 Fisch"]]],
-  ["Zeit",[["schnell","Bis 20 Min"],["alltag","Bis 30 Min"],["zeit","Ab 40 Min"]]],
-  ["Aufwand",[["aktiv15","👩‍🍳 Wenig Aufwand (aktiv bis 15 Min)"],["aktiv25","👩‍🍳 Mittlerer Aufwand (aktiv bis 25 Min)"]]],
+  ["Essen & Küche",[["#","Art"],["veg","🌱 Vegetarisch"],["fleisch","🥩 Fleisch"],["fisch","🐟 Fisch"],["#","Küche"],["asia","🥢 Asiatisch"],["indien","🍛 Indisch"],["#","Herkunft"],["eingesendet","📷 Eingesendet"],["meine","⭐ Meine Rezepte"]]],
+  ["Zeit & Aufwand",[["#","Zeit"],["schnell","Bis 20 Min"],["alltag","Bis 30 Min"],["zeit","Ab 40 Min"],["#","Aufwand"],["aktiv15","👩‍🍳 Wenig Aufwand (aktiv bis 15 Min)"],["aktiv25","👩‍🍳 Mittlerer Aufwand (aktiv bis 25 Min)"]]],
+  ["Gesundheit & Ernährung",[["#","Gesundheit"],["gesund","❤️ Gesund"],["protein","💪 Proteinreich"],["gemuese","🥦 Gemüsereich"],["ballast","🌾 Ballaststoffreich"],["leicht","🥗 Leicht"],["lowcarb","📉 Low-Carb"],["#","Ernährung"],["kinder","👶 Kinderliebling"],["antient","🌿 Antientzündlich"],["glutenfrei",'<span class="gfb">GF</span> Glutenfrei']]],
   ["Budget",[["b1","💶 Günstig (bis 6,50 €)"],["b2","💶💶 Mittel (bis 9 €)"],["b3","💶💶💶 Teurer"]]],
-  ["Gesundheit",[["gesund","❤️ Gesund"],["protein","💪 Proteinreich"],["gemuese","🥦 Gemüsereich"],["ballast","🌾 Ballaststoffreich"],["leicht","🥗 Leicht"],["lowcarb","📉 Low-Carb"]]],
-  ["Ernährung",[["kinder","👶 Kinderliebling"],["antient","🌿 Antientzündlich"],["glutenfrei",'<span class="gfb">GF</span> Glutenfrei']]],
-  ["Küche",[["asia","🥢 Asiatisch"],["indien","🍛 Indisch"]]],
-  ["Herkunft",[["eingesendet","📷 Eingesendet"],["meine","⭐ Meine Rezepte"]]],
+  ["Bewertung",[["like","👍 Mögen wir"],["dislike","👎 Mögen wir nicht"],["lange","🕒 Lange nicht gegessen"]]],
   ["Ohne Allergene",ALLERGENS.map(([k,i,l])=>["no-"+k,`${i} ohne ${l}`])],
 ];
-const FLABEL = Object.fromEntries(FILTER_GROUPS.flatMap(g=>g[1]));
+const FLABEL = Object.fromEntries(FILTER_GROUPS.flatMap(g=>g[1]).filter(x=>x[0]!=="#"));
 function filterUI(id, placeholder){
   return `<div class="fbar"><input class="search" id="${id}Search" type="search" placeholder="${esc(placeholder)}" autocomplete="off">
     <button type="button" class="fbtn" id="${id}Toggle" aria-expanded="false" aria-controls="${id}Panel">Alle Filter<span class="fnum" id="${id}Num"></span> <span class="caret">▾</span></button></div>
     <div class="fchips" id="${id}Chips"></div>
-    <div class="fpanel" id="${id}Panel" hidden>${FILTER_GROUPS.map(([g,items])=>`<div class="fgroup"><button type="button" class="fghead" data-fgt aria-expanded="false"><span class="fgn">${g}</span><span class="fgc"></span><span class="caret" aria-hidden="true">▾</span></button><div class="filters" hidden>${items.map(([f,l])=>`<button type="button" data-fv="${f}" aria-pressed="false">${l}</button>`).join("")}</div></div>`).join("")}
+    <div class="fpanel" id="${id}Panel" hidden>${FILTER_GROUPS.map(([g,items])=>`<div class="fgroup"><button type="button" class="fghead" data-fgt aria-expanded="false"><span class="fgn">${g}</span><span class="fgc"></span><span class="caret" aria-hidden="true">▾</span></button><div class="filters" hidden>${items.map(([f,l])=>f==="#"?`<span class="fsub">${l}</span>`:`<button type="button" data-fv="${f}" aria-pressed="false">${l}</button>`).join("")}</div></div>`).join("")}
       <div class="fpanel-foot"><button type="button" class="btn small ghost" data-fclear>Zurücksetzen</button><button type="button" class="btn small primary" data-fdone>Fertig</button></div></div>`;
 }
 function bindFilterUI(id, set, onChange){
