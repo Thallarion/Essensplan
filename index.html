@@ -207,7 +207,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--mustard);outlin
 .item{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px dashed var(--line)}
 .item:last-child{border-bottom:0}
 .item input{width:22px;height:22px;accent-color:var(--basil);flex:none;cursor:pointer}
-.item label{flex:1;min-width:0;cursor:pointer;display:grid;grid-template-columns:auto 1fr;column-gap:10px;align-items:baseline}
+.item label{flex:1;min-width:0;cursor:pointer;display:grid;grid-template-columns:auto minmax(0,1fr);overflow-wrap:break-word;column-gap:10px;align-items:baseline}
 .qty{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
 .item label>span:only-child{grid-column:1/-1}
 .for{font-size:12px;color:var(--muted);grid-column:1/-1}
@@ -408,6 +408,7 @@ details.info p{margin:8px 0 0}
 .day{padding-top:10px;padding-bottom:10px}
 @media (max-width:460px){.day{grid-template-columns:44px 1fr auto;gap:8px}}
 .tags .tg{white-space:nowrap}
+.tags .tg:first-child{white-space:normal}
 .gfb{display:inline-block;font:700 9px/1 var(--body);letter-spacing:.02em;padding:2px 3px;border:1.5px solid currentColor;border-radius:4px;vertical-align:2px;color:var(--basil);margin:0 1px}
 .plan-btn{display:grid;place-items:center;border:1px solid var(--line)!important}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) nav.tabs button[aria-selected="true"]{background:var(--line)}}
@@ -3531,6 +3532,7 @@ function openHelp(first){
         <li><b>×</b> leert den Tag. Danach könnt ihr „Selbst wählen“ (ganze Liste mit Suche und Filtern) oder „Zufällig“ antippen.</li>
         <li><b>Leere Tage füllen</b> würfelt alle freien Tage – unter der Woche nur schnelle Gerichte (Kochzeit in ⚙ einstellbar), bevorzugt vegetarisch und eure Lieblingskategorien.</li>
         <li><b>Plan leeren</b> leert Wochenplan und Einkaufsliste (zur Sicherheit zweimal tippen). Bewertungen, eigene Rezepte und Einstellungen bleiben erhalten.</li>
+        <li><b>⋯</b> neben „Diese Woche“: <b>Woche kopieren …</b> füllt die Woche aus einer anderen (auch aus zuletzt gekochten Wochen) und enthält „Plan leeren“.</li>
         <li>Tipp auf ein Gericht öffnet das Rezept.</li>
       </ul>
     </details>
@@ -3539,7 +3541,8 @@ function openHelp(first){
       <ul>
         <li><b>👍 / 👎</b>: Mag die Familie das? 👍 kommt beim Würfeln öfter dran, 👎 nie.</li>
         <li><b>🕒 Zuletzt gekocht</b> merkt sich die App automatisch aus dem Wochenplan.</li>
-        <li><b>− 3 +</b> rechnet die Zutaten für mehr oder weniger Personen um. Startwert ist eure Personenzahl aus ⚙.</li>
+        <li><b>− 3 +</b> rechnet die Zutaten <b>und die Mengen in den Schritten</b> für mehr oder weniger Personen um. Startwert ist eure Personenzahl aus ⚙.</li>
+        <li><b>👨‍🍳 Kochmodus</b>: zeigt nur dieses Rezept im Vollbild mit großer Schrift – Zutaten und Schritte zum Abhaken, die Ansicht scrollt von selbst weiter, der Bildschirm bleibt an.</li>
         <li><b>So geht's</b>: Schritte antippen zum Abhaken.</li>
         <li><b>ⓘ Hinweise & Allergene</b>: die 14 Hauptallergene, Quelle und Nährwerte.</li>
         <li>Unten wählst du den Tag, an dem es das Gericht geben soll.</li>
@@ -3562,7 +3565,8 @@ function openHelp(first){
       <ul>
         <li><b>Keine Idee?</b> zeigt oben einen Zufallsvorschlag.</li>
         <li>Suche nach Gericht oder Zutat, z. B. „Feta“ oder „Nudeln“.</li>
-        <li><b>Alle Filter</b> öffnet alle Filter in Gruppen. Mehrere lassen sich kombinieren, z. B. „Vegetarisch“ + „Bis 30 Min“. Aktive Filter stehen als Chips darunter – mit × entfernen.</li>
+        <li><b>Alle Filter</b> öffnet die Filter in Reitern: Essen &amp; Küche, Zeit &amp; Alltag, Gesundheit &amp; Ernährung, Budget, Bewertung und Ohne Allergene. Mehrere lassen sich kombinieren, z. B. „Vegetarisch“ + „Italienisch“. Aktive Filter stehen als Chips darunter – mit × entfernen.</li>
+        <li><b>Alltag</b> (unter „Zeit &amp; Alltag“): Ofengericht, Ein Topf, Gut einzufrieren, Vorkochen, Zum Mitnehmen, Kind kann helfen, Wenige Zutaten und Mit Vorrat machbar.</li>
         <li><b>Ohne Allergene</b>: z. B. „ohne Gluten“ + „ohne Milch“ zeigt nur Gerichte, in denen beides nicht vorkommt.</li>
       </ul>
       <p><b>Die Symbole:</b></p>
