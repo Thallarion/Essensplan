@@ -3930,7 +3930,7 @@ document.addEventListener("click",e=>{
   if(t.dataset.tab){
     document.querySelectorAll("nav.tabs button").forEach(b=>b.setAttribute("aria-selected", String(b===t)));
     ["woche","einkauf","ideen"].forEach(p=>$("#p-"+p).hidden = p!==t.dataset.tab);
-    try{ localStorage.setItem(LS+"-tab", t.dataset.tab); }catch(err){}
+    try{ localStorage.removeItem(LS+"-tab"); sessionStorage.setItem(LS+"-tab", t.dataset.tab); }catch(err){}
     return;
   }
   if(t.dataset.open){ showDish(t.dataset.open); return; }
@@ -4617,7 +4617,8 @@ $("#fridgeBtn").addEventListener("click",()=>openFridge({have:[...frSel], f:[]})
 try{ localStorage.setItem("essensplan-hilfe","1"); }catch(e){}
 $("#tab-einkauf").addEventListener("click",()=>{ try{ if(!localStorage.getItem("essensplan-tipp-einkauf")){ localStorage.setItem("essensplan-tipp-einkauf","1"); setTimeout(()=>toast("Tipp: Beim Einkaufen abhaken – „🏠 Zuhause“ für alles, was ihr schon habt"),400); } }catch(e){} });
 startSync().then(()=>{ if(window.__joined) toast("Mit dem Familien-Plan verbunden"); });
-try{ const tab = localStorage.getItem(LS+"-tab"); if(tab && tab!=="woche"){ const b=document.querySelector(`[data-tab="${tab}"]`); b&&b.click(); } }catch(e){}
+/* Frischer Start (Link, App-Start, Neuladen) = immer Woche; nur beim Zurückkehren in dieselbe Sitzung bleibt der Reiter */
+try{ const nav = (performance.getEntriesByType("navigation")[0]||{}).type; const tab = nav==="reload" ? null : sessionStorage.getItem(LS+"-tab"); if(tab && tab!=="woche"){ const b=document.querySelector(`[data-tab="${tab}"]`); b&&b.click(); } }catch(e){}
 /* ---------- Wochenseite: heutigen Tag in die Mitte ---------- */
 let autoPos = null;
 const WIDE = window.matchMedia("(min-width:1000px)");
