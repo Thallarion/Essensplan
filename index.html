@@ -3611,7 +3611,7 @@ function methodHtml(d){
   let list = st ? st.s : (d.own && d.m ? d.m.split(/\n+/).map(x=>x.trim()).filter(Boolean) : null);
   if(!list || (!st && list.length<2)) return d.m ? `<h3>So geht's</h3><p style="margin:0;white-space:pre-line">${esc(d.m)}</p>` : "";
   return `${st&&st.v?`<h3>Aus dem Vorrat</h3><p class="pantry-need">${esc(st.v)}</p>`:""}
-    <h3>So geht's <span class="hint">– Schritt antippen zum Abhaken</span></h3>
+    <h3>So geht's</h3>
     <ol class="steps-list">${list.map(x=>`<li tabindex="0" data-o="${esc(x)}">${esc(scaleText(x,curPersons))}</li>`).join("")}</ol>`;
 }
 /* Mengen im Schritt-Text (Rezepte gelten für 3 Personen) auf die gewählte Personenzahl umrechnen */
