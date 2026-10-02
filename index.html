@@ -188,6 +188,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--mustard);outlin
 .thumbs .pdf{width:72px;height:72px;border-radius:10px;border:1px solid var(--line);background:var(--sunk,#F1F2EE);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;padding:4px;text-align:center;overflow:hidden;word-break:break-all;line-height:1.2}
 .thumbs .pdf b{font-size:24px;line-height:1}
 .form input[type=file]{font:15px var(--body)}
+.form input[type=file]::file-selector-button{font:700 14px var(--body);padding:9px 14px;margin-right:10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--basil);cursor:pointer}
 .form input[type=password]{font:16px var(--body);padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
 .queue{list-style:none;padding:0;margin:6px 0 0}
 .queue li{padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px}
@@ -562,14 +563,14 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
 details.cp-wk{margin:0 0 8px}
 details.cp-wk summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:700}
 .hints{display:flex;flex-direction:column;gap:8px;margin:0 0 12px}
-.hint{display:flex;align-items:center;gap:10px;padding:10px 8px 10px 14px;border:1px solid var(--line);border-left:3px solid var(--basil);border-radius:12px;background:var(--surface);font-size:14px;line-height:1.35}
-.hint .h-t{flex:1;min-width:0}
-.hint .h-t b{display:block;font-weight:700}
-.hint .h-t small{color:var(--muted);font-size:12px;overflow-wrap:anywhere}
-.hint .btn{flex:none}
-.hint .h-x{flex:none;min-width:44px;min-height:44px;border:0;background:none;color:var(--muted);font-size:18px;cursor:pointer}
-.hint .h-r{flex:none;display:flex}
-.hint .h-r button{min-width:44px;min-height:44px;border:0;background:none;font-size:20px;cursor:pointer}
+.hints .hint{display:flex;align-items:center;gap:10px;padding:10px 8px 10px 14px;border:1px solid var(--line);border-left:3px solid var(--basil);border-radius:12px;background:var(--surface);font-size:14px;line-height:1.35}
+.hints .hint .h-t{flex:1;min-width:0}
+.hints .hint .h-t b{display:block;font-weight:700}
+.hints .hint .h-t small{color:var(--muted);font-size:12px;overflow-wrap:anywhere}
+.hints .hint .btn{flex:none}
+.hints .hint .h-x{flex:none;min-width:44px;min-height:44px;border:0;background:none;color:var(--muted);font-size:18px;cursor:pointer}
+.hints .hint .h-r{flex:none;display:flex}
+.hints .hint .h-r button{min-width:44px;min-height:44px;border:0;background:none;font-size:20px;cursor:pointer}
 .balance{margin:14px 0 0;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);font-size:14px;line-height:1.45}
 .balance h4{display:flex;align-items:center;gap:8px;margin:0 0 6px;font:700 13px var(--body);letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
 .balance h4 button{margin-left:auto;font:600 12px var(--body);text-transform:none;letter-spacing:0}
