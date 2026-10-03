@@ -867,7 +867,8 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
 .hero-steps b{flex:none;width:26px;height:26px;border-radius:50%;background:var(--sunk);color:var(--basil);display:grid;place-items:center;font-size:14px}
 .hero-steps span{font-weight:700;font-size:15px}
 .hero-steps small{display:block;font-weight:400;color:var(--muted);font-size:13px}
-.hero .btn.primary{width:100%}
+.hero .btn{width:100%}
+.hero #heroSet{margin-top:8px}
 .hero-trust{margin:10px 0 0;text-align:center;color:var(--muted);font-size:12.5px}
 </style>
 <script data-goatcounter="https://wasessenwir.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
@@ -897,6 +898,7 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
       <p class="hero-sub">Wochenplan, Rezepte und Einkaufsliste an einem Ort. Ohne Konto, ohne Werbung, deine Daten bleiben auf dem Gerät.</p>
       <ol class="hero-steps"><li><b>1</b><span>Gerichte wählen<small>Tippe Tage an oder lass die App Vorschläge machen.</small></span></li><li><b>2</b><span>Einkaufsliste bekommen<small>Alle Zutaten sind automatisch zusammengefasst.</small></span></li><li><b>3</b><span>Kochen<small>Schritt für Schritt, mit Kochmodus.</small></span></li></ol>
       <button type="button" class="btn primary" id="heroGo">✨ Jetzt Woche planen</button>
+      <button type="button" class="btn" id="heroSet">⚙️ Persönlich einrichten</button>
       <p class="hero-trust">🔒 Kein Konto nötig · 🚫 Keine Werbung · 🏠 Daten bleiben auf deinem Gerät</p>
     </div>
     <div class="weekhead"><h2 id="weekTitle">Diese Woche</h2><span id="weekRange"></span>
@@ -3046,6 +3048,7 @@ const KIND_IC = {veg:"🌱",fleisch:"🥩",fisch:"🐟"};
 function tagList(d){
   const t = [];
   const bl = blockedAllergens(d); if(bl.length) t.push(["⚠️", "Enthält "+bl.map(x=>x[2]).join(", ")]);
+  const ng = nogoHits(d); if(ng.length) t.push(["🚫", "Enthält "+ng.join(", ")]);
   const lk = likeOf(d.id); if(lk) t.push([lk>0?"👍":"👎", lk>0?"Mögen wir":"Mögen wir nicht"]);
   t.push([KIND_IC[d.k]||"", KIND[d.k]]);
   if(d.side) t.push(["🥣","Beilage/Dip"]);
@@ -3064,7 +3067,17 @@ function setNote(id,t){ t=(t||"").trim().slice(0,300); state.notes = state.notes
 function likeOf(id){ return (state.likes||{})[id]||0; }
 /* ---------- Einstellungen (gelten für die ganze Familie, im gemeinsamen Plan gespeichert) ---------- */
 const SET_DEF = {persons:3, fav:[], maxT:30, allerg:[]};
-function S(){ const v = state.settings||{}; return {persons: +v.persons||3, fav: Array.isArray(v.fav)?v.fav:[], maxT: v.maxT===0?0:(+v.maxT||30), allerg: Array.isArray(v.allerg)?v.allerg:[], region: ["DE","AT","CH"].includes(v.region)?v.region:"DE"}; }
+const MEAT_OPTS = [["oft","Oft"],["mittel","Ab und zu"],["selten","Selten"],["nie","Nie"]];
+const MEAT_CAP = {oft:4, mittel:2, selten:1, nie:0}, MEAT_VEGW = {oft:1, mittel:3, selten:5, nie:3};
+function meatCap(){ return MEAT_CAP[S().meat]; }
+function vegWeight(){ return MEAT_VEGW[S().meat]; }
+const _ng = new Map();
+function nogoHits(d){
+  const l = S().nogo; if(!l.length) return [];
+  const key = d.id+"|"+l.join(","); if(_ng.has(key)) return _ng.get(key);
+  const r = l.filter(t=>d.i.some(x=>frMatch(t,String(x[2])))); _ng.set(key,r); return r;
+}
+function S(){ const v = state.settings||{}; return {persons: +v.persons||3, fav: Array.isArray(v.fav)?v.fav:[], maxT: v.maxT===0?0:(+v.maxT||30), allerg: Array.isArray(v.allerg)?v.allerg:[], region: ["DE","AT","CH"].includes(v.region)?v.region:"DE", meat: MEAT_CAP[v.meat]!==undefined?v.meat:"mittel", nogo: Array.isArray(v.nogo)?v.nogo.filter(x=>typeof x==="string"):[]}; }
 function setSetting(k,v){ state.settings = {...(state.settings||{}), [k]:v}; commit(); }
 const _blk = new Map();
 function blockedAllergens(d){
@@ -3151,17 +3164,17 @@ function randomDish(excludeDay){
   const wk = Math.floor(+excludeDay/7), inWk = k=>Math.floor(+k/7)===wk;
   const used = new Set(Object.entries(state.days).filter(([k,v])=>k!==String(excludeDay)&&inWk(k)&&typeof v==="string").map(([,v])=>v));
   const nonVeg = Object.entries(state.days).filter(([k,v])=>k!==String(excludeDay)&&inWk(k)&&typeof v==="string"&&dish(v)&&dish(v).k!=="veg").length;
-  const ALL = allDishes().filter(d=>!d.side && likeOf(d.id)>=0 && !blockedAllergens(d).length);
+  const ALL = allDishes().filter(d=>!d.side && likeOf(d.id)>=0 && !blockedAllergens(d).length && !nogoHits(d).length && (d.k==="veg"||meatCap()>0));
   // Mo–Fr nur schnelle Gerichte (bis 30 Min), am Wochenende alles
   const weekday = +excludeDay>=0 && (+excludeDay%7)<=4;
   const maxT = S().maxT;
   const fits = d=>!weekday || !maxT || !act(d) || act(d)<=maxT;
-  let pool = ALL.filter(d=>!used.has(d.id) && (d.k==="veg" || nonVeg<2) && fits(d));
+  let pool = ALL.filter(d=>!used.has(d.id) && (d.k==="veg" || nonVeg<meatCap()) && fits(d));
   if(!pool.length) pool = ALL.filter(d=>!used.has(d.id) && fits(d));
   if(!pool.length) pool = ALL;
   // vegetarisch bevorzugen
   // Gewichtung: vegetarisch ×3, 👍 ×2, in den letzten 3 Wochen gekocht ÷3
-  const weighted = pool.flatMap(d=>{ let w=(d.k==="veg"?3:1)*(likeOf(d.id)>0?2:1)*(isFav(d)?2:1)*3; if(daysSince(lastCooked(d.id))<=RECENT_DAYS) w=Math.max(1,Math.round(w/3)); return Array(w).fill(d); });
+  const weighted = pool.flatMap(d=>{ let w=(d.k==="veg"?vegWeight():1)*(likeOf(d.id)>0?2:1)*(isFav(d)?2:1)*3; if(daysSince(lastCooked(d.id))<=RECENT_DAYS) w=Math.max(1,Math.round(w/3)); return Array(w).fill(d); });
   return weighted[Math.floor(Math.random()*weighted.length)];
 }
 
@@ -3439,7 +3452,7 @@ function matchQuick(d){
     const mine = (tx(d).match(re)||[]).map(m=>m.toLowerCase().slice(0,4));
     if(mine.some(m=>used.has(m))) return false;
     const meat = plan.filter(x=>x.k==="fleisch").length;
-    return !(meat>=2 && d.k==="fleisch");
+    return !(meat>=Math.max(2,meatCap()) && d.k==="fleisch");
   }
   return true;
 }
@@ -3653,25 +3666,35 @@ function openSettings(){
   <div class="set">
     <h2>Einstellungen</h2>
     <p class="sub">${sync?"Gilt für eure ganze Familie – auf allen verbundenen Handys.":"Gilt für diese App. Wenn du den Plan teilst, gilt es für alle Verbundenen."}</p>
+    <h3>👨‍👩‍👧 Personen</h3>
+    <p class="sub">Rezepte und Einkaufsliste rechnen die Mengen automatisch um.</p>
+    <div class="stepper" role="group" aria-label="Personen"><button type="button" data-setp="-1" aria-label="Eine Person weniger">−</button><span id="setPers">${s.persons}</span><button type="button" data-setp="1" aria-label="Eine Person mehr">+</button></div>
+    <h3>⚠️ Allergene ausschließen</h3>
+    <p class="sub">Solche Gerichte werden nie gewürfelt und überall mit ⚠️ markiert. Automatisch aus den Zutaten erkannt – ohne Gewähr.</p>
+    <div class="filters" id="setAll">${ALLERGENS.map(([k,i,l])=>`<button type="button" data-allg="${k}" aria-pressed="${s.allerg.includes(k)}">${i} ${l}</button>`).join("")}</div>
+    <h3>⏱️ Kochzeit Mo–Fr</h3>
+    <p class="sub">So lange darfst du unter der Woche höchstens aktiv am Herd stehen (ohne Garen, Backen und Warten). Gilt für Würfeln und den Plan-Assistenten.</p>
+    <div class="filters" id="setTime">${[[20,"Bis 20 Min"],[30,"Bis 30 Min"],[45,"Bis 45 Min"],[0,"Egal"]].map(([v,l])=>`<button type="button" data-maxt="${v}" aria-pressed="${s.maxT===v}">${l}</button>`).join("")}</div>
+    <h3>🥩 Fleisch & Fisch</h3>
+    <p class="sub">Wie oft darf es Fleisch oder Fisch geben? Steuert Würfeln, „Leere Tage füllen“ und den Plan-Assistenten.</p>
+    <div class="filters" id="setMeat">${MEAT_OPTS.map(([k,l])=>`<button type="button" data-meat="${k}" aria-pressed="${s.meat===k}">${l}</button>`).join("")}</div>
+    <h3>🚫 Mögen wir nicht</h3>
+    <p class="sub">Zutaten, die bei euch nie auf den Tisch kommen, zum Beispiel Pilze. Solche Gerichte werden nie gewürfelt und mit 🚫 markiert.</p>
+    <div class="filters" id="setNogo"></div>
+    <div class="fr-in"><input id="ngInput" type="text" placeholder="Zutat hinzufügen …" autocomplete="off" enterkeyhint="done"><button type="button" class="btn small" id="ngAdd">Hinzufügen</button></div>
+    <h3>❤️ Lieblingskategorien</h3>
+    <p class="sub">Kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran.</p>
+    <div class="filters" id="setFav">${FAV_OPTS.map(([k,l])=>k==="#"?`<span class="fsub">${l}</span>`:`<button type="button" data-fav="${k}" aria-pressed="${s.fav.includes(k)}">${l}</button>`).join("")}</div>
+    <h3>🏠 Vorrat zuhause</h3>
+    <p class="sub">Steht nie auf der Einkaufsliste und zählt bei „Was haben wir noch zuhause?“ als vorhanden. Aufnehmen: in der Einkaufsliste beim 🏠 → „Immer“, oder hier eintippen. „Immer“-Zutaten stehen nur hier, nicht unter „Schon zuhause“. Mit 🥫 markiert: angebrochen – fällt aus dem Vorrat, sobald ein Gericht damit gekocht wurde.</p>
+    <div class="filters" id="setPantry"></div>
+    <div class="fr-in"><input id="pnInput" type="text" placeholder="Zutat hinzufügen …" autocomplete="off" enterkeyhint="done"><button class="btn primary" id="pnAdd" type="button">+</button></div>
     <h3>🎨 Design</h3>
     <p class="sub">Hell, dunkel oder wie dein Handy eingestellt ist. Gilt nur für dieses Gerät.</p>
     <div class="filters" id="setTheme">${[["auto","Automatisch"],["light","☀️ Hell"],["dark","🌙 Dunkel"]].map(([k,l])=>`<button type="button" data-settheme="${k}" aria-pressed="${themeMode()===k}">${l}</button>`).join("")}</div>
     <h3>💡 Tipps</h3>
     <p class="sub">Beim Start der App erscheint höchstens einmal am Tag ein kurzer Pro-Tipp, der Reihe nach. Gilt nur für dieses Gerät.</p>
     <div class="filters" id="setTips"><button type="button" data-settips="1" aria-pressed="${tipsOn()}">Pro-Tipps beim Start: ${tipsOn()?"An":"Aus"}</button></div>
-    <h3>👨‍👩‍👧 Personen</h3>
-    <p class="sub">Rezepte und Einkaufsliste rechnen die Mengen automatisch um.</p>
-    <div class="stepper" role="group" aria-label="Personen"><button type="button" data-setp="-1" aria-label="Eine Person weniger">−</button><span id="setPers">${s.persons}</span><button type="button" data-setp="1" aria-label="Eine Person mehr">+</button></div>
-    <h3>❤️ Lieblingskategorien</h3>
-    <p class="sub">Kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran.</p>
-    <div class="filters" id="setFav">${FAV_OPTS.map(([k,l])=>k==="#"?`<span class="fsub">${l}</span>`:`<button type="button" data-fav="${k}" aria-pressed="${s.fav.includes(k)}">${l}</button>`).join("")}</div>
-    <h3>⏱️ Kochzeit Mo–Fr</h3>
-    <p class="sub">So lange darfst du unter der Woche höchstens aktiv am Herd stehen (ohne Garen, Backen und Warten). Gilt für Würfeln und den Plan-Assistenten.</p>
-    <div class="filters" id="setTime">${[[20,"Bis 20 Min"],[30,"Bis 30 Min"],[45,"Bis 45 Min"],[0,"Egal"]].map(([v,l])=>`<button type="button" data-maxt="${v}" aria-pressed="${s.maxT===v}">${l}</button>`).join("")}</div>
-    <h3>🏠 Vorrat zuhause</h3>
-    <p class="sub">Steht nie auf der Einkaufsliste und zählt bei „Was haben wir noch zuhause?“ als vorhanden. Aufnehmen: in der Einkaufsliste beim 🏠 → „Immer“, oder hier eintippen. „Immer“-Zutaten stehen nur hier, nicht unter „Schon zuhause“. Mit 🥫 markiert: angebrochen – fällt aus dem Vorrat, sobald ein Gericht damit gekocht wurde.</p>
-    <div class="filters" id="setPantry"></div>
-    <div class="fr-in"><input id="pnInput" type="text" placeholder="Zutat hinzufügen …" autocomplete="off" enterkeyhint="done"><button class="btn primary" id="pnAdd" type="button">+</button></div>
     <h3>🌍 Region</h3>
     <p class="sub">Bestimmt den Saisonkalender („Jetzt saisonal“) und die landestypischen Namen (z. B. Karfiol, Rüebli).</p>
     <div class="filters" id="setRegion">${REGIONS.map(([k,l])=>`<button type="button" data-setregion="${k}" aria-pressed="${s.region===k}">${l}</button>`).join("")}</div>
@@ -3685,9 +3708,6 @@ function openSettings(){
     <h3>💾 Daten sichern</h3>
     <p class="sub">Euer Plan liegt auf diesem Gerät${sync?" und im Familienplan":""}. Für einen Handywechsel oder als Sicherung: Plan, eigene Rezepte und Einstellungen als Datei speichern.</p>
     <div class="datarow"><button type="button" class="btn small" id="dataExport">Sicherung speichern</button><button type="button" class="btn small" id="dataImport">Sicherung laden</button><input type="file" id="dataFile" accept="application/json,.json" hidden></div>
-    <h3>⚠️ Allergene ausschließen</h3>
-    <p class="sub">Solche Gerichte werden nie gewürfelt und überall mit ⚠️ markiert. Automatisch aus den Zutaten erkannt – ohne Gewähr.</p>
-    <div class="filters" id="setAll">${ALLERGENS.map(([k,i,l])=>`<button type="button" data-allg="${k}" aria-pressed="${s.allerg.includes(k)}">${i} ${l}</button>`).join("")}</div>
     <p class="sub"><a href="datenschutz.html" target="_blank" rel="noopener">Datenschutz</a></p>
   </div>`);
   const drawPantry = ()=>{ const ks = Object.keys(state.pantry||{}).sort((a,b)=>a.localeCompare(b,"de")); $("#setPantry").innerHTML = ks.length ? ks.map(k=>`<button type="button" data-pn="${esc(k)}" aria-label="${esc(k)} entfernen">${state.pantry[k]===2?"🥫 ":""}${esc(k)} ×</button>`).join("") : `<span class="sub">Noch nichts im Vorrat.</span>`; };
@@ -3701,6 +3721,11 @@ function openSettings(){
   const addPantry = ()=>{ const inp = $("#pnInput"); const v = inp.value.trim(); if(!v) return; state.pantry = state.pantry||{}; state.pantry[v]=1; inp.value=""; commit(); drawPantry(); };
   $("#pnAdd").addEventListener("click",e=>{ e.stopPropagation(); addPantry(); });
   $("#pnInput").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); addPantry(); } });
+  const drawNogo = ()=>{ const l = S().nogo; $("#setNogo").innerHTML = l.length ? l.map(k=>`<button type="button" data-ng="${esc(k)}" aria-label="${esc(k)} entfernen">${esc(k)} ×</button>`).join("") : '<span class="sub">Noch nichts eingetragen.</span>'; };
+  drawNogo();
+  const addNogo = ()=>{ const inp = $("#ngInput"); const v = inp.value.trim().slice(0,40); if(!v) return; const l = S().nogo; if(!l.some(x=>x.toLowerCase()===v.toLowerCase())) setSetting("nogo",[...l,v]); inp.value=""; drawNogo(); };
+  $("#ngAdd").addEventListener("click",e=>{ e.stopPropagation(); addNogo(); });
+  $("#ngInput").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); addNogo(); } });
   const tog = (list,k)=> list.includes(k) ? list.filter(x=>x!==k) : [...list,k];
   $(".set").addEventListener("click",e=>{
     const b = e.target.closest("button"); if(!b) return; e.stopPropagation();
@@ -3708,7 +3733,9 @@ function openSettings(){
     if(b.dataset.cup){ moveCat(b.dataset.cup,-1); return; }
     if(b.dataset.cdown){ moveCat(b.dataset.cdown,1); return; }
     if(b.dataset.pn){ removePantry(b.dataset.pn); commit(); drawPantry(); return; }
-    if(b.id==="pnAdd") return;
+    if(b.id==="pnAdd"||b.id==="ngAdd") return;
+    if(b.dataset.ng){ setSetting("nogo",cur.nogo.filter(x=>x!==b.dataset.ng)); drawNogo(); return; }
+    if(b.dataset.meat){ setSetting("meat",b.dataset.meat); document.querySelectorAll("#setMeat button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); return; }
     if(b.dataset.setp){ const n=Math.min(12,Math.max(1,cur.persons+(+b.dataset.setp))); setSetting("persons",n); $("#setPers").textContent=n; }
     else if(b.dataset.fav){ const v=tog(cur.fav,b.dataset.fav); setSetting("fav",v); b.setAttribute("aria-pressed",String(v.includes(b.dataset.fav))); }
     else if(b.dataset.settips!==undefined){ const on = !tipsOn(); tipsSave({...tipsState(), off:!on}); b.setAttribute("aria-pressed",String(on)); b.textContent = "Pro-Tipps beim Start: "+(on?"An":"Aus"); }
@@ -3918,6 +3945,7 @@ function showDish(id){
   openSheet(`<button class="btn small close" data-close>Schließen</button>
     <h2>${esc(d.n)}</h2>${chips(d,true)}
     ${d.own?`<div class="own-bar"><button type="button" class="btn small" data-editrecipe="${d.id}">✏️ Bearbeiten</button><button type="button" class="btn small danger" data-delrecipe="${d.id}">Löschen</button></div>`:''}
+    ${nogoHits(d).length?`<div class="allergy-warn">🚫 Enthält <b>${nogoHits(d).map(esc).join(", ")}</b> – steht bei „Mögen wir nicht“.</div>`:""}
     ${bl.length?`<div class="allergy-warn">⚠️ Enthält <b>${bl.map(x=>x[1]+" "+x[2]).join(", ")}</b> – laut euren Einstellungen ausgeschlossen.</div>`:""}
     <div class="rate"><button type="button" class="rbtn" data-like="${d.id}" data-v="1" aria-pressed="${likeOf(d.id)>0}" aria-label="Mögen wir">👍</button><button type="button" class="rbtn" data-like="${d.id}" data-v="-1" aria-pressed="${likeOf(d.id)<0}" aria-label="Mögen wir nicht">👎</button><span class="cooked">🕒 ${esc(cookedText(d.id))}</span></div>
     ${nutriHtml(d)}
@@ -4127,6 +4155,7 @@ document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeSheet(); if(e
 
 $("#noteHelp").addEventListener("click",()=>openHelp(false));
 $("#heroX").addEventListener("click",heroClose);
+$("#heroSet").addEventListener("click",()=>{ heroClose(); openSettings(); });
 $("#heroGo").addEventListener("click",()=>{ heroClose(); $("#fillWeek").click(); });
 $("#newWeek").addEventListener("click",()=>setTimeout(()=>{ if(!$("#newWeek").dataset.confirm) $("#wkMenu").open=false; },0));
 document.addEventListener("click",e=>{ const m=$("#wkMenu"); if(m && m.open && !e.target.closest("#wkMenu")) m.open=false; });
@@ -4254,14 +4283,14 @@ function paPick(g, plan){
   const neighbors = [i>0?at(g-1):null, i<6?at(g+1):null].filter(Boolean).flatMap(paStaple);
   const have = opt.has("vorrat") ? frHave([]) : [];
   const weekday = i<=4;
-  const base = allDishes().filter(d=>!d.side && likeOf(d.id)>=0 && !blockedAllergens(d).length && !used.has(d.id));
+  const base = allDishes().filter(d=>!d.side && likeOf(d.id)>=0 && !blockedAllergens(d).length && !nogoHits(d).length && (d.k==="veg"||meatCap()>0) && !used.has(d.id));
   const tryPool = (rel)=>base.filter(d=>{
     if(!rel.has("veg") && opt.has("veg") && d.k!=="veg") return false;
     if(!rel.has("schnell") && opt.has("schnell") && act(d)>30) return false;
     if(!rel.has("guenstig") && opt.has("guenstig") && budgetTier(d)===3) return false;
     if(!rel.has("zeit") && weekday && maxT && act(d) && act(d)>maxT && !opt.has("schnell")) return false;
     if(!rel.has("kette") && paStaple(d).some(a=>neighbors.includes(a))) return false;
-    if(!rel.has("fleisch") && d.k!=="veg" && nonVeg>=2) return false;
+    if(!rel.has("fleisch") && d.k!=="veg" && nonVeg>=meatCap()) return false;
     if(!rel.has("fisch") && opt.has("abwechslung") && d.k==="fisch" && fish>=1) return false;
     return true;
   });
@@ -4269,7 +4298,7 @@ function paPick(g, plan){
   if(!pool.length) return null;
   const cus = new Set(week.map(x=>x.cu).filter(c=>c&&c!=="alltag"&&c!=="bowl"));
   const weighted = pool.flatMap(d=>{
-    let w = (d.k==="veg"?3:1)*(likeOf(d.id)>0?2:1)*(isFav(d)?2:1)*3;
+    let w = (d.k==="veg"?vegWeight():1)*(likeOf(d.id)>0?2:1)*(isFav(d)?2:1)*3;
     if(opt.has("kid")) w *= d.kid?4:1;
     if(opt.has("guenstig")) w *= budgetTier(d)===1?3:1;
     if(have.length) w *= 1+Math.min(4,frScore(d,have).hits.length)*2;
