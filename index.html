@@ -243,6 +243,10 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--mustard);outlin
 .filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
 .filters button{font:700 13px var(--body);padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
 .filters button[aria-pressed="true"]{background:var(--ink);color:var(--ground);border-color:var(--ink)}
+.filters button.excl,.filters button.excl[aria-pressed]{color:#c0392b;border-color:#c0392b;background:transparent;text-decoration:line-through}
+.filters button.excl::before{content:"🚫 ";display:inline-block;text-decoration:none}
+#ideaPanel [data-fv],#setFav [data-fav]{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.fhint{margin:0 0 8px;font-size:13px;color:var(--muted)}
 .ideas{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
 .idea{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
 .idea h4{margin:0;font-size:16px;cursor:pointer}
@@ -3095,6 +3099,29 @@ function blockedAllergens(d){
   const key = d.id+"|"+a.join(","); if(_blk.has(key)) return _blk.get(key);
   const r = allergensOf(d).filter(x=>a.includes(x[0])); _blk.set(key,r); return r;
 }
+function exclToggle(k, off){
+  const c = S();
+  if(c.excl.includes(k)){ setSetting("excl", c.excl.filter(x=>x!==k)); toast("Wird wieder vorgeschlagen"); }
+  else if(!off){ setSetting("excl",[...c.excl,k]); if(c.fav.includes(k)) setSetting("fav", c.fav.filter(x=>x!==k)); try{ filterSet.delete(k); }catch(e){} toast("Wird nicht mehr vorgeschlagen"); }
+  const e = S().excl, f = S().fav;
+  document.querySelectorAll("#setFav [data-fav]").forEach(b=>{ b.classList.toggle("excl", e.includes(b.dataset.fav)); b.setAttribute("aria-pressed", String(f.includes(b.dataset.fav))); });
+  try{ ideaUI.sync(); renderIdeas(); }catch(x){}
+}
+(function(){
+  let timer=null, sx=0, sy=0, block=0;
+  const sel = "#ideaPanel [data-fv], #setFav [data-fav]";
+  const clear = ()=>{ if(timer){ clearTimeout(timer); timer=null; } };
+  document.addEventListener("pointerdown",e=>{
+    const b = e.target.closest && e.target.closest(sel); if(!b) return;
+    const k = b.dataset.fv||b.dataset.fav; if(!FAV_OPTS.some(o=>o[0]===k)) return;
+    sx=e.clientX; sy=e.clientY; clear();
+    timer = setTimeout(()=>{ timer=null; block=Date.now()+900; if(navigator.vibrate) try{ navigator.vibrate(30); }catch(x){} exclToggle(k); }, 550);
+  });
+  document.addEventListener("pointermove",e=>{ if(timer && Math.hypot(e.clientX-sx,e.clientY-sy)>10) clear(); });
+  ["pointerup","pointercancel","pointerleave"].forEach(t=>document.addEventListener(t,clear));
+  document.addEventListener("contextmenu",e=>{ if(e.target.closest && e.target.closest(sel)) e.preventDefault(); });
+  document.addEventListener("click",e=>{ if(Date.now()<block && e.target.closest && e.target.closest(sel)){ e.stopPropagation(); e.preventDefault(); block=0; } },true);
+})();
 function isFav(d){ return S().fav.some(f=>matchFilter(d,f)); }
 function isExcl(d){ return S().excl.some(f=>matchFilter(d,f)); }
 function notExcl(list){ const r = list.filter(d=>!isExcl(d)); return r.length ? r : list; }
@@ -3387,8 +3414,8 @@ function filterUI(id, placeholder){
     <button type="button" class="fbtn" id="${id}Toggle" aria-expanded="false" aria-controls="${id}Panel">Alle Filter<span class="fnum" id="${id}Num"></span> <span class="caret">▾</span></button></div>
     <div class="fchips" id="${id}Chips"></div>
     ${id==="idea"?`<div class="fchips fexcl" id="ideaExcl"></div>`:""}
-    <div class="fpanel" id="${id}Panel" hidden>${FILTER_GROUPS.map(([g,items])=>`<div class="fgroup"><button type="button" class="fghead" data-fgt aria-expanded="false"><span class="fgn">${g}</span><span class="fgc"></span><span class="caret" aria-hidden="true">▾</span></button><div class="filters" hidden>${items.map(([f,l])=>f==="#"?`<span class="fsub">${l}</span>`:`<button type="button" data-fv="${f}" aria-pressed="false">${l}</button>`).join("")}</div></div>`).join("")}
-      <div class="fpanel-foot">${id==="idea"?`<button type="button" class="btn small ghost" data-fexcl>🚫 Auswahl ausschließen</button>`:""}<button type="button" class="btn small ghost" data-fclear>Zurücksetzen</button><button type="button" class="btn small primary" data-fdone>Fertig</button></div></div>`;
+    <div class="fpanel" id="${id}Panel" hidden>${id==="idea"?`<p class="fhint">Tipp: Eine Kategorie lange drücken = 🚫 ausschließen (wird nicht vorgeschlagen).</p>`:""}${FILTER_GROUPS.map(([g,items])=>`<div class="fgroup"><button type="button" class="fghead" data-fgt aria-expanded="false"><span class="fgn">${g}</span><span class="fgc"></span><span class="caret" aria-hidden="true">▾</span></button><div class="filters" hidden>${items.map(([f,l])=>f==="#"?`<span class="fsub">${l}</span>`:`<button type="button" data-fv="${f}" aria-pressed="false">${l}</button>`).join("")}</div></div>`).join("")}
+      <div class="fpanel-foot"><button type="button" class="btn small ghost" data-fclear>Zurücksetzen</button><button type="button" class="btn small primary" data-fdone>Fertig</button></div></div>`;
 }
 function bindFilterUI(id, set, onChange){
   const $$ = x=>document.getElementById(id+x);
@@ -3402,6 +3429,7 @@ function bindFilterUI(id, set, onChange){
     $$("Num").textContent = set.size ? ` (${set.size})` : "";
     tog.classList.toggle("active", set.size>0);
     $$("Chips").innerHTML = [...set].map(f=>`<button type="button" class="fchip" data-fx="${f}" aria-label="Filter entfernen">${FLABEL[f]||f} <span aria-hidden="true">×</span></button>`).join("");
+    if(id==="idea") panel.querySelectorAll("[data-fv]").forEach(b=>b.classList.toggle("excl", S().excl.includes(b.dataset.fv)));
     const ex = $$("Excl"); if(ex) ex.innerHTML = S().excl.map(f=>`<button type="button" class="fchip" data-fxx="${f}" aria-label="Nicht mehr ausschließen">🚫 ${(FAV_OPTS.find(o=>o[0]===f)||[0,f])[1]} <span aria-hidden="true">×</span></button>`).join("");
   };
   const changed = ()=>{ sync(); onChange(); };
@@ -3409,12 +3437,7 @@ function bindFilterUI(id, set, onChange){
   panel.addEventListener("click",e=>{
     const b = e.target.closest("button"); if(!b) return; e.stopPropagation();
     if(b.dataset.fgt!==undefined){ const g=b.closest(".fgroup"); grp(g, b.getAttribute("aria-expanded")!=="true"); }
-    else if(b.dataset.fv){ toggleFilter(set,b.dataset.fv); changed(); }
-    else if(b.dataset.fexcl!==undefined){
-      const ks = [...set].filter(k=>FAV_OPTS.some(o=>o[0]===k));
-      if(!ks.length){ toast("Wähle zuerst eine Kategorie im Filter"); return; }
-      const c = S(); setSetting("excl",[...new Set([...c.excl,...ks])]); setSetting("fav",c.fav.filter(x=>!ks.includes(x)));
-      ks.forEach(k=>set.delete(k)); toast("Wird nicht mehr vorgeschlagen (Einstellungen → Kategorien ausschließen)"); changed(); }
+    else if(b.dataset.fv){ if(id==="idea" && S().excl.includes(b.dataset.fv)){ exclToggle(b.dataset.fv,true); return; } toggleFilter(set,b.dataset.fv); changed(); }
     else if(b.dataset.fclear!==undefined){ set.clear(); changed(); }
     else if(b.dataset.fdone!==undefined){ open(false); tog.focus(); }
   });
@@ -3653,7 +3676,7 @@ const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","
 /* ---------- Pro-Tipps: ein Tipp pro Tag, der Reihe nach, nur beim Start; abschaltbar (pro Gerät) ---------- */
 const TIPS = [["Kochmodus", "Tippe im Rezept auf „Kochmodus“: große Schrift, Zutaten und Schritte zum Abhaken, der Bildschirm bleibt an. Wenn du etwas abhakst, scrollt es von selbst zum Nächsten."], ["Einkauf", "Das 🏠 hinter einer Zutat in der Einkaufsliste nimmt sie von der Liste, weil ihr sie zuhause habt. „Nur diesmal“ und „Angebrochen“ holst du unter „Schon zuhause“ mit dem 🛒 zurück."], ["Personenzahl", "Im Rezept änderst du mit − und + die Personenzahl. Die Zutaten und die Mengen in den Schritten rechnen sich automatisch mit um."], ["Vorrat", "Zutaten, die immer da sind, zum Beispiel Zwiebeln: Tippe in der Einkaufsliste beim 🏠 auf „Immer“. Dann tauchen sie nie wieder auf der Liste auf. Ändern kannst du das unter „Vorrat anpassen“ ganz unten in der Liste."], ["Alltag-Filter", "Unter Ideen findest du bei „Alle Filter“ den Reiter „Zeit & Alltag“: zum Beispiel Ofengericht, ein Topf, gut einzufrieren oder mit wenigen Zutaten."], ["Supermarkt", "Die Einkaufsliste lässt sich nach Abteilung sortieren. In den Einstellungen stellst du die Reihenfolge so ein, wie euer Supermarkt aufgebaut ist."], ["Reste", "„Was haben wir noch zuhause?“ in den Ideen: Tippe ein, was im Kühlschrank liegt, und die App zeigt dir Gerichte, die dazu passen."], ["Liste teilen", "Mit „Teilen“ in der Einkaufsliste schickst du die offenen Artikel zum Beispiel direkt an Google Keep oder an deine Familie."], ["Link teilen", "Tippe im Rezept auf „Link teilen“, um es per Nachricht zu verschicken. Wer den Link öffnet, sieht sofort das Rezept."], ["Zutaten kopieren", "Im Rezept kopiert „Zutaten kopieren“ die Mengen für eure Personenzahl, bereit zum Einfügen in eine Notiz oder eine Listen-App."], ["Leere Tage", "Mit „Leere Tage füllen“ schlägt die App für alle freien Tage Gerichte vor. Unter der Woche sind es nur schnelle Gerichte, bevorzugt vegetarisch."], ["Design", "In den Einstellungen wählst du zwischen hellem und dunklem Design, oder die App folgt automatisch deinem Handy."], ["Notiz", "Im Rezept hältst du unter „Unsere Notiz“ fest, was ihr beim nächsten Mal anders macht, zum Beispiel weniger Salz."], ["Lieblinge", "In den Einstellungen wählst du Lieblingskategorien. Sie kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran."], ["Einsenden", "Unter Ideen kannst du über „Rezept hinzufügen“ ein Rezept als Foto, PDF oder Link einsenden. Nach der Prüfung steht es für alle in der App."], ["Bewerten", "Nach dem Essen fragt die App, wie es geschmeckt hat. Mit 👍 und 👎 merkt ihr euch eure Favoriten."], ["Sicherung", "Unter Einstellungen → Daten sichern speicherst du Plan, eigene Rezepte und Einstellungen als Datei, zum Beispiel vor einem Handywechsel."]];
 const LS_TIPS = "essensplan-tips";
-const APP_VERSION = "2026-10-03 q";
+const APP_VERSION = "2026-10-03 r";
 const LS_HERO = "essensplan-hero";
 function heroClosed(){ try{ return !!localStorage.getItem(LS_HERO); }catch(e){ return false; } }
 function heroClose(){ try{ localStorage.setItem(LS_HERO,"1"); }catch(e){} $("#hero").hidden = true; }
@@ -3705,11 +3728,8 @@ function openSettings(){
     <div class="filters" id="setNogo"></div>
     <div class="fr-in"><input id="ngInput" type="text" placeholder="Zutat hinzufügen …" autocomplete="off" enterkeyhint="done"><button type="button" class="btn small" id="ngAdd">Hinzufügen</button></div>
     <h3>❤️ Lieblingskategorien</h3>
-    <p class="sub">Kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran.</p>
-    <div class="filters" id="setFav">${FAV_OPTS.map(([k,l])=>k==="#"?`<span class="fsub">${l}</span>`:`<button type="button" data-fav="${k}" aria-pressed="${s.fav.includes(k)}">${l}</button>`).join("")}</div>
-    <h3>🚫 Kategorien ausschließen</h3>
-    <p class="sub">Diese Kategorien werden beim Würfeln, bei „Leere Tage füllen“ und im Plan-Assistenten nicht vorgeschlagen. Selbst gewählte Gerichte und euer Plan bleiben unverändert.</p>
-    <div class="filters" id="setExcl">${FAV_OPTS.map(([k,l])=>k==="#"?`<span class="fsub">${l}</span>`:`<button type="button" data-excl="${k}" aria-pressed="${s.excl.includes(k)}">${l}</button>`).join("")}</div>
+    <p class="sub">Kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran. <b>Lange drücken = ausschließen</b> (🚫): Solche Gerichte werden nicht mehr vorgeschlagen. Nochmal tippen hebt es auf.</p>
+    <div class="filters" id="setFav">${FAV_OPTS.map(([k,l])=>k==="#"?`<span class="fsub">${l}</span>`:`<button type="button" data-fav="${k}" class="${s.excl.includes(k)?"excl":""}" aria-pressed="${s.fav.includes(k)}">${l}</button>`).join("")}</div>
     <h3>🏠 Vorrat zuhause</h3>
     <p class="sub">Steht nie auf der Einkaufsliste und zählt bei „Was haben wir noch zuhause?“ als vorhanden. Aufnehmen: in der Einkaufsliste beim 🏠 → „Immer“, oder hier eintippen. „Immer“-Zutaten stehen nur hier, nicht unter „Schon zuhause“. Mit 🥫 markiert: angebrochen – fällt aus dem Vorrat, sobald ein Gericht damit gekocht wurde.</p>
     <div class="filters" id="setPantry"></div>
@@ -3764,10 +3784,9 @@ function openSettings(){
     if(b.dataset.ng){ setSetting("nogo",cur.nogo.filter(x=>x!==b.dataset.ng)); drawNogo(); return; }
     if(b.dataset.meat){ setSetting("meat",b.dataset.meat); document.querySelectorAll("#setMeat button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); return; }
     if(b.dataset.setp){ const n=Math.min(12,Math.max(1,cur.persons+(+b.dataset.setp))); setSetting("persons",n); $("#setPers").textContent=n; }
-    else if(b.dataset.fav){ const k=b.dataset.fav, v=tog(cur.fav,k); setSetting("fav",v); b.setAttribute("aria-pressed",String(v.includes(k)));
-      if(v.includes(k) && cur.excl.includes(k)){ setSetting("excl",cur.excl.filter(x=>x!==k)); document.querySelector(`#setExcl [data-excl="${k}"]`)?.setAttribute("aria-pressed","false"); toast("Nicht mehr ausgeschlossen"); } }
-    else if(b.dataset.excl){ const k=b.dataset.excl, v=tog(cur.excl,k); setSetting("excl",v); b.setAttribute("aria-pressed",String(v.includes(k)));
-      if(v.includes(k) && cur.fav.includes(k)){ setSetting("fav",cur.fav.filter(x=>x!==k)); document.querySelector(`#setFav [data-fav="${k}"]`)?.setAttribute("aria-pressed","false"); toast("Nicht mehr bei den Lieblingen"); } }
+    else if(b.dataset.fav){ const k=b.dataset.fav;
+      if(cur.excl.includes(k)){ exclToggle(k,true); return; }
+      const v=tog(cur.fav,k); setSetting("fav",v); b.setAttribute("aria-pressed",String(v.includes(k))); }
     else if(b.dataset.settips!==undefined){ const on = !tipsOn(); tipsSave({...tipsState(), off:!on}); b.setAttribute("aria-pressed",String(on)); b.textContent = "Pro-Tipps beim Start: "+(on?"An":"Aus"); }
     else if(b.dataset.settheme!==undefined){ applyTheme(b.dataset.settheme); document.querySelectorAll("#setTheme button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); }
     else if(b.dataset.setregion!==undefined){ setSetting("region",b.dataset.setregion); document.querySelectorAll("#setRegion button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); }
@@ -3861,7 +3880,7 @@ function openHelp(first){
         <li><b>🎨 Design:</b> Hell, Dunkel oder wie dein Handy. Gilt nur für dieses Gerät.</li>
         <li><b>💡 Tipps:</b> Einmal am Tag zeigt die App beim Start einen kurzen Pro-Tipp, der Reihe nach. Hier schaltest du sie aus und wieder ein. Gilt nur für dieses Gerät.</li>
         <li><b>Personen:</b> Rezepte und Einkaufsliste rechnen alle Mengen darauf um.</li>
-        <li><b>Kategorien ausschließen:</b> in ⚙ Einstellungen oder im Ideen-Filter mit „🚫 Auswahl ausschließen“. Solche Gerichte werden nicht vorgeschlagen; selbst gewählte und schon geplante bleiben.</li>
+        <li><b>Kategorien ausschließen:</b> eine Kategorie im Ideen-Filter oder bei den Lieblingskategorien in ⚙ lange drücken. Solche Gerichte werden nicht vorgeschlagen; selbst gewählte und schon geplante bleiben. Nochmal tippen hebt es auf.</li>
         <li><b>Lieblingskategorien:</b> z. B. 🐟 Fisch oder 🥢 Asiatisch – kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran.</li>
         <li><b>Kochzeit Mo–Fr:</b> wie lange du unter der Woche höchstens aktiv am Herd stehen willst (ohne Backen und Warten). Das gilt für Würfeln und den Plan-Assistenten.</li>
         <li><b>🏠 Vorrat zuhause:</b> Zutaten, die immer da sind (z. B. Zwiebeln oder Reis), stehen nie auf der Einkaufsliste. Zum Aufnehmen tippst du in der Einkaufsliste beim 🏠 auf „Immer“, oder du tippst sie hier ein. Mit × entfernst du sie wieder. 🥫 bedeutet angebrochen: Die Zutat fällt aus dem Vorrat, sobald ein Gericht damit gekocht wurde.</li>
