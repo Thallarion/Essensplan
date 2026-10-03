@@ -600,7 +600,17 @@ details.cp-wk summary{cursor:pointer;min-height:44px;display:flex;align-items:ce
 .qi button{flex:none;white-space:nowrap;font:600 13px var(--body);padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
 .qi button[aria-pressed="true"]{border-color:var(--basil);background:var(--basil-soft);color:var(--basil)}
 .qi button[aria-pressed="true"]::before{content:"✓ "}
-.qi-lbl{font-size:12px;color:var(--muted);margin:0 0 6px}
+.qi-lbl{font-size:12px;color:var(--muted);margin:0 0 6px;display:flex;align-items:center;gap:6px}
+.qi-edit{border:0;background:transparent;font-size:14px;line-height:1;padding:4px 6px;border-radius:8px;cursor:pointer;color:var(--muted)}
+.qi-edit:hover,.qi-edit:focus-visible{background:var(--basil-soft)}
+.qe-list{list-style:none;margin:8px 0 14px;padding:0}
+.qe-list li{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--line)}
+.qe-list li span.qe-n{flex:1;font:600 14px var(--body)}
+.qe-list button{flex:none;min-width:36px;min-height:36px;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:10px;font:600 14px var(--body);cursor:pointer}
+.qe-list li.qe-over span.qe-n{color:var(--muted)}
+.qe-sub{font:700 12px var(--body);letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+.qe-add{display:flex;flex-wrap:wrap;gap:6px}
+.qe-add button{font:600 13px var(--body);padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
 .catord{display:flex;align-items:center;gap:6px;margin:4px 0}.catord span{flex:1}
 .catord button{min-width:36px;min-height:36px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
 .datarow{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
@@ -921,7 +931,7 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
     </div>
     <div class="bar"><button class="btn primary" id="addRecipe" type="button">＋ Rezept hinzufügen <span class="count" id="inboxCount" hidden>0</span></button><button class="btn" id="kitchenBtn" type="button">🍽 Meine Küche</button></div>
     <div id="kitchenView" hidden></div>
-    <p class="qi-lbl">Schnell zum Ziel</p>
+    <p class="qi-lbl">Schnell zum Ziel <button type="button" class="qi-edit" id="qiEdit" aria-label="Schnell zum Ziel anpassen" title="Anpassen">✏️</button></p>
     <div class="qi" id="quickIdeas" role="group" aria-label="Schnelle Einstiege"></div>
     <div class="season-info" id="seasonInfo" hidden></div>
     <div id="ideaFilterUI"></div>
@@ -3394,7 +3404,22 @@ function matchQuick(d){
   }
   return true;
 }
-const QUICK_BTNS = [["m:woche","🗓 Passt zu deiner Woche"],["f:schnell","⏱ In 20 Min fertig"],["m:vorrat","🥕 Verwendet Vorräte"],["f:veg","🌱 Vegetarisch"],["m:saison","🍂 Jetzt saisonal"],["f:like","👍 Von euch bewertet"],["f:kinder","👶 Familienfreundlich"],["f:glutenfrei","Ohne Gluten"]];
+const QUICK_ALL = [
+ ["m:woche","🗓 Passt zu deiner Woche"],["f:schnell","⏱ In 20 Min fertig"],["m:vorrat","🥕 Verwendet Vorräte"],["f:veg","🌱 Vegetarisch"],["m:saison","🍂 Jetzt saisonal"],["f:like","👍 Von euch bewertet"],["f:kinder","👶 Familienfreundlich"],["f:glutenfrei","Ohne Gluten"],
+ ["f:fleisch","🥩 Fleisch"],["f:fisch","🐟 Fisch"],["f:antient","🌿 Antientzündlich"],["f:b1","💶 Günstig"],
+ ["f:italien","🇮🇹 Italienisch"],["f:deutsch","🇩🇪🇦🇹 Deutsch / Österr."],["f:med","🧆 Mediterran"],["f:mexiko","🇲🇽 Mexikanisch"],["f:asia","🥢 Asiatisch"],["f:indien","🍛 Indisch"],["f:alltag-k","🍳 Alltagsküche"],["f:bowl","🥗 Salate & Bowls"],
+ ["f:az-o","🔥 Ofengericht"],["f:az-t","🍲 Ein Topf / Pfanne"],["f:az-f","❄️ Gut einzufrieren"],["f:az-v","🍱 Vorkochen"],["f:az-m","🧸 Zum Mitnehmen"],["f:az-k","👶 Kind kann helfen"],["f:az-wenig","⏱️ Wenige Zutaten"],["f:aktiv15","👩‍🍳 Wenig Aufwand"],
+ ["f:gesund","❤️ Gesund"],["f:protein","💪 Proteinreich"],["f:gemuese","🥦 Gemüsereich"],["f:ballast","🌾 Ballaststoffreich"],["f:leicht","🥗 Leicht"],["f:lowcarb","📉 Low-Carb"]
+];
+const QUICK_GROUPS = [["Allgemein",0,12],["Küchen",12,20],["Alltag",20,28],["Gesund",28,34]];
+const QUICK_DEFAULT = QUICK_ALL.slice(0,8).map(x=>x[0]);
+const QUICK_MAX = 10, LS_QUICK = "essensplan-quick";
+function quickKeys(){
+  try{ const a = JSON.parse(localStorage.getItem(LS_QUICK)||"null"); if(Array.isArray(a)){ const ok = a.filter(k=>QUICK_ALL.some(x=>x[0]===k)); if(ok.length) return ok; } }catch(e){}
+  return QUICK_DEFAULT.slice();
+}
+function quickSave(a){ try{ if(JSON.stringify(a)===JSON.stringify(QUICK_DEFAULT)) localStorage.removeItem(LS_QUICK); else localStorage.setItem(LS_QUICK, JSON.stringify(a)); }catch(e){} }
+const QUICK_LBL = Object.fromEntries(QUICK_ALL);
 function renderSeasonInfo(){
   const el = $("#seasonInfo"); if(!el) return;
   if(quick!=="saison"){ el.hidden = true; return; }
@@ -3409,8 +3434,10 @@ function renderSeasonInfo(){
 $("#seasonInfo").addEventListener("click",e=>{ const b=e.target.closest("[data-region]"); if(!b) return; e.stopPropagation(); setSetting("region",b.dataset.region); renderIdeas(); });
 function renderQuick(){
   const html = (k,l)=>{ const [t,v]=k.split(":"); const on = t==="m" ? quick===v : filterSet.has(v); return `<button type="button" data-qi="${k}" aria-pressed="${on}">${l}</button>`; };
-  const hidden = QUICK_BTNS.slice(4), anyOn = hidden.some(([k])=>{ const [t,v]=k.split(":"); return t==="m" ? quick===v : filterSet.has(v); });
-  $("#quickIdeas").innerHTML = QUICK_BTNS.slice(0,5).map(([k,l])=>html(k,l)).join("");
+  const keys = quickKeys(), rest = keys.slice(QUICK_MAX);
+  const restOn = rest.some(k=>{ const [t,v]=k.split(":"); return t==="m" ? quick===v : filterSet.has(v); });
+  const shown = (quickMore || restOn) ? keys : keys.slice(0,QUICK_MAX);
+  $("#quickIdeas").innerHTML = shown.map(k=>html(k,QUICK_LBL[k])).join("") + (rest.length ? `<button type="button" data-qi-more aria-expanded="${quickMore||restOn}">${quickMore||restOn ? "Weniger" : "Mehr …"}</button>` : "");
 }
 function renderIdeas(){
   const q = query.trim().toLowerCase();
@@ -4334,6 +4361,35 @@ $("#quickIdeas").addEventListener("click",e=>{
   } else { toggleFilter(filterSet, v); ideaUI.sync(); }
   renderIdeas();
 });
+function openQuickEdit(){
+  let keys = quickKeys();
+  const draw = ()=>{
+    const sheet = $("#sheetRoot .sheet"); if(!sheet) return;
+    const inList = new Set(keys);
+    sheet.innerHTML = `<button class="btn small close" data-close>Fertig</button>
+      <h2>✏️ Schnell zum Ziel</h2>
+      <p class="sub">Die ersten ${QUICK_MAX} stehen in der Leiste, der Rest liegt hinter „Mehr“. Die Auswahl gilt nur auf diesem Gerät.</p>
+      <ul class="qe-list">${keys.map((k,i)=>`<li class="${i>=QUICK_MAX?"qe-over":""}"><span class="qe-n">${esc(QUICK_LBL[k])}</span><button type="button" data-qe-up="${i}" aria-label="Nach oben" ${i===0?"disabled":""}>↑</button><button type="button" data-qe-down="${i}" aria-label="Nach unten" ${i===keys.length-1?"disabled":""}>↓</button><button type="button" data-qe-del="${i}" aria-label="Entfernen">×</button></li>`).join("") || '<li><span class="qe-n">Nichts ausgewählt – es gilt die Standardauswahl.</span></li>'}</ul>
+      ${QUICK_GROUPS.map(([g,a,b])=>{ const rest = QUICK_ALL.slice(a,b).filter(x=>!inList.has(x[0])); return rest.length ? `<p class="qe-sub">${g}</p><div class="qe-add">${rest.map(([k,l])=>`<button type="button" data-qe-add="${k}">＋ ${esc(l)}</button>`).join("")}</div>` : ""; }).join("")}
+      <p class="sub" style="margin-top:16px"><button type="button" class="btn small ghost" data-qe-reset>Zurücksetzen</button></p>`;
+  };
+  openSheet("");
+  const sheet = $("#sheetRoot .sheet");
+  sheet.addEventListener("click",e=>{
+    const b = e.target.closest("button"); if(!b || b.hasAttribute("data-close")) return;
+    e.stopPropagation();
+    const d = b.dataset;
+    if("qeAdd" in d) keys.push(d.qeAdd);
+    else if("qeDel" in d) keys.splice(+d.qeDel,1);
+    else if("qeUp" in d){ const i=+d.qeUp; if(i>0) [keys[i-1],keys[i]]=[keys[i],keys[i-1]]; }
+    else if("qeDown" in d){ const i=+d.qeDown; if(i<keys.length-1) [keys[i+1],keys[i]]=[keys[i],keys[i+1]]; }
+    else if("qeReset" in d) keys = QUICK_DEFAULT.slice();
+    else return;
+    quickSave(keys.length ? keys : QUICK_DEFAULT); renderQuick(); draw();
+  });
+  draw();
+}
+$("#qiEdit").addEventListener("click",openQuickEdit);
 $("#surpriseAgain").addEventListener("click",()=>nextSurprise());
 $("#surpriseUse").addEventListener("click",()=>surprise&&showDish(surprise.id));
 
