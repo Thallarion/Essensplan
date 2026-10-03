@@ -3331,7 +3331,7 @@ const FILTER_GROUPS = [
   ["Essen & Küche",[["#","Art"],["veg","🌱 Vegetarisch"],["fleisch","🥩 Fleisch"],["fisch","🐟 Fisch"],["#","Küche"],["italien","🇮🇹 Italienisch"],["deutsch","🇩🇪🇦🇹 Deutsch / Österreichisch"],["med","🧆 Mediterran / Orientalisch"],["mexiko","🇲🇽 Mexikanisch"],["asia","🥢 Asiatisch"],["indien","🍛 Indisch"],["alltag-k","🍳 Alltagsküche"],["bowl","🥗 Salate & Bowls"],["#","Herkunft"],["eingesendet","📷 Eingesendet"],["meine","⭐ Meine Rezepte"]]],
   ["Zeit & Alltag",[["#","Zeit"],["schnell","Bis 20 Min"],["alltag","Bis 30 Min"],["zeit","Ab 40 Min"],["#","Aufwand"],["aktiv15","👩‍🍳 Wenig Aufwand (aktiv bis 15 Min)"],["aktiv25","👩‍🍳 Mittlerer Aufwand (aktiv bis 25 Min)"],["#","Alltag"],["az-o","🔥 Ofengericht (backt von allein)"],["az-t","🍲 Ein Topf / eine Pfanne"],["az-f","❄️ Gut einzufrieren"],["az-v","🍱 Vorkochen / aufwärmen"],["az-m","🧸 Zum Mitnehmen / kalt essbar"],["az-k","👶 Kind kann helfen"],["az-wenig","⏱️ Wenige Zutaten (bis 6)"],["az-vorrat","🛍️ Mit Vorrat machbar"]]],
   ["Gesundheit & Ernährung",[["#","Gesundheit"],["gesund","❤️ Gesund"],["protein","💪 Proteinreich"],["gemuese","🥦 Gemüsereich"],["ballast","🌾 Ballaststoffreich"],["leicht","🥗 Leicht"],["lowcarb","📉 Low-Carb"],["#","Ernährung"],["kinder","👶 Kinderliebling"],["antient","🌿 Antientzündlich"],["glutenfrei",'<span class="gfb">GF</span> Glutenfrei']]],
-  ["Budget",[["b1",'<span aria-hidden="true">💶</span><span class="vh">Günstig (bis 6,50 €)</span>'],["b2",'<span aria-hidden="true">💶💶</span><span class="vh">Mittel (bis 9 €)</span>'],["b3",'<span aria-hidden="true">💶💶💶</span><span class="vh">Teurer</span>']]],
+  ["Budget",[["b1",'<span aria-hidden="true">💶</span><span class="vh">Günstig</span>'],["b2",'<span aria-hidden="true">💶💶</span><span class="vh">Mittel</span>'],["b3",'<span aria-hidden="true">💶💶💶</span><span class="vh">Teurer</span>']]],
   ["Bewertung",[["like","👍 Mögen wir"],["dislike","👎 Mögen wir nicht"],["lange","🕒 Lange nicht gegessen"]]],
   ["Ohne Allergene",ALLERGENS.map(([k,i,l])=>["no-"+k,`${i} ohne ${l}`])],
 ];
@@ -4214,7 +4214,7 @@ $("#sheetRoot").addEventListener("click",e=>{
 });
 
 /* ---------- Plan aus Vorschlägen (Assistent) ---------- */
-const PA_OPTS = [["schnell","⚡ Wenig Aufwand","Aktiv höchstens 30 Min am Herd"],["guenstig","💶 Günstig","Bis ca. 9 € pro Gericht"],["veg","🌱 Vegetarisch","Nur ohne Fleisch und Fisch"],["kid","👶 Familienfreundlich","Kinderlieblinge zuerst"],["vorrat","🧊 Vorräte verwenden","Was im Vorrat ist, zählt"],["abwechslung","🎨 Abwechslungsreich","Verschiedene Beilagen, Küchen, Arten"]];
+const PA_OPTS = [["schnell","⚡ Wenig Aufwand","Aktiv höchstens 30 Min am Herd"],["guenstig","💶 Günstig","Günstige Gerichte bevorzugen"],["veg","🌱 Vegetarisch","Nur ohne Fleisch und Fisch"],["kid","👶 Familienfreundlich","Kinderlieblinge zuerst"],["vorrat","🧊 Vorräte verwenden","Was im Vorrat ist, zählt"],["abwechslung","🎨 Abwechslungsreich","Verschiedene Beilagen, Küchen, Arten"]];
 const PA_STAPLES = [["Nudeln",/nudel|spaghetti|penne|fusilli|makkaroni|tagliatelle|gnocchi|lasagne|spätzle|tortellini/i],["Reis",/\breis\b|risotto/i],["Kartoffeln",/kartoffel/i]];
 function paStaple(x){ const txt = x.n+" "+x.i.map(r=>r[2]).join(" "); return PA_STAPLES.filter(([,re])=>re.test(x.n) || (re.test(txt) && x.i.some(r=>re.test(r[2]) && r[0]>=300))).map(a=>a[0]); }
 let paSel = new Set(), paPlan = {}, paWeek = 0;
