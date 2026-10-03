@@ -700,6 +700,11 @@ h1{font-size:clamp(28px,7.6vw,32px);font-weight:700}
 header.top{display:block}
 header.top .ttl{width:100%}
 header.top #helpBtn{margin-left:auto}
+header.top .ttl{gap:10px}
+header.top .logo{flex:none;width:44px;height:44px;border-radius:11px;display:block}
+header.top .ttltx{min-width:0}
+header.top h1{font-size:clamp(30px,8.6vw,38px);line-height:1.05}
+header.top .tag{margin:3px 0 0;font-size:13px;font-weight:500;color:var(--muted);line-height:1.25}
 header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;padding:2px 0;border:0;background:transparent;font-size:13px;font-weight:500;min-height:0}
 .db-acts{align-items:center;gap:4px}
 .db-acts .btn.primary{flex:0 0 auto;padding:8px 16px}
@@ -914,7 +919,8 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
 <div class="wrap">
   <header class="top">
     <div class="ttl">
-      <h1>Was <span>essen</span> wir?</h1>
+      <img class="logo" src="icon.png" alt="" width="44" height="44">
+      <div class="ttltx"><h1>Was <span>essen</span> wir?</h1><p class="tag">Familien-Wochenplan &amp; Einkaufsliste</p></div>
       <button class="helpbtn" id="helpBtn" type="button" aria-label="Anleitung öffnen" title="Anleitung">?</button>
       <button class="helpbtn" id="setBtn" type="button" aria-label="Einstellungen" title="Einstellungen">⚙</button>
     </div>
