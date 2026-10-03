@@ -133,6 +133,10 @@ textarea.cfg{width:100%;height:150px;font:13px ui-monospace,Menlo,monospace;back
 .err-text{color:var(--tomato);font-size:14px}
 .sync i{width:8px;height:8px;border-radius:50%;background:var(--muted);display:inline-block}
 .sync.ok i{background:var(--basil)}
+.sync:not(.ok):not(.warn):not(.err) i{width:auto;height:auto;border-radius:0;background:none;font-style:normal;line-height:1}
+.sync:not(.ok):not(.warn):not(.err) i::before{content:"📱";font-size:14px}
+.sync:not(.ok):not(.warn):not(.err) b{font-weight:700;color:var(--ink)}
+.sync:not(.ok):not(.warn):not(.err) u{color:var(--basil);font-weight:700;text-decoration:underline;text-underline-offset:2px}
 nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--ground);display:flex;gap:6px;padding-block:8px;margin-bottom:10px}
 nav.tabs button{flex:1;font:700 15px var(--body);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:10px 8px;border-radius:999px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
 nav.tabs button[aria-selected="true"]{background:var(--basil);color:var(--basil-ink);border-color:var(--basil)}
@@ -925,7 +929,7 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
       <button class="helpbtn" id="helpBtn" type="button" aria-label="Anleitung öffnen" title="Anleitung">?</button>
       <button class="helpbtn" id="setBtn" type="button" aria-label="Einstellungen" title="Einstellungen">⚙</button>
     </div>
-    <button class="sync" id="sync" type="button"><i></i><span>Plan nur hier gespeichert · Familie einladen</span></button>
+    <button class="sync" id="sync" type="button"><i></i><span><b>Nur auf diesem Gerät gespeichert</b> · <u>Familie einladen</u></span></button>
   </header>
 
   <nav class="tabs" role="tablist">
@@ -2937,7 +2941,9 @@ function loadScript(src){ return new Promise((res,rej)=>{ const s=document.creat
 function setSync(kind, text){
   const el = document.getElementById("sync");
   el.className = "sync " + kind;
-  el.querySelector("span").textContent = text;
+  const sp = el.querySelector("span");
+  if(kind===""){ sp.innerHTML = "<b>Nur auf diesem Gerät gespeichert</b> · <u>Familie einladen</u>"; }
+  else sp.textContent = text;
 }
 let lastSyncAt = +(localStorage.getItem("essensplan-lastsync")||0) || 0;
 function markSynced(){ lastSyncAt = Date.now(); try{ localStorage.setItem("essensplan-lastsync", String(lastSyncAt)); }catch(e){} }
