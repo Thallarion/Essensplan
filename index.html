@@ -882,7 +882,7 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
       <button class="helpbtn" id="helpBtn" type="button" aria-label="Anleitung öffnen" title="Anleitung">?</button>
       <button class="helpbtn" id="setBtn" type="button" aria-label="Einstellungen" title="Einstellungen">⚙</button>
     </div>
-    <button class="sync" id="sync" type="button"><i></i><span>Nur dieses Handy · Familie einladen</span></button>
+    <button class="sync" id="sync" type="button"><i></i><span>Plan nur hier gespeichert · Familie einladen</span></button>
   </header>
 
   <nav class="tabs" role="tablist">
@@ -2899,7 +2899,7 @@ function syncAgo(){
   return d.toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"})+", "+t+" Uhr";
 }
 function syncLabel(){
-  if(!sync) setSync("", "Nur dieses Handy · Familie einladen");
+  if(!sync) setSync("", "Plan nur hier gespeichert · Familie einladen");
   else if(online) setSync("ok", "Mit Familie geteilt");
   else setSync("warn", "Familienplan · offline");
 }
@@ -4763,11 +4763,16 @@ function openSyncSheet(){
   openSheet(`<button class="btn small close" data-close>Schließen</button>
     <h2>Gemeinsam planen</h2>
     <div class="syncinfo"><div><span>Status</span><b>Nur auf diesem Handy gespeichert</b></div><div><span>Zugriff</span><b>Nur du auf diesem Gerät</b></div></div>
-    <p>Plant zu zweit oder als Familie: Alle sehen denselben Wochenplan, dieselbe Einkaufsliste und dieselben 👍/👎.</p>
+    <p>Dein Plan ist aktuell nur auf diesem Gerät gespeichert. Zum gemeinsamen Planen lädst du deine Familie ein: Alle sehen denselben Wochenplan, dieselbe Einkaufsliste und dieselben 👍/👎.</p>
     <p><b>Hast du schon einen Familien-Link bekommen?</b> Dann öffne einfach den Link – fertig.</p>
     <div class="bar" style="margin:14px 0"><button class="btn primary" id="quickShare">Gemeinsamen Plan starten</button></div>
     <p class="sub">Dein aktueller Plan wird übernommen. Danach bekommst du einen Einladungslink für die anderen Handys. Jede Familie hat ihren eigenen, privaten Plan.</p>
-    <p class="sub"><b>Ohne gemeinsamen Plan</b> bleibt dein Plan nur auf diesem Handy. Bei einem Handy-Wechsel oder gelöschten Browserdaten geht er verloren – speichere dann vorher unter ⚙ Einstellungen eine Sicherung.</p>
+    <div class="help faq-sync">
+      <details><summary>Ist mein Plan sicher gespeichert?</summary><p>Ohne gemeinsamen Plan liegt er nur auf diesem Gerät. Das reicht im Alltag. Gehen Browserdaten verloren, ist er weg. Eine Sicherung als Datei speicherst du jederzeit unter ⚙ Einstellungen.</p></details>
+      <details><summary>Was passiert, wenn mein Handy kaputtgeht?</summary><p>Mit gemeinsamem Plan öffnest du auf dem neuen Handy einfach den Familien-Link. Ohne gemeinsamen Plan lädst du die Sicherung aus den Einstellungen auf dem neuen Handy.</p></details>
+      <details><summary>Sieht mein Partner meine Änderungen?</summary><p>Ja, sobald ihr den gemeinsamen Plan nutzt. Änderungen am Wochenplan, an der Einkaufsliste und an den Bewertungen erscheinen automatisch auf allen verbundenen Handys.</p></details>
+      <details><summary>Brauche ich ein Konto?</summary><p>Nein. Es gibt keine Anmeldung. Wer den Familien-Link hat, ist dabei. Schick ihn nur an Menschen, die mitplanen sollen.</p></details>
+    </div>
     <details class="info" style="margin-top:18px"><summary>Für Technik-Fans: eigene Firebase-Datenbank verwenden</summary>
     <p>Zum Einrichten (einmalig, ca. 10 Minuten, kostenlos):</p>
     <ol class="steps">
