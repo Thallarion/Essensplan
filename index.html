@@ -4854,7 +4854,7 @@ let autoPos = null;
 const WIDE = window.matchMedia("(min-width:1000px)");
 function todayEl(){ return document.querySelector("#week .daybig.today, #week .day.today"); }
 function centerToday(){
-  const wk = $("#p-woche"); const el = todayEl(); if(WIDE.matches || !el || !wk || wk.hidden) return;
+  const wk = $("#p-woche"); const el = todayEl(); if(WIDE.matches || !el || !wk || wk.hidden || !$("#hero").hidden) return;
   const r = el.getBoundingClientRect();
   const top = Math.max(0, Math.round(window.scrollY + r.top - (window.innerHeight - r.height)/2));
   window.scrollTo({top, behavior:"instant"}); autoPos = window.scrollY; updateTodayBtn();
