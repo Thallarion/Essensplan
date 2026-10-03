@@ -810,7 +810,7 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
 @media print{
   @page{margin:14mm}
   html,body{background:#fff!important;color:#000!important}
-  header.top,nav.tabs,#toToday,.shopdays,.seg,.shopbar,.add,.pantry,#p-woche,#p-ideen,.scrim,.item .rm,#noscriptInfo{display:none!important}
+  header.top,nav.tabs,#toToday,.shopdays,.seg,.shopbar,.add,.pantry,#p-woche,#p-ideen,.appfoot,.scrim,.item .rm,#noscriptInfo{display:none!important}
   .wrap{max-width:none;padding:0}
   #p-einkauf{display:block!important}
   .print-head{display:block;margin:0 0 10px;font:700 20px var(--display)}
@@ -858,6 +858,8 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
 .ck-fab[hidden]{display:none}
 .ck-fin{margin:22px 0 0;padding:18px;border-radius:16px;background:var(--basil-soft);color:var(--basil);font:700 22px var(--body);text-align:center}
 .help-info{display:block;text-align:center;text-decoration:none;margin:0 0 12px}
+.appfoot{margin:28px 0 20px;text-align:center;font-size:13px;color:var(--muted)}
+.appfoot a{color:var(--muted);text-decoration:underline;text-underline-offset:2px;padding:6px 4px}
 .hero{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px 16px 14px;margin:0 0 14px;box-shadow:var(--shadow)}
 .hero h2{margin:0 28px 4px 0;font-size:22px;line-height:1.2}
 .hero-sub{margin:0 0 12px;color:var(--muted);font-size:15px}
@@ -962,6 +964,7 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
     <div class="fcount" id="ideaCount"></div>
     <div class="ideas" id="ideas"></div>
   </section>
+  <footer class="appfoot"><a href="info.html">Info</a> · <a href="datenschutz.html">Datenschutz</a> · <a href="mailto:postmaster@wasessenwir.at">Kontakt</a></footer>
 </div>
 
 <div id="sheetRoot"></div>
