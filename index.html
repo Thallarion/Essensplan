@@ -874,6 +874,10 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
 .hero h2{margin:0 28px 4px 0;font-size:22px;line-height:1.2}
 .hero-sub{margin:0 0 12px;color:var(--muted);font-size:15px}
 .hero-x{position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:50%;border:0;background:transparent;color:var(--muted);font:400 24px/1 var(--body);cursor:pointer}
+.empty-hint{margin:0 0 10px;font-size:15px;color:var(--muted)}
+.hero-know-h{margin:0 0 4px;font-weight:700;font-size:14px}
+.hero-know{margin:0 0 14px;padding-left:18px;font-size:14px;color:var(--muted);display:grid;gap:3px}
+.hero-know b{color:var(--ink);font-weight:600}
 .hero-steps{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:8px}
 .hero-steps li{display:flex;gap:10px;align-items:flex-start}
 .hero-steps b{flex:none;width:26px;height:26px;border-radius:50%;background:var(--sunk);color:var(--basil);display:grid;place-items:center;font-size:14px}
@@ -908,6 +912,8 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
       <button type="button" class="hero-x" id="heroX" aria-label="Schließen">×</button>
       <h2>Was kochen wir heute?</h2>
       <p class="hero-sub">Weniger Planungsstress. Mehr Zeit für euch.</p>
+      <p class="hero-know-h">Kennst du das?</p>
+      <ul class="hero-know"><li>Niemand mag nach der Arbeit noch überlegen → <b>ein Tipp füllt die Woche</b></li><li>Heute nur 20 Minuten → <b>schnelle Gerichte</b></li><li>Paprika, Reis und Eier sind noch da → <b>passende Rezepte</b></li><li>Das Kind mag wenig → <b>Kinderlieblinge</b></li></ul>
       <ol class="hero-steps"><li><b>1</b><span>Gerichte wählen<small>Tippe Tage an oder lass die App Vorschläge machen.</small></span></li><li><b>2</b><span>Einkaufsliste bekommen<small>Alle Zutaten sind automatisch zusammengefasst.</small></span></li><li><b>3</b><span>Kochen<small>Schritt für Schritt, mit Kochmodus.</small></span></li></ol>
       <button type="button" class="btn primary" id="heroGo">✨ Jetzt Woche planen</button>
       <button type="button" class="btn" id="heroSet">⚙️ Persönlich einrichten</button>
@@ -921,6 +927,7 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
       <button class="btn primary" id="fillWeek">✨ Woche planen</button>
       <span class="wk-status" id="wkStatus" hidden>✓ Woche ist komplett</span>
     </div>
+    <p class="empty-hint" id="emptyHint" hidden>Noch nichts geplant. Ein Tipp auf „Woche planen“, und der Abend ist gerettet.</p>
     <div class="note" id="exampleNote" hidden>👋 Beispielwoche · Antippen = Rezept · 🎲 = tauschen · × = Tag leeren · <button type="button" class="linkbtn" id="noteHelp">Anleitung ansehen</button></div>
     <div class="week" id="week"></div>
     <div class="balance" id="balance" hidden></div>
@@ -3227,6 +3234,7 @@ function renderWeek(){
   $("#hero").hidden = !isExample || !!viewWeek || heroClosed();
   { const e = DAYS.filter((_,i)=>i>=today && !(typeof state.days[i+O]==="string" && dish(state.days[i+O])) && !(state.days[i+O]&&state.days[i+O].custom)).length;
     $("#fillWeek").hidden = e===0; $("#wkStatus").hidden = e>0;
+    $("#emptyHint").hidden = isExample || DAYS.some((_,i)=>(typeof state.days[i+O]==="string" && dish(state.days[i+O])) || (state.days[i+O]&&state.days[i+O].custom));
     $("#fillWeek").textContent = e===7 ? "✨ Woche planen" : `✨ ${e} freie${e>1?"":"n"} Tag${e>1?"e":""} füllen`;
     const f = x=>x.toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"});
     $("#weekRange").textContent = f(dates[0])+" – "+f(dates[6]); $("#weekTitle").textContent = viewWeek ? "Nächste Woche" : "Diese Woche"; }
@@ -3501,7 +3509,7 @@ function matchQuick(d){
   return true;
 }
 const QUICK_ALL = [
- ["m:woche","🗓 Passt zu deiner Woche"],["f:schnell","⏱ In 20 Min fertig"],["m:vorrat","🥕 Verwendet Vorräte"],["f:veg","🌱 Vegetarisch"],["m:saison","🍂 Jetzt saisonal"],["f:like","👍 Von euch bewertet"],["f:kinder","👶 Familienfreundlich"],["f:glutenfrei","Ohne Gluten"],
+ ["m:woche","🗓 Passt zu deiner Woche"],["f:schnell","⏱ Heute wenig Zeit (20 Min)"],["m:vorrat","🥕 Was noch da ist"],["f:veg","🌱 Vegetarisch"],["m:saison","🍂 Jetzt saisonal"],["f:like","👍 Das mögen wir"],["f:kinder","👶 Das mögen Kinder"],["f:glutenfrei","Ohne Gluten"],
  ["f:fleisch","🥩 Fleisch"],["f:fisch","🐟 Fisch"],["f:antient","🌿 Antientzündlich"],["f:b1","💶 Günstig"],
  ["f:italien","🇮🇹 Italienisch"],["f:deutsch","🇩🇪🇦🇹 Deutsch / Österr."],["f:med","🧆 Mediterran"],["f:mexiko","🇲🇽 Mexikanisch"],["f:asia","🥢 Asiatisch"],["f:indien","🍛 Indisch"],["f:alltag-k","🍳 Alltagsküche"],["f:bowl","🥗 Salate & Bowls"],
  ["f:az-o","🔥 Ofengericht"],["f:az-t","🍲 Ein Topf / Pfanne"],["f:az-f","❄️ Gut einzufrieren"],["f:az-v","🍱 Vorkochen"],["f:az-m","🧸 Zum Mitnehmen"],["f:az-k","👶 Kind kann helfen"],["f:az-wenig","⏱️ Wenige Zutaten"],["f:aktiv15","👩‍🍳 Wenig Aufwand"],
@@ -3677,7 +3685,7 @@ const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","
 /* ---------- Pro-Tipps: ein Tipp pro Tag, der Reihe nach, nur beim Start; abschaltbar (pro Gerät) ---------- */
 const TIPS = [["Kochmodus", "Tippe im Rezept auf „Kochmodus“: große Schrift, Zutaten und Schritte zum Abhaken, der Bildschirm bleibt an. Wenn du etwas abhakst, scrollt es von selbst zum Nächsten."], ["Einkauf", "Das 🏠 hinter einer Zutat in der Einkaufsliste nimmt sie von der Liste, weil ihr sie zuhause habt. „Nur diesmal“ und „Angebrochen“ holst du unter „Schon zuhause“ mit dem 🛒 zurück."], ["Personenzahl", "Im Rezept änderst du mit − und + die Personenzahl. Die Zutaten und die Mengen in den Schritten rechnen sich automatisch mit um."], ["Vorrat", "Zutaten, die immer da sind, zum Beispiel Zwiebeln: Tippe in der Einkaufsliste beim 🏠 auf „Immer“. Dann tauchen sie nie wieder auf der Liste auf. Ändern kannst du das unter „Vorrat anpassen“ ganz unten in der Liste."], ["Alltag-Filter", "Unter Ideen findest du bei „Alle Filter“ den Reiter „Zeit & Alltag“: zum Beispiel Ofengericht, ein Topf, gut einzufrieren oder mit wenigen Zutaten."], ["Supermarkt", "Die Einkaufsliste lässt sich nach Abteilung sortieren. In den Einstellungen stellst du die Reihenfolge so ein, wie euer Supermarkt aufgebaut ist."], ["Reste", "„Was haben wir noch zuhause?“ in den Ideen: Tippe ein, was im Kühlschrank liegt, und die App zeigt dir Gerichte, die dazu passen."], ["Liste teilen", "Mit „Teilen“ in der Einkaufsliste schickst du die offenen Artikel zum Beispiel direkt an Google Keep oder an deine Familie."], ["Link teilen", "Tippe im Rezept auf „Link teilen“, um es per Nachricht zu verschicken. Wer den Link öffnet, sieht sofort das Rezept."], ["Zutaten kopieren", "Im Rezept kopiert „Zutaten kopieren“ die Mengen für eure Personenzahl, bereit zum Einfügen in eine Notiz oder eine Listen-App."], ["Leere Tage", "Mit „Leere Tage füllen“ schlägt die App für alle freien Tage Gerichte vor. Unter der Woche sind es nur schnelle Gerichte, bevorzugt vegetarisch."], ["Design", "In den Einstellungen wählst du zwischen hellem und dunklem Design, oder die App folgt automatisch deinem Handy."], ["Notiz", "Im Rezept hältst du unter „Unsere Notiz“ fest, was ihr beim nächsten Mal anders macht, zum Beispiel weniger Salz."], ["Lieblinge", "In den Einstellungen wählst du Lieblingskategorien. Sie kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran."], ["Einsenden", "Unter Ideen kannst du über „Rezept hinzufügen“ ein Rezept als Foto, PDF oder Link einsenden. Nach der Prüfung steht es für alle in der App."], ["Bewerten", "Nach dem Essen fragt die App, wie es geschmeckt hat. Mit 👍 und 👎 merkt ihr euch eure Favoriten."], ["Sicherung", "Unter Einstellungen → Daten sichern speicherst du Plan, eigene Rezepte und Einstellungen als Datei, zum Beispiel vor einem Handywechsel."]];
 const LS_TIPS = "essensplan-tips";
-const APP_VERSION = "2026-10-03 w";
+const APP_VERSION = "2026-10-03 x";
 const LS_HERO = "essensplan-hero";
 function heroClosed(){ try{ return !!localStorage.getItem(LS_HERO); }catch(e){ return false; } }
 function heroClose(){ try{ localStorage.setItem(LS_HERO,"1"); }catch(e){} $("#hero").hidden = true; }
@@ -3852,7 +3860,7 @@ function openHelp(first){
       ${img("ideen","Ideen mit geöffnetem Filter")}
       <ul>
         <li><b>Keine Idee?</b> zeigt oben einen Zufallsvorschlag.</li>
-        <li><b>Schnell zum Ziel</b>: Knöpfe für die häufigsten Wünsche, z. B. „In 20 Min fertig“ oder „Vegetarisch“. Mit dem <b>✏️</b> daneben stellst du sie nach deinem Geschmack zusammen: Küchen (z. B. Italienisch), Alltag (z. B. Ofengericht) und Gesund-Kategorien (z. B. Proteinreich), verschiebst sie mit ↑ ↓ oder entfernst sie mit ×. Die ersten 10 sind sichtbar, der Rest liegt hinter „Mehr …“. Die Auswahl gilt nur auf deinem Gerät, „Zurücksetzen“ stellt die Standardauswahl wieder her.</li>
+        <li><b>Schnell zum Ziel</b>: Knöpfe für die häufigsten Wünsche, z. B. „Heute wenig Zeit“ oder „Vegetarisch“. Mit dem <b>✏️</b> daneben stellst du sie nach deinem Geschmack zusammen: Küchen (z. B. Italienisch), Alltag (z. B. Ofengericht) und Gesund-Kategorien (z. B. Proteinreich), verschiebst sie mit ↑ ↓ oder entfernst sie mit ×. Die ersten 10 sind sichtbar, der Rest liegt hinter „Mehr …“. Die Auswahl gilt nur auf deinem Gerät, „Zurücksetzen“ stellt die Standardauswahl wieder her.</li>
         <li>Suche nach Gericht oder Zutat, z. B. „Feta“ oder „Nudeln“.</li>
         <li><b>Alle Filter</b> öffnet die Filter in Reitern: Essen &amp; Küche, Zeit &amp; Alltag, Gesundheit &amp; Ernährung, Budget, Bewertung und Ohne Allergene. Mehrere lassen sich kombinieren, z. B. „Vegetarisch“ + „Italienisch“. Aktive Filter stehen als Chips darunter – mit × entfernen.</li>
         <li><b>Budget</b>: 💶, 💶💶 und 💶💶💶 – je mehr 💶, desto teurer sind die Zutaten (geschätzt für 3 Personen).</li>
