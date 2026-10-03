@@ -620,6 +620,8 @@ details.cp-wk summary{cursor:pointer;min-height:44px;display:flex;align-items:ce
 .qi-lbl{font-size:12px;color:var(--muted);margin:0 0 6px;display:flex;align-items:center;gap:6px}
 .qi-edit{border:0;background:transparent;font-size:14px;line-height:1;padding:4px 6px;border-radius:8px;cursor:pointer;color:var(--muted)}
 .qi-edit:hover,.qi-edit:focus-visible{background:var(--basil-soft)}
+.qi-lbl{justify-content:space-between}
+.qi-lbl .qi-edit{margin-left:auto;display:inline-flex;align-items:center;gap:4px;min-height:36px;padding:6px 12px;border:1px solid color-mix(in srgb,var(--basil) 35%,var(--line));border-radius:999px;background:transparent;color:var(--basil);font:700 13.5px var(--body)}
 .qe-list{list-style:none;margin:8px 0 14px;padding:0}
 .qe-list li{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--line)}
 .qe-list li span.qe-n{flex:1;font:600 14px var(--body)}
@@ -1026,7 +1028,7 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
     <p class="qi-lbl">Suchen</p>
     <div id="ideaFilterUI"></div>
     <div class="fcount" id="ideaCount"></div>
-    <p class="qi-lbl">Schnell zum Ziel <button type="button" class="qi-edit" id="qiEdit" aria-label="Schnell zum Ziel anpassen" title="Anpassen">✏️</button></p>
+    <p class="qi-lbl">Schnell zum Ziel <button type="button" class="qi-edit" id="qiEdit" aria-label="Schnell zum Ziel anpassen" title="Anpassen">✏️ Anpassen</button></p>
     <div class="qi" id="quickIdeas" role="group" aria-label="Schnelle Einstiege"></div>
     <div class="season-info" id="seasonInfo" hidden></div>
     <div class="ideas" id="ideas"></div>
@@ -3747,7 +3749,7 @@ const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","
 /* ---------- Pro-Tipps: ein Tipp pro Tag, der Reihe nach, nur beim Start; abschaltbar (pro Gerät) ---------- */
 const TIPS = [["Kochmodus", "Tippe im Rezept auf „Kochmodus“: große Schrift, Zutaten und Schritte zum Abhaken, der Bildschirm bleibt an. Wenn du etwas abhakst, scrollt es von selbst zum Nächsten."], ["Einkauf", "Das 🏠 hinter einer Zutat in der Einkaufsliste nimmt sie von der Liste, weil ihr sie zuhause habt. „Nur diesmal“ und „Angebrochen“ holst du unter „Schon zuhause“ mit dem 🛒 zurück."], ["Personenzahl", "Im Rezept änderst du mit − und + die Personenzahl. Die Zutaten und die Mengen in den Schritten rechnen sich automatisch mit um."], ["Vorrat", "Zutaten, die immer da sind, zum Beispiel Zwiebeln: Tippe in der Einkaufsliste beim 🏠 auf „Immer“. Dann tauchen sie nie wieder auf der Liste auf. Ändern kannst du das unter „Vorrat anpassen“ ganz unten in der Liste."], ["Alltag-Filter", "Unter Ideen findest du bei „Alle Filter“ den Reiter „Zeit & Alltag“: zum Beispiel Ofengericht, ein Topf, gut einzufrieren oder mit wenigen Zutaten."], ["Supermarkt", "Die Einkaufsliste lässt sich nach Abteilung sortieren. In den Einstellungen stellst du die Reihenfolge so ein, wie euer Supermarkt aufgebaut ist."], ["Reste", "„Was haben wir noch zuhause?“ in den Ideen: Tippe ein, was im Kühlschrank liegt, und die App zeigt dir Gerichte, die dazu passen."], ["Liste teilen", "Mit „Teilen“ in der Einkaufsliste schickst du die offenen Artikel zum Beispiel direkt an Google Keep oder an deine Familie."], ["Link teilen", "Tippe im Rezept auf „Link teilen“, um es per Nachricht zu verschicken. Wer den Link öffnet, sieht sofort das Rezept."], ["Zutaten kopieren", "Im Rezept kopiert „Zutaten kopieren“ die Mengen für eure Personenzahl, bereit zum Einfügen in eine Notiz oder eine Listen-App."], ["Leere Tage", "Mit „Leere Tage füllen“ schlägt die App für alle freien Tage Gerichte vor. Unter der Woche sind es nur schnelle Gerichte, bevorzugt vegetarisch."], ["Design", "In den Einstellungen wählst du zwischen hellem und dunklem Design, oder die App folgt automatisch deinem Handy."], ["Notiz", "Im Rezept hältst du unter „Unsere Notiz“ fest, was ihr beim nächsten Mal anders macht, zum Beispiel weniger Salz."], ["Lieblinge", "In den Einstellungen wählst du Lieblingskategorien. Sie kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran."], ["Einsenden", "Unter Ideen kannst du über „Rezept hinzufügen“ ein Rezept als Foto, PDF oder Link einsenden. Nach der Prüfung steht es für alle in der App."], ["Bewerten", "Nach dem Essen fragt die App, wie es geschmeckt hat. Mit 👍 und 👎 merkt ihr euch eure Favoriten."], ["Sicherung", "Unter Einstellungen → Daten sichern speicherst du Plan, eigene Rezepte und Einstellungen als Datei, zum Beispiel vor einem Handywechsel."]];
 const LS_TIPS = "essensplan-tips";
-const APP_VERSION = "v1.1.1";
+const APP_VERSION = "v1.1.2";
 const LS_HERO = "essensplan-hero";
 function heroClosed(){ try{ return !!localStorage.getItem(LS_HERO); }catch(e){ return false; } }
 function heroClose(){ try{ localStorage.setItem(LS_HERO,"1"); }catch(e){} $("#hero").hidden = true; }
@@ -3928,7 +3930,7 @@ function openHelp(first){
       ${img("ideen","Ideen mit geöffnetem Filter")}
       <ul>
         <li><b>Keine Idee?</b> zeigt oben einen Zufallsvorschlag.</li>
-        <li><b>Schnell zum Ziel</b>: Knöpfe für die häufigsten Wünsche, z. B. „Heute wenig Zeit“ oder „Vegetarisch“. Mit dem <b>✏️</b> daneben stellst du sie nach deinem Geschmack zusammen: Küchen (z. B. Italienisch), Alltag (z. B. Ofengericht) und Gesund-Kategorien (z. B. Proteinreich), verschiebst sie mit ↑ ↓ oder entfernst sie mit ×. Die ersten 10 sind sichtbar, der Rest liegt hinter „Mehr …“. Die Auswahl gilt nur auf deinem Gerät, „Zurücksetzen“ stellt die Standardauswahl wieder her.</li>
+        <li><b>Schnell zum Ziel</b>: Knöpfe für die häufigsten Wünsche, z. B. „Heute wenig Zeit“ oder „Vegetarisch“. Mit <b>✏️ Anpassen</b> daneben stellst du sie nach deinem Geschmack zusammen: Küchen (z. B. Italienisch), Alltag (z. B. Ofengericht) und Gesund-Kategorien (z. B. Proteinreich), verschiebst sie mit ↑ ↓ oder entfernst sie mit ×. Die ersten 10 sind sichtbar, der Rest liegt hinter „Mehr …“. Die Auswahl gilt nur auf deinem Gerät, „Zurücksetzen“ stellt die Standardauswahl wieder her.</li>
         <li>Suche nach Gericht oder Zutat, z. B. „Feta“ oder „Nudeln“.</li>
         <li><b>Alle Filter</b> öffnet die Filter in Reitern: Essen &amp; Küche, Zeit &amp; Alltag, Gesundheit &amp; Ernährung, Budget, Bewertung und Ohne Allergene. Mehrere lassen sich kombinieren, z. B. „Vegetarisch“ + „Italienisch“. Aktive Filter stehen als Chips darunter – mit × entfernen.</li>
         <li><b>Budget</b>: 💶, 💶💶 und 💶💶💶 – je mehr 💶, desto teurer sind die Zutaten (geschätzt für 3 Personen).</li>
