@@ -4883,6 +4883,38 @@ window.addEventListener("resize",updateTodayBtn);
 document.addEventListener("click",e=>{ const t = e.target.closest("[data-tab]"); if(t){ requestAnimationFrame(()=>{ if(t.dataset.tab==="woche"){ if(TAB_SCROLL.woche===undefined) centerToday(); updateTodayBtn(); } else toToday.hidden = true; }); } });
 $("#printList").addEventListener("click",()=>window.print());
 window.addEventListener("beforeprint",()=>{ const h=$("#printHead"); if(h){ const d=$("#weekRange"); h.innerHTML="Einkaufsliste<small>"+(d?d.textContent+" · ":"")+"Stand "+new Date().toLocaleDateString("de-DE")+"</small>"; } });
+/* ---------- Zurück-Taste (Handy): erst Fenster/Reiter zurück, auf der Wochenansicht „App verlassen?“ ---------- */
+(function(){
+  let guarded = false, exiting = false;
+  const hasSheet = ()=>!!document.querySelector("#sheetRoot .scrim");
+  const cookOpen = ()=>{ const r=$("#cookRoot"); return r && !r.hidden; };
+  function guard(){
+    if(guarded || exiting) return;
+    try{ history.pushState(null,"",location.href); guarded = true; }catch(e){}
+  }
+  ["pointerdown","keydown","touchstart"].forEach(ev=>window.addEventListener(ev,guard,{capture:true,passive:true}));
+  if(navigator.userActivation && navigator.userActivation.hasBeenActive) guard();
+  function askExit(){
+    openSheet(`<h2>App wirklich verlassen?</h2>
+      <div class="bar" style="margin-top:14px"><button type="button" class="btn primary" id="exitOk">OK</button><button type="button" class="btn ghost" data-close>Abbrechen</button></div>`);
+    $("#exitOk").addEventListener("click",e=>{
+      e.stopPropagation(); exiting = true; closeSheet();
+      history.back();                                         /* auf den ersten Eintrag */
+      setTimeout(()=>{ history.back(); setTimeout(()=>{ try{ window.close(); }catch(e){} },300); },150);   /* und aus der App */
+    });
+  }
+  window.addEventListener("popstate",()=>{
+    if(exiting || !guarded) return;
+    guarded = false; guard();                                  /* Sperr-Eintrag sofort wieder setzen */
+    if($("#exitOk")){ closeSheet(); return; }                  /* Abfrage offen: Zurück = Abbrechen */
+    if(cookOpen()){ closeCook(); return; }
+    if(hasSheet()){ closeSheet(); return; }
+    const tab = document.querySelector('nav.tabs [aria-selected="true"]');
+    if(tab && tab.dataset.tab!=="woche"){ $("#tab-woche").click(); return; }
+    if(viewWeek){ $("#wkThis").click(); return; }
+    askExit();
+  });
+})();
 requestAnimationFrame(()=>centerToday());
 if(document.fonts && document.fonts.ready) document.fonts.ready.then(()=>{ if(autoPos!==null && Math.abs(window.scrollY-autoPos)<3) centerToday(); });
 </script>
