@@ -4284,7 +4284,7 @@ function openQuickstart(step){
     <p class="sub">Die Angaben werden automatisch aus den Zutaten erkannt. Bei Allergien bitte immer zusätzlich die Packungsangaben prüfen.</p>
     <h3>Nicht mögen</h3>
     <div class="filters" id="qsNogo"></div>
-    <div class="fr-in"><input id="qsNgIn" type="text" placeholder="Zutaten, die bei euch nie auf den Tisch kommen – zum Beispiel Pilze" autocomplete="off" enterkeyhint="done"><button type="button" class="btn small" data-qs="ngadd">Hinzufügen</button></div>${nav(2,4)}`;
+    <div class="fr-in"><input id="qsNgIn" type="text" placeholder="Nie auf dem Tisch, z. B. Pilze" autocomplete="off" enterkeyhint="done"><button type="button" class="btn small" data-qs="ngadd">Hinzufügen</button></div>${nav(2,4)}`;
   } else if(step===4){
     h=`${qsProg(4)}<h2>Wie viel Zeit habt ihr Montag bis Freitag meistens zum Kochen?</h2>
     <div class="qs-chips" id="qsTime">${QS_TIME.map(([v,l])=>`<button type="button" data-qst="${v}" aria-pressed="${qs.maxT===v}">${l}</button>`).join("")}</div>
