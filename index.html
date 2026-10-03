@@ -610,6 +610,7 @@ details.cp-wk summary{cursor:pointer;min-height:44px;display:flex;align-items:ce
 .rep-hint,.rate-q{font-size:12.5px;color:var(--muted);margin-top:6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .rep-hint button,.rate-q button,.linkbtn{background:transparent;border:1px solid var(--line);border-radius:999px;color:var(--ink);font:600 12.5px var(--body);padding:4px 10px;cursor:pointer}
 .linkbtn{border:0;padding:0;text-decoration:underline;color:var(--basil)}
+#exampleNote .linkbtn{display:inline-block;margin-top:4px;font-size:13px;font-weight:700;text-underline-offset:2px}
 .qi{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
 .qi [data-qi-more]{border-style:dashed;color:var(--muted)}
 .qi button{flex:none;white-space:nowrap;font:600 13px var(--body);padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
@@ -964,7 +965,7 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
     </div>
     <div class="note qs-note" id="qsNote" hidden></div>
     <p class="empty-hint" id="emptyHint" hidden>Noch nichts geplant. Ein Tipp auf „Woche planen“, und der Abend ist gerettet.</p>
-    <div class="note" id="exampleNote" hidden>👋 Beispielwoche · Antippen = Rezept · 🎲 = tauschen · × = Tag leeren · <button type="button" class="linkbtn" id="noteHelp">Anleitung ansehen</button></div>
+    <div class="note" id="exampleNote" hidden>👋 Beispielwoche · Tippen zum Öffnen · 🎲 Gericht tauschen<br><button type="button" class="linkbtn" id="noteHelp">Anleitung ansehen</button></div>
     <div class="week" id="week"></div>
     <div class="balance" id="balance" hidden></div>
   </section>
