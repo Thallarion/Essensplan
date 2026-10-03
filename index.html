@@ -4160,7 +4160,7 @@ $("#heroGo").addEventListener("click",()=>{ heroClose(); $("#fillWeek").click();
 $("#newWeek").addEventListener("click",()=>setTimeout(()=>{ if(!$("#newWeek").dataset.confirm) $("#wkMenu").open=false; },0));
 document.addEventListener("click",e=>{ const m=$("#wkMenu"); if(m && m.open && !e.target.closest("#wkMenu")) m.open=false; });
 $("#pantryEdit").addEventListener("click",()=>openSettings());
-$("#wkThis").addEventListener("click",()=>{ viewWeek=0; render(); centerToday(); updateTodayBtn(); });
+$("#wkThis").addEventListener("click",()=>{ viewWeek=0; render(); centerToday(true); updateTodayBtn(); });
 $("#wkNext").addEventListener("click",()=>{ viewWeek=1; render(); updateTodayBtn(); });
 $("#fillWeek").addEventListener("click",()=>openPlanAssistant());
 
@@ -4853,8 +4853,8 @@ setTimeout(maybeShowTip, 1500);
 let autoPos = null;
 const WIDE = window.matchMedia("(min-width:1000px)");
 function todayEl(){ return document.querySelector("#week .daybig.today, #week .day.today"); }
-function centerToday(){
-  const wk = $("#p-woche"); const el = todayEl(); if(WIDE.matches || !el || !wk || wk.hidden || !$("#hero").hidden) return;
+function centerToday(force){
+  const wk = $("#p-woche"); const el = todayEl(); if(WIDE.matches || !el || !wk || wk.hidden || (!force && (!$("#hero").hidden || !$("#hints").hidden))) return;
   const r = el.getBoundingClientRect();
   const top = Math.max(0, Math.round(window.scrollY + r.top - (window.innerHeight - r.height)/2));
   window.scrollTo({top, behavior:"instant"}); autoPos = window.scrollY; updateTodayBtn();
@@ -4869,13 +4869,13 @@ function updateTodayBtn(){
   const far = r.top < 40 || r.bottom > window.innerHeight - 70;
   toToday.hidden = !far; if(far) toToday.textContent = off < 0 ? "↑ Heute" : "↓ Heute";
 }
-toToday.addEventListener("click",()=>{ if(viewWeek){ viewWeek=0; render(); } centerToday(); updateTodayBtn(); });
+toToday.addEventListener("click",()=>{ if(viewWeek){ viewWeek=0; render(); } centerToday(true); updateTodayBtn(); });
 window.addEventListener("scroll",updateTodayBtn,{passive:true});
 window.addEventListener("resize",updateTodayBtn);
 document.addEventListener("click",e=>{ const t = e.target.closest("[data-tab]"); if(t){ requestAnimationFrame(()=>{ if(t.dataset.tab==="woche"){ if(TAB_SCROLL.woche===undefined) centerToday(); updateTodayBtn(); } else toToday.hidden = true; }); } });
 $("#printList").addEventListener("click",()=>window.print());
 window.addEventListener("beforeprint",()=>{ const h=$("#printHead"); if(h){ const d=$("#weekRange"); h.innerHTML="Einkaufsliste<small>"+(d?d.textContent+" · ":"")+"Stand "+new Date().toLocaleDateString("de-DE")+"</small>"; } });
-requestAnimationFrame(centerToday);
+requestAnimationFrame(()=>centerToday());
 if(document.fonts && document.fonts.ready) document.fonts.ready.then(()=>{ if(autoPos!==null && Math.abs(window.scrollY-autoPos)<3) centerToday(); });
 </script>
 
