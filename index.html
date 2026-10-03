@@ -874,6 +874,23 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
 .hero h2{margin:0 28px 4px 0;font-size:22px;line-height:1.2}
 .hero-sub{margin:0 0 12px;color:var(--muted);font-size:15px}
 .hero-x{position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:50%;border:0;background:transparent;color:var(--muted);font:400 24px/1 var(--body);cursor:pointer}
+.set-grp{font:700 21px var(--body);margin:34px 0 2px;padding-top:16px;border-top:2px solid var(--line)}
+.set .sub + .set-grp, .set h2:first-child + .set-grp{margin-top:20px}
+.grp-sub{margin:0 0 4px}
+.hero-note{margin:4px 0 12px;font-size:13px;color:var(--muted)}
+#heroToday{display:block;margin:2px 0 12px;font-size:15px}
+.qs{max-width:560px}
+.qs-prog{margin:0 0 6px;font-size:14px;color:var(--muted)}
+.qs h2{margin:0 0 14px}
+.qs h3{font:700 16px var(--body);margin:18px 0 6px;color:var(--ink)}
+.qs-chips{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0 10px}
+.qs-chips button{font:700 16px var(--body);padding:12px 18px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.qs-chips button[aria-pressed="true"]{background:var(--basil-soft);color:var(--basil);border-color:var(--basil)}
+.qs-foot{display:flex;gap:10px;margin:18px 0 0}.qs-foot .btn{flex:1}
+.qs-skip{display:block;margin:14px auto 0;font-size:14px}
+.qs-sum{margin:0;font-size:16px;line-height:1.5}
+.qs-note{position:relative;padding-right:34px}
+.qs-note .hero-x{top:6px;right:6px}
 .empty-hint{margin:0 0 10px;font-size:15px;color:var(--muted)}
 .hero-know-h{margin:0 0 4px;font-weight:700;font-size:14px}
 .hero-know{margin:0 0 14px;padding-left:18px;font-size:14px;color:var(--muted);display:grid;gap:3px}
@@ -910,14 +927,14 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
   <section id="p-woche">
     <div class="hero" id="hero" hidden>
       <button type="button" class="hero-x" id="heroX" aria-label="Schließen">×</button>
-      <h2>Was kochen wir heute?</h2>
-      <p class="hero-sub">Weniger Planungsstress. Mehr Zeit für euch.</p>
-      <p class="hero-know-h">Kennst du das?</p>
-      <ul class="hero-know"><li>Niemand mag nach der Arbeit noch überlegen → <b>ein Tipp füllt die Woche</b></li><li>Heute nur 20 Minuten → <b>schnelle Gerichte</b></li><li>Paprika, Reis und Eier sind noch da → <b>passende Rezepte</b></li><li>Das Kind mag wenig → <b>Kinderlieblinge</b></li></ul>
-      <ol class="hero-steps"><li><b>1</b><span>Gerichte wählen<small>Tippe Tage an oder lass die App Vorschläge machen.</small></span></li><li><b>2</b><span>Einkaufsliste bekommen<small>Alle Zutaten sind automatisch zusammengefasst.</small></span></li><li><b>3</b><span>Kochen<small>Schritt für Schritt, mit Kochmodus.</small></span></li></ol>
-      <button type="button" class="btn primary" id="heroGo">✨ Jetzt Woche planen</button>
-      <button type="button" class="btn" id="heroSet">⚙️ Persönlich einrichten</button>
-      <p class="hero-trust">🔒 Kein Konto nötig · 🚫 Keine Werbung · 🏠 Daten bleiben auf deinem Gerät</p>
+      <h2>Planen wir eure erste Familienwoche?</h2>
+      <p class="hero-sub">Was essen wir? hilft euch, Gerichte zu finden, den Einkauf zu organisieren und auch an hektischen Tagen eine passende Idee zu haben.</p>
+      <button type="button" class="btn primary" id="heroGo">Direkt loslegen</button>
+      <p class="hero-note">Mit der Beispielwoche. Du kannst alles später ändern.</p>
+      <button type="button" class="btn" id="heroSet">Unsere Familie kurz einrichten</button>
+      <p class="hero-note">Dauert etwa 1 Minute – alle Angaben sind später änderbar.</p>
+      <button type="button" class="linkbtn" id="heroToday">Nur etwas für heute suchen</button>
+      <p class="hero-trust">🔒 Kein Konto nötig · 🚫 Keine Werbung · 🏠 Eure Angaben bleiben zunächst auf diesem Gerät</p>
     </div>
     <div class="weekhead"><h2 id="weekTitle">Diese Woche</h2><span id="weekRange"></span>
       <details class="wkmenu" id="wkMenu"><summary aria-label="Weitere Aktionen" title="Weitere Aktionen">⋯</summary><div class="wkmenu-pop"><button type="button" id="copyWeek">Woche kopieren …</button><button type="button" id="newWeek">Plan leeren</button></div></details></div>
@@ -927,6 +944,7 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
       <button class="btn primary" id="fillWeek">✨ Woche planen</button>
       <span class="wk-status" id="wkStatus" hidden>✓ Woche ist komplett</span>
     </div>
+    <div class="note qs-note" id="qsNote" hidden></div>
     <p class="empty-hint" id="emptyHint" hidden>Noch nichts geplant. Ein Tipp auf „Woche planen“, und der Abend ist gerettet.</p>
     <div class="note" id="exampleNote" hidden>👋 Beispielwoche · Antippen = Rezept · 🎲 = tauschen · × = Tag leeren · <button type="button" class="linkbtn" id="noteHelp">Anleitung ansehen</button></div>
     <div class="week" id="week"></div>
@@ -3231,6 +3249,7 @@ function renderWeek(){
   $("#wkThis").setAttribute("aria-pressed",String(!viewWeek)); $("#wkNext").setAttribute("aria-pressed",String(!!viewWeek));
   $("#wkThis").textContent = "Diese Woche"; $("#wkNext").textContent = "Nächste Woche";
   $("#exampleNote").hidden = !isExample || !!viewWeek;
+  try{ qsNoteRender(); }catch(e){}
   $("#hero").hidden = !isExample || !!viewWeek || heroClosed();
   { const e = DAYS.filter((_,i)=>i>=today && !(typeof state.days[i+O]==="string" && dish(state.days[i+O])) && !(state.days[i+O]&&state.days[i+O].custom)).length;
     $("#fillWeek").hidden = e===0; $("#wkStatus").hidden = e>0;
@@ -3679,13 +3698,13 @@ function importData(file){
   r.readAsText(file);
 }
 /* ---------- Einstellungen-Fenster ---------- */
-const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","🥩 Fleisch"],["kinder","👶 Kinderliebling"],["gesund","❤️ Gesund"],["protein","💪 Proteinreich"],["gemuese","🥦 Gemüsereich"],["ballast","🌾 Ballaststoffreich"],["leicht","🥗 Leicht"],["lowcarb","📉 Low-Carb"],["kalorien","🍔 Kalorienreich (über 800 kcal)"],["antient","🌿 Antientzündlich"],["glutenfrei",'<span class="gfb">GF</span> Glutenfrei'],["b1","💶 Günstig"],
+const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","🥩 Fleisch"],["kinder","👶 Kinderliebling"],["schnell","⏱️ Schnell fertig (bis 20 Min)"],["gesund","❤️ Gesund"],["protein","💪 Proteinreich"],["gemuese","🥦 Gemüsereich"],["ballast","🌾 Ballaststoffreich"],["leicht","🥗 Leicht"],["lowcarb","📉 Low-Carb"],["kalorien","🍔 Kalorienreich (über 800 kcal)"],["antient","🌿 Antientzündlich"],["glutenfrei",'<span class="gfb">GF</span> Glutenfrei'],["b1","💶 Günstig"],
   ["#","Küche"],["italien","🇮🇹 Italienisch"],["deutsch","🇩🇪🇦🇹 Deutsch / Österreichisch"],["med","🧆 Mediterran / Orientalisch"],["mexiko","🇲🇽 Mexikanisch"],["asia","🥢 Asiatisch"],["indien","🍛 Indisch"],["alltag-k","🍳 Alltagsküche"],["bowl","🥗 Salate & Bowls"],
   ["#","Alltag"],["az-o","🔥 Ofengericht"],["az-t","🍲 Ein Topf / eine Pfanne"],["az-f","❄️ Gut einzufrieren"],["az-v","🍱 Vorkochen"],["az-m","🧸 Zum Mitnehmen"],["az-k","👶 Kind kann helfen"],["az-wenig","⏱️ Wenige Zutaten"],["az-vorrat","🛍️ Mit Vorrat machbar"]];
 /* ---------- Pro-Tipps: ein Tipp pro Tag, der Reihe nach, nur beim Start; abschaltbar (pro Gerät) ---------- */
 const TIPS = [["Kochmodus", "Tippe im Rezept auf „Kochmodus“: große Schrift, Zutaten und Schritte zum Abhaken, der Bildschirm bleibt an. Wenn du etwas abhakst, scrollt es von selbst zum Nächsten."], ["Einkauf", "Das 🏠 hinter einer Zutat in der Einkaufsliste nimmt sie von der Liste, weil ihr sie zuhause habt. „Nur diesmal“ und „Angebrochen“ holst du unter „Schon zuhause“ mit dem 🛒 zurück."], ["Personenzahl", "Im Rezept änderst du mit − und + die Personenzahl. Die Zutaten und die Mengen in den Schritten rechnen sich automatisch mit um."], ["Vorrat", "Zutaten, die immer da sind, zum Beispiel Zwiebeln: Tippe in der Einkaufsliste beim 🏠 auf „Immer“. Dann tauchen sie nie wieder auf der Liste auf. Ändern kannst du das unter „Vorrat anpassen“ ganz unten in der Liste."], ["Alltag-Filter", "Unter Ideen findest du bei „Alle Filter“ den Reiter „Zeit & Alltag“: zum Beispiel Ofengericht, ein Topf, gut einzufrieren oder mit wenigen Zutaten."], ["Supermarkt", "Die Einkaufsliste lässt sich nach Abteilung sortieren. In den Einstellungen stellst du die Reihenfolge so ein, wie euer Supermarkt aufgebaut ist."], ["Reste", "„Was haben wir noch zuhause?“ in den Ideen: Tippe ein, was im Kühlschrank liegt, und die App zeigt dir Gerichte, die dazu passen."], ["Liste teilen", "Mit „Teilen“ in der Einkaufsliste schickst du die offenen Artikel zum Beispiel direkt an Google Keep oder an deine Familie."], ["Link teilen", "Tippe im Rezept auf „Link teilen“, um es per Nachricht zu verschicken. Wer den Link öffnet, sieht sofort das Rezept."], ["Zutaten kopieren", "Im Rezept kopiert „Zutaten kopieren“ die Mengen für eure Personenzahl, bereit zum Einfügen in eine Notiz oder eine Listen-App."], ["Leere Tage", "Mit „Leere Tage füllen“ schlägt die App für alle freien Tage Gerichte vor. Unter der Woche sind es nur schnelle Gerichte, bevorzugt vegetarisch."], ["Design", "In den Einstellungen wählst du zwischen hellem und dunklem Design, oder die App folgt automatisch deinem Handy."], ["Notiz", "Im Rezept hältst du unter „Unsere Notiz“ fest, was ihr beim nächsten Mal anders macht, zum Beispiel weniger Salz."], ["Lieblinge", "In den Einstellungen wählst du Lieblingskategorien. Sie kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran."], ["Einsenden", "Unter Ideen kannst du über „Rezept hinzufügen“ ein Rezept als Foto, PDF oder Link einsenden. Nach der Prüfung steht es für alle in der App."], ["Bewerten", "Nach dem Essen fragt die App, wie es geschmeckt hat. Mit 👍 und 👎 merkt ihr euch eure Favoriten."], ["Sicherung", "Unter Einstellungen → Daten sichern speicherst du Plan, eigene Rezepte und Einstellungen als Datei, zum Beispiel vor einem Handywechsel."]];
 const LS_TIPS = "essensplan-tips";
-const APP_VERSION = "2026-10-03 x";
+const APP_VERSION = "2026-10-03 y";
 const LS_HERO = "essensplan-hero";
 function heroClosed(){ try{ return !!localStorage.getItem(LS_HERO); }catch(e){ return false; } }
 function heroClose(){ try{ localStorage.setItem(LS_HERO,"1"); }catch(e){} $("#hero").hidden = true; }
@@ -3720,9 +3739,15 @@ function openSettings(toPantry){
   <div class="set">
     <h2>Einstellungen</h2>
     <p class="sub">${sync?"Gilt für eure ganze Familie – auf allen verbundenen Handys.":"Gilt für diese App. Wenn du den Plan teilst, gilt es für alle Verbundenen."}</p>
+    <h2 class="set-grp">A. Eure Familie</h2>
     <h3>👨‍👩‍👧 Personen</h3>
     <p class="sub">Rezepte und Einkaufsliste rechnen die Mengen automatisch um.</p>
     <div class="stepper" role="group" aria-label="Personen"><button type="button" data-setp="-1" aria-label="Eine Person weniger">−</button><span id="setPers">${s.persons}</span><button type="button" data-setp="1" aria-label="Eine Person mehr">+</button></div>
+    <h3>🌍 Region</h3>
+    <p class="sub">Bestimmt den Saisonkalender („Jetzt saisonal“) und die landestypischen Namen (z. B. Karfiol, Rüebli).</p>
+    <div class="filters" id="setRegion">${REGIONS.map(([k,l])=>`<button type="button" data-setregion="${k}" aria-pressed="${s.region===k}">${l}</button>`).join("")}</div>
+    <h2 class="set-grp">B. Was passt zu euch?</h2>
+    <p class="sub grp-sub">Alles hier ist optional. Je genauer, desto passender die Vorschläge.</p>
     <h3>⚠️ Allergene ausschließen</h3>
     <p class="sub">Solche Gerichte werden nie gewürfelt und überall mit ⚠️ markiert. Automatisch aus den Zutaten erkannt – ohne Gewähr.</p>
     <div class="filters" id="setAll">${ALLERGENS.map(([k,i,l])=>`<button type="button" data-allg="${k}" aria-pressed="${s.allerg.includes(k)}">${i} ${l}</button>`).join("")}</div>
@@ -3739,26 +3764,26 @@ function openSettings(toPantry){
     <h3>❤️ Lieblingskategorien</h3>
     <p class="sub">Kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran. <b>Lange drücken = ausschließen</b> (🚫): Solche Gerichte werden nicht mehr vorgeschlagen. Nochmal tippen hebt es auf.</p>
     <div class="filters" id="setFav">${FAV_OPTS.map(([k,l])=>k==="#"?`<span class="fsub">${l}</span>`:`<button type="button" data-fav="${k}" class="${s.excl.includes(k)?"excl":""}" aria-pressed="${s.fav.includes(k)}">${l}</button>`).join("")}</div>
+    <h2 class="set-grp">C. Was ist zuhause?</h2>
     <h3 id="setPantryH">🏠 Vorrat zuhause</h3>
     <p class="sub">Steht nie auf der Einkaufsliste und zählt bei „Was haben wir noch zuhause?“ als vorhanden. Aufnehmen: in der Einkaufsliste beim 🏠 → „Immer“, oder hier eintippen. „Immer“-Zutaten stehen nur hier, nicht unter „Schon zuhause“. Mit 🥫 markiert: angebrochen – fällt aus dem Vorrat, sobald ein Gericht damit gekocht wurde.</p>
     <div class="filters" id="setPantry"></div>
     <div class="fr-in"><input id="pnInput" type="text" placeholder="Zutat hinzufügen …" autocomplete="off" enterkeyhint="done"><button class="btn primary" id="pnAdd" type="button">+</button></div>
+    <h2 class="set-grp">D. Planung und Einkauf</h2>
+    <h3>🛒 Reihenfolge im Supermarkt</h3>
+    <p class="sub">So sortiert sich die Einkaufsliste „nach Abteilung“. Mit ▲▼ an euren Laden anpassen.</p>
+    <div id="setCats"></div>
+    <h3>🔔 Hinweise in der App</h3>
+    <p class="sub">Dezente Karten oben im Plan – keine Push-Nachrichten. Jede Art lässt sich einzeln abschalten (gilt nur für dieses Gerät).</p>
+    <div class="filters" id="setHints">${HINT_TYPES.map(([k,l,d])=>`<button type="button" data-hintset="${k}" aria-pressed="${!hintPrefs().off[k]}" title="${esc(d)}">${l}</button>`).join("")}</div>
+    <p class="sub">${HINT_TYPES.map(([,l,d])=>`${l.replace(/^\S+\s/,"")}: ${d}.`).join(" ")}</p>
+    <h2 class="set-grp">E. App und Gerät</h2>
     <h3>🎨 Design</h3>
     <p class="sub">Hell, dunkel oder wie dein Handy eingestellt ist. Gilt nur für dieses Gerät.</p>
     <div class="filters" id="setTheme">${[["auto","Automatisch"],["light","☀️ Hell"],["dark","🌙 Dunkel"]].map(([k,l])=>`<button type="button" data-settheme="${k}" aria-pressed="${themeMode()===k}">${l}</button>`).join("")}</div>
     <h3>💡 Tipps</h3>
     <p class="sub">Beim Start der App erscheint höchstens einmal am Tag ein kurzer Pro-Tipp, der Reihe nach. Gilt nur für dieses Gerät.</p>
     <div class="filters" id="setTips"><button type="button" data-settips="1" aria-pressed="${tipsOn()}">Pro-Tipps beim Start: ${tipsOn()?"An":"Aus"}</button></div>
-    <h3>🌍 Region</h3>
-    <p class="sub">Bestimmt den Saisonkalender („Jetzt saisonal“) und die landestypischen Namen (z. B. Karfiol, Rüebli).</p>
-    <div class="filters" id="setRegion">${REGIONS.map(([k,l])=>`<button type="button" data-setregion="${k}" aria-pressed="${s.region===k}">${l}</button>`).join("")}</div>
-    <h3>🔔 Hinweise in der App</h3>
-    <p class="sub">Dezente Karten oben im Plan – keine Push-Nachrichten. Jede Art lässt sich einzeln abschalten (gilt nur für dieses Gerät).</p>
-    <div class="filters" id="setHints">${HINT_TYPES.map(([k,l,d])=>`<button type="button" data-hintset="${k}" aria-pressed="${!hintPrefs().off[k]}" title="${esc(d)}">${l}</button>`).join("")}</div>
-    <p class="sub">${HINT_TYPES.map(([,l,d])=>`${l.replace(/^\S+\s/,"")}: ${d}.`).join(" ")}</p>
-    <h3>🛒 Reihenfolge im Supermarkt</h3>
-    <p class="sub">So sortiert sich die Einkaufsliste „nach Abteilung“. Mit ▲▼ an euren Laden anpassen.</p>
-    <div id="setCats"></div>
     <h3>💾 Daten sichern</h3>
     <p class="sub">Euer Plan liegt auf diesem Gerät${sync?" und im Familienplan":""}. Für einen Handywechsel oder als Sicherung: Plan, eigene Rezepte und Einstellungen als Datei speichern.</p>
     <div class="datarow"><button type="button" class="btn small" id="dataExport">Sicherung speichern</button><button type="button" class="btn small" id="dataImport">Sicherung laden</button><input type="file" id="dataFile" accept="application/json,.json" hidden></div>
@@ -4213,9 +4238,163 @@ document.addEventListener("change",e=>{
 document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeSheet(); if(e.key==="Enter" && e.target.id==="customDish"){ const b=document.querySelector("[data-custom]"); b&&b.click(); } });
 
 $("#noteHelp").addEventListener("click",()=>openHelp(false));
+
+/* ---------- Schnellstart (5 Fragen) und „Nur etwas für heute“ ---------- */
+const QS_FAV = [["kinder","👶 Kinderlieblinge"],["schnell","⏱️ Schnell fertig"],["veg","🌱 Vegetarisch"],["az-t","🍲 Ein Topf / eine Pfanne"],["az-v","🍱 Gut zum Vorkochen"],["az-vorrat","🛍️ Mit Vorräten machbar"],["b1","💶 Günstig"]];
+const QS_ALG = ["gluten","ei","milch","fisch","soja","erdnuss"];
+const QS_TIME = [[20,"Bis 20 Minuten"],[30,"Bis 30 Minuten"],[45,"Bis 45 Minuten"],[0,"Unterschiedlich / egal"]];
+const LS_QSNOTE = "essensplan-qsnote";
+let qs = null, qsMore = false;
+function qsInit(){ const c=S(); qs = {persons:c.persons, fav:new Set(c.fav.filter(k=>QS_FAV.some(x=>x[0]===k))), allerg:new Set(c.allerg), nogo:[...c.nogo], maxT:c.maxT, meat:c.meat}; }
+const qsTog = (set,k)=>{ if(set.has(k)) set.delete(k); else set.add(k); };
+function qsProg(n){ return `<p class="qs-prog">Schritt ${n} von 5 <span aria-hidden="true">${[1,2,3,4,5].map(i=>i<=n?"●":"○").join(" ")}</span></p>`; }
+function qsSummary(){
+  const p=[`${qs.persons} Person${qs.persons>1?"en":""}`, qs.maxT?`bis ${qs.maxT} Minuten`:"Zeit egal"];
+  QS_FAV.filter(x=>qs.fav.has(x[0])).forEach(x=>p.push(x[1].replace(/^\S+\s/,"")));
+  p.push(qs.allerg.size?`Ohne ${[...qs.allerg].map(k=>(ALLERGENS.find(a=>a[0]===k)||[0,0,k])[2]).join(", ")}`:"Keine Allergene ausgewählt");
+  if(qs.nogo.length) p.push(`Nicht gewünscht: ${qs.nogo.join(", ")}`);
+  p.push(`Fleisch und Fisch: ${(MEAT_OPTS.find(m=>m[0]===qs.meat)||[0,qs.meat])[1].toLowerCase()}`);
+  return p.join(" · ");
+}
+function qsWhy(){
+  const p=[]; if(qs.fav.has("schnell")||(qs.maxT&&qs.maxT<=30)) p.push("schnelle Gerichte"); if(qs.fav.has("kinder")) p.push("familienfreundliche Rezepte"); if(qs.fav.has("veg")) p.push("viel Vegetarisches"); if(qs.fav.has("b1")) p.push("günstige Zutaten");
+  if(qs.meat==="selten") p.push("wenig Fleisch"); if(qs.meat==="nie") p.push("kein Fleisch und Fisch");
+  if(qs.allerg.size) p.push("ohne eure Allergene"); if(qs.nogo.length) p.push("ohne ungeliebte Zutaten");
+  return p.length>1 ? p.slice(0,-1).join(", ")+" und "+p[p.length-1] : (p[0]||"eure Angaben");
+}
+function openQuickstart(step){
+  if(!qs || (step===1 && !qs._started)){ qsInit(); qs._started=true; }
+  const skip = `<button type="button" class="linkbtn qs-skip" data-qs="skip">Überspringen – ich starte mit der Beispielwoche</button>`;
+  const nav = (back,next,label)=>`<div class="qs-foot">${back?`<button type="button" class="btn" data-qs="to${back}">Zurück</button>`:""}<button type="button" class="btn primary" data-qs="to${next}">${label||"Weiter"}</button></div>${skip}`;
+  let h;
+  if(step===1){
+    h=`${qsProg(1)}<h2>Für wie viele Personen kocht ihr meistens?</h2>
+    <div class="stepper" role="group" aria-label="Personen"><button type="button" data-qs="pm" aria-label="Eine Person weniger">−</button><span id="qsPers">${qs.persons}</span><button type="button" data-qs="pp" aria-label="Eine Person mehr">+</button></div>
+    <p class="sub">2 Erwachsene + 1 Kind – du kannst das jederzeit ändern.</p>${nav(0,2)}`;
+  } else if(step===2){
+    h=`${qsProg(2)}<h2>Was soll bei euren Gerichten häufiger vorkommen?</h2>
+    <div class="qs-chips" id="qsFav">${QS_FAV.map(([k,l])=>`<button type="button" data-qsf="${k}" aria-pressed="${qs.fav.has(k)}">${l}</button>`).join("")}<button type="button" data-qsf="" class="qs-none" aria-pressed="${!qs.fav.size}">Nichts festlegen</button></div>
+    <p class="sub">Du kannst später weitere Lieblingskategorien hinzufügen oder einzelne wieder ausschließen.</p>${nav(1,3)}`;
+  } else if(step===3){
+    const list = qsMore ? ALLERGENS : ALLERGENS.filter(a=>QS_ALG.includes(a[0]));
+    h=`${qsProg(3)}<h2>Gibt es Allergien oder Zutaten, die ihr nicht mögt?</h2>
+    <h3>Allergene ausschließen</h3>
+    <div class="qs-chips" id="qsAll">${list.map(([k,i,l])=>`<button type="button" data-qsa="${k}" aria-pressed="${qs.allerg.has(k)}">${i} ${l}</button>`).join("")}</div>
+    ${qsMore?"":`<button type="button" class="linkbtn" data-qs="more">Weitere Allergene anzeigen</button>`}
+    <p class="sub">Die Angaben werden automatisch aus den Zutaten erkannt. Bei Allergien bitte immer zusätzlich die Packungsangaben prüfen.</p>
+    <h3>Nicht mögen</h3>
+    <div class="filters" id="qsNogo"></div>
+    <div class="fr-in"><input id="qsNgIn" type="text" placeholder="Zutaten, die bei euch nie auf den Tisch kommen – zum Beispiel Pilze" autocomplete="off" enterkeyhint="done"><button type="button" class="btn small" data-qs="ngadd">Hinzufügen</button></div>${nav(2,4)}`;
+  } else if(step===4){
+    h=`${qsProg(4)}<h2>Wie viel Zeit habt ihr Montag bis Freitag meistens zum Kochen?</h2>
+    <div class="qs-chips" id="qsTime">${QS_TIME.map(([v,l])=>`<button type="button" data-qst="${v}" aria-pressed="${qs.maxT===v}">${l}</button>`).join("")}</div>
+    <p class="sub">Gemeint ist die aktive Zeit am Herd. Backen, Warten und Garzeit zählen nicht mit. 30 Minuten sind für die meisten Familien ein guter Startwert.</p>${nav(3,5)}`;
+  } else if(step===5){
+    h=`${qsProg(5)}<h2>Wie oft sollen Fleisch oder Fisch vorkommen?</h2>
+    <div class="qs-chips" id="qsMeat">${MEAT_OPTS.map(([k,l])=>`<button type="button" data-qsm="${k}" aria-pressed="${qs.meat===k}">${l}</button>`).join("")}</div>
+    <p class="sub">Das steuert nur die Vorschläge. Du kannst einzelne Gerichte jederzeit selbst auswählen.</p>${nav(4,6)}`;
+  } else {
+    h=`<h2>Eure Startvorlieben</h2><p class="qs-sum">${esc(qsSummary())}</p>
+    <div class="qs-foot"><button type="button" class="btn primary" data-qs="build">Passende Woche erstellen</button></div>
+    <div class="qs-foot"><button type="button" class="btn" data-qs="to1">Noch etwas ändern</button></div>
+    <button type="button" class="linkbtn qs-skip" data-qs="nosave">Ohne Einstellungen starten</button>`;
+  }
+  openSheet(`<button class="btn small close" data-close>Schließen</button><div class="qs" data-qstep="${step}">${h}</div>`);
+  if(step===3) qsDrawNogo();
+}
+function qsDrawNogo(){ const el=$("#qsNogo"); if(el) el.innerHTML = qs.nogo.map((k,i)=>`<button type="button" data-qsn="${i}" aria-label="${esc(k)} entfernen">${esc(k)} ×</button>`).join(""); }
+function qsApply(){
+  const c=S(), keepFav=c.fav.filter(k=>!QS_FAV.some(x=>x[0]===k));
+  state.settings = {...(state.settings||{}), persons:qs.persons, fav:[...keepFav,...qs.fav], allerg:[...qs.allerg], nogo:[...qs.nogo], maxT:qs.maxT, meat:qs.meat};
+}
+function qsBuildWeek(){
+  qsApply();
+  state.days = {};   /* Beispielwoche wird ersetzt */
+  const sel=new Set(["abwechslung"]); if(qs.fav.has("kinder")) sel.add("kid"); if(qs.fav.has("schnell")) sel.add("schnell"); if(qs.fav.has("b1")) sel.add("guenstig");
+  let n=0;
+  [0,1].forEach(w=>{ if(w===1 && n>=3) return;
+    paWeek=w; paSel=sel; const plan={};
+    paFreeDays().forEach(g=>{ const d=paPick(g,plan); if(d) plan[g]=d.id; });
+    Object.keys(plan).forEach(k=>{ state.days[k]=plan[k]; n++; }); });
+  paPlan={}; paWeek=0; viewWeek=0;
+  try{ localStorage.setItem(LS_QSNOTE, qsWhy()); }catch(e){}
+  heroClose(); closeSheet(); commit(true);
+  toast(n?"Eure erste Woche ist vorbereitet":"Kein passendes Gericht gefunden – lockert die Angaben ein wenig");
+}
+function qsNoteRender(){
+  const el=$("#qsNote"); if(!el) return; let why=null; try{ why=localStorage.getItem(LS_QSNOTE); }catch(e){}
+  el.hidden = !why || !!viewWeek || isExample;
+  if(why) el.innerHTML = `<button type="button" class="hero-x" data-qsnote="x" aria-label="Hinweis schließen">×</button><b>Eure erste Woche ist vorbereitet.</b> Du kannst jedes Gericht antippen, austauschen oder direkt die <button type="button" class="linkbtn" data-qsnote="shop">Einkaufsliste öffnen</button>.<br><b>Warum diese Woche?</b> Eure Auswahl wurde berücksichtigt: ${esc(why)}.`;
+}
+$("#qsNote").addEventListener("click",e=>{ const b=e.target.closest("[data-qsnote]"); if(!b) return;
+  if(b.dataset.qsnote==="x"){ try{ localStorage.removeItem(LS_QSNOTE); }catch(x){} $("#qsNote").hidden=true; }
+  else $("#tab-einkauf").click(); });
+$("#sheetRoot").addEventListener("click",e=>{
+  const root=e.target.closest(".qs[data-qstep]"); if(!root) return;
+  const b=e.target.closest("button"); if(!b) return; e.stopPropagation();
+  const step=+root.dataset.qstep;
+  if(b.dataset.qs){ const a=b.dataset.qs;
+    if(a==="skip"||a==="nosave"){ heroClose(); closeSheet(); qs=null; return; }
+    if(a==="build"){ qsBuildWeek(); qs=null; return; }
+    if(a==="pm"||a==="pp"){ qs.persons=Math.min(12,Math.max(1,qs.persons+(a==="pp"?1:-1))); $("#qsPers").textContent=qs.persons; return; }
+    if(a==="more"){ qsMore=true; openQuickstart(3); return; }
+    if(a==="ngadd"){ const inp=$("#qsNgIn"), v=inp.value.trim().slice(0,40); if(v && !qs.nogo.some(x=>x.toLowerCase()===v.toLowerCase())) qs.nogo.push(v); inp.value=""; qsDrawNogo(); return; }
+    if(/^to\d$/.test(a)){ if(step===3){ const inp=$("#qsNgIn"), v=inp&&inp.value.trim().slice(0,40); if(v && !qs.nogo.some(x=>x.toLowerCase()===v.toLowerCase())) qs.nogo.push(v); } openQuickstart(+a[2]); return; }
+  }
+  if(b.dataset.qsf!==undefined){ const k=b.dataset.qsf; if(!k) qs.fav.clear(); else qsTog(qs.fav,k);
+    document.querySelectorAll("#qsFav [data-qsf]").forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.qsf?qs.fav.has(x.dataset.qsf):!qs.fav.size))); return; }
+  if(b.dataset.qsa){ qsTog(qs.allerg,b.dataset.qsa); b.setAttribute("aria-pressed",String(qs.allerg.has(b.dataset.qsa))); return; }
+  if(b.dataset.qsn!==undefined){ qs.nogo.splice(+b.dataset.qsn,1); qsDrawNogo(); return; }
+  if(b.dataset.qst!==undefined){ qs.maxT=+b.dataset.qst; document.querySelectorAll("#qsTime button").forEach(x=>x.setAttribute("aria-pressed",String(+x.dataset.qst===qs.maxT))); return; }
+  if(b.dataset.qsm){ qs.meat=b.dataset.qsm; document.querySelectorAll("#qsMeat button").forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.qsm===qs.meat))); return; }
+});
+document.addEventListener("keydown",e=>{ if(e.key==="Enter" && e.target.id==="qsNgIn"){ e.preventDefault(); document.querySelector('[data-qs="ngadd"]').click(); } });
+
+/* „Nur etwas für heute suchen“ */
+let td = {t:30, kid:false, k:"", have:""};
+function openToday(res){
+  const chips=(id,attr,opts,val)=>`<div class="qs-chips" id="${id}">${opts.map(([v,l])=>`<button type="button" data-${attr}="${v}" aria-pressed="${val===v}">${l}</button>`).join("")}</div>`;
+  let h;
+  if(res){
+    h=`<h2>${esc(res.d.n)}</h2><p class="sub">${esc(timeLong(res.d))} · ${KIND_IC[res.d.k]||""} ${res.d.k==="veg"?"Vegetarisch":res.d.k==="fisch"?"Fisch":"Fleisch"}</p>${res.note?`<p class="sub">${esc(res.note)}</p>`:""}
+    <div class="qs-foot"><button type="button" class="btn primary" data-td="open" data-id="${res.d.id}">Rezept öffnen und einplanen</button></div>
+    <div class="qs-foot"><button type="button" class="btn" data-td="again">Etwas anderes zeigen</button></div>
+    <button type="button" class="linkbtn qs-skip" data-td="back">Angaben ändern</button>`;
+  } else {
+    h=`<h2>Nur etwas für heute</h2><p class="sub">Vier kurze Angaben, dann zeigen wir dir ein passendes Gericht.</p>
+    <h3>Kochzeit</h3>${chips("tdT","tdt",[[20,"Bis 20 Min"],[30,"Bis 30 Min"],[45,"Bis 45 Min"],[0,"Egal"]],td.t)}
+    <h3>Für wen</h3><div class="qs-chips" id="tdK"><button type="button" data-tdkid="1" aria-pressed="${td.kid}">👶 Familienfreundlich</button></div>
+    <h3>Art</h3>${chips("tdA","tdk",[["","Egal"],["veg","🌱 Vegetarisch"],["fleisch","🥩 Fleisch"],["fisch","🐟 Fisch"]],td.k)}
+    <h3>Was ist noch da?</h3><div class="fr-in"><input id="tdHave" type="text" value="${esc(td.have)}" placeholder="z. B. Paprika, Reis, Eier (optional)" autocomplete="off" enterkeyhint="done"></div>
+    <div class="qs-foot"><button type="button" class="btn primary" data-td="go">Zeig mir etwas Passendes</button></div>`;
+  }
+  openSheet(`<button class="btn small close" data-close>Schließen</button><div class="qs" data-today="1">${h}</div>`);
+}
+function todayPick(){
+  const hv = td.have.split(/[,;\n]+/).map(x=>x.trim()).filter(Boolean);
+  let pool = notExcl(allDishes().filter(d=>!d.side && likeOf(d.id)>=0 && !blockedAllergens(d).length && !nogoHits(d).length && (!td.t || !act(d) || act(d)<=td.t) && (!td.kid || d.kid) && (!td.k || d.k===td.k) && (d.k==="veg"||meatCap()>0)));
+  let note="";
+  if(!pool.length){ pool = notExcl(allDishes().filter(d=>!d.side && !blockedAllergens(d).length && !nogoHits(d))); note="Mit diesen Angaben gab es nichts Passendes – hier ein Vorschlag mit gelockerten Angaben."; }
+  if(hv.length){ const hit = pool.filter(d=>hv.some(t=>d.i.some(x=>frMatch(t,String(x[2]))))); if(hit.length) pool=hit; else note=note||"Mit euren Zutaten nichts gefunden – hier etwas anderes."; }
+  return {d:pool[Math.floor(Math.random()*pool.length)], note};
+}
+$("#sheetRoot").addEventListener("click",e=>{
+  const root=e.target.closest(".qs[data-today]"); if(!root) return;
+  const b=e.target.closest("button"); if(!b) return; e.stopPropagation();
+  const hv=$("#tdHave"); if(hv) td.have=hv.value;
+  if(b.dataset.tdt!==undefined){ td.t=+b.dataset.tdt; document.querySelectorAll("#tdT button").forEach(x=>x.setAttribute("aria-pressed",String(+x.dataset.tdt===td.t))); return; }
+  if(b.dataset.tdkid){ td.kid=!td.kid; b.setAttribute("aria-pressed",String(td.kid)); return; }
+  if(b.dataset.tdk!==undefined){ td.k=b.dataset.tdk; document.querySelectorAll("#tdA button").forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.tdk===td.k))); return; }
+  const a=b.dataset.td;
+  if(a==="go"||a==="again"){ const r=todayPick(); if(r.d) openToday(r); else toast("Kein passendes Gericht gefunden"); return; }
+  if(a==="back"){ openToday(); return; }
+  if(a==="open"){ showDish(b.dataset.id); return; }
+});
+
 $("#heroX").addEventListener("click",heroClose);
-$("#heroSet").addEventListener("click",()=>{ heroClose(); openSettings(); });
-$("#heroGo").addEventListener("click",()=>{ heroClose(); $("#fillWeek").click(); });
+$("#heroSet").addEventListener("click",()=>openQuickstart(1));
+$("#heroGo").addEventListener("click",()=>{ heroClose(); });
+$("#heroToday").addEventListener("click",()=>openToday());
 $("#newWeek").addEventListener("click",()=>setTimeout(()=>{ if(!$("#newWeek").dataset.confirm) $("#wkMenu").open=false; },0));
 document.addEventListener("click",e=>{ const m=$("#wkMenu"); if(m && m.open && !e.target.closest("#wkMenu")) m.open=false; });
 $("#pantryEdit").addEventListener("click",()=>openSettings(true));
