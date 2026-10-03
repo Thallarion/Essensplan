@@ -601,6 +601,7 @@ details.cp-wk summary{cursor:pointer;min-height:44px;display:flex;align-items:ce
 .qi button{flex:none;white-space:nowrap;font:600 13px var(--body);padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
 .qi button[aria-pressed="true"]{border-color:var(--basil);background:var(--basil-soft);color:var(--basil)}
 .qi button[aria-pressed="true"]::before{content:"✓ "}
+.vh{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .qi-lbl{font-size:12px;color:var(--muted);margin:0 0 6px;display:flex;align-items:center;gap:6px}
 .qi-edit{border:0;background:transparent;font-size:14px;line-height:1;padding:4px 6px;border-radius:8px;cursor:pointer;color:var(--muted)}
 .qi-edit:hover,.qi-edit:focus-visible{background:var(--basil-soft)}
@@ -3330,7 +3331,7 @@ const FILTER_GROUPS = [
   ["Essen & Küche",[["#","Art"],["veg","🌱 Vegetarisch"],["fleisch","🥩 Fleisch"],["fisch","🐟 Fisch"],["#","Küche"],["italien","🇮🇹 Italienisch"],["deutsch","🇩🇪🇦🇹 Deutsch / Österreichisch"],["med","🧆 Mediterran / Orientalisch"],["mexiko","🇲🇽 Mexikanisch"],["asia","🥢 Asiatisch"],["indien","🍛 Indisch"],["alltag-k","🍳 Alltagsküche"],["bowl","🥗 Salate & Bowls"],["#","Herkunft"],["eingesendet","📷 Eingesendet"],["meine","⭐ Meine Rezepte"]]],
   ["Zeit & Alltag",[["#","Zeit"],["schnell","Bis 20 Min"],["alltag","Bis 30 Min"],["zeit","Ab 40 Min"],["#","Aufwand"],["aktiv15","👩‍🍳 Wenig Aufwand (aktiv bis 15 Min)"],["aktiv25","👩‍🍳 Mittlerer Aufwand (aktiv bis 25 Min)"],["#","Alltag"],["az-o","🔥 Ofengericht (backt von allein)"],["az-t","🍲 Ein Topf / eine Pfanne"],["az-f","❄️ Gut einzufrieren"],["az-v","🍱 Vorkochen / aufwärmen"],["az-m","🧸 Zum Mitnehmen / kalt essbar"],["az-k","👶 Kind kann helfen"],["az-wenig","⏱️ Wenige Zutaten (bis 6)"],["az-vorrat","🛍️ Mit Vorrat machbar"]]],
   ["Gesundheit & Ernährung",[["#","Gesundheit"],["gesund","❤️ Gesund"],["protein","💪 Proteinreich"],["gemuese","🥦 Gemüsereich"],["ballast","🌾 Ballaststoffreich"],["leicht","🥗 Leicht"],["lowcarb","📉 Low-Carb"],["#","Ernährung"],["kinder","👶 Kinderliebling"],["antient","🌿 Antientzündlich"],["glutenfrei",'<span class="gfb">GF</span> Glutenfrei']]],
-  ["Budget",[["b1","💶 Günstig (bis 6,50 €)"],["b2","💶💶 Mittel (bis 9 €)"],["b3","💶💶💶 Teurer"]]],
+  ["Budget",[["b1",'<span aria-hidden="true">💶</span><span class="vh">Günstig (bis 6,50 €)</span>'],["b2",'<span aria-hidden="true">💶💶</span><span class="vh">Mittel (bis 9 €)</span>'],["b3",'<span aria-hidden="true">💶💶💶</span><span class="vh">Teurer</span>']]],
   ["Bewertung",[["like","👍 Mögen wir"],["dislike","👎 Mögen wir nicht"],["lange","🕒 Lange nicht gegessen"]]],
   ["Ohne Allergene",ALLERGENS.map(([k,i,l])=>["no-"+k,`${i} ohne ${l}`])],
 ];
@@ -3755,6 +3756,7 @@ function openHelp(first){
         <li><b>Schnell zum Ziel</b>: Knöpfe für die häufigsten Wünsche, z. B. „In 20 Min fertig“ oder „Vegetarisch“. Mit dem <b>✏️</b> daneben stellst du sie nach deinem Geschmack zusammen: Küchen (z. B. Italienisch), Alltag (z. B. Ofengericht) und Gesund-Kategorien (z. B. Proteinreich), verschiebst sie mit ↑ ↓ oder entfernst sie mit ×. Die ersten 10 sind sichtbar, der Rest liegt hinter „Mehr …“. Die Auswahl gilt nur auf deinem Gerät, „Zurücksetzen“ stellt die Standardauswahl wieder her.</li>
         <li>Suche nach Gericht oder Zutat, z. B. „Feta“ oder „Nudeln“.</li>
         <li><b>Alle Filter</b> öffnet die Filter in Reitern: Essen &amp; Küche, Zeit &amp; Alltag, Gesundheit &amp; Ernährung, Budget, Bewertung und Ohne Allergene. Mehrere lassen sich kombinieren, z. B. „Vegetarisch“ + „Italienisch“. Aktive Filter stehen als Chips darunter – mit × entfernen.</li>
+        <li><b>Budget</b> (geschätzte Zutatenkosten für 3 Personen): 💶 günstig (bis 6,50 €), 💶💶 mittel (bis 9 €), 💶💶💶 teurer.</li>
         <li><b>Alltag</b> (unter „Zeit &amp; Alltag“): Ofengericht, Ein Topf, Gut einzufrieren, Vorkochen, Zum Mitnehmen, Kind kann helfen, Wenige Zutaten und Mit Vorrat machbar.</li>
         <li><b>Ohne Allergene</b>: z. B. „ohne Gluten“ + „ohne Milch“ zeigt nur Gerichte, in denen beides nicht vorkommt.</li>
       </ul>
