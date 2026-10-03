@@ -547,7 +547,7 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
 .home-btn:hover,.home-btn:focus-visible{border-color:var(--basil);color:var(--basil)}
 .item.done .home-btn{display:none}
 .homebox{margin:0 0 12px;color:var(--muted)}
-.homebox summary{cursor:pointer;font:600 14px var(--body);padding:8px 4px}
+.homebox-h{font:600 14px var(--body);padding:8px 4px}
 
 /* --- Review-Umsetzung --- */
 .weekbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
@@ -3230,7 +3230,7 @@ function renderShop(){
   const open = grouped.filter(it=>!isDone(it)).length + extras.filter(it=>!isDone(it)).length;
   $("#shopCount").textContent = open;
   homeList = groupParts(shopPartsAll().filter(pt=>pantryHas(pt.n) || state.hidden[pt.key]==="home")).map(it=>({...it, pantry:pantryHas(it.n)})).sort((a,b)=>a.n.localeCompare(b.n,"de"));
-  const homeHtml = homeList.length ? `<details class="homebox"><summary>🏠 Schon zuhause (${homeList.length})</summary>${homeList.map((it,i)=>`<div class="item"><label style="cursor:default"><span class="qty">${fmtQty(it.a,it.u)}</span><span>${esc(it.n)}${it.pantry?" <small class=\"for\">Vorrat</small>":""}</span></label><button class="home-btn" type="button" data-unhome="${i}">${it.pantry?"Aus Vorrat nehmen":"Zurück auf die Liste"}</button></div>`).join("")}</details>` : "";
+  const homeHtml = homeList.length ? `<div class="homebox"><div class="homebox-h">🏠 Schon zuhause (${homeList.length})</div>${homeList.map((it,i)=>`<div class="item"><label style="cursor:default"><span class="qty">${fmtQty(it.a,it.u)}</span><span>${esc(it.n)}${it.pantry?" <small class=\"for\">Vorrat</small>":""}</span></label><button class="home-btn" type="button" data-unhome="${i}" aria-label="${it.pantry?"Aus Vorrat nehmen":"Zurück auf die Liste"}" title="${it.pantry?"Aus Vorrat nehmen":"Zurück auf die Liste"}">🛒</button></div>`).join("")}</div>` : "";
   if(!grouped.length && !extras.length){
     $("#shop").innerHTML = `<p class="empty" style="padding:14px 0">${plannedDays().length?'Für die ausgewählten Tage ist nichts mehr offen. Wähl oben andere Tage aus.':'Die Liste ist leer. Plane ein paar Gerichte, dann erscheinen die Zutaten hier.'}</p>` + homeHtml;
     return;
