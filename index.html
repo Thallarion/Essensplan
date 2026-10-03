@@ -857,6 +857,7 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
 .ck-fab{position:fixed;left:16px;right:16px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:3;min-height:68px;border:0;border-radius:18px;background:var(--basil);color:var(--basil-ink);font:700 22px var(--body);cursor:pointer;box-shadow:var(--shadow)}
 .ck-fab[hidden]{display:none}
 .ck-fin{margin:22px 0 0;padding:18px;border-radius:16px;background:var(--basil-soft);color:var(--basil);font:700 22px var(--body);text-align:center}
+.help-info{display:block;text-align:center;text-decoration:none;margin:0 0 12px}
 .hero{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px 16px 14px;margin:0 0 14px;box-shadow:var(--shadow)}
 .hero h2{margin:0 28px 4px 0;font-size:22px;line-height:1.2}
 .hero-sub{margin:0 0 12px;color:var(--muted);font-size:15px}
@@ -3725,9 +3726,9 @@ function openHelp(first){
   const leg = [["🌱","Vegetarisch"],["🥩","Fleisch"],["🐟","Fisch"],["👶","Kinderliebling – mild und kindertauglich"],["❤️","Gesund – viel Gemüse und Ballaststoffe, nicht zu fett, kein verarbeitetes Fleisch"],["💪","Proteinreich – mind. 25 g Eiweiß pro Portion"],["🥦","Gemüsereich – mind. 250 g Gemüse/Hülsenfrüchte pro Portion"],["🌾","Ballaststoffreich – mind. 10 g pro Portion"],["🥗","Leicht – höchstens 550 kcal pro Portion"],["📉","Low-Carb – höchstens 35 g Kohlenhydrate pro Portion"],["🌿","Antientzündlich – jodarm, viel Gemüse, gute Öle"],['<span class="gfb">GF</span>',"Glutenfrei"],["🥢","Asiatisch"],["🍛","Indisch"],["🥣","Beilage/Dip – wird nicht gewürfelt"],["📷 🔗","Eingesendet (Foto/Link)"],["⭐","Mein Rezept – selbst angelegt"],["👍 👎","Eure Bewertung"],["⚠️","Enthält ein Allergen, das ihr in ⚙ ausgeschlossen habt"]];
   openSheet(`<button class="btn small close" data-close>Schließen</button>
   <div class="help">
-    <p class="sub"><a href="info.html">Was ist „Was essen wir?“ – Überblick &amp; Fragen</a></p>
     <h2>${first?"Willkommen! 👋":"Anleitung"}</h2>
     <p class="intro">Was essen wir? plant eure Woche, schreibt die Einkaufsliste und hat viele Rezeptideen für jeden Tag. Tipp auf ein Thema:</p>
+    <a class="btn help-info" href="info.html">ℹ️ Überblick &amp; häufige Fragen</a>
     <details ${first?"open":""}><summary>👋 Erste Schritte</summary>
       <p>Die App funktioniert sofort – ohne Anmeldung. Alles wird <b>nur auf deinem Handy</b> gespeichert, bis du den Plan mit jemandem teilst.</p>
       <p>Am Anfang siehst du eine <b>Beispielwoche</b>. Tausch einfach Gerichte aus – ab dann ist es dein Plan.</p>
