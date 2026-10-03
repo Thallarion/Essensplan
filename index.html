@@ -71,6 +71,9 @@
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
+html.scroll-lock{overflow-y:scroll;overscroll-behavior:none}
+body.scroll-lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
+.scrim,.sheet,#cookRoot,#byeRoot{overscroll-behavior:contain}
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 [hidden]{display:none!important}
 body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45}
@@ -3591,8 +3594,18 @@ function openSheet(html){
   $("#sheetRoot").innerHTML = `<div class="scrim" data-scrim><div class="sheet" role="dialog" aria-modal="true">${html}</div></div>`;
   const f = $("#sheetRoot").querySelector("button"); if(f) f.focus();
   const m = /data-cook="([^"]+)"/.exec(html); setRecipeHash(m ? m[1] : null);
+  scrollLockSync();
 }
-function closeSheet(){ $("#sheetRoot").innerHTML = ""; setRecipeHash(null); }
+function closeSheet(){ $("#sheetRoot").innerHTML = ""; setRecipeHash(null); scrollLockSync(); }
+/* Seite hinter einem Fenster einfrieren (Einstellungen, Rezept, Kochmodus …) und danach exakt dieselbe Stelle wiederherstellen */
+let _lockY = null;
+function scrollLockSync(){
+  const bye = document.getElementById("byeRoot"), ck = document.getElementById("cookRoot"), sr = document.getElementById("sheetRoot");
+  const open = !!((sr && sr.children.length) || (ck && !ck.hidden) || (bye && !bye.hidden));
+  if(open && _lockY===null){ _lockY = window.scrollY; document.body.style.top = (-_lockY)+"px"; document.documentElement.classList.add("scroll-lock"); document.body.classList.add("scroll-lock"); }
+  else if(!open && _lockY!==null){ const y=_lockY; _lockY = null; document.documentElement.classList.remove("scroll-lock"); document.body.classList.remove("scroll-lock"); document.body.style.top = ""; window.scrollTo({top:y, behavior:"instant"}); }
+}
+try{ const mo = new MutationObserver(scrollLockSync); document.addEventListener("DOMContentLoaded",()=>{ ["sheetRoot","cookRoot"].forEach(i=>{ const el=document.getElementById(i); if(el) mo.observe(el,{childList:true,attributes:true,attributeFilter:["hidden"]}); }); mo.observe(document.body,{childList:true}); }); }catch(e){}
 /* Rezept-Links: wasessenwir.at/#/rezept/<id> öffnet das Rezept (Adresszeile folgt dem geöffneten Rezept) */
 const RZ_HASH = /^#\/rezept\/([A-Za-z0-9_-]+)$/;
 function setRecipeHash(id){
@@ -3704,7 +3717,7 @@ const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","
 /* ---------- Pro-Tipps: ein Tipp pro Tag, der Reihe nach, nur beim Start; abschaltbar (pro Gerät) ---------- */
 const TIPS = [["Kochmodus", "Tippe im Rezept auf „Kochmodus“: große Schrift, Zutaten und Schritte zum Abhaken, der Bildschirm bleibt an. Wenn du etwas abhakst, scrollt es von selbst zum Nächsten."], ["Einkauf", "Das 🏠 hinter einer Zutat in der Einkaufsliste nimmt sie von der Liste, weil ihr sie zuhause habt. „Nur diesmal“ und „Angebrochen“ holst du unter „Schon zuhause“ mit dem 🛒 zurück."], ["Personenzahl", "Im Rezept änderst du mit − und + die Personenzahl. Die Zutaten und die Mengen in den Schritten rechnen sich automatisch mit um."], ["Vorrat", "Zutaten, die immer da sind, zum Beispiel Zwiebeln: Tippe in der Einkaufsliste beim 🏠 auf „Immer“. Dann tauchen sie nie wieder auf der Liste auf. Ändern kannst du das unter „Vorrat anpassen“ ganz unten in der Liste."], ["Alltag-Filter", "Unter Ideen findest du bei „Alle Filter“ den Reiter „Zeit & Alltag“: zum Beispiel Ofengericht, ein Topf, gut einzufrieren oder mit wenigen Zutaten."], ["Supermarkt", "Die Einkaufsliste lässt sich nach Abteilung sortieren. In den Einstellungen stellst du die Reihenfolge so ein, wie euer Supermarkt aufgebaut ist."], ["Reste", "„Was haben wir noch zuhause?“ in den Ideen: Tippe ein, was im Kühlschrank liegt, und die App zeigt dir Gerichte, die dazu passen."], ["Liste teilen", "Mit „Teilen“ in der Einkaufsliste schickst du die offenen Artikel zum Beispiel direkt an Google Keep oder an deine Familie."], ["Link teilen", "Tippe im Rezept auf „Link teilen“, um es per Nachricht zu verschicken. Wer den Link öffnet, sieht sofort das Rezept."], ["Zutaten kopieren", "Im Rezept kopiert „Zutaten kopieren“ die Mengen für eure Personenzahl, bereit zum Einfügen in eine Notiz oder eine Listen-App."], ["Leere Tage", "Mit „Leere Tage füllen“ schlägt die App für alle freien Tage Gerichte vor. Unter der Woche sind es nur schnelle Gerichte, bevorzugt vegetarisch."], ["Design", "In den Einstellungen wählst du zwischen hellem und dunklem Design, oder die App folgt automatisch deinem Handy."], ["Notiz", "Im Rezept hältst du unter „Unsere Notiz“ fest, was ihr beim nächsten Mal anders macht, zum Beispiel weniger Salz."], ["Lieblinge", "In den Einstellungen wählst du Lieblingskategorien. Sie kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran."], ["Einsenden", "Unter Ideen kannst du über „Rezept hinzufügen“ ein Rezept als Foto, PDF oder Link einsenden. Nach der Prüfung steht es für alle in der App."], ["Bewerten", "Nach dem Essen fragt die App, wie es geschmeckt hat. Mit 👍 und 👎 merkt ihr euch eure Favoriten."], ["Sicherung", "Unter Einstellungen → Daten sichern speicherst du Plan, eigene Rezepte und Einstellungen als Datei, zum Beispiel vor einem Handywechsel."]];
 const LS_TIPS = "essensplan-tips";
-const APP_VERSION = "2026-10-03 y";
+const APP_VERSION = "2026-10-03 z";
 const LS_HERO = "essensplan-hero";
 function heroClosed(){ try{ return !!localStorage.getItem(LS_HERO); }catch(e){ return false; } }
 function heroClose(){ try{ localStorage.setItem(LS_HERO,"1"); }catch(e){} $("#hero").hidden = true; }
@@ -5142,8 +5155,8 @@ window.addEventListener("beforeprint",()=>{ const h=$("#printHead"); if(h){ cons
     let el = $("#byeRoot");
     if(!el){ el = document.createElement("div"); el.id = "byeRoot"; document.body.appendChild(el); }
     el.innerHTML = `<div class="bye-in"><div class="bye-emo">👋</div><h2>Bis bald!</h2><p>Zum Beenden drücke noch einmal die Zurück-Taste.</p><button type="button" class="btn" id="byeBack">Doch weiter planen</button></div>`;
-    el.hidden = false; document.body.style.overflow = "hidden";
-    $("#byeBack").addEventListener("click",()=>{ el.hidden = true; document.body.style.overflow = ""; exiting = false; depth = 0; fill(); });
+    el.hidden = false; document.body.style.overflow = "hidden"; scrollLockSync();
+    $("#byeBack").addEventListener("click",()=>{ el.hidden = true; document.body.style.overflow = ""; scrollLockSync(); exiting = false; depth = 0; fill(); });
   }
   /* Zurück auf der Wochenansicht: direkt zum Abschied-Bildschirm, dort beendet das nächste Zurück die App */
   function askExit(){
