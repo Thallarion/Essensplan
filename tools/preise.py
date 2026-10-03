@@ -25,7 +25,7 @@ PREIS = {
  "Gewürzgurken":3,"Gnocchi":5,"Gochujang (koreanische Chilipaste)":15,"Gouda am Stück":10,"Gouda gerieben":10,"Gouda in Scheiben":10,"Griechischer Joghurt":5,"Grüne Bohnen":5,
  "Grüne Bohnen (TK)":4,"Grüne Linsen":5,"Grüne Peperoni":8,"Grüner Spargel":10,"Grünes Pesto":12,"Grünkernschrot":5,"Grünkohl":5,"Gurke":3,"Gyoza mit Gemüsefüllung":12,"Gyros (gewürzt)":10,
  "Hackfleisch gemischt":9,"Haferdrink (ohne Jodzusatz)":1.5,"Haferflocken":2.5,"Halloumi":13,"Hefeflocken":25,"Hirse":4,"Hokkaido-Kürbis":3,"Holzspieße":0,"Hähnchenbrust":11,
- "Mandeln (gehobelt)":14,"Romanesco":6,"Hähnchenbrustfilet":11,"Hähnchenschenkel":6,"Hüttenkäse":6,"Ingwer (klein)":12,"Jasminreis":3.5,"Kabeljaufilet":24,"Karotten":1.5,"Kartoffeln (festkochend)":1.8,
+ "Mandeln (gehobelt)":14,"Romanesco":6,"Grünkern":6,"Burrata":20,"Pekannusskerne":45,"Rosmarin":40,"Hähnchenbrustfilet":11,"Hähnchenschenkel":6,"Hüttenkäse":6,"Ingwer (klein)":12,"Jasminreis":3.5,"Kabeljaufilet":24,"Karotten":1.5,"Kartoffeln (festkochend)":1.8,
  "Kartoffeln (mehligkochend)":1.8,"Kartoffeln (mittelgroß)":1.8,"Kichererbsen":3.5,"Kidneybohnen":3.5,"Kirschtomaten":7,"Knoblauch":12,"Knollensellerie (klein)":3,"Kochschinken":14,
  "Kohlrabi":3,"Kokosmilch":4,"Koriander":40,"Krautsalat":4,"Kresse":40,"Kräuter-Schmelzkäse":8,"Käse-Tortellini":9,"Kürbiskerne":12,"Lachsfilet":25,"Lasagneplatten":4,"Lauch":3,
  "Leinsamen (geschrotet)":5,"Limette":8,"Limette (Bio)":8,"Linsen (Dose)":4,"Linsennudeln (glutenfrei)":9,"Magerquark":3,"Mais":3.5,"Mais-Reis-Nudeln (glutenfrei)":7,
