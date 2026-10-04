@@ -1023,7 +1023,7 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
       <div class="zh-chips" id="zhChips"></div>
       <button class="btn primary zh-go" id="zhGo" type="button" hidden></button>
     </div>
-    <div class="bar"><button class="btn primary" id="addRecipe" type="button">＋ Rezept hinzufügen <span class="count" id="inboxCount" hidden>0</span></button><button class="btn" id="kitchenBtn" type="button">🍽 Meine Küche</button></div>
+    <div class="bar"><button class="btn primary" id="addRecipe" type="button">＋ Rezept hinzufügen</button><button class="btn" id="kitchenBtn" type="button">🍽 Meine Küche</button></div>
     <div id="kitchenView" hidden></div>
     <p class="qi-lbl">Suchen</p>
     <div id="ideaFilterUI"></div>
@@ -3749,7 +3749,7 @@ const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","
 /* ---------- Pro-Tipps: ein Tipp pro Tag, der Reihe nach, nur beim Start; abschaltbar (pro Gerät) ---------- */
 const TIPS = [["Kochmodus", "Tippe im Rezept auf „Kochmodus“: große Schrift, Zutaten und Schritte zum Abhaken, der Bildschirm bleibt an. Wenn du etwas abhakst, scrollt es von selbst zum Nächsten."], ["Einkauf", "Das 🏠 hinter einer Zutat in der Einkaufsliste nimmt sie von der Liste, weil ihr sie zuhause habt. „Nur diesmal“ und „Angebrochen“ holst du unter „Schon zuhause“ mit dem 🛒 zurück."], ["Personenzahl", "Im Rezept änderst du mit − und + die Personenzahl. Die Zutaten und die Mengen in den Schritten rechnen sich automatisch mit um."], ["Vorrat", "Zutaten, die immer da sind, zum Beispiel Zwiebeln: Tippe in der Einkaufsliste beim 🏠 auf „Immer“. Dann tauchen sie nie wieder auf der Liste auf. Ändern kannst du das unter „Vorrat anpassen“ ganz unten in der Liste."], ["Alltag-Filter", "Unter Ideen findest du bei „Alle Filter“ den Reiter „Zeit & Alltag“: zum Beispiel Ofengericht, ein Topf, gut einzufrieren oder mit wenigen Zutaten."], ["Supermarkt", "Die Einkaufsliste lässt sich nach Abteilung sortieren. In den Einstellungen stellst du die Reihenfolge so ein, wie euer Supermarkt aufgebaut ist."], ["Reste", "„Was haben wir noch zuhause?“ in den Ideen: Tippe ein, was im Kühlschrank liegt, und die App zeigt dir Gerichte, die dazu passen."], ["Liste teilen", "Mit „Teilen“ in der Einkaufsliste schickst du die offenen Artikel zum Beispiel direkt an Google Keep oder an deine Familie."], ["Link teilen", "Tippe im Rezept auf „Link teilen“, um es per Nachricht zu verschicken. Wer den Link öffnet, sieht sofort das Rezept."], ["Zutaten kopieren", "Im Rezept kopiert „Zutaten kopieren“ die Mengen für eure Personenzahl, bereit zum Einfügen in eine Notiz oder eine Listen-App."], ["Leere Tage", "Mit „Leere Tage füllen“ schlägt die App für alle freien Tage Gerichte vor. Unter der Woche sind es nur schnelle Gerichte, bevorzugt vegetarisch."], ["Design", "In den Einstellungen wählst du zwischen hellem und dunklem Design, oder die App folgt automatisch deinem Handy."], ["Notiz", "Im Rezept hältst du unter „Unsere Notiz“ fest, was ihr beim nächsten Mal anders macht, zum Beispiel weniger Salz."], ["Lieblinge", "In den Einstellungen wählst du Lieblingskategorien. Sie kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran."], ["Einsenden", "Unter Ideen kannst du über „Rezept hinzufügen“ ein Rezept als Foto, PDF oder Link einsenden. Nach der Prüfung steht es für alle in der App."], ["Bewerten", "Nach dem Essen fragt die App, wie es geschmeckt hat. Mit 👍 und 👎 merkt ihr euch eure Favoriten."], ["Sicherung", "Unter Einstellungen → Daten sichern speicherst du Plan, eigene Rezepte und Einstellungen als Datei, zum Beispiel vor einem Handywechsel."]];
 const LS_TIPS = "essensplan-tips";
-const APP_VERSION = "v1.1.3";
+const APP_VERSION = "v1.2.0";
 const LS_HERO = "essensplan-hero";
 function heroClosed(){ try{ return !!localStorage.getItem(LS_HERO); }catch(e){ return false; } }
 function heroClose(){ try{ localStorage.setItem(LS_HERO,"1"); }catch(e){} $("#hero").hidden = true; }
@@ -4876,133 +4876,6 @@ document.addEventListener("change",e=>{
 });
 
 
-/* ---------- Rezept-Eingang (Warteliste auf GitHub) ---------- */
-const INBOX_REPO = "Thallarion/Essensplan-Inbox";
-const LS_INBOX = "essensplan-inbox";
-function inboxCfg(){ const v = lsGet(LS_INBOX); return v && v.token ? v : null; }
-async function gh(path, opts={}){
-  const cfg = inboxCfg(); if(!cfg) throw new Error("kein Zugang");
-  const r = await fetch("https://api.github.com/repos/"+INBOX_REPO+path, {...opts, headers:{"Accept":"application/vnd.github+json","Authorization":"Bearer "+cfg.token,...(opts.body?{"Content-Type":"application/json"}:{})}});
-  if(r.status===404 && (!opts.method || opts.method==="GET")) return null;
-  if(!r.ok){ const e = new Error("GitHub "+r.status); e.status=r.status; throw e; }
-  return r.status===204 ? null : r.json();
-}
-function b64utf8(str){ return btoa(unescape(encodeURIComponent(str))); }
-const isPdf = f => f.type==="application/pdf" || /\.pdf$/i.test(f.name||"");
-function fileB64(file){ return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(String(r.result).split(",")[1]); r.onerror=()=>rej(new Error("Datei konnte nicht gelesen werden")); r.readAsDataURL(file); }); }
-function thumbHtml(f){ return isPdf(f) ? `<span class="pdf"><b>📄</b>${esc((f.name||"PDF").slice(0,22))}</span>` : `<img alt="" src="${URL.createObjectURL(f)}">`; }
-function shrinkImage(file){
-  return new Promise((res,rej)=>{
-    const img = new Image(); const url = URL.createObjectURL(file);
-    img.onload = ()=>{
-      const max = 1800, sc = Math.min(1, max/Math.max(img.width,img.height));
-      const c = document.createElement("canvas"); c.width = Math.round(img.width*sc); c.height = Math.round(img.height*sc);
-      c.getContext("2d").drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(url);
-      res(c.toDataURL("image/jpeg",0.82).split(",")[1]);
-    };
-    img.onerror = ()=>{ URL.revokeObjectURL(url); rej(new Error("Bild konnte nicht gelesen werden")); };
-    img.src = url;
-  });
-}
-async function loadQueue(){
-  const list = await gh("/contents/inbox");
-  const dirs = (list||[]).filter(x=>x.type==="dir").sort((a,b)=>b.name.localeCompare(a.name));
-  const items = await Promise.all(dirs.map(async d=>{
-    try{ const f = await gh(`/contents/inbox/${d.name}/info.json`); return {id:d.name, ...JSON.parse(decodeURIComponent(escape(atob(f.content.replace(/\n/g,"")))))}; }
-    catch(e){ return {id:d.name}; }
-  }));
-  return items;
-}
-async function refreshInboxCount(){
-  const el = $("#inboxCount"); if(!inboxCfg()){ el.hidden = true; return; }
-  try{ const q = await loadQueue(); el.textContent = q.length; el.hidden = !q.length; }catch(e){ el.hidden = true; }
-}
-function inboxSetup(msg){
-  openSheet(`<button class="btn small close" data-close>Schließen</button>
-    <h2>Rezept-Eingang einrichten</h2>
-    <p class="sub">Einmal pro Handy nötig. Den Zugangsschlüssel bekommst du von der Person, die die App eingerichtet hat.</p>
-    <div class="form">
-      <label>Zugangsschlüssel<input type="password" id="ibToken" autocomplete="off" placeholder="github_pat_…"></label>
-      <p class="err-text" id="ibErr" ${msg?"":"hidden"}>${msg?esc(msg):""}</p>
-      <div class="bar"><button class="btn primary" id="ibSave">Speichern & testen</button></div>
-    </div>`);
-  $("#ibSave").addEventListener("click",async()=>{
-    const token = $("#ibToken").value.trim(); const err = $("#ibErr");
-    if(!token){ err.textContent="Bitte den Schlüssel einfügen."; err.hidden=false; return; }
-    lsSet({token}, LS_INBOX);
-    try{ const r = await gh(""); if(!r) throw new Error("nicht gefunden"); toast("Rezept-Eingang eingerichtet"); openInbox(); refreshInboxCount(); }
-    catch(e){ try{ localStorage.removeItem(LS_INBOX); }catch(_){} err.textContent="Das hat nicht geklappt – Schlüssel prüfen ("+e.message+")."; err.hidden=false; }
-  });
-}
-async function openInbox(){
-  if(!inboxCfg()){
-    openSheet(`<button class="btn small close" data-close>Schließen</button>
-      <h2>Rezept einsenden</h2>
-      <p>Schick ein Rezept als Foto, PDF oder Link – es wird geprüft, auf 3 Personen umgerechnet und kommt dann für alle in die App.</p>
-      <div class="bar" style="margin:14px 0"><a class="btn primary" href="einsenden.html?app=1" style="text-decoration:none">📷 Rezept einsenden</a></div>
-      <p class="sub" style="margin-top:18px">Du hast einen Zugangsschlüssel für den Familien-Eingang? <button class="btn small ghost" id="ibSetup">Zugang einrichten</button></p>`);
-    $("#ibSetup").addEventListener("click",()=>inboxSetup());
-    return;
-  }
-  const from = (lsGet(LS_INBOX)||{}).from||"";
-  openSheet(`<button class="btn small close" data-close>Schließen</button>
-    <h2>Rezept einsenden</h2>
-    <p class="sub">Foto(s) von einem Rezept oder ein Link – Claude macht daraus ein Rezept für eure App (Mengen für 3 Personen, Kategorien, Schritte).</p>
-    <div class="form">
-      <label>📷 Fotos oder 📄 PDF <span class="hint">z. B. Kochbuchseite, Screenshot oder Rezept als PDF, auch mehrere</span><input type="file" id="ibFiles" accept="image/*,application/pdf,.pdf" multiple></label>
-      <div class="thumbs" id="ibThumbs"></div>
-      <label>🔗 Link <span class="hint">optional, Instagram/TikTok bitte als Screenshot</span><input type="text" id="ibLink" inputmode="url" autocomplete="off" placeholder="https://…"></label>
-      <label>Notiz <span class="hint">optional, z. B. „ohne Koriander“ oder „fürs Wochenende“</span><input type="text" id="ibNote" autocomplete="off"></label>
-      <label>Von<input type="text" id="ibFrom" autocomplete="off" value="${esc(from)}" placeholder="Dein Name"></label>
-      <p class="err-text" id="ibErr" hidden></p>
-      <div class="bar"><button class="btn primary" id="ibSend">Einsenden</button></div>
-    </div>
-    <h3>Warteliste</h3><div id="ibQueue"><p class="hint">Wird geladen …</p></div>
-    <p class="hint" style="margin-top:14px"><button class="btn small ghost" id="ibReset">Zugang entfernen</button></p>`);
-  $("#ibFiles").addEventListener("change",e=>{
-    $("#ibThumbs").innerHTML = [...e.target.files].map(thumbHtml).join("");
-  });
-  $("#ibReset").addEventListener("click",()=>{ try{ localStorage.removeItem(LS_INBOX); }catch(_){} closeSheet(); refreshInboxCount(); toast("Zugang entfernt"); });
-  $("#ibSend").addEventListener("click",async()=>{
-    const files = [...$("#ibFiles").files], link = $("#ibLink").value.trim(), note = $("#ibNote").value.trim(), who = $("#ibFrom").value.trim();
-    const err = $("#ibErr"), btn = $("#ibSend");
-    if(!files.length && !link){ err.textContent="Bitte ein Foto oder PDF auswählen oder einen Link einfügen."; err.hidden=false; return; }
-    const big = files.find(f=>isPdf(f) && f.size>15e6); if(big){ err.textContent=`„${big.name}“ ist zu groß (max. 15 MB).`; err.hidden=false; return; }
-    if(link && !/^https?:\/\//i.test(link)){ err.textContent="Der Link muss mit https:// beginnen."; err.hidden=false; return; }
-    err.hidden=true; btn.disabled=true;
-    const cfg = lsGet(LS_INBOX)||{}; cfg.from = who; lsSet(cfg, LS_INBOX);
-    const now = new Date(); const pad = n=>String(n).padStart(2,"0");
-    const id = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}_${Math.random().toString(36).slice(2,6)}`;
-    try{
-      const names = []; let nF=0, nD=0;
-      for(let k=0;k<files.length;k++){
-        btn.textContent = `Datei ${k+1} von ${files.length} wird hochgeladen …`;
-        const pdf = isPdf(files[k]);
-        const data = pdf ? await fileB64(files[k]) : await shrinkImage(files[k]);
-        const name = pdf ? `dokument${++nD}.pdf` : `foto${++nF}.jpg`;
-        await gh(`/contents/inbox/${id}/${name}`,{method:"PUT",body:JSON.stringify({message:`Einsendung ${id}: ${name}`,content:data})});
-        names.push(name);
-      }
-      btn.textContent = "Wird gespeichert …";
-      const info = {created:now.toISOString(), from:who, link, note, photos:names};
-      await gh(`/contents/inbox/${id}/info.json`,{method:"PUT",body:JSON.stringify({message:`Einsendung ${id}`,content:b64utf8(JSON.stringify(info,null,1))})});
-      toast("Eingesendet – landet bald in der App"); openInbox(); refreshInboxCount();
-    }catch(e){
-      err.textContent = e.status===401||e.status===403 ? "Zugang abgelehnt – der Schlüssel ist evtl. abgelaufen." : "Senden fehlgeschlagen ("+e.message+"). Internet prüfen und nochmal versuchen.";
-      err.hidden=false; btn.disabled=false; btn.textContent="Einsenden";
-    }
-  });
-  try{
-    const q = await loadQueue(); const el = $("#ibQueue"); if(!el) return;
-    el.innerHTML = q.length ? `<ul class="queue">${q.map(x=>{
-      const d = x.created ? new Date(x.created).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}) : x.id;
-      const nP=(x.photos||[]).filter(n=>/\.pdf$/i.test(n)).length, nI=(x.photos||[]).length-nP;
-      const what = [nI?`📷 ${nI} Foto${nI>1?"s":""}`:"", nP?`📄 ${nP} PDF`:"", x.link?"🔗 Link":""].filter(Boolean).join(" · ");
-      return `<li>${esc(what||"Einsendung")}${x.note?` – ${esc(x.note)}`:""}<br><small>${esc(d)}${x.from?` · von ${esc(x.from)}`:""} · wartet</small></li>`;}).join("")}</ul>`
-      : `<p class="ok-text">Nichts offen – alles eingetragen. ✔</p>`;
-  }catch(e){ const el = $("#ibQueue"); if(el) el.innerHTML = `<p class="err-text">Warteliste konnte nicht geladen werden.</p>`; }
-}
-refreshInboxCount();
 
 /* ---------- Einrichtung ---------- */
 const RULES = `rules_version = '2';
@@ -5103,8 +4976,8 @@ function openAddSheet(){
       <button type="button" class="add-opt" id="aoPhoto"><span aria-hidden="true">📷</span><b>Foto, PDF oder Link</b><small>Kochbuchseite, Screenshot oder Webseite – wird aufbereitet und für alle eingetragen</small></button>
       <button type="button" class="add-opt" id="aoOwn"><span aria-hidden="true">✍️</span><b>Selbst eingeben</b><small>Bleibt nur in eurem Plan (Filter „⭐ Meine Rezepte“)</small></button>
     </div>
-    <p><a class="btn small ghost" href="einsenden.html?app=1" style="text-decoration:none">🌐 Einsendeseite für Gäste öffnen</a></p>`);
-  $("#aoPhoto").addEventListener("click",()=>openInbox());
+    `);
+  $("#aoPhoto").addEventListener("click",()=>{ location.href = "einsenden.html?app=1"; });
   $("#aoOwn").addEventListener("click",()=>{ closeSheet(); openRecipeForm(); });
 }
 /* ---------- "Was haben wir noch zuhause?": Zutaten-Chips direkt auf der Ideen-Seite ---------- */
