@@ -941,6 +941,7 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
 .hero .btn{width:100%}
 .hero #heroSet{margin-top:8px}
 .hero-trust{margin:10px 0 0;text-align:center;color:var(--muted);font-size:12.5px}
+@media (max-width:340px){#week .daybig .db-acts{flex-wrap:wrap;gap:4px}#week .daybig .db-acts .btn{padding:8px 6px;font-size:12.5px;white-space:nowrap}#week .daybig .db-acts .dbmenu summary{width:34px;height:34px}}
 </style>
 <script data-goatcounter="https://wasessenwir.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
@@ -3967,7 +3968,7 @@ const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","
 /* ---------- Pro-Tipps: ein Tipp pro Tag, der Reihe nach, nur beim Start; abschaltbar (pro Gerät) ---------- */
 const TIPS = [["Kochmodus", "Tippe im Rezept auf „Kochmodus“: große Schrift, Zutaten und Schritte zum Abhaken, der Bildschirm bleibt an. Wenn du etwas abhakst, scrollt es von selbst zum Nächsten."], ["Einkauf", "Das 🏠 hinter einer Zutat in der Einkaufsliste nimmt sie von der Liste, weil ihr sie zuhause habt. „Nur diesmal“ und „Angebrochen“ holst du unter „Schon zuhause“ mit dem 🛒 zurück."], ["Personenzahl", "Im Rezept änderst du mit − und + die Personenzahl. Die Zutaten und die Mengen in den Schritten rechnen sich automatisch mit um."], ["Vorrat", "Zutaten, die immer da sind, zum Beispiel Zwiebeln: Tippe in der Einkaufsliste beim 🏠 auf „Immer“. Dann tauchen sie nie wieder auf der Liste auf. Ändern kannst du das unter „Vorrat anpassen“ ganz unten in der Liste."], ["Alltag-Filter", "Unter Ideen findest du bei „Alle Filter“ den Reiter „Zeit & Alltag“: zum Beispiel Ofengericht, ein Topf, gut einzufrieren oder mit wenigen Zutaten."], ["Supermarkt", "Die Einkaufsliste lässt sich nach Abteilung sortieren. In den Einstellungen stellst du die Reihenfolge so ein, wie euer Supermarkt aufgebaut ist."], ["Reste", "„Was haben wir noch zuhause?“ in den Ideen: Tippe ein, was im Kühlschrank liegt, und die App zeigt dir Gerichte, die dazu passen."], ["Liste teilen", "Mit „Teilen“ in der Einkaufsliste schickst du die offenen Artikel zum Beispiel direkt an Google Keep oder an deine Familie."], ["Link teilen", "Tippe im Rezept auf „Link teilen“, um es per Nachricht zu verschicken. Wer den Link öffnet, sieht sofort das Rezept."], ["Zutaten kopieren", "Im Rezept kopiert „Zutaten kopieren“ die Mengen für eure Personenzahl, bereit zum Einfügen in eine Notiz oder eine Listen-App."], ["Leere Tage", "Mit „Leere Tage füllen“ schlägt die App für alle freien Tage Gerichte vor. Unter der Woche sind es nur schnelle Gerichte, bevorzugt vegetarisch."], ["Design", "In den Einstellungen wählst du zwischen hellem und dunklem Design, oder die App folgt automatisch deinem Handy."], ["Notiz", "Im Rezept hältst du unter „Unsere Notiz“ fest, was ihr beim nächsten Mal anders macht, zum Beispiel weniger Salz."], ["Lieblinge", "In den Einstellungen wählst du Lieblingskategorien. Sie kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran."], ["Einsenden", "Unter Ideen kannst du über „Rezept hinzufügen“ ein Rezept als Foto, PDF oder Link einsenden. Nach der Prüfung steht es für alle in der App."], ["Bewerten", "Nach dem Essen fragt die App, wie es geschmeckt hat. Mit 👍 und 👎 merkt ihr euch eure Favoriten."], ["Offline", "Öffne die App einmal mit Netz und danach noch einmal: Dann startet sie auch ohne Empfang. Im Supermarkt kannst du die Einkaufsliste abhaken und ergänzen, beim nächsten Netz gleicht sie sich ab."], ["Eigene Filter", "Allergene, Vorlieben und Vorrat gelten standardmäßig nur auf deinem Handy. Mit dem Schalter „Filter & Vorrat mit Familie teilen“ in den Einstellungen nutzt ihr sie gemeinsam."], ["Sicherung", "Unter Einstellungen → Daten sichern speicherst du Plan, eigene Rezepte und Einstellungen als Datei, zum Beispiel vor einem Handywechsel."]];
 const LS_TIPS = "essensplan-tips";
-const APP_VERSION = "v1.5.2";
+const APP_VERSION = "v1.5.3";
 const LS_HERO = "essensplan-hero";
 function heroClosed(){ try{ return !!localStorage.getItem(LS_HERO); }catch(e){ return false; } }
 function heroClose(){ try{ localStorage.setItem(LS_HERO,"1"); }catch(e){} $("#hero").hidden = true; }
@@ -4149,7 +4150,8 @@ function openHelp(first){
         <li><b>Noch etwas dazu</b>: eigene Artikel wie Joghurt oder Obst ergänzen.</li>
         <li><b>🏠</b> hinter einer Zutat: haben wir schon. Du wählst: <b>Nur diesmal</b> (kommt bei der nächsten Planung wieder), <b>Immer</b> (steht nie mehr auf der Liste) oder <b>Angebrochen</b> (bald verbrauchen – die App schlägt passende Gerichte vor).</li>
         <li><b>Schon zuhause</b> unten in der Liste: Hier stehen „Nur diesmal“- und „Angebrochen“-Zutaten. Mit dem <b>🛒</b> holst du sie zurück auf die Liste. „Immer“-Zutaten stehen dort nicht, du änderst sie unter <b>⚙ Einstellungen → Vorrat zuhause</b> oder über „Vorrat anpassen“ ganz unten.</li>
-        <li><b>📤 Teilen</b> schickt die offenen Artikel z. B. an Google Keep oder an die Familie.</li>
+        <li><b>📤 Teilen</b> schickt die offenen Artikel z. B. an Google Keep oder an die Familie. Auf Geräten ohne Teilen-Funktion heißt der Knopf <b>📋 Für Keep</b>: Er kopiert die Liste, dann in Google Keep auf „+ Listenelement“ tippen und einfügen – jede Zeile wird ein eigener Punkt.</li>
+        <li><b>Kopieren</b> legt die offene Liste als Text in die Zwischenablage, <b>Abgehakte ausblenden</b> räumt Erledigtes weg, <b>🖨 Drucken</b> druckt die Liste.</li>
         <li><b>📋 Zutaten kopieren</b> (im Rezept): kopiert die Mengen für eure Personenzahl, zum Einfügen in eine Listen-App oder Notiz.</li>
         <li>Salz, Öl, Gewürze & Co. stehen nicht drauf – die hat man meist im Haus.</li>
       </ul>
@@ -4157,7 +4159,7 @@ function openHelp(first){
     <details><summary>💡 Ideen, Suche & Filter</summary>
       ${img("ideen","Ideen mit geöffnetem Filter")}
       <ul>
-        <li><b>Keine Idee?</b> zeigt oben einen Zufallsvorschlag.</li>
+        <li><b>Keine Idee?</b> zeigt oben einen Zufallsvorschlag. Tipp auf den Namen öffnet das Rezept, „Einplanen“ trägt es in den Plan ein.</li>
         <li><b>Schnell zum Ziel</b>: Knöpfe für die häufigsten Wünsche, z. B. „Heute wenig Zeit“ oder „Vegetarisch“. Mit <b>✏️ Anpassen</b> daneben stellst du sie nach deinem Geschmack zusammen: Küchen (z. B. Italienisch), Alltag (z. B. Ofengericht) und Gesund-Kategorien (z. B. Proteinreich), verschiebst sie mit ↑ ↓ oder entfernst sie mit ×. Die ersten 10 sind sichtbar, der Rest liegt hinter „Mehr …“. Die Auswahl gilt nur auf deinem Gerät, „Zurücksetzen“ stellt die Standardauswahl wieder her.</li>
         <li>Suche nach Gericht oder Zutat, z. B. „Feta“ oder „Nudeln“.</li>
         <li><b>Alle Filter</b> öffnet die Filter in Reitern: Essen &amp; Küche, Zeit &amp; Alltag, Gesundheit &amp; Ernährung, Budget, Bewertung und Ohne Allergene. Mehrere lassen sich kombinieren, z. B. „Vegetarisch“ + „Italienisch“. Aktive Filter stehen als Chips darunter – mit × entfernen.</li>
@@ -4185,6 +4187,8 @@ function openHelp(first){
         <li><b>🎨 Design:</b> Hell, Dunkel oder wie dein Handy. Gilt nur für dieses Gerät.</li>
         <li><b>💡 Tipps:</b> Einmal am Tag zeigt die App beim Start einen kurzen Pro-Tipp, der Reihe nach. Hier schaltest du sie aus und wieder ein. Gilt nur für dieses Gerät.</li>
         <li><b>Personen:</b> Rezepte und Einkaufsliste rechnen alle Mengen darauf um.</li>
+        <li><b>🥩 Fleisch &amp; Fisch:</b> wie oft pro Woche es Fleisch oder Fisch geben darf. Das steuert Würfeln, „Leere Tage füllen“ und den Plan-Assistenten.</li>
+        <li><b>🚫 Mögen wir nicht:</b> Zutaten, die ihr nicht mögt. Gerichte damit werden nicht mehr vorgeschlagen.</li>
         <li><b>Kategorien ausschließen:</b> eine Kategorie im Ideen-Filter oder bei den Lieblingskategorien in ⚙ lange drücken. Solche Gerichte werden nicht vorgeschlagen; selbst gewählte und schon geplante bleiben. Nochmal tippen hebt es auf.</li>
         <li><b>Lieblingskategorien:</b> z. B. 🐟 Fisch oder 🥢 Asiatisch – kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran.</li>
         <li><b>Kochzeit Mo–Fr:</b> wie lange du unter der Woche höchstens aktiv am Herd stehen willst (ohne Backen und Warten). Das gilt für Würfeln und den Plan-Assistenten.</li>
@@ -4208,7 +4212,7 @@ function openHelp(first){
     <details><summary>📷 Rezepte einsenden & eigene Rezepte</summary>
       ${img("einsenden","Rezept einsenden")}
       <ul>
-        <li><b>＋ Rezept hinzufügen</b> (unter Ideen) → <b>Foto oder PDF / Link</b>: Kochbuchseite fotografieren, Screenshot, PDF oder Link schicken. Das Rezept wird aufbereitet, auf 3 Personen umgerechnet und kommt für alle in die App.</li>
+        <li><b>＋ Rezept hinzufügen</b> (unter Ideen) → <b>Foto, PDF oder Link</b>: öffnet die Einsende-Seite. Dort Kochbuchseite fotografieren, Screenshot, PDF oder Link schicken. Das Rezept wird aufbereitet, auf 3 Personen umgerechnet und kommt nach der Prüfung für alle in die App.</li>
         <li><b>＋ Rezept hinzufügen</b> → <b>Selbst eingeben</b>: selbst eintippen – bleibt nur in deinem bzw. eurem Plan (Filter „⭐ Meine Rezepte“).</li>
       </ul>
     </details>
@@ -5149,7 +5153,7 @@ function openSyncSheet(){
   }
   openSheet(`<button class="btn small close" data-close>Schließen</button>
     <h2>Gemeinsam planen</h2>
-    <div class="syncinfo"><div><span>Status</span><b>Nur auf diesem Handy gespeichert</b></div><div><span>Zugriff</span><b>Nur du auf diesem Gerät</b></div></div>
+    <div class="syncinfo"><div><span>Status</span><b>Nur auf diesem Gerät gespeichert</b></div><div><span>Zugriff</span><b>Nur du auf diesem Gerät</b></div></div>
     <p>Dein Plan ist aktuell nur auf diesem Gerät gespeichert. Zum gemeinsamen Planen lädst du deine Familie ein: Alle sehen denselben Wochenplan, dieselbe Einkaufsliste und dieselben 👍/👎.</p>
     <p><b>Hast du schon einen Familien-Link bekommen?</b> Dann öffne einfach den Link – fertig.</p>
     <div class="bar" style="margin:14px 0"><button class="btn primary" id="quickShare">Gemeinsamen Plan starten</button></div>
