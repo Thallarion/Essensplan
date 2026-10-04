@@ -103,6 +103,9 @@ TAB = {
  "Kabeljaufilet":(None,82,18,0.7,0,0,0,0), "Knollensellerie (klein)":(400,42,1.6,0.3,7,4.2,1,0), "Magerquark":(None,67,12,0.3,4,0,0,0), "Putenhackfleisch":(None,150,22,6,0,0,0,0),
  "Rote Zwiebel":(100,40,1.2,0.1,8,1.7,0,0), "Rotkohl":(None,28,1.4,0.2,4,2.5,1,0), "Räucherlachs":(None,180,22,10,0,0,0,0), "Tellerlinsen":(None,340,24,1.5,50,11,1,0),
  "Thunfisch im eigenen Saft":(150,110,25,1,0,0,0,0), "Tofu natur":(None,120,13,7,1,1,0,0), "Äpfel":(180,52,0.3,0.2,12,2,0,0),
+ "Fenchel":(250,31,1.2,0.2,4,3.1,1,0), "Haselnüsse":(None,650,15,62,10,8,0,0), "Knäckebrot (Sesam)":(250,370,12,5,62,14,0,0), "Kokosraspeln":(None,600,6,60,7,16,0,0),
+ "Nackthafer":(None,370,12,7,60,10,0,0), "Sesamsamen":(None,570,18,50,12,12,0,0), "Sonnenblumenkerne":(None,590,23,50,12,9,0,0), "Spitzkohl":(None,25,1.3,0.2,3.5,2.5,1,0),
+ "Zuckerschoten":(None,40,2.8,0.2,5,2.6,1,0), "Äpfel (säuerlich)":(180,52,0.3,0.4,11,2,0,0),
 }
 # Einheiten, die als Gramm/ml zählen
 GRAM = {"g":1, "ml":1, "l":1000, "kg":1000}
@@ -115,14 +118,14 @@ BUCH = {
  "k28":(310,18,12,30), "k29":(510,7,20,70), "k30":(690,18,31,84), "k31":(550,17,36,35), "k32":(1096,60,67,67),
  "k71":(382,8,17,44), "k73":(285,7,13,32),
  "k74":(420,15,18,49), "k75":(210,18,13,3), "k76":(330,13,16,33),
- "k77":(805,32,56,37),
+ "k77":(805,32,56,37), "k80":(230,4,16,16), "k83":(640,19,36,60), "k88":(790,24,47,68),
  "k11":(470,36,27,20), "k12":(350,1,37,2),
 }
 
 def load_dishes(src):
     a = src.index("const DISHES = ["); b = src.index("\n];", a)
     js = "const D=" + src[a+15:b+3] + "\nprocess.stdout.write(JSON.stringify(D));"
-    out = subprocess.run(["node","-e",js], capture_output=True, text=True, check=True).stdout
+    out = subprocess.run(["node","-"], input=js, capture_output=True, text=True, check=True).stdout
     return json.loads(out), a, b
 
 def estimate(d):

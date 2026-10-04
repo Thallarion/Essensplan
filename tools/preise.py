@@ -43,6 +43,7 @@ PREIS = {
  "Vollkorn-Tortillas":7,"Vollkornbrot":4,"Vollkornmehl":2,"Vollkornnudeln":3.5,"Vollkornreis":3.5,"Walnusskerne":14,"Weichweizengrieß":2.5,"Weiße Bohnen":3.5,"Weißkohl":1.8,
  "Wiener Würstchen":11,"Wirsing (klein)":3,"Wurst (z. B. Mettwurst oder Fleischwurst)":10,"Zanderfilet (mit Haut)":28,"Ziegenfrischkäse (oder Feta)":14,"Zitrone":5,"Zitrone (Bio)":5,
  "Zucchini":3,"Zwiebel":1.5,"Äpfel":3,
+ "Fenchel":3.5,"Haselnüsse":14,"Knäckebrot (Sesam)":7,"Kokosraspeln":9,"Nackthafer":4.5,"Sesamsamen":9,"Sonnenblumenkerne":6,"Spitzkohl":2.5,"Zuckerschoten":9,"Äpfel (säuerlich)":2.8,
 }
 
 def cost(d):
