@@ -105,7 +105,7 @@ TAB = {
  "Thunfisch im eigenen Saft":(150,110,25,1,0,0,0,0), "Tofu natur":(None,120,13,7,1,1,0,0), "Äpfel":(180,52,0.3,0.2,12,2,0,0),
  "Fenchel":(250,31,1.2,0.2,4,3.1,1,0), "Haselnüsse":(None,650,15,62,10,8,0,0), "Knäckebrot (Sesam)":(250,370,12,5,62,14,0,0), "Kokosraspeln":(None,600,6,60,7,16,0,0),
  "Nackthafer":(None,370,12,7,60,10,0,0), "Sesamsamen":(None,570,18,50,12,12,0,0), "Sonnenblumenkerne":(None,590,23,50,12,9,0,0), "Spitzkohl":(None,25,1.3,0.2,3.5,2.5,1,0),
- "Zuckerschoten":(None,40,2.8,0.2,5,2.6,1,0), "Äpfel (säuerlich)":(180,52,0.3,0.4,11,2,0,0),
+ "Zuckerschoten":(None,40,2.8,0.2,5,2.6,1,0), "Kochsahne (15 %)":(None,160,2.7,15,3.5,0,0,0), "Äpfel (säuerlich)":(180,52,0.3,0.4,11,2,0,0),
 }
 # Einheiten, die als Gramm/ml zählen
 GRAM = {"g":1, "ml":1, "l":1000, "kg":1000}
