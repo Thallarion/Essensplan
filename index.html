@@ -3655,7 +3655,7 @@ function askHome(it){
     <p class="sub">Soll das nur für diesen Einkauf gelten oder immer?</p>
     <div class="add-opts">
       <button type="button" class="add-opt" id="ahOnce"><span aria-hidden="true">1×</span><b>Nur diesmal</b><small>Kommt bei der nächsten Planung wieder auf die Liste</small></button>
-      <button type="button" class="add-opt" id="ahAlways"><span aria-hidden="true">♾️</span><b>Immer</b><small>Steht nie mehr auf der Einkaufsliste – in ⚙ Einstellungen wieder entfernbar</small></button>
+      <button type="button" class="add-opt" id="ahAlways"><span aria-hidden="true">♾️</span><b>Immer</b><small>Steht nie mehr auf der Einkaufsliste (ohne Einfluss auf Rezeptvorschläge) – in ⚙ Einstellungen wieder entfernbar</small></button>
       <button type="button" class="add-opt" id="ahOpen"><span aria-hidden="true">🥫</span><b>Angebrochen – bald verbrauchen</b><small>Steht nicht auf der Liste, bis ein Gericht damit gekocht wurde; wir schlagen passende Gerichte vor</small></button>
     </div>`);
   $("#ahOnce").addEventListener("click",()=>{ it.keys.forEach(k=>{ state.hidden[k]="home"; }); closeSheet(); commit(); toast(`${it.n}: haben wir zu Hause`); });
@@ -3883,8 +3883,9 @@ function frMatch(term, name){ const n=name.toLowerCase(); return frTerms(term).s
 function frAllNames(){ const set=new Set(); allDishes().forEach(d=>d.i.forEach(x=>set.add(String(x[2])))); return [...set].sort((a,b)=>a.localeCompare(b,"de")); }
 function frScore(d, have){
   const ing = d.i.filter(x=>!FR_PANTRY.test(String(x[2]).replace(/\s*\(.*\)/,"").trim()));
+  const alw = frAlways();   // „Immer“-Vorrat: gilt als vorhanden, löst aber keine Vorschläge aus
   const hits = have.filter(t=>ing.some(x=>frMatch(t,String(x[2]))));
-  const covered = ing.filter(x=>have.some(t=>frMatch(t,String(x[2]))));
+  const covered = ing.filter(x=>have.some(t=>frMatch(t,String(x[2]))) || alw.some(t=>frMatch(t,String(x[2]))));
   const missing = ing.filter(x=>!covered.includes(x));
   return {hits, covered, missing};
 }
@@ -3966,9 +3967,9 @@ const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","
   ["#","Küche"],["italien","🇮🇹 Italienisch"],["deutsch","🇩🇪🇦🇹 Deutsch / Österreichisch"],["med","🧆 Mediterran / Orientalisch"],["mexiko","🇲🇽 Mexikanisch"],["asia","🥢 Asiatisch"],["indien","🍛 Indisch"],["alltag-k","🍳 Alltagsküche"],["bowl","🥗 Salate & Bowls"],
   ["#","Alltag"],["az-o","🔥 Ofengericht"],["az-t","🍲 Ein Topf / eine Pfanne"],["az-f","❄️ Gut einzufrieren"],["az-v","🍱 Vorkochen"],["az-m","🧸 Zum Mitnehmen"],["az-k","👶 Kind kann helfen"],["az-wenig","⏱️ Wenige Zutaten"],["az-vorrat","🛍️ Mit Vorrat machbar"]];
 /* ---------- Pro-Tipps: ein Tipp pro Tag, der Reihe nach, nur beim Start; abschaltbar (pro Gerät) ---------- */
-const TIPS = [["Kochmodus", "Tippe im Rezept auf „Kochmodus“: große Schrift, Zutaten und Schritte zum Abhaken, der Bildschirm bleibt an. Wenn du etwas abhakst, scrollt es von selbst zum Nächsten."], ["Einkauf", "Das 🏠 hinter einer Zutat in der Einkaufsliste nimmt sie von der Liste, weil ihr sie zuhause habt. „Nur diesmal“ und „Angebrochen“ holst du unter „Schon zuhause“ mit dem 🛒 zurück."], ["Personenzahl", "Im Rezept änderst du mit − und + die Personenzahl. Die Zutaten und die Mengen in den Schritten rechnen sich automatisch mit um."], ["Vorrat", "Zutaten, die immer da sind, zum Beispiel Zwiebeln: Tippe in der Einkaufsliste beim 🏠 auf „Immer“. Dann tauchen sie nie wieder auf der Liste auf. Ändern kannst du das unter „Vorrat anpassen“ ganz unten in der Liste."], ["Alltag-Filter", "Unter Ideen findest du bei „Alle Filter“ den Reiter „Zeit & Alltag“: zum Beispiel Ofengericht, ein Topf, gut einzufrieren oder mit wenigen Zutaten."], ["Supermarkt", "Die Einkaufsliste lässt sich nach Abteilung sortieren. In den Einstellungen stellst du die Reihenfolge so ein, wie euer Supermarkt aufgebaut ist."], ["Reste", "„Was haben wir noch zuhause?“ in den Ideen: Tippe ein, was im Kühlschrank liegt, und die App zeigt dir Gerichte, die dazu passen."], ["Liste teilen", "Mit „Teilen“ in der Einkaufsliste schickst du die offenen Artikel zum Beispiel direkt an Google Keep oder an deine Familie."], ["Link teilen", "Tippe im Rezept auf „Link teilen“, um es per Nachricht zu verschicken. Wer den Link öffnet, sieht sofort das Rezept."], ["Zutaten kopieren", "Im Rezept kopiert „Zutaten kopieren“ die Mengen für eure Personenzahl, bereit zum Einfügen in eine Notiz oder eine Listen-App."], ["Leere Tage", "Mit „Leere Tage füllen“ schlägt die App für alle freien Tage Gerichte vor. Unter der Woche sind es nur schnelle Gerichte, bevorzugt vegetarisch."], ["Design", "In den Einstellungen wählst du zwischen hellem und dunklem Design, oder die App folgt automatisch deinem Handy."], ["Notiz", "Im Rezept hältst du unter „Unsere Notiz“ fest, was ihr beim nächsten Mal anders macht, zum Beispiel weniger Salz."], ["Lieblinge", "In den Einstellungen wählst du Lieblingskategorien. Sie kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran."], ["Einsenden", "Unter Ideen kannst du über „Rezept hinzufügen“ ein Rezept als Foto, PDF oder Link einsenden. Nach der Prüfung steht es für alle in der App."], ["Bewerten", "Nach dem Essen fragt die App, wie es geschmeckt hat. Mit 👍 und 👎 merkt ihr euch eure Favoriten."], ["Offline", "Öffne die App einmal mit Netz und danach noch einmal: Dann startet sie auch ohne Empfang. Im Supermarkt kannst du die Einkaufsliste abhaken und ergänzen, beim nächsten Netz gleicht sie sich ab."], ["Eigene Filter", "Allergene, Vorlieben und Vorrat gelten standardmäßig nur auf deinem Handy. Mit dem Schalter „Filter & Vorrat mit Familie teilen“ in den Einstellungen nutzt ihr sie gemeinsam."], ["Sicherung", "Unter Einstellungen → Daten sichern speicherst du Plan, eigene Rezepte und Einstellungen als Datei, zum Beispiel vor einem Handywechsel."]];
+const TIPS = [["Kochmodus", "Tippe im Rezept auf „Kochmodus“: große Schrift, Zutaten und Schritte zum Abhaken, der Bildschirm bleibt an. Wenn du etwas abhakst, scrollt es von selbst zum Nächsten."], ["Einkauf", "Das 🏠 hinter einer Zutat in der Einkaufsliste nimmt sie von der Liste, weil ihr sie zuhause habt. „Nur diesmal“ und „Angebrochen“ holst du unter „Schon zuhause“ mit dem 🛒 zurück."], ["Personenzahl", "Im Rezept änderst du mit − und + die Personenzahl. Die Zutaten und die Mengen in den Schritten rechnen sich automatisch mit um."], ["Vorrat", "Zutaten, die immer da sind, zum Beispiel Zwiebeln: Tippe in der Einkaufsliste beim 🏠 auf „Immer“. Dann tauchen sie nie wieder auf der Liste auf, beeinflussen aber keine Rezeptvorschläge. Ändern kannst du das unter „Vorrat anpassen“ ganz unten in der Liste."], ["Alltag-Filter", "Unter Ideen findest du bei „Alle Filter“ den Reiter „Zeit & Alltag“: zum Beispiel Ofengericht, ein Topf, gut einzufrieren oder mit wenigen Zutaten."], ["Supermarkt", "Die Einkaufsliste lässt sich nach Abteilung sortieren. In den Einstellungen stellst du die Reihenfolge so ein, wie euer Supermarkt aufgebaut ist."], ["Reste", "„Was haben wir noch zuhause?“ in den Ideen: Tippe ein, was im Kühlschrank liegt, und die App zeigt dir Gerichte, die dazu passen."], ["Liste teilen", "Mit „Teilen“ in der Einkaufsliste schickst du die offenen Artikel zum Beispiel direkt an Google Keep oder an deine Familie."], ["Link teilen", "Tippe im Rezept auf „Link teilen“, um es per Nachricht zu verschicken. Wer den Link öffnet, sieht sofort das Rezept."], ["Zutaten kopieren", "Im Rezept kopiert „Zutaten kopieren“ die Mengen für eure Personenzahl, bereit zum Einfügen in eine Notiz oder eine Listen-App."], ["Leere Tage", "Mit „Leere Tage füllen“ schlägt die App für alle freien Tage Gerichte vor. Unter der Woche sind es nur schnelle Gerichte, bevorzugt vegetarisch."], ["Design", "In den Einstellungen wählst du zwischen hellem und dunklem Design, oder die App folgt automatisch deinem Handy."], ["Notiz", "Im Rezept hältst du unter „Unsere Notiz“ fest, was ihr beim nächsten Mal anders macht, zum Beispiel weniger Salz."], ["Lieblinge", "In den Einstellungen wählst du Lieblingskategorien. Sie kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran."], ["Einsenden", "Unter Ideen kannst du über „Rezept hinzufügen“ ein Rezept als Foto, PDF oder Link einsenden. Nach der Prüfung steht es für alle in der App."], ["Bewerten", "Nach dem Essen fragt die App, wie es geschmeckt hat. Mit 👍 und 👎 merkt ihr euch eure Favoriten."], ["Offline", "Öffne die App einmal mit Netz und danach noch einmal: Dann startet sie auch ohne Empfang. Im Supermarkt kannst du die Einkaufsliste abhaken und ergänzen, beim nächsten Netz gleicht sie sich ab."], ["Eigene Filter", "Allergene, Vorlieben und Vorrat gelten standardmäßig nur auf deinem Handy. Mit dem Schalter „Filter & Vorrat mit Familie teilen“ in den Einstellungen nutzt ihr sie gemeinsam."], ["Sicherung", "Unter Einstellungen → Daten sichern speicherst du Plan, eigene Rezepte und Einstellungen als Datei, zum Beispiel vor einem Handywechsel."]];
 const LS_TIPS = "essensplan-tips";
-const APP_VERSION = "v1.5.3";
+const APP_VERSION = "v1.5.4";
 const LS_HERO = "essensplan-hero";
 function heroClosed(){ try{ return !!localStorage.getItem(LS_HERO); }catch(e){ return false; } }
 function heroClose(){ try{ localStorage.setItem(LS_HERO,"1"); }catch(e){} $("#hero").hidden = true; }
@@ -4032,7 +4033,7 @@ function openSettings(toPantry){
     <div class="filters" id="setFav">${FAV_OPTS.map(([k,l])=>k==="#"?`<span class="fsub">${l}</span>`:`<button type="button" data-fav="${k}" class="${s.excl.includes(k)?"excl":""}" aria-pressed="${s.fav.includes(k)}">${l}</button>`).join("")}</div>
     <h2 class="set-grp">C. Was ist zuhause?</h2>
     <h3 id="setPantryH">🏠 Vorrat zuhause</h3>
-    <p class="sub">Steht nie auf der Einkaufsliste und zählt bei „Was haben wir noch zuhause?“ als vorhanden. Aufnehmen: in der Einkaufsliste beim 🏠 → „Immer“, oder hier eintippen. „Immer“-Zutaten stehen nur hier, nicht unter „Schon zuhause“. Mit 🥫 markiert: angebrochen – fällt aus dem Vorrat, sobald ein Gericht damit gekocht wurde.</p>
+    <p class="sub">Steht nie auf der Einkaufsliste. Rezeptvorschläge („Was haben wir noch zuhause?“) beeinflusst nur das, was mit 🥫 als angebrochen markiert ist; „Immer“-Zutaten gelten dort nur als vorhanden und fehlen nie. Aufnehmen: in der Einkaufsliste beim 🏠 → „Immer“, oder hier eintippen. „Immer“-Zutaten stehen nur hier, nicht unter „Schon zuhause“. Mit 🥫 markiert: angebrochen – fällt aus dem Vorrat, sobald ein Gericht damit gekocht wurde.</p>
     <div class="filters" id="setPantry"></div>
     <div class="fr-in"><input id="pnInput" type="text" placeholder="Zutat hinzufügen …" autocomplete="off" enterkeyhint="done"><button class="btn primary" id="pnAdd" type="button">+</button></div>
     <h2 class="set-grp">D. Planung und Einkauf</h2>
@@ -4148,7 +4149,7 @@ function openHelp(first){
         <li>Oben wählst du, <b>für welche Tage</b> du einkaufst (z. B. „Heute + morgen“).</li>
         <li>Sortiert <b>nach Supermarkt-Abteilung</b> oder nach Tagen. Abhaken beim Einkaufen.</li>
         <li><b>Noch etwas dazu</b>: eigene Artikel wie Joghurt oder Obst ergänzen.</li>
-        <li><b>🏠</b> hinter einer Zutat: haben wir schon. Du wählst: <b>Nur diesmal</b> (kommt bei der nächsten Planung wieder), <b>Immer</b> (steht nie mehr auf der Liste) oder <b>Angebrochen</b> (bald verbrauchen – die App schlägt passende Gerichte vor).</li>
+        <li><b>🏠</b> hinter einer Zutat: haben wir schon. Du wählst: <b>Nur diesmal</b> (kommt bei der nächsten Planung wieder), <b>Immer</b> (steht nie mehr auf der Liste, ohne Einfluss auf Rezeptvorschläge) oder <b>Angebrochen</b> (bald verbrauchen – die App schlägt passende Gerichte vor).</li>
         <li><b>Schon zuhause</b> unten in der Liste: Hier stehen „Nur diesmal“- und „Angebrochen“-Zutaten. Mit dem <b>🛒</b> holst du sie zurück auf die Liste. „Immer“-Zutaten stehen dort nicht, du änderst sie unter <b>⚙ Einstellungen → Vorrat zuhause</b> oder über „Vorrat anpassen“ ganz unten.</li>
         <li><b>📤 Teilen</b> schickt die offenen Artikel z. B. an Google Keep oder an die Familie. Auf Geräten ohne Teilen-Funktion heißt der Knopf <b>📋 Für Keep</b>: Er kopiert die Liste, dann in Google Keep auf „+ Listenelement“ tippen und einfügen – jede Zeile wird ein eigener Punkt.</li>
         <li><b>Kopieren</b> legt die offene Liste als Text in die Zwischenablage, <b>Abgehakte ausblenden</b> räumt Erledigtes weg, <b>🖨 Drucken</b> druckt die Liste.</li>
@@ -4192,7 +4193,7 @@ function openHelp(first){
         <li><b>Kategorien ausschließen:</b> eine Kategorie im Ideen-Filter oder bei den Lieblingskategorien in ⚙ lange drücken. Solche Gerichte werden nicht vorgeschlagen; selbst gewählte und schon geplante bleiben. Nochmal tippen hebt es auf.</li>
         <li><b>Lieblingskategorien:</b> z. B. 🐟 Fisch oder 🥢 Asiatisch – kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran.</li>
         <li><b>Kochzeit Mo–Fr:</b> wie lange du unter der Woche höchstens aktiv am Herd stehen willst (ohne Backen und Warten). Das gilt für Würfeln und den Plan-Assistenten.</li>
-        <li><b>🏠 Vorrat zuhause:</b> Zutaten, die immer da sind (z. B. Zwiebeln oder Reis), stehen nie auf der Einkaufsliste. Zum Aufnehmen tippst du in der Einkaufsliste beim 🏠 auf „Immer“, oder du tippst sie hier ein. Mit × entfernst du sie wieder. 🥫 bedeutet angebrochen: Die Zutat fällt aus dem Vorrat, sobald ein Gericht damit gekocht wurde.</li>
+        <li><b>🏠 Vorrat zuhause:</b> Zutaten, die immer da sind (z. B. Zwiebeln oder Reis), stehen nie auf der Einkaufsliste. Zum Aufnehmen tippst du in der Einkaufsliste beim 🏠 auf „Immer“, oder du tippst sie hier ein. Mit × entfernst du sie wieder. „Immer“-Zutaten beeinflussen keine Rezeptvorschläge. 🥫 bedeutet angebrochen: Diese Zutat schlägt passende Gerichte vor und fällt aus dem Vorrat, sobald ein Gericht damit gekocht wurde.</li>
         <li><b>🌍 Region:</b> bestimmt den Saisonkalender („Jetzt saisonal“) und die Namen, z. B. Karfiol oder Rüebli.</li>
         <li><b>🔔 Hinweise in der App:</b> dezente Karten oben im Plan, keine Push-Nachrichten. Jede Art kannst du einzeln abschalten. Gilt nur für dieses Gerät.</li>
         <li><b>🛒 Reihenfolge im Supermarkt:</b> Mit ▲▼ stellst du die Abteilungen so ein, wie euer Laden aufgebaut ist. Danach sortiert sich die Einkaufsliste „nach Abteilung“.</li>
@@ -4958,7 +4959,7 @@ $("#quickIdeas").addEventListener("click",e=>{
   const b = e.target.closest("[data-qi]"); if(!b) return;
   const [t,v] = b.dataset.qi.split(":");
   if(t==="m"){
-    if(v==="vorrat" && !Object.keys(state.pantry||{}).length && quick!=="vorrat"){ openFridge({have:[...frSel], f:[]}); return; }
+    if(v==="vorrat" && !frOpen().length && quick!=="vorrat"){ openFridge({have:[...frSel], f:[]}); return; }
     quick = quick===v ? null : v;
   } else { toggleFilter(filterSet, v); ideaUI.sync(); }
   renderIdeas();
@@ -5218,12 +5219,14 @@ function openAddSheet(){
 /* ---------- "Was haben wir noch zuhause?": Zutaten-Chips direkt auf der Ideen-Seite ---------- */
 const FR_QUICK = ["Eier","Käse","Tomaten","Nudeln","Reis","Kartoffeln","Zucchini","Karotten","Paprika","Sahne"];
 let frSel = [];
-function frHave(l){ return [...new Set([...(l||[]), ...Object.keys(state.pantry||{})])]; }
+function frOpen(){ const p = state.pantry||{}; return Object.keys(p).filter(k=>p[k]===2); }      // angebrochen: löst Vorschläge aus
+function frAlways(){ const p = state.pantry||{}; return Object.keys(p).filter(k=>p[k]!==2); }     // „Immer“: nur Einkaufsliste
+function frHave(l){ return [...new Set([...(l||[]), ...frOpen()])]; }
 function frNearCount(){ const hv=frHave(frSel); return allDishes().filter(d=>{ if(d.side) return false; const r=frScore(d,hv); return r.hits.length && r.missing.length<=3; }).length; }
 function renderFrChips(){
   $("#zhChips").innerHTML = FR_QUICK.map(t=>`<button type="button" data-frq="${esc(t)}" aria-pressed="${frSel.includes(t)}">${esc(t)}</button>`).join("") + `<button type="button" data-frq-more>＋ weitere</button>`;
   const go = $("#zhGo");
-  if(!frSel.length && !Object.keys(state.pantry||{}).length){ go.hidden = true; return; }
+  if(!frSel.length && !frOpen().length){ go.hidden = true; return; }
   const n = frNearCount();
   go.hidden = false;
   go.innerHTML = n ? `→ ${n} passende Gerichte anzeigen<small>Es fehlen höchstens 3 Zutaten</small>` : `→ Vorschläge anzeigen<small>Kein Gericht fast komplett – Teil-Treffer ansehen</small>`;
