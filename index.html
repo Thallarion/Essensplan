@@ -910,6 +910,7 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
 .hero h2{margin:0 28px 4px 0;font-size:22px;line-height:1.2}
 .hero-sub{margin:0 0 12px;color:var(--muted);font-size:15px}
 .hero-x{position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:50%;border:0;background:transparent;color:var(--muted);font:400 24px/1 var(--body);cursor:pointer}
+.offnote{margin:0 0 10px;padding:8px 12px;border-radius:12px;background:var(--sunk);border:1px solid var(--line);font-size:14px;color:var(--ink)}
 .sharebox{margin:4px 0 6px;padding:12px 14px;background:var(--sunk);border:1px solid var(--line);border-radius:14px}.sharebox .filters{padding:0;margin:0 0 6px;flex-wrap:wrap;overflow:visible}.sharebox .filters button{white-space:normal;text-align:left;line-height:1.3;border-radius:14px;padding:8px 14px;max-width:100%}.sharebox .sub{margin:0}
 .set-grp{font:700 21px var(--body);margin:34px 0 2px;padding-top:16px;border-top:2px solid var(--line)}
 .set .sub + .set-grp, .set h2:first-child + .set-grp{margin-top:20px}
@@ -1007,6 +1008,7 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
       <button class="btn small ghost" id="clearDone">Abgehakte ausblenden</button>
       <button class="btn small" id="printList" type="button">🖨 Drucken</button>
     </div>
+    <p class="offnote" id="offNote" hidden></p>
     <div class="shop" id="shop"></div>
     <div class="add">
       <input id="extraInput" type="text" placeholder="Noch etwas dazu, z. B. Joghurt, Obst …" autocomplete="off">
@@ -3119,8 +3121,21 @@ function syncAgo(){
 }
 function syncLabel(){
   if(!sync) setSync("", "Plan nur hier gespeichert · Familie einladen");
+  else if(!navigator.onLine) setSync("warn", "Offline · wird später abgeglichen");
   else if(online) setSync("ok", "Mit Familie geteilt");
   else setSync("warn", "Familienplan · offline");
+  offNote();
+}
+function offNote(){
+  const el = document.getElementById("offNote"); if(!el) return;
+  const off = !navigator.onLine;
+  el.hidden = !off;
+  el.textContent = sync ? "📴 Offline – Änderungen werden später abgeglichen" : "📴 Offline – deine Liste ist auf diesem Gerät gespeichert";
+}
+window.addEventListener("online", ()=>{ syncLabel(); });
+window.addEventListener("offline", ()=>{ syncLabel(); });
+if("serviceWorker" in navigator && location.protocol.startsWith("http")){
+  window.addEventListener("load", ()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); });
 }
 
 async function startSync(){
@@ -3896,7 +3911,7 @@ const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","
 /* ---------- Pro-Tipps: ein Tipp pro Tag, der Reihe nach, nur beim Start; abschaltbar (pro Gerät) ---------- */
 const TIPS = [["Kochmodus", "Tippe im Rezept auf „Kochmodus“: große Schrift, Zutaten und Schritte zum Abhaken, der Bildschirm bleibt an. Wenn du etwas abhakst, scrollt es von selbst zum Nächsten."], ["Einkauf", "Das 🏠 hinter einer Zutat in der Einkaufsliste nimmt sie von der Liste, weil ihr sie zuhause habt. „Nur diesmal“ und „Angebrochen“ holst du unter „Schon zuhause“ mit dem 🛒 zurück."], ["Personenzahl", "Im Rezept änderst du mit − und + die Personenzahl. Die Zutaten und die Mengen in den Schritten rechnen sich automatisch mit um."], ["Vorrat", "Zutaten, die immer da sind, zum Beispiel Zwiebeln: Tippe in der Einkaufsliste beim 🏠 auf „Immer“. Dann tauchen sie nie wieder auf der Liste auf. Ändern kannst du das unter „Vorrat anpassen“ ganz unten in der Liste."], ["Alltag-Filter", "Unter Ideen findest du bei „Alle Filter“ den Reiter „Zeit & Alltag“: zum Beispiel Ofengericht, ein Topf, gut einzufrieren oder mit wenigen Zutaten."], ["Supermarkt", "Die Einkaufsliste lässt sich nach Abteilung sortieren. In den Einstellungen stellst du die Reihenfolge so ein, wie euer Supermarkt aufgebaut ist."], ["Reste", "„Was haben wir noch zuhause?“ in den Ideen: Tippe ein, was im Kühlschrank liegt, und die App zeigt dir Gerichte, die dazu passen."], ["Liste teilen", "Mit „Teilen“ in der Einkaufsliste schickst du die offenen Artikel zum Beispiel direkt an Google Keep oder an deine Familie."], ["Link teilen", "Tippe im Rezept auf „Link teilen“, um es per Nachricht zu verschicken. Wer den Link öffnet, sieht sofort das Rezept."], ["Zutaten kopieren", "Im Rezept kopiert „Zutaten kopieren“ die Mengen für eure Personenzahl, bereit zum Einfügen in eine Notiz oder eine Listen-App."], ["Leere Tage", "Mit „Leere Tage füllen“ schlägt die App für alle freien Tage Gerichte vor. Unter der Woche sind es nur schnelle Gerichte, bevorzugt vegetarisch."], ["Design", "In den Einstellungen wählst du zwischen hellem und dunklem Design, oder die App folgt automatisch deinem Handy."], ["Notiz", "Im Rezept hältst du unter „Unsere Notiz“ fest, was ihr beim nächsten Mal anders macht, zum Beispiel weniger Salz."], ["Lieblinge", "In den Einstellungen wählst du Lieblingskategorien. Sie kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran."], ["Einsenden", "Unter Ideen kannst du über „Rezept hinzufügen“ ein Rezept als Foto, PDF oder Link einsenden. Nach der Prüfung steht es für alle in der App."], ["Bewerten", "Nach dem Essen fragt die App, wie es geschmeckt hat. Mit 👍 und 👎 merkt ihr euch eure Favoriten."], ["Sicherung", "Unter Einstellungen → Daten sichern speicherst du Plan, eigene Rezepte und Einstellungen als Datei, zum Beispiel vor einem Handywechsel."]];
 const LS_TIPS = "essensplan-tips";
-const APP_VERSION = "v1.4.1";
+const APP_VERSION = "v1.5.0";
 const LS_HERO = "essensplan-hero";
 function heroClosed(){ try{ return !!localStorage.getItem(LS_HERO); }catch(e){ return false; } }
 function heroClose(){ try{ localStorage.setItem(LS_HERO,"1"); }catch(e){} $("#hero").hidden = true; }
