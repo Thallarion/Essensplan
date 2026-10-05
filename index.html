@@ -231,6 +231,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--mustard);outlin
 .tip-text{font-size:18px;line-height:1.5;margin:6px 0 16px}
 @media (max-width:340px){.item{gap:8px}.item label{font-size:14px;column-gap:8px}.home-btn{width:40px;height:40px}}
 .item .rm{border:0;background:none;color:var(--muted);cursor:pointer;font-size:18px;padding:0 4px}
+.item .rc{border:0;background:none;color:var(--muted);cursor:pointer;font-size:15px;padding:0 6px;opacity:.7}
 .add{display:flex;gap:8px;margin:12px 0 4px}
 .add input{flex:1;min-width:0;font:16px var(--body);padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
 .shopdays{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:10px;display:flex;flex-direction:column;gap:10px}
@@ -3588,7 +3589,62 @@ function groupParts(parts){
   });
   return [...map.values()].map(it=>({...it, days:it.days.sort((a,b)=>a-b)}));
 }
-function extraItems(){ return Object.entries(state.extras).map(([id,e])=>({n:e.text,c:"x",extra:id,keys:["x:"+id]})).filter(it=>!state.hidden[it.keys[0]]); }
+/* Eigene Artikel automatisch in die richtige Kategorie einsortieren */
+const CAT_STEMS = {
+ k:["skyr","joghurt","jogurt","quark","milch","buttermilch","sahne","schmand","butter","margarine","käse","mozzarella","parmesan","gouda","feta","frischkäse","kefir","ayran","wurst","schinken","salami","aufschnitt","hummus","tofu","pudding","eier","ei","crème fraîche","mascarpone","ricotta","halloumi","kräuterquark","dip","tzatziki","sauerrahm","frischteig","pizzateig","blätterteig","fertigteig","grillkäse"],
+ g:["apfel","äpfel","banane","birne","orange","mandarine","clementine","zitrone","limette","traube","beere","erdbeere","himbeere","heidelbeere","brombeere","melone","mango","ananas","kiwi","pfirsich","nektarine","pflaume","kirsche","tomate","gurke","salat","paprika","zwiebel","knoblauch","kartoffel","möhre","karotte","brokkoli","blumenkohl","spinat","pilz","champignon","zucchini","aubergine","kürbis","lauch","porree","sellerie","radieschen","kohl","avocado","ingwer","petersilie","basilikum","schnittlauch","koriander","minze","kräuter","obst","gemüse","rucola","fenchel","spargel","rosenkohl","mangold","kohlrabi","rote bete","süßkartoffel","feldsalat","dill","rosmarin","thymian"],
+ b:["brot","brötchen","semmel","toast","baguette","croissant","brezel","laugen","kuchen","fladenbrot","ciabatta","bagel","vollkornbrot","knäckebrot","wecken","zopf","gebäck","donut","muffin"],
+ f:["fleisch","hack","hackfleisch","hähnchen","hühnchen","pute","rind","schwein","steak","schnitzel","lachs","fisch","garnelen","speck","bratwurst","würstchen","bockwurst","leberkäse","gyros","forelle","kabeljau","filet","nuggets","geflügel","lamm","entrecôte"],
+ t:["tiefkühl","tk","eis","eiswürfel","eiscreme","pizza","pommes","fischstäbchen","rahmspinat","gefroren","tiefkühlpizza","kroketten","gemüsemischung","beerenmischung"],
+ v:["nudeln","pasta","spaghetti","penne","fusilli","reis","mehl","zucker","salz","pfeffer","öl","essig","müsli","haferflocken","cornflakes","kaffee","tee","kakao","schokolade","kekse","chips","nüsse","nuss","mandeln","honig","marmelade","nutella","konserve","tomatenmark","passata","brühe","linsen","bohnen","kichererbsen","couscous","bulgur","quinoa","wasser","saft","limo","cola","bier","wein","kokosmilch","haferdrink","sojadrink","mandeldrink","hafermilch","sojamilch","reiswaffel","cracker","gewürz","ketchup","senf","mayo","mayonnaise","soße","sauce","tortilla","pesto","thunfisch","mais","backpulver","hefe","semmelbrösel","paniermehl","puddingpulver","gummibärchen","popcorn","oliven","kapern","sirup","ahornsirup"],
+ x:["spülmittel","spülmaschinentabs","toilettenpapier","klopapier","küchenrolle","taschentücher","müllbeutel","müllsack","waschmittel","weichspüler","zahnpasta","zahnbürste","shampoo","seife","batterie","windel","alufolie","backpapier","frischhaltefolie","gefrierbeutel","schwamm","duschgel","deo","kerze","reiniger","geschirrspül","tempo","servietten","feuchttücher"]
+};
+const CAT_UNITS = /^(\d+([.,]\d+)?|[½¼¾]|x|g|kg|gr|ml|l|stk|stück|st|pck|pck\.|pkg|packung|packungen|dose|dosen|flasche|flaschen|bund|el|tl|prise|glas|gläser|becher|beutel|kopf|köpfe|netz|tüte|tüten|und|mit|ohne|von|für)$/;
+function catKey(text){
+  return String(text||"").toLowerCase().replace(/\([^)]*\)/g," ").split(/[^a-zäöüßé\-½¼¾\d.,]+/).filter(w=>w&&!CAT_UNITS.test(w)).join(" ").trim();
+}
+let _ingIdx = null;
+function ingIndex(){
+  if(!_ingIdx){ _ingIdx = new Map(); DISHES.forEach(d=>(d.i||[]).forEach(x=>{ const n = catKey(x[2]); if(n && x[3] && !_ingIdx.has(n)) _ingIdx.set(n, x[3]); })); }
+  const own = new Map();
+  Object.keys(state.recipes||{}).forEach(id=>{ const d = ownDish(id); if(d) (d.i||[]).forEach(x=>{ const n = catKey(x[2]); if(n && x[3] && !own.has(n)) own.set(n, x[3]); }); });
+  return own.size ? new Map([..._ingIdx, ...own]) : _ingIdx;
+}
+function autoCat(text){
+  const key = catKey(text); if(!key) return null;
+  const mem = (state.settings&&state.settings.catMem)||{};
+  if(mem[key]) return mem[key];
+  const idx = ingIndex(), words = key.split(" ");
+  if(idx.has(key)) return idx.get(key);
+  for(const w of words){ if(w.length>=3 && idx.has(w)) return idx.get(w); }
+  let best = null, bl = 0;
+  Object.keys(CAT_STEMS).forEach(c=>CAT_STEMS[c].forEach(st=>{
+    if(st.length<=3){ if(!words.includes(st)) return; }
+    else if(!words.some(w=>w.endsWith(st)||w.startsWith(st))) { if(!key.includes(st)) return; }
+    if(st.length>bl){ bl = st.length; best = c; }
+  }));
+  return best;
+}
+function extraCat(e){ return (e.c && CATS_BASE.some(x=>x[0]===e.c)) ? e.c : (autoCat(e.text)||"x"); }
+function extraItems(){ return Object.entries(state.extras).map(([id,e])=>({n:e.text,c:extraCat(e),extra:id,keys:["x:"+id]})).filter(it=>!state.hidden[it.keys[0]]); }
+const CAT_ICON = {g:"🥕",b:"🥖",k:"🧀",f:"🥩",t:"🧊",v:"🥫",x:"🧺"};
+function askCat(id, fresh){
+  const e = state.extras[id]; if(!e) return;
+  const cur = extraCat(e);
+  openSheet(`<button class="btn small close" data-close>Schließen</button>
+    <h2>${fresh?"Wohin gehört":"Kategorie für"} „${esc(e.text)}“?</h2>
+    <p class="sub">${fresh?"Das kenne ich noch nicht. ":""}Ich merke mir deine Wahl für das nächste Mal.</p>
+    <div class="add-opts">${CAT_ORDER_FOR_ASK().map(([c,l])=>`<button type="button" class="add-opt" data-pickcat="${c}" data-xid="${id}"><span aria-hidden="true">${CAT_ICON[c]||""}</span><b>${l}${c===cur&&!fresh?" ✓":""}</b><small>&nbsp;</small></button>`).join("")}</div>`);
+}
+function CAT_ORDER_FOR_ASK(){ return CATS_BASE; }
+document.addEventListener("click",ev=>{
+  const rc = ev.target.closest("[data-recat]");
+  if(rc){ askCat(rc.dataset.recat, false); return; }
+  const pc = ev.target.closest("[data-pickcat]");
+  if(pc){ const e = state.extras[pc.dataset.xid]; if(!e) return; const c = pc.dataset.pickcat, key = catKey(e.text);
+    e.c = c; if(key){ state.settings = {...(state.settings||{}), catMem:{...((state.settings&&state.settings.catMem)||{}), [key]:c}}; }
+    closeSheet(); commit(); toast(`${e.text} → ${(CATS_BASE.find(x=>x[0]===c)||[])[1]}`); }
+});
 function isDone(it){ return it.keys.every(k=>state.checked[k]); }
 let shopItems = [], homeList = [];
 function itemHtml(it, showDays){
@@ -3597,7 +3653,7 @@ function itemHtml(it, showDays){
   return `<div class="item${done?' done':''}">
     <input type="checkbox" id="si_${idx}" data-item="${idx}" ${done?'checked':''}>
     <label for="si_${idx}">${it.extra?'':`<span class="qty">${fmtQty(it.a,it.u)}</span>`}<span>${esc(it.n)}</span>${showDays&&it.days?`<span class="for">für ${daysText(it.days)}</span>`:''}</label>
-    ${it.extra?`<button class="rm" data-rmextra="${it.extra}" aria-label="${esc(it.n)} entfernen">×</button>`:`<button class="home-btn" type="button" data-home="${idx}" aria-label="${esc(it.n)}: haben wir zu Hause" title="Haben wir zu Hause – von der Liste nehmen"><span aria-hidden="true">🏠</span></button>`}
+    ${it.extra?`<button class="rc" data-recat="${it.extra}" aria-label="${esc(it.n)}: Kategorie ändern" title="Kategorie ändern">🏷</button><button class="rm" data-rmextra="${it.extra}" aria-label="${esc(it.n)} entfernen">×</button>`:`<button class="home-btn" type="button" data-home="${idx}" aria-label="${esc(it.n)}: haben wir zu Hause" title="Haben wir zu Hause – von der Liste nehmen"><span aria-hidden="true">🏠</span></button>`}
   </div>`;
 }
 function renderShopControls(){
@@ -3633,7 +3689,7 @@ function renderShop(){
     const all = [...grouped, ...extras];
     html = CATS.map(([c,label])=>{
       const its = all.filter(it=>it.c===c).sort((a,b)=>a.n.localeCompare(b.n,"de"));
-      return its.length ? `<div class="cat"><h3>${({g:"🥕",b:"🥖",k:"🧀",f:"🥩",t:"🧊",v:"🥫",x:"🧺"})[c]||""} ${label}</h3>${its.map(it=>itemHtml(it,true)).join("")}</div>` : "";
+      return its.length ? `<div class="cat"><h3>${CAT_ICON[c]||""} ${label}</h3>${its.map(it=>itemHtml(it,true)).join("")}</div>` : "";
     }).join("");
   }
   $("#shop").innerHTML = html + homeHtml;
@@ -3971,7 +4027,7 @@ const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","
 /* ---------- Pro-Tipps: ein Tipp pro Tag, der Reihe nach, nur beim Start; abschaltbar (pro Gerät) ---------- */
 const TIPS = [["Kochmodus", "Tippe im Rezept auf „Kochmodus“: große Schrift, Zutaten und Schritte zum Abhaken, der Bildschirm bleibt an. Wenn du etwas abhakst, scrollt es von selbst zum Nächsten."], ["Einkauf", "Das 🏠 hinter einer Zutat in der Einkaufsliste nimmt sie von der Liste, weil ihr sie zuhause habt. „Nur diesmal“ und „Angebrochen“ holst du unter „Schon zuhause“ mit dem 🛒 zurück."], ["Personenzahl", "Im Rezept änderst du mit − und + die Personenzahl. Die Zutaten und die Mengen in den Schritten rechnen sich automatisch mit um."], ["Vorrat", "Zutaten, die immer da sind, zum Beispiel Zwiebeln: Tippe in der Einkaufsliste beim 🏠 auf „Immer“. Dann tauchen sie nie wieder auf der Liste auf, beeinflussen aber keine Rezeptvorschläge. Ändern kannst du das unter „Vorrat anpassen“ ganz unten in der Liste."], ["Alltag-Filter", "Unter Ideen findest du bei „Alle Filter“ den Reiter „Zeit & Alltag“: zum Beispiel Ofengericht, ein Topf, gut einzufrieren oder mit wenigen Zutaten."], ["Supermarkt", "Die Einkaufsliste lässt sich nach Abteilung sortieren. In den Einstellungen stellst du die Reihenfolge so ein, wie euer Supermarkt aufgebaut ist."], ["Reste", "„Was haben wir noch zuhause?“ in den Ideen: Tippe ein, was im Kühlschrank liegt, und die App zeigt dir Gerichte, die dazu passen."], ["Liste teilen", "Mit „Teilen“ in der Einkaufsliste schickst du die offenen Artikel zum Beispiel direkt an Google Keep oder an deine Familie."], ["Link teilen", "Tippe im Rezept auf „Link teilen“, um es per Nachricht zu verschicken. Wer den Link öffnet, sieht sofort das Rezept."], ["Zutaten kopieren", "Im Rezept kopiert „Zutaten kopieren“ die Mengen für eure Personenzahl, bereit zum Einfügen in eine Notiz oder eine Listen-App."], ["Leere Tage", "Mit „Leere Tage füllen“ schlägt die App für alle freien Tage Gerichte vor. Unter der Woche sind es nur schnelle Gerichte, bevorzugt vegetarisch."], ["Design", "In den Einstellungen wählst du zwischen hellem und dunklem Design, oder die App folgt automatisch deinem Handy."], ["Notiz", "Im Rezept hältst du unter „Unsere Notiz“ fest, was ihr beim nächsten Mal anders macht, zum Beispiel weniger Salz."], ["Lieblinge", "In den Einstellungen wählst du Lieblingskategorien. Sie kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran."], ["Einsenden", "Unter Ideen kannst du über „Rezept hinzufügen“ ein Rezept als Foto, PDF oder Link einsenden. Nach der Prüfung steht es für alle in der App."], ["Bewerten", "Nach dem Essen fragt die App, wie es geschmeckt hat. Mit 👍 und 👎 merkt ihr euch eure Favoriten."], ["Offline", "Öffne die App einmal mit Netz und danach noch einmal: Dann startet sie auch ohne Empfang. Im Supermarkt kannst du die Einkaufsliste abhaken und ergänzen, beim nächsten Netz gleicht sie sich ab."], ["Eigene Filter", "Allergene und Vorlieben gelten standardmäßig nur auf deinem Handy. Mit dem Schalter „Filter mit Familie teilen“ in den Einstellungen nutzt ihr sie gemeinsam. Der Vorrat wird immer geteilt."], ["Sicherung", "Unter Einstellungen → Daten sichern speicherst du Plan, eigene Rezepte und Einstellungen als Datei, zum Beispiel vor einem Handywechsel."]];
 const LS_TIPS = "essensplan-tips";
-const APP_VERSION = "v1.5.6";
+const APP_VERSION = "v1.6.0";
 const LS_HERO = "essensplan-hero";
 function heroClosed(){ try{ return !!localStorage.getItem(LS_HERO); }catch(e){ return false; } }
 function heroClose(){ try{ localStorage.setItem(LS_HERO,"1"); }catch(e){} $("#hero").hidden = true; }
@@ -4150,7 +4206,7 @@ function openHelp(first){
         <li>Entsteht <b>automatisch</b> aus dem Wochenplan – für eure Personenzahl, gleiche Zutaten werden zusammengezählt.</li>
         <li>Oben wählst du, <b>für welche Tage</b> du einkaufst (z. B. „Heute + morgen“).</li>
         <li>Sortiert <b>nach Supermarkt-Abteilung</b> oder nach Tagen. Abhaken beim Einkaufen.</li>
-        <li><b>Noch etwas dazu</b>: eigene Artikel wie Joghurt oder Obst ergänzen.</li>
+        <li><b>Noch etwas dazu</b>: eigene Artikel wie Joghurt oder Obst ergänzen. Sie landen automatisch in der passenden Kategorie (Skyr im Kühlregal); kennt die App einen Artikel nicht, fragt sie kurz nach. Mit dem 🏷 änderst du die Kategorie später, die App merkt sich das.</li>
         <li><b>🏠</b> hinter einer Zutat: haben wir schon. Du wählst: <b>Nur diesmal</b> (kommt bei der nächsten Planung wieder), <b>Immer</b> (steht nie mehr auf der Liste, ohne Einfluss auf Rezeptvorschläge) oder <b>Angebrochen</b> (bald verbrauchen – die App schlägt passende Gerichte vor).</li>
         <li><b>Schon zuhause</b> unten in der Liste: Hier stehen „Nur diesmal“- und „Angebrochen“-Zutaten. Mit dem <b>🛒</b> holst du sie zurück auf die Liste. „Immer“-Zutaten stehen dort nicht, du änderst sie unter <b>⚙ Einstellungen → Vorrat zuhause</b> oder über „Vorrat anpassen“ ganz unten.</li>
         <li><b>📤 Teilen</b> schickt die offenen Artikel z. B. an Google Keep oder an die Familie. Auf Geräten ohne Teilen-Funktion heißt der Knopf <b>📋 Für Keep</b>: Er kopiert die Liste, dann in Google Keep auf „+ Listenelement“ tippen und einfügen – jede Zeile wird ein eigener Punkt.</li>
@@ -4898,10 +4954,12 @@ $("#newWeek").addEventListener("click",()=>{
 });
 function addExtra(){
   const inp = $("#extraInput"); const v = inp.value.trim(); if(!v) return;
-  state.extras[Date.now().toString(36)+Math.random().toString(36).slice(2,5)] = {text:v}; inp.value=""; commit();
+  const id = Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+  state.extras[id] = {text:v}; inp.value=""; commit();
+  if(!autoCat(v)) askCat(id, true);
 }
 $("#extraAdd").addEventListener("click",addExtra);
-$("#extraInput").addEventListener("keydown",e=>{ if(e.key==="Enter") addExtra(); });
+$("#extraInput").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); addExtra(); } });
 $("#clearDone").addEventListener("click",()=>{
   let n=0; groupParts(shopParts()).forEach(it=>{ if(isDone(it)){ it.keys.forEach(k=>state.hidden[k]=true); n++; } });
   Object.keys(state.extras).forEach(id=>{ if(state.checked["x:"+id]){ delete state.extras[id]; delete state.checked["x:"+id]; } });
