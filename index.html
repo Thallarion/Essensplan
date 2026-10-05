@@ -123,7 +123,7 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);lin
 h1 span{color:var(--basil)}
 .sub{color:var(--muted);font-size:14px;margin:6px 0 0}
 .syncrow{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;margin:8px 0 0}
-.sync-state{display:inline-flex;align-items:center;gap:6px;font:600 13px var(--body);color:var(--ink)}
+.sync-state{background:transparent;border:0;padding:4px 0;cursor:pointer;text-align:left;display:inline-flex;align-items:center;gap:6px;font:600 13px var(--body);color:var(--ink)}
 .sync-state i{width:8px;height:8px;border-radius:50%;background:var(--muted);display:inline-block}
 .sync-state.ok i{background:var(--basil)}
 .sync-state.warn i{background:var(--mustard)}
@@ -656,7 +656,6 @@ details.cp-wk summary{cursor:pointer;min-height:44px;display:flex;align-items:ce
 .weekhead{display:grid;grid-template-columns:1fr auto;column-gap:10px;row-gap:2px;align-items:center;margin:6px 0 16px}
 .weekhead h2{grid-column:1;grid-row:1;font-size:clamp(22px,6.2vw,24px);line-height:1.1;letter-spacing:-.01em}
 .weekhead #weekRange{grid-column:1;grid-row:2;font-size:14px;font-weight:500}
-.weekhead .wkmenu{grid-column:2;grid-row:1 / span 2;align-self:center}
 .wk-status{flex:1;color:var(--basil);font-weight:700;font-size:15px;padding:10px 4px}
 #newWeek{color:var(--tomato)!important;background:transparent!important;border:0!important;font-weight:600!important;text-decoration:none!important;padding:10px 12px!important;min-height:44px}
 .weekbar #newWeek{margin-left:auto}
@@ -673,8 +672,11 @@ details.cp-wk summary{cursor:pointer;min-height:44px;display:flex;align-items:ce
 .wkmenu summary::-webkit-details-marker{display:none}
 #wkMenu summary{width:auto;padding:0 14px;border-radius:999px;display:inline-flex;align-items:center;gap:6px}
 #wkMenu summary .wk-l{font:600 13px var(--body);color:var(--muted)}
-.wkmenu-pop{position:absolute;right:0;top:46px;z-index:5;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:6px;min-width:170px}
-.wkmenu-pop button{width:100%;text-align:left}
+.wkmenu-pop{position:absolute;right:0;top:46px;z-index:30;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:6px;min-width:170px}
+.wkmenu-pop button{width:100%;text-align:left;display:block;white-space:nowrap}
+.wkmenu-pop hr{border:0;border-top:1px solid var(--line);margin:4px 2px}
+#wkMenu .wkmenu-pop button:not(#newWeek){background:transparent;border:0;padding:10px 12px;font:600 14px var(--body);color:var(--ink);border-radius:8px;cursor:pointer;min-height:44px}
+#wkMenu .wkmenu-pop{min-width:210px}
 .weektop{display:flex;flex-direction:column;gap:12px;margin-bottom:12px}
 .daybig{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:16px}
 .daybig.today{border:2px solid var(--mustard)}
@@ -732,7 +734,7 @@ h1{font-size:clamp(28px,7.6vw,32px);font-weight:700}
 /* ===== UX-Feinschliff 2 ===== */
 header.top{display:block}
 header.top .ttl{width:100%}
-header.top #helpBtn{margin-left:auto}
+header.top #wkMenu{margin-left:auto;flex:none}
 header.top .ttl{gap:10px;align-items:center}
 header.top .logo{flex:none;width:38px;height:38px;border-radius:10px;display:block}
 header.top .helpbtn{align-self:flex-end;margin-bottom:-2px;width:auto;height:auto;min-width:40px;border-radius:12px;padding:4px 6px 3px;flex-direction:column;align-items:center;justify-content:center;display:flex;gap:2px}
@@ -959,12 +961,10 @@ header.top .tag{margin:3px 0 0;font-size:13px;font-weight:500;color:var(--muted)
     <div class="ttl">
       <img class="logo" src="icon.png" alt="" width="38" height="38">
       <div class="ttltx"><h1>Was <span>essen</span> wir?</h1><p class="tag">Familien-Wochenplan &amp; Einkaufsliste</p></div>
-      <button class="helpbtn" id="helpBtn" type="button" aria-label="Anleitung öffnen" title="Anleitung"><span class="hb-i" aria-hidden="true">?</span><span class="hb-l">Hilfe</span></button>
-      <button class="helpbtn" id="setBtn" type="button" aria-label="Einstellungen" title="Einstellungen"><span class="hb-i" aria-hidden="true">⚙</span><span class="hb-l">Einstellungen</span></button>
+      <details class="wkmenu" id="wkMenu"><summary aria-label="Mehr: Familie, Einstellungen, Hilfe" title="Mehr"><span aria-hidden="true">⋯</span><span class="wk-l">Mehr</span></summary><div class="wkmenu-pop"><button type="button" id="sync">Familienplan einrichten</button><button type="button" id="setBtn">⚙ Einstellungen</button><button type="button" id="helpBtn">? Hilfe</button><hr><button type="button" id="copyWeek">Woche kopieren …</button><button type="button" id="newWeek">Plan leeren</button></div></details>
     </div>
     <div class="syncrow">
-      <span class="sync-state" id="syncState"><i aria-hidden="true"></i><b id="syncStateTx">Nur auf diesem Gerät</b></span>
-      <button class="sync-btn" id="sync" type="button">Familienplan einrichten</button>
+      <button class="sync-state" id="syncState" type="button" aria-label="Familienplan öffnen"><i aria-hidden="true"></i><b id="syncStateTx">Nur auf diesem Gerät</b></button>
     </div>
   </header>
 
@@ -986,8 +986,7 @@ header.top .tag{margin:3px 0 0;font-size:13px;font-weight:500;color:var(--muted)
       <button type="button" class="linkbtn" id="heroToday">Nur etwas für heute suchen</button>
       <p class="hero-trust">🔒 Kein Konto nötig · 🚫 Keine Werbung · 🏠 Eure Angaben bleiben zunächst auf diesem Gerät</p>
     </div>
-    <div class="weekhead"><h2 id="weekTitle">Diese Woche</h2><span id="weekRange"></span>
-      <details class="wkmenu" id="wkMenu"><summary aria-label="Weitere Aktionen" title="Weitere Aktionen"><span aria-hidden="true">⋯</span><span class="wk-l">Mehr</span></summary><div class="wkmenu-pop"><button type="button" id="copyWeek">Woche kopieren …</button><button type="button" id="newWeek">Plan leeren</button></div></details></div>
+    <div class="weekhead"><h2 id="weekTitle">Diese Woche</h2><span id="weekRange"></span></div>
     <div class="seg wk-switch" role="group" aria-label="Woche wählen"><button type="button" id="wkThis" aria-pressed="true">Diese Woche</button><button type="button" id="wkNext" aria-pressed="false">Nächste Woche</button></div>
     <div class="hints" id="hints" hidden></div>
     <div class="weekbar">
@@ -3734,7 +3733,7 @@ function askHome(it){
     <p class="sub">Soll das nur für diesen Einkauf gelten oder immer?</p>
     <div class="add-opts">
       <button type="button" class="add-opt" id="ahOnce"><span aria-hidden="true">1×</span><b>Nur diesmal</b><small>Kommt bei der nächsten Planung wieder auf die Liste</small></button>
-      <button type="button" class="add-opt" id="ahAlways"><span aria-hidden="true">♾️</span><b>Immer</b><small>Steht nie mehr auf der Einkaufsliste (ohne Einfluss auf Rezeptvorschläge) – in ⚙ Einstellungen wieder entfernbar</small></button>
+      <button type="button" class="add-opt" id="ahAlways"><span aria-hidden="true">♾️</span><b>Immer</b><small>Steht nie mehr auf der Einkaufsliste (ohne Einfluss auf Rezeptvorschläge) – unter ⋯ Mehr → Einstellungen wieder entfernbar</small></button>
       <button type="button" class="add-opt" id="ahOpen"><span aria-hidden="true">🥫</span><b>Angebrochen – bald verbrauchen</b><small>Steht nicht auf der Liste, bis ein Gericht damit gekocht wurde; wir schlagen passende Gerichte vor</small></button>
     </div>`);
   $("#ahOnce").addEventListener("click",()=>{ it.keys.forEach(k=>{ state.hidden[k]="home"; }); closeSheet(); commit(); toast(`${it.n}: haben wir zu Hause`); });
@@ -4087,7 +4086,7 @@ function openSettings(toPantry){
     <p class="sub">${shareOn()?"Filter, Allergene und Vorlieben sind auf allen verbundenen Handys gleich.":"Filter, Allergene und Vorlieben gelten nur auf diesem Handy. Plan, Einkaufsliste, Rezepte und Vorrat bleiben gemeinsam."}</p></div>`:""}
     <h2 class="set-grp">A. Eure Familie</h2>
     <h3>👨‍👩‍👧 Wer isst mit?</h3>
-    <p class="sub">Rezepte und Einkaufsliste rechnen die Mengen automatisch um. Ein Kind zählt wie ein Erwachsener.</p>
+    <p class="sub">Rezepte und Einkaufsliste rechnen die Mengen automatisch um.</p>
     <div class="famrow"><span class="famlbl">Erwachsene</span><div class="stepper" role="group" aria-label="Erwachsene"><button type="button" data-seta="-1" aria-label="Einen Erwachsenen weniger">−</button><span id="setAdults">${s.adults}</span><button type="button" data-seta="1" aria-label="Einen Erwachsenen mehr">+</button></div></div>
     <div class="famrow"><span class="famlbl">Kinder</span><div class="stepper" role="group" aria-label="Kinder"><button type="button" data-setk="-1" aria-label="Ein Kind weniger">−</button><span id="setKids">${s.kids}</span><button type="button" data-setk="1" aria-label="Ein Kind mehr">+</button></div></div>
     <p class="sub" id="setFamTxt">${famText(s.adults,s.kids)} · ${s.persons} Person${s.persons>1?"en":""}</p>
@@ -4187,7 +4186,7 @@ function openSettings(toPantry){
 function openHelp(first){
   try{ localStorage.setItem("essensplan-hilfe","1"); }catch(e){}
   const img = (f,alt)=>`<img src="hilfe/${f}.webp" alt="${alt}" loading="lazy" width="320">`;
-  const leg = [["🌱","Vegetarisch"],["🥩","Fleisch"],["🐟","Fisch"],["👶","Kinderliebling – mild und kindertauglich"],["❤️","Gesund – viel Gemüse und Ballaststoffe, nicht zu fett, kein verarbeitetes Fleisch"],["💪","Proteinreich – mind. 25 g Eiweiß pro Portion"],["🥦","Gemüsereich – mind. 250 g Gemüse/Hülsenfrüchte pro Portion"],["🌾","Ballaststoffreich – mind. 10 g pro Portion"],["🥗","Leicht – höchstens 550 kcal pro Portion"],["📉","Low-Carb – höchstens 35 g Kohlenhydrate pro Portion"],["🍔","Kalorienreich – über 800 kcal pro Portion"],["🌿","Antientzündlich – jodarm, viel Gemüse, gute Öle"],['<span class="gfb">GF</span>',"Glutenfrei"],["🥢","Asiatisch"],["🍛","Indisch"],["🥣","Beilage/Dip – wird nicht gewürfelt"],["📷 🔗","Eingesendet (Foto/Link)"],["⭐","Mein Rezept – selbst angelegt"],["👍 👎","Eure Bewertung"],["⚠️","Enthält ein Allergen, das ihr in ⚙ ausgeschlossen habt"]];
+  const leg = [["🌱","Vegetarisch"],["🥩","Fleisch"],["🐟","Fisch"],["👶","Kinderliebling – mild und kindertauglich"],["❤️","Gesund – viel Gemüse und Ballaststoffe, nicht zu fett, kein verarbeitetes Fleisch"],["💪","Proteinreich – mind. 25 g Eiweiß pro Portion"],["🥦","Gemüsereich – mind. 250 g Gemüse/Hülsenfrüchte pro Portion"],["🌾","Ballaststoffreich – mind. 10 g pro Portion"],["🥗","Leicht – höchstens 550 kcal pro Portion"],["📉","Low-Carb – höchstens 35 g Kohlenhydrate pro Portion"],["🍔","Kalorienreich – über 800 kcal pro Portion"],["🌿","Antientzündlich – jodarm, viel Gemüse, gute Öle"],['<span class="gfb">GF</span>',"Glutenfrei"],["🥢","Asiatisch"],["🍛","Indisch"],["🥣","Beilage/Dip – wird nicht gewürfelt"],["📷 🔗","Eingesendet (Foto/Link)"],["⭐","Mein Rezept – selbst angelegt"],["👍 👎","Eure Bewertung"],["⚠️","Enthält ein Allergen, das ihr in den Einstellungen ausgeschlossen habt"]];
   openSheet(`<button class="btn small close" data-close>Schließen</button>
   <div class="help">
     <h2>${first?"Willkommen! 👋":"Anleitung"}</h2>
@@ -4204,7 +4203,7 @@ function openHelp(first){
       <ul>
         <li><b>🎲</b> (unter dem Datum) würfelt ein anderes, passendes Gericht.</li>
         <li><b>×</b> leert den Tag. Danach könnt ihr „Selbst wählen“ (ganze Liste mit Suche und Filtern) oder „Zufällig“ antippen.</li>
-        <li><b>Leere Tage füllen</b> würfelt alle freien Tage – unter der Woche nur schnelle Gerichte (Kochzeit in ⚙ einstellbar), bevorzugt vegetarisch und eure Lieblingskategorien.</li>
+        <li><b>Leere Tage füllen</b> würfelt alle freien Tage – unter der Woche nur schnelle Gerichte (Kochzeit unter ⋯ Mehr → Einstellungen einstellbar), bevorzugt vegetarisch und eure Lieblingskategorien.</li>
         <li><b>Plan leeren</b> leert Wochenplan und Einkaufsliste (zur Sicherheit zweimal tippen). Bewertungen, eigene Rezepte und Einstellungen bleiben erhalten.</li>
         <li><b>⋯</b> neben „Diese Woche“: <b>Woche kopieren …</b> füllt die Woche aus einer anderen (auch aus zuletzt gekochten Wochen) und enthält „Plan leeren“.</li>
         <li>Tipp auf ein Gericht öffnet das Rezept.</li>
@@ -4216,7 +4215,7 @@ function openHelp(first){
       <ul>
         <li><b>👍 / 👎</b>: Mag die Familie das? 👍 kommt beim Würfeln öfter dran, 👎 nie.</li>
         <li><b>🕒 Zuletzt gekocht</b> merkt sich die App automatisch aus dem Wochenplan.</li>
-        <li><b>− 3 +</b> rechnet die Zutaten <b>und die Mengen in den Schritten</b> für mehr oder weniger Personen um. Startwert ist eure Personenzahl aus ⚙.</li>
+        <li><b>− 3 +</b> rechnet die Zutaten <b>und die Mengen in den Schritten</b> für mehr oder weniger Personen um. Startwert ist eure Personenzahl aus den Einstellungen.</li>
         <li><b>👨‍🍳 Kochmodus</b>: zeigt nur dieses Rezept im Vollbild mit großer Schrift – Zutaten und Schritte zum Abhaken, die Ansicht scrollt von selbst weiter, der Bildschirm bleibt an.</li>
         <li><b>So geht's</b>: Schritte antippen zum Abhaken.</li>
         <li><b>📝 Unsere Notiz</b>: halte fest, was ihr beim nächsten Mal anders macht, z. B. „weniger Salz“.</li>
@@ -4233,7 +4232,7 @@ function openHelp(first){
         <li>Sortiert <b>nach Supermarkt-Abteilung</b> oder nach Tagen. Abhaken beim Einkaufen.</li>
         <li><b>Noch etwas dazu</b>: eigene Artikel wie Joghurt oder Obst ergänzen. Sie landen automatisch in der passenden Kategorie (Skyr im Kühlregal); kennt die App einen Artikel nicht, fragt sie kurz nach. Mit dem 🏷 änderst du die Kategorie später, die App merkt sich das.</li>
         <li><b>🏠</b> hinter einer Zutat: haben wir schon. Du wählst: <b>Nur diesmal</b> (kommt bei der nächsten Planung wieder), <b>Immer</b> (steht nie mehr auf der Liste, ohne Einfluss auf Rezeptvorschläge) oder <b>Angebrochen</b> (bald verbrauchen – die App schlägt passende Gerichte vor).</li>
-        <li><b>Schon zuhause</b> unten in der Liste: Hier stehen „Nur diesmal“- und „Angebrochen“-Zutaten. Mit dem <b>🛒</b> holst du sie zurück auf die Liste. „Immer“-Zutaten stehen dort nicht, du änderst sie unter <b>⚙ Einstellungen → Vorrat zuhause</b> oder über „Vorrat anpassen“ ganz unten.</li>
+        <li><b>Schon zuhause</b> unten in der Liste: Hier stehen „Nur diesmal“- und „Angebrochen“-Zutaten. Mit dem <b>🛒</b> holst du sie zurück auf die Liste. „Immer“-Zutaten stehen dort nicht, du änderst sie unter <b>⋯ Mehr → Einstellungen → Vorrat zuhause</b> oder über „Vorrat anpassen“ ganz unten.</li>
         <li><b>📤 Teilen</b> schickt die offenen Artikel z. B. an Google Keep oder an die Familie. Auf Geräten ohne Teilen-Funktion heißt der Knopf <b>📋 Für Keep</b>: Er kopiert die Liste, dann in Google Keep auf „+ Listenelement“ tippen und einfügen – jede Zeile wird ein eigener Punkt.</li>
         <li><b>Kopieren</b> legt die offene Liste als Text in die Zwischenablage, <b>Abgehakte ausblenden</b> räumt Erledigtes weg, <b>🖨 Drucken</b> druckt die Liste.</li>
         <li><b>📋 Zutaten kopieren</b> (im Rezept): kopiert die Mengen für eure Personenzahl, zum Einfügen in eine Listen-App oder Notiz.</li>
@@ -4264,16 +4263,16 @@ function openHelp(first){
         <li><b>🛒 Fehlendes auf die Liste</b> setzt nur die fehlenden Zutaten auf die Einkaufsliste.</li>
       </ul>
     </details>
-    <details><summary>⚙ Einstellungen</summary>
+    <details><summary>Einstellungen</summary>
       ${img("einstellungen","Einstellungen")}
-      <p>Über das <b>⚙</b> oben neben dem Titel. Filter, Allergene, Vorlieben, Region sowie Erwachsene und Kinder gelten <b>nur auf deinem Gerät</b>, außer du schaltest oben <b>„Filter mit Familie teilen“</b> ein (nur sichtbar, wenn ihr einen gemeinsamen Plan nutzt). Design, Tipps und Hinweise gelten immer nur für dein Gerät.</p>
+      <p>Über <b>⋯ Mehr → Einstellungen</b> oben rechts. Filter, Allergene, Vorlieben, Region sowie Erwachsene und Kinder gelten <b>nur auf deinem Gerät</b>, außer du schaltest oben <b>„Filter mit Familie teilen“</b> ein (nur sichtbar, wenn ihr einen gemeinsamen Plan nutzt). Design, Tipps und Hinweise gelten immer nur für dein Gerät.</p>
       <ul>
         <li><b>🎨 Design:</b> Hell, Dunkel oder wie dein Handy. Gilt nur für dieses Gerät.</li>
         <li><b>💡 Tipps:</b> Einmal am Tag zeigt die App beim Start einen kurzen Pro-Tipp, der Reihe nach. Hier schaltest du sie aus und wieder ein. Gilt nur für dieses Gerät.</li>
-        <li><b>Erwachsene und Kinder:</b> Rezepte und Einkaufsliste rechnen alle Mengen darauf um. Ein Kind zählt wie ein Erwachsener.</li>
+        <li><b>Erwachsene und Kinder:</b> Rezepte und Einkaufsliste rechnen alle Mengen darauf um.</li>
         <li><b>🥩 Fleisch &amp; Fisch:</b> wie oft pro Woche es Fleisch oder Fisch geben darf. Das steuert Würfeln, „Leere Tage füllen“ und den Plan-Assistenten.</li>
         <li><b>🚫 Mögen wir nicht:</b> Zutaten, die ihr nicht mögt. Gerichte damit werden nicht mehr vorgeschlagen.</li>
-        <li><b>Kategorien ausschließen:</b> eine Kategorie im Ideen-Filter oder bei den Lieblingskategorien in ⚙ lange drücken. Solche Gerichte werden nicht vorgeschlagen; selbst gewählte und schon geplante bleiben. Nochmal tippen hebt es auf.</li>
+        <li><b>Kategorien ausschließen:</b> eine Kategorie im Ideen-Filter oder bei den Lieblingskategorien in den Einstellungen lange drücken. Solche Gerichte werden nicht vorgeschlagen; selbst gewählte und schon geplante bleiben. Nochmal tippen hebt es auf.</li>
         <li><b>Lieblingskategorien:</b> z. B. 🐟 Fisch oder 🥢 Asiatisch – kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran.</li>
         <li><b>Kochzeit Mo–Fr:</b> wie lange du unter der Woche höchstens aktiv am Herd stehen willst (ohne Backen und Warten). Das gilt für Würfeln und den Plan-Assistenten.</li>
         <li><b>🏠 Vorrat zuhause:</b> Zutaten, die immer da sind (z. B. Zwiebeln oder Reis), stehen nie auf der Einkaufsliste. Zum Aufnehmen tippst du in der Einkaufsliste beim 🏠 auf „Immer“, oder du tippst sie hier ein. Mit × entfernst du sie wieder. „Immer“-Zutaten beeinflussen keine Rezeptvorschläge. 🥫 bedeutet angebrochen: Diese Zutat schlägt passende Gerichte vor und fällt aus dem Vorrat, sobald ein Gericht damit gekocht wurde.</li>
@@ -4287,9 +4286,9 @@ function openHelp(first){
     <details><summary>👨‍👩‍👧 Gemeinsam planen</summary>
       ${img("teilen","Gemeinsamen Plan starten")}
       <ul>
-        <li>Tipp oben auf <b>„Familienplan einrichten“</b> → <b>„Gemeinsamen Plan starten“</b>.</li>
+        <li>Tipp oben rechts auf <b>⋯ Mehr → „Familienplan einrichten“</b> → <b>„Gemeinsamen Plan starten“</b>.</li>
         <li>Schick den <b>Einladungslink</b> an deinen Partner. Wer ihn öffnet, sieht denselben Plan, dieselbe Einkaufsliste und dieselben 👍/👎 – Änderungen erscheinen sofort bei allen.</li>
-        <li>Geteilt werden Wochenplan, Einkaufsliste, Vorrat, Rezepte, Notizen und Bewertungen. <b>Filter, Allergene und Vorlieben gelten standardmäßig nur auf deinem Handy</b> – in ⚙ kannst du sie mit dem Schalter „Filter mit Familie teilen“ gemeinsam nutzen.</li>
+        <li>Geteilt werden Wochenplan, Einkaufsliste, Vorrat, Rezepte, Notizen und Bewertungen. <b>Filter, Allergene und Vorlieben gelten standardmäßig nur auf deinem Handy</b> – in den Einstellungen kannst du sie mit dem Schalter „Filter mit Familie teilen“ gemeinsam nutzen.</li>
         <li>Jede Familie hat ihren eigenen, privaten Plan. Teile den Link nur mit der Familie.</li>
       </ul>
     </details>
@@ -4639,7 +4638,7 @@ function openQuickstart(step){
     h=`${qsProg(1)}<h2>Wer isst meistens mit?</h2>
     <div class="famrow"><span class="famlbl">Erwachsene</span><div class="stepper" role="group" aria-label="Erwachsene"><button type="button" data-qs="am" aria-label="Einen Erwachsenen weniger">−</button><span id="qsAdults">${qs.adults}</span><button type="button" data-qs="ap" aria-label="Einen Erwachsenen mehr">+</button></div></div>
     <div class="famrow"><span class="famlbl">Kinder</span><div class="stepper" role="group" aria-label="Kinder"><button type="button" data-qs="km" aria-label="Ein Kind weniger">−</button><span id="qsKids">${qs.kids}</span><button type="button" data-qs="kp" aria-label="Ein Kind mehr">+</button></div></div>
-    <p class="sub" id="qsFamTxt">${famText(qs.adults,qs.kids)} – du kannst das jederzeit ändern. Ein Kind zählt in den Mengen wie ein Erwachsener.</p>${nav(0,2)}`;
+    <p class="sub" id="qsFamTxt">${famText(qs.adults,qs.kids)} – du kannst das jederzeit ändern.</p>${nav(0,2)}`;
   } else if(step===2){
     h=`${qsProg(2)}<h2>Was soll bei euren Gerichten häufiger vorkommen?</h2>
     <div class="qs-chips" id="qsFav">${QS_FAV.map(([k,l])=>`<button type="button" data-qsf="${k}" aria-pressed="${qs.fav.has(k)}">${l}</button>`).join("")}<button type="button" data-qsf="" class="qs-none" aria-pressed="${!qs.fav.size}">Nichts festlegen</button></div>
@@ -4705,8 +4704,8 @@ $("#sheetRoot").addEventListener("click",e=>{
   if(b.dataset.qs){ const a=b.dataset.qs;
     if(a==="skip"||a==="nosave"){ heroClose(); closeSheet(); qs=null; return; }
     if(a==="build"){ qsBuildWeek(); qs=null; return; }
-    if(a==="am"||a==="ap"){ qs.adults=Math.min(6,Math.max(1,qs.adults+(a==="ap"?1:-1))); $("#qsAdults").textContent=qs.adults; $("#qsFamTxt").textContent=`${famText(qs.adults,qs.kids)} – du kannst das jederzeit ändern. Ein Kind zählt in den Mengen wie ein Erwachsener.`; return; }
-    if(a==="km"||a==="kp"){ qs.kids=Math.min(6,Math.max(0,qs.kids+(a==="kp"?1:-1))); $("#qsKids").textContent=qs.kids; $("#qsFamTxt").textContent=`${famText(qs.adults,qs.kids)} – du kannst das jederzeit ändern. Ein Kind zählt in den Mengen wie ein Erwachsener.`; return; }
+    if(a==="am"||a==="ap"){ qs.adults=Math.min(6,Math.max(1,qs.adults+(a==="ap"?1:-1))); $("#qsAdults").textContent=qs.adults; $("#qsFamTxt").textContent=`${famText(qs.adults,qs.kids)} – du kannst das jederzeit ändern.`; return; }
+    if(a==="km"||a==="kp"){ qs.kids=Math.min(6,Math.max(0,qs.kids+(a==="kp"?1:-1))); $("#qsKids").textContent=qs.kids; $("#qsFamTxt").textContent=`${famText(qs.adults,qs.kids)} – du kannst das jederzeit ändern.`; return; }
     if(a==="more"){ qsMore=true; openQuickstart(3); return; }
     if(a==="ngadd"){ const inp=$("#qsNgIn"), v=inp.value.trim().slice(0,40); if(v && !qs.nogo.some(x=>x.toLowerCase()===v.toLowerCase())) qs.nogo.push(v); inp.value=""; qsDrawNogo(); return; }
     if(/^to\d$/.test(a)){ if(step===3){ const inp=$("#qsNgIn"), v=inp&&inp.value.trim().slice(0,40); if(v && !qs.nogo.some(x=>x.toLowerCase()===v.toLowerCase())) qs.nogo.push(v); } openQuickstart(+a[2]); return; }
@@ -5229,7 +5228,7 @@ function openSyncSheet(){
         <div><span>Zuletzt synchronisiert</span><b>${esc(syncAgo())}</b></div>
         <div><span>Zugriff</span><b>Alle, die den Familien-Link haben (Sehen und Ändern)</b></div>
       </div>
-      <p class="sub">Alle Änderungen werden automatisch synchronisiert. Ein Handy-Wechsel ist einfach: Link öffnen, fertig. Zusätzlich könnt ihr unter ⚙ Einstellungen eine Sicherung speichern.</p>
+      <p class="sub">Alle Änderungen werden automatisch synchronisiert. Ein Handy-Wechsel ist einfach: Link öffnen, fertig. Zusätzlich könnt ihr unter ⋯ Mehr → Einstellungen eine Sicherung speichern.</p>
       <p>Öffne diesen Link auf jedem Handy, das mitplanen soll. Danach sehen alle denselben Wochenplan und dieselbe Einkaufsliste.</p>
       <div class="sharewarn" role="note"><b>Wichtig:</b> Jede Person mit diesem Link kann euren Wochenplan und die Einkaufsliste sehen und ändern. Teilt ihn nur mit eurer Familie.</div>
       <pre class="code" id="joinLinkText">${esc(link)}</pre>
@@ -5254,7 +5253,7 @@ function openSyncSheet(){
     <div class="bar" style="margin:14px 0"><button class="btn primary" id="quickShare">Gemeinsamen Plan starten</button></div>
     <p class="sub">Dein aktueller Plan wird übernommen. Danach bekommst du einen Einladungslink für die anderen Handys. Jede Familie hat ihren eigenen, privaten Plan.</p>
     <div class="help faq-sync">
-      <details><summary>Ist mein Plan sicher gespeichert?</summary><p>Ohne gemeinsamen Plan liegt er nur auf diesem Gerät. Das reicht im Alltag. Gehen Browserdaten verloren, ist er weg. Eine Sicherung als Datei speicherst du jederzeit unter ⚙ Einstellungen.</p></details>
+      <details><summary>Ist mein Plan sicher gespeichert?</summary><p>Ohne gemeinsamen Plan liegt er nur auf diesem Gerät. Das reicht im Alltag. Gehen Browserdaten verloren, ist er weg. Eine Sicherung als Datei speicherst du jederzeit unter ⋯ Mehr → Einstellungen.</p></details>
       <details><summary>Was passiert, wenn mein Handy kaputtgeht?</summary><p>Mit gemeinsamem Plan öffnest du auf dem neuen Handy einfach den Familien-Link. Ohne gemeinsamen Plan lädst du die Sicherung aus den Einstellungen auf dem neuen Handy.</p></details>
       <details><summary>Sieht mein Partner meine Änderungen?</summary><p>Ja, sobald ihr den gemeinsamen Plan nutzt. Änderungen am Wochenplan, an der Einkaufsliste und an den Bewertungen erscheinen automatisch auf allen verbundenen Handys.</p></details>
       <details><summary>Brauche ich ein Konto?</summary><p>Nein. Es gibt keine Anmeldung. Wer den Familien-Link hat, ist dabei. Schick ihn nur an Menschen, die mitplanen sollen.</p></details>
@@ -5289,14 +5288,14 @@ function openSyncSheet(){
     closeSheet(); startSync().then(()=>setTimeout(openSyncSheet,600));
   });
 }
-$("#sync").addEventListener("click", openSyncSheet);
+$("#sync").addEventListener("click",()=>{ $("#wkMenu").open=false; openSyncSheet(); }); $("#syncState").addEventListener("click", openSyncSheet);
 
 // Planänderungen: ausgeblendete/abgehakte Einträge zurücksetzen, wenn sich Mengen ändern, bleibt bewusst einfach
 render();
 if(rollWeek()|recordCooked()) commit();
 document.addEventListener("visibilitychange",()=>{ if(!document.hidden && (rollWeek()|recordCooked())) commit(); });
-$("#helpBtn").addEventListener("click",()=>openHelp(false));
-$("#setBtn").addEventListener("click",()=>openSettings());
+$("#helpBtn").addEventListener("click",()=>{ $("#wkMenu").open=false; openHelp(false); });
+$("#setBtn").addEventListener("click",()=>{ $("#wkMenu").open=false; openSettings(); });
 /* ---------- Rezept hinzufügen (eine Auswahl statt drei Buttons) ---------- */
 function openAddSheet(){
   openSheet(`<button class="btn small close" data-close>Schließen</button>
