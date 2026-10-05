@@ -122,21 +122,25 @@ header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:spac
 h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);line-height:1;margin:0;letter-spacing:-.02em;text-wrap:balance}
 h1 span{color:var(--basil)}
 .sub{color:var(--muted);font-size:14px;margin:6px 0 0}
-.sync{font:700 12px var(--body);color:var(--muted);display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer}
-.sync.warn i{background:var(--mustard)}
-.sync.err i{background:var(--tomato)}
+.syncrow{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;margin:8px 0 0}
+.sync-state{display:inline-flex;align-items:center;gap:6px;font:600 13px var(--body);color:var(--ink)}
+.sync-state i{width:8px;height:8px;border-radius:50%;background:var(--muted);display:inline-block}
+.sync-state.ok i{background:var(--basil)}
+.sync-state.warn i{background:var(--mustard)}
+.sync-state.err i{background:var(--tomato)}
+.sync-state:not(.ok):not(.warn):not(.err) i{width:auto;height:auto;border-radius:0;background:none;font-style:normal;line-height:1}
+.sync-state:not(.ok):not(.warn):not(.err) i::before{content:"📱";font-size:14px}
+.sync-btn{font:700 13px var(--body);color:var(--basil);background:var(--surface);border:1.5px solid var(--basil);border-radius:999px;padding:6px 14px;min-height:34px;cursor:pointer}
+.sharewarn{margin:12px 0;padding:10px 12px;border-radius:10px;background:var(--mustard-soft);border:1px solid var(--mustard);color:var(--ink);font-size:14px;line-height:1.45}
+.famrow{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0}
+.famlbl{font:700 15px var(--body)}
+.exnote .ex-acts{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 4px}
 .steps{margin:0;padding-left:20px}
 .steps li{margin:6px 0}
 .steps code,.code{font:13px ui-monospace,Menlo,monospace;background:var(--sunk);padding:1px 5px;border-radius:5px;overflow-wrap:anywhere}
 pre.code{display:block;padding:10px;white-space:pre-wrap;margin:6px 0}
 textarea.cfg{width:100%;height:150px;font:13px ui-monospace,Menlo,monospace;background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px}
 .err-text{color:var(--tomato);font-size:14px}
-.sync i{width:8px;height:8px;border-radius:50%;background:var(--muted);display:inline-block}
-.sync.ok i{background:var(--basil)}
-.sync:not(.ok):not(.warn):not(.err) i{width:auto;height:auto;border-radius:0;background:none;font-style:normal;line-height:1}
-.sync:not(.ok):not(.warn):not(.err) i::before{content:"📱";font-size:14px}
-.sync:not(.ok):not(.warn):not(.err) b{font-weight:700;color:var(--ink)}
-.sync:not(.ok):not(.warn):not(.err) u{color:var(--basil);font-weight:700;text-decoration:underline;text-underline-offset:2px}
 nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--ground);display:flex;gap:6px;padding-block:8px;margin-bottom:10px}
 nav.tabs button{flex:1;font:700 15px var(--body);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:10px 8px;border-radius:999px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
 nav.tabs button[aria-selected="true"]{background:var(--basil);color:var(--basil-ink);border-color:var(--basil)}
@@ -317,7 +321,6 @@ body{line-height:1.5}
 .wrap{padding-block:24px 72px}
 h1{font-weight:700;font-size:clamp(26px,6vw,34px);letter-spacing:-.025em}
 .sub{font-size:13px;line-height:1.45}
-.sync{background:transparent;font-weight:400}
 /* Tabs als ruhige Segment-Leiste */
 nav.tabs{background:var(--ground);padding-block:10px;margin-bottom:14px}
 nav.tabs{gap:0}
@@ -668,6 +671,8 @@ details.cp-wk summary{cursor:pointer;min-height:44px;display:flex;align-items:ce
 .wkmenu{margin-left:auto;position:relative}
 .wkmenu summary{list-style:none;cursor:pointer;width:40px;height:40px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--line);font-size:20px;line-height:1;color:var(--muted)}
 .wkmenu summary::-webkit-details-marker{display:none}
+#wkMenu summary{width:auto;padding:0 14px;border-radius:999px;display:inline-flex;align-items:center;gap:6px}
+#wkMenu summary .wk-l{font:600 13px var(--body);color:var(--muted)}
 .wkmenu-pop{position:absolute;right:0;top:46px;z-index:5;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:6px;min-width:170px}
 .wkmenu-pop button{width:100%;text-align:left}
 .weektop{display:flex;flex-direction:column;gap:12px;margin-bottom:12px}
@@ -730,11 +735,12 @@ header.top .ttl{width:100%}
 header.top #helpBtn{margin-left:auto}
 header.top .ttl{gap:10px;align-items:center}
 header.top .logo{flex:none;width:38px;height:38px;border-radius:10px;display:block}
-header.top .helpbtn{align-self:flex-end;margin-bottom:-2px}
+header.top .helpbtn{align-self:flex-end;margin-bottom:-2px;width:auto;height:auto;min-width:40px;border-radius:12px;padding:4px 6px 3px;flex-direction:column;align-items:center;justify-content:center;display:flex;gap:2px}
+header.top .helpbtn .hb-i{font:800 16px/1 var(--body)}
+header.top .helpbtn .hb-l{font:600 10px/1.1 var(--body);color:var(--muted);letter-spacing:.01em}
 header.top .ttltx{min-width:0}
 header.top h1{font-size:clamp(22px,6.8vw,28px);line-height:1.05;white-space:nowrap}
 header.top .tag{margin:3px 0 0;font-size:13px;font-weight:500;color:var(--muted);line-height:1.25}
-header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;padding:2px 0;border:0;background:transparent;font-size:13px;font-weight:500;min-height:0}
 .db-acts{align-items:center;gap:4px}
 .db-acts .btn.primary{flex:0 0 auto;padding:8px 16px}
 .db-acts .btn.textbtn{flex:0 0 auto;border-color:transparent;background:transparent;color:var(--basil);padding:6px 7px;font-weight:600;font-size:12.5px;min-height:40px;gap:3px}
@@ -953,10 +959,13 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
     <div class="ttl">
       <img class="logo" src="icon.png" alt="" width="38" height="38">
       <div class="ttltx"><h1>Was <span>essen</span> wir?</h1><p class="tag">Familien-Wochenplan &amp; Einkaufsliste</p></div>
-      <button class="helpbtn" id="helpBtn" type="button" aria-label="Anleitung öffnen" title="Anleitung">?</button>
-      <button class="helpbtn" id="setBtn" type="button" aria-label="Einstellungen" title="Einstellungen">⚙</button>
+      <button class="helpbtn" id="helpBtn" type="button" aria-label="Anleitung öffnen" title="Anleitung"><span class="hb-i" aria-hidden="true">?</span><span class="hb-l">Hilfe</span></button>
+      <button class="helpbtn" id="setBtn" type="button" aria-label="Einstellungen" title="Einstellungen"><span class="hb-i" aria-hidden="true">⚙</span><span class="hb-l">Einstellungen</span></button>
     </div>
-    <button class="sync" id="sync" type="button"><i></i><span><b>Nur auf diesem Gerät gespeichert</b> · <u>Familie einladen</u></span></button>
+    <div class="syncrow">
+      <span class="sync-state" id="syncState"><i aria-hidden="true"></i><b id="syncStateTx">Nur auf diesem Gerät</b></span>
+      <button class="sync-btn" id="sync" type="button">Familienplan einrichten</button>
+    </div>
   </header>
 
   <nav class="tabs" role="tablist">
@@ -978,7 +987,7 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
       <p class="hero-trust">🔒 Kein Konto nötig · 🚫 Keine Werbung · 🏠 Eure Angaben bleiben zunächst auf diesem Gerät</p>
     </div>
     <div class="weekhead"><h2 id="weekTitle">Diese Woche</h2><span id="weekRange"></span>
-      <details class="wkmenu" id="wkMenu"><summary aria-label="Weitere Aktionen" title="Weitere Aktionen">⋯</summary><div class="wkmenu-pop"><button type="button" id="copyWeek">Woche kopieren …</button><button type="button" id="newWeek">Plan leeren</button></div></details></div>
+      <details class="wkmenu" id="wkMenu"><summary aria-label="Weitere Aktionen" title="Weitere Aktionen"><span aria-hidden="true">⋯</span><span class="wk-l">Mehr</span></summary><div class="wkmenu-pop"><button type="button" id="copyWeek">Woche kopieren …</button><button type="button" id="newWeek">Plan leeren</button></div></details></div>
     <div class="seg wk-switch" role="group" aria-label="Woche wählen"><button type="button" id="wkThis" aria-pressed="true">Diese Woche</button><button type="button" id="wkNext" aria-pressed="false">Nächste Woche</button></div>
     <div class="hints" id="hints" hidden></div>
     <div class="weekbar">
@@ -987,12 +996,15 @@ header.top .sync{display:flex;width:max-content;max-width:100%;margin:6px 0 0;pa
     </div>
     <div class="note qs-note" id="qsNote" hidden></div>
     <p class="empty-hint" id="emptyHint" hidden>Noch nichts geplant. Ein Tipp auf „Woche planen“, und der Abend ist gerettet.</p>
-    <div class="note" id="exampleNote" hidden>👋 Beispielwoche · Tippen zum Öffnen · 🎲 Gericht tauschen<br><button type="button" class="linkbtn" id="noteHelp">Anleitung ansehen</button></div>
+    <div class="note exnote" id="exampleNote" hidden><b>👋 Beispielwoche</b> – noch nicht eure Planung. Tippen zum Öffnen, 🎲 tauscht ein Gericht.
+      <div class="ex-acts"><button type="button" class="btn small primary" id="exTake">Beispiel übernehmen</button><button type="button" class="btn small" id="exOwn">Eigene Woche starten</button></div>
+      <button type="button" class="linkbtn" id="noteHelp">Anleitung ansehen</button></div>
     <div class="week" id="week"></div>
     <div class="balance" id="balance" hidden></div>
   </section>
 
   <section id="p-einkauf" hidden>
+    <div class="note exnote" id="exampleShopNote" hidden><b>Beispiel</b> – das ist noch nicht eure Einkaufsliste, sie gehört zur Beispielwoche.</div>
     <div class="shopdays">
       <div class="sd-top"><span class="lbl">Einkaufen für</span>
         <span class="sd-quick"><button class="btn small" id="selToday">Ab heute</button><button class="btn small" id="selNext2">Heute + morgen</button><button class="btn small ghost" id="selAll">Alle</button></span></div>
@@ -3107,7 +3119,7 @@ function lsSet(v,k=LS){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(
 function lsDel(k){ try{ localStorage.removeItem(k); }catch(e){} }
 function clone(o){ return JSON.parse(JSON.stringify(o)); }
 /* Filter: standardmäßig nur auf diesem Gerät (Schalter in den Einstellungen); der Vorrat wird immer geteilt */
-const LOCAL_KEYS = ["persons","fav","excl","maxT","allerg","region","meat","nogo"];
+const LOCAL_KEYS = ["persons","adults","kids","fav","excl","maxT","allerg","region","meat","nogo"];
 function shareOn(){ try{ return localStorage.getItem("essensplan-share")==="1"; }catch(e){ return false; } }
 function maskLocal(st, ref){   // st mit den Remote-Werten (ref) für lokale Felder
   const o = clone(st), r = ref||{};
@@ -3165,11 +3177,10 @@ function parseConfig(text){
 function loadScript(src){ return new Promise((res,rej)=>{ const s=document.createElement("script"); s.src=src; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); }
 
 function setSync(kind, text){
-  const el = document.getElementById("sync");
-  el.className = "sync " + kind;
-  const sp = el.querySelector("span");
-  if(kind===""){ sp.innerHTML = "<b>Nur auf diesem Gerät gespeichert</b> · <u>Familie einladen</u>"; }
-  else sp.textContent = text;
+  /* Anzeige (Speicherort/Zustand) und Knopf (Familienplan einrichten bzw. verwalten) sind getrennt */
+  document.getElementById("syncState").className = "sync-state " + kind;
+  document.getElementById("syncStateTx").textContent = kind==="" ? "Nur auf diesem Gerät" : text;
+  document.getElementById("sync").textContent = sync ? "Familie verwalten" : "Familienplan einrichten";
 }
 let lastSyncAt = +(localStorage.getItem("essensplan-lastsync")||0) || 0;
 function markSynced(){ lastSyncAt = Date.now(); try{ localStorage.setItem("essensplan-lastsync", String(lastSyncAt)); }catch(e){} }
@@ -3180,9 +3191,9 @@ function syncAgo(){
   return d.toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"})+", "+t+" Uhr";
 }
 function syncLabel(){
-  if(!sync) setSync("", "Plan nur hier gespeichert · Familie einladen");
+  if(!sync) setSync("", "");
   else if(!navigator.onLine) setSync("warn", "Offline · wird später abgeglichen");
-  else if(online) setSync("ok", "Mit Familie geteilt");
+  else if(online) setSync("ok", "Familienplan aktiv");
   else setSync("warn", "Familienplan · offline");
   offNote();
 }
@@ -3374,7 +3385,15 @@ function nogoHits(d){
   const key = d.id+"|"+l.join(","); if(_ng.has(key)) return _ng.get(key);
   const r = l.filter(t=>d.i.some(x=>frMatch(t,String(x[2])))); _ng.set(key,r); return r;
 }
-function S(){ const v = state.settings||{}; return {persons: +v.persons||3, fav: Array.isArray(v.fav)?v.fav:[], excl: Array.isArray(v.excl)?v.excl:[], maxT: v.maxT===0?0:(+v.maxT||30), allerg: Array.isArray(v.allerg)?v.allerg:[], region: ["DE","AT","CH"].includes(v.region)?v.region:"DE", meat: MEAT_CAP[v.meat]!==undefined?v.meat:"mittel", nogo: Array.isArray(v.nogo)?v.nogo.filter(x=>typeof x==="string"):[]}; }
+/* Familie: Erwachsene + Kinder (ein Kind zählt in den Mengen wie ein Erwachsener); „persons“ bleibt die Summe */
+function famSplit(v){
+  if(v.adults!==undefined && v.adults!==null){ const a=Math.min(6,Math.max(1,Math.round(+v.adults)||1)), k=Math.min(6,Math.max(0,Math.round(+v.kids)||0)); return [a,k]; }
+  const p = Math.min(12,Math.max(1,Math.round(+v.persons)||3)), a = Math.min(2,p);   /* ältere Einstellungen: 2 Erwachsene + Rest Kinder */
+  return [a,p-a];
+}
+function famText(a,k){ const A = a===1?"1 Erwachsener":a+" Erwachsene"; return k ? A+" + "+(k===1?"1 Kind":k+" Kinder") : A; }
+function setFamily(a,k){ a=Math.min(6,Math.max(1,a)); k=Math.min(6,Math.max(0,k)); state.settings = {...(state.settings||{}), adults:a, kids:k, persons:a+k}; commit(); }
+function S(){ const v = state.settings||{}; const [adults,kids] = famSplit(v); return {persons: adults+kids, adults, kids, fav: Array.isArray(v.fav)?v.fav:[], excl: Array.isArray(v.excl)?v.excl:[], maxT: v.maxT===0?0:(+v.maxT||30), allerg: Array.isArray(v.allerg)?v.allerg:[], region: ["DE","AT","CH"].includes(v.region)?v.region:"DE", meat: MEAT_CAP[v.meat]!==undefined?v.meat:"mittel", nogo: Array.isArray(v.nogo)?v.nogo.filter(x=>typeof x==="string"):[]}; }
 function setSetting(k,v){ state.settings = {...(state.settings||{}), [k]:v}; commit(); }
 const _blk = new Map();
 function blockedAllergens(d){
@@ -3506,6 +3525,7 @@ function renderWeek(){
   $("#wkThis").setAttribute("aria-pressed",String(!viewWeek)); $("#wkNext").setAttribute("aria-pressed",String(!!viewWeek));
   $("#wkThis").textContent = "Diese Woche"; $("#wkNext").textContent = "Nächste Woche";
   $("#exampleNote").hidden = !isExample || !!viewWeek;
+  $("#exampleShopNote").hidden = !isExample;
   try{ qsNoteRender(); }catch(e){}
   $("#hero").hidden = !isExample || !!viewWeek || heroClosed();
   { const e = DAYS.filter((_,i)=>i>=today && !(typeof state.days[i+O]==="string" && dish(state.days[i+O])) && !(state.days[i+O]&&state.days[i+O].custom)).length;
@@ -4028,7 +4048,7 @@ const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","
 /* ---------- Pro-Tipps: ein Tipp pro Tag, der Reihe nach, nur beim Start; abschaltbar (pro Gerät) ---------- */
 const TIPS = [["Kochmodus", "Tippe im Rezept auf „Kochmodus“: große Schrift, Zutaten und Schritte zum Abhaken, der Bildschirm bleibt an. Wenn du etwas abhakst, scrollt es von selbst zum Nächsten."], ["Einkauf", "Das 🏠 hinter einer Zutat in der Einkaufsliste nimmt sie von der Liste, weil ihr sie zuhause habt. „Nur diesmal“ und „Angebrochen“ holst du unter „Schon zuhause“ mit dem 🛒 zurück."], ["Personenzahl", "Im Rezept änderst du mit − und + die Personenzahl. Die Zutaten und die Mengen in den Schritten rechnen sich automatisch mit um."], ["Vorrat", "Zutaten, die immer da sind, zum Beispiel Zwiebeln: Tippe in der Einkaufsliste beim 🏠 auf „Immer“. Dann tauchen sie nie wieder auf der Liste auf, beeinflussen aber keine Rezeptvorschläge. Ändern kannst du das unter „Vorrat anpassen“ ganz unten in der Liste."], ["Alltag-Filter", "Unter Ideen findest du bei „Alle Filter“ den Reiter „Zeit & Alltag“: zum Beispiel Ofengericht, ein Topf, gut einzufrieren oder mit wenigen Zutaten."], ["Supermarkt", "Die Einkaufsliste lässt sich nach Abteilung sortieren. In den Einstellungen stellst du die Reihenfolge so ein, wie euer Supermarkt aufgebaut ist."], ["Reste", "„Was haben wir noch zuhause?“ in den Ideen: Tippe ein, was im Kühlschrank liegt, und die App zeigt dir Gerichte, die dazu passen."], ["Liste teilen", "Mit „Teilen“ in der Einkaufsliste schickst du die offenen Artikel zum Beispiel direkt an Google Keep oder an deine Familie."], ["Link teilen", "Tippe im Rezept auf „Link teilen“, um es per Nachricht zu verschicken. Wer den Link öffnet, sieht sofort das Rezept."], ["Zutaten kopieren", "Im Rezept kopiert „Zutaten kopieren“ die Mengen für eure Personenzahl, bereit zum Einfügen in eine Notiz oder eine Listen-App."], ["Leere Tage", "Mit „Leere Tage füllen“ schlägt die App für alle freien Tage Gerichte vor. Unter der Woche sind es nur schnelle Gerichte, bevorzugt vegetarisch."], ["Design", "In den Einstellungen wählst du zwischen hellem und dunklem Design, oder die App folgt automatisch deinem Handy."], ["Notiz", "Im Rezept hältst du unter „Unsere Notiz“ fest, was ihr beim nächsten Mal anders macht, zum Beispiel weniger Salz."], ["Lieblinge", "In den Einstellungen wählst du Lieblingskategorien. Sie kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran."], ["Einsenden", "Unter Ideen kannst du über „Rezept hinzufügen“ ein Rezept als Foto, PDF oder Link einsenden. Nach der Prüfung steht es für alle in der App."], ["Bewerten", "Nach dem Essen fragt die App, wie es geschmeckt hat. Mit 👍 und 👎 merkt ihr euch eure Favoriten."], ["Offline", "Öffne die App einmal mit Netz und danach noch einmal: Dann startet sie auch ohne Empfang. Im Supermarkt kannst du die Einkaufsliste abhaken und ergänzen, beim nächsten Netz gleicht sie sich ab."], ["Eigene Filter", "Allergene und Vorlieben gelten standardmäßig nur auf deinem Handy. Mit dem Schalter „Filter mit Familie teilen“ in den Einstellungen nutzt ihr sie gemeinsam. Der Vorrat wird immer geteilt."], ["Sicherung", "Unter Einstellungen → Daten sichern speicherst du Plan, eigene Rezepte und Einstellungen als Datei, zum Beispiel vor einem Handywechsel."]];
 const LS_TIPS = "essensplan-tips";
-const APP_VERSION = "v1.6.1";
+const APP_VERSION = "v1.7.0";
 const LS_HERO = "essensplan-hero";
 function heroClosed(){ try{ return !!localStorage.getItem(LS_HERO); }catch(e){ return false; } }
 function heroClose(){ try{ localStorage.setItem(LS_HERO,"1"); }catch(e){} $("#hero").hidden = true; }
@@ -4066,9 +4086,11 @@ function openSettings(toPantry){
     ${sync?`<div class="sharebox"><div class="filters" id="setShare"><button type="button" data-shareflt="1" aria-pressed="${shareOn()}">Filter mit Familie teilen: ${shareOn()?"An":"Aus"}</button></div>
     <p class="sub">${shareOn()?"Filter, Allergene und Vorlieben sind auf allen verbundenen Handys gleich.":"Filter, Allergene und Vorlieben gelten nur auf diesem Handy. Plan, Einkaufsliste, Rezepte und Vorrat bleiben gemeinsam."}</p></div>`:""}
     <h2 class="set-grp">A. Eure Familie</h2>
-    <h3>👨‍👩‍👧 Personen</h3>
-    <p class="sub">Rezepte und Einkaufsliste rechnen die Mengen automatisch um.</p>
-    <div class="stepper" role="group" aria-label="Personen"><button type="button" data-setp="-1" aria-label="Eine Person weniger">−</button><span id="setPers">${s.persons}</span><button type="button" data-setp="1" aria-label="Eine Person mehr">+</button></div>
+    <h3>👨‍👩‍👧 Wer isst mit?</h3>
+    <p class="sub">Rezepte und Einkaufsliste rechnen die Mengen automatisch um. Ein Kind zählt wie ein Erwachsener.</p>
+    <div class="famrow"><span class="famlbl">Erwachsene</span><div class="stepper" role="group" aria-label="Erwachsene"><button type="button" data-seta="-1" aria-label="Einen Erwachsenen weniger">−</button><span id="setAdults">${s.adults}</span><button type="button" data-seta="1" aria-label="Einen Erwachsenen mehr">+</button></div></div>
+    <div class="famrow"><span class="famlbl">Kinder</span><div class="stepper" role="group" aria-label="Kinder"><button type="button" data-setk="-1" aria-label="Ein Kind weniger">−</button><span id="setKids">${s.kids}</span><button type="button" data-setk="1" aria-label="Ein Kind mehr">+</button></div></div>
+    <p class="sub" id="setFamTxt">${famText(s.adults,s.kids)} · ${s.persons} Person${s.persons>1?"en":""}</p>
     <h3>🌍 Region</h3>
     <p class="sub">Bestimmt den Saisonkalender („Jetzt saisonal“) und die landestypischen Namen (z. B. Karfiol, Rüebli).</p>
     <div class="filters" id="setRegion">${REGIONS.map(([k,l])=>`<button type="button" data-setregion="${k}" aria-pressed="${s.region===k}">${l}</button>`).join("")}</div>
@@ -4141,7 +4163,9 @@ function openSettings(toPantry){
     if(b.id==="pnAdd"||b.id==="ngAdd") return;
     if(b.dataset.ng){ setSetting("nogo",cur.nogo.filter(x=>x!==b.dataset.ng)); drawNogo(); return; }
     if(b.dataset.meat){ setSetting("meat",b.dataset.meat); document.querySelectorAll("#setMeat button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); return; }
-    if(b.dataset.setp){ const n=Math.min(12,Math.max(1,cur.persons+(+b.dataset.setp))); setSetting("persons",n); $("#setPers").textContent=n; }
+    if(b.dataset.seta||b.dataset.setk){
+      setFamily(cur.adults+(+b.dataset.seta||0), cur.kids+(+b.dataset.setk||0));
+      const n=S(); $("#setAdults").textContent=n.adults; $("#setKids").textContent=n.kids; $("#setFamTxt").textContent=`${famText(n.adults,n.kids)} · ${n.persons} Person${n.persons>1?"en":""}`; }
     else if(b.dataset.fav){ const k=b.dataset.fav;
       if(cur.excl.includes(k)){ exclToggle(k,true); return; }
       const v=tog(cur.fav,k); setSetting("fav",v); b.setAttribute("aria-pressed",String(v.includes(k))); }
@@ -4242,11 +4266,11 @@ function openHelp(first){
     </details>
     <details><summary>⚙ Einstellungen</summary>
       ${img("einstellungen","Einstellungen")}
-      <p>Über das <b>⚙</b> oben neben dem Titel. Filter, Allergene, Vorlieben, Region und Personenzahl gelten <b>nur auf deinem Gerät</b>, außer du schaltest oben <b>„Filter mit Familie teilen“</b> ein (nur sichtbar, wenn ihr einen gemeinsamen Plan nutzt). Design, Tipps und Hinweise gelten immer nur für dein Gerät.</p>
+      <p>Über das <b>⚙</b> oben neben dem Titel. Filter, Allergene, Vorlieben, Region sowie Erwachsene und Kinder gelten <b>nur auf deinem Gerät</b>, außer du schaltest oben <b>„Filter mit Familie teilen“</b> ein (nur sichtbar, wenn ihr einen gemeinsamen Plan nutzt). Design, Tipps und Hinweise gelten immer nur für dein Gerät.</p>
       <ul>
         <li><b>🎨 Design:</b> Hell, Dunkel oder wie dein Handy. Gilt nur für dieses Gerät.</li>
         <li><b>💡 Tipps:</b> Einmal am Tag zeigt die App beim Start einen kurzen Pro-Tipp, der Reihe nach. Hier schaltest du sie aus und wieder ein. Gilt nur für dieses Gerät.</li>
-        <li><b>Personen:</b> Rezepte und Einkaufsliste rechnen alle Mengen darauf um.</li>
+        <li><b>Erwachsene und Kinder:</b> Rezepte und Einkaufsliste rechnen alle Mengen darauf um. Ein Kind zählt wie ein Erwachsener.</li>
         <li><b>🥩 Fleisch &amp; Fisch:</b> wie oft pro Woche es Fleisch oder Fisch geben darf. Das steuert Würfeln, „Leere Tage füllen“ und den Plan-Assistenten.</li>
         <li><b>🚫 Mögen wir nicht:</b> Zutaten, die ihr nicht mögt. Gerichte damit werden nicht mehr vorgeschlagen.</li>
         <li><b>Kategorien ausschließen:</b> eine Kategorie im Ideen-Filter oder bei den Lieblingskategorien in ⚙ lange drücken. Solche Gerichte werden nicht vorgeschlagen; selbst gewählte und schon geplante bleiben. Nochmal tippen hebt es auf.</li>
@@ -4263,7 +4287,7 @@ function openHelp(first){
     <details><summary>👨‍👩‍👧 Gemeinsam planen</summary>
       ${img("teilen","Gemeinsamen Plan starten")}
       <ul>
-        <li>Tipp oben auf <b>„Nur auf diesem Gerät gespeichert · Familie einladen“</b> → <b>„Gemeinsamen Plan starten“</b>.</li>
+        <li>Tipp oben auf <b>„Familienplan einrichten“</b> → <b>„Gemeinsamen Plan starten“</b>.</li>
         <li>Schick den <b>Einladungslink</b> an deinen Partner. Wer ihn öffnet, sieht denselben Plan, dieselbe Einkaufsliste und dieselben 👍/👎 – Änderungen erscheinen sofort bei allen.</li>
         <li>Geteilt werden Wochenplan, Einkaufsliste, Vorrat, Rezepte, Notizen und Bewertungen. <b>Filter, Allergene und Vorlieben gelten standardmäßig nur auf deinem Handy</b> – in ⚙ kannst du sie mit dem Schalter „Filter mit Familie teilen“ gemeinsam nutzen.</li>
         <li>Jede Familie hat ihren eigenen, privaten Plan. Teile den Link nur mit der Familie.</li>
@@ -4576,6 +4600,12 @@ document.addEventListener("change",e=>{
 document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeSheet(); if(e.key==="Enter" && e.target.id==="customDish"){ const b=document.querySelector("[data-custom]"); b&&b.click(); } });
 
 $("#noteHelp").addEventListener("click",()=>openHelp(false));
+/* Beispielwoche: übernehmen (wird eure Woche) oder leer starten */
+$("#exTake").addEventListener("click",()=>{ heroClose(); commit(true); toast("Die Beispielwoche ist jetzt eure Woche"); });
+$("#exOwn").addEventListener("click",()=>{
+  state = {days:{},checked:{},hidden:{},extras:{},recipes:state.recipes||{},likes:state.likes||{},cooked:state.cooked||{},notes:state.notes||{},settings:state.settings||{},pantry:state.pantry||{}};
+  heroClose(); commit(true); toast("Leere Woche – „Woche planen“ füllt sie für euch");
+});
 
 /* ---------- Schnellstart (5 Fragen) und „Nur etwas für heute“ ---------- */
 const QS_FAV = [["kinder","👶 Kinderlieblinge"],["schnell","⏱️ Schnell fertig"],["veg","🌱 Vegetarisch"],["az-t","🍲 Ein Topf / eine Pfanne"],["az-v","🍱 Gut zum Vorkochen"],["az-vorrat","🛍️ Mit Vorräten machbar"],["b1","💶 Günstig"]];
@@ -4583,11 +4613,11 @@ const QS_ALG = ["gluten","ei","milch","fisch","soja","erdnuss"];
 const QS_TIME = [[20,"Bis 20 Minuten"],[30,"Bis 30 Minuten"],[45,"Bis 45 Minuten"],[0,"Unterschiedlich / egal"]];
 const LS_QSNOTE = "essensplan-qsnote";
 let qs = null, qsMore = false;
-function qsInit(){ const c=S(); qs = {persons:c.persons, fav:new Set(c.fav.filter(k=>QS_FAV.some(x=>x[0]===k))), allerg:new Set(c.allerg), nogo:[...c.nogo], maxT:c.maxT, meat:c.meat}; }
+function qsInit(){ const c=S(); qs = {adults:c.adults, kids:c.kids, fav:new Set(c.fav.filter(k=>QS_FAV.some(x=>x[0]===k))), allerg:new Set(c.allerg), nogo:[...c.nogo], maxT:c.maxT, meat:c.meat}; }
 const qsTog = (set,k)=>{ if(set.has(k)) set.delete(k); else set.add(k); };
 function qsProg(n){ return `<p class="qs-prog">Schritt ${n} von 5 <span aria-hidden="true">${[1,2,3,4,5].map(i=>i<=n?"●":"○").join(" ")}</span></p>`; }
 function qsSummary(){
-  const p=[`${qs.persons} Person${qs.persons>1?"en":""}`, qs.maxT?`bis ${qs.maxT} Minuten`:"Zeit egal"];
+  const p=[famText(qs.adults,qs.kids), qs.maxT?`bis ${qs.maxT} Minuten`:"Zeit egal"];
   QS_FAV.filter(x=>qs.fav.has(x[0])).forEach(x=>p.push(x[1].replace(/^\S+\s/,"")));
   p.push(qs.allerg.size?`Ohne ${[...qs.allerg].map(k=>(ALLERGENS.find(a=>a[0]===k)||[0,0,k])[2]).join(", ")}`:"Keine Allergene ausgewählt");
   if(qs.nogo.length) p.push(`Nicht gewünscht: ${qs.nogo.join(", ")}`);
@@ -4606,9 +4636,10 @@ function openQuickstart(step){
   const nav = (back,next,label)=>`<div class="qs-foot">${back?`<button type="button" class="btn" data-qs="to${back}">Zurück</button>`:""}<button type="button" class="btn primary" data-qs="to${next}">${label||"Weiter"}</button></div>${skip}`;
   let h;
   if(step===1){
-    h=`${qsProg(1)}<h2>Für wie viele Personen kocht ihr meistens?</h2>
-    <div class="stepper" role="group" aria-label="Personen"><button type="button" data-qs="pm" aria-label="Eine Person weniger">−</button><span id="qsPers">${qs.persons}</span><button type="button" data-qs="pp" aria-label="Eine Person mehr">+</button></div>
-    <p class="sub">2 Erwachsene + 1 Kind – du kannst das jederzeit ändern.</p>${nav(0,2)}`;
+    h=`${qsProg(1)}<h2>Wer isst meistens mit?</h2>
+    <div class="famrow"><span class="famlbl">Erwachsene</span><div class="stepper" role="group" aria-label="Erwachsene"><button type="button" data-qs="am" aria-label="Einen Erwachsenen weniger">−</button><span id="qsAdults">${qs.adults}</span><button type="button" data-qs="ap" aria-label="Einen Erwachsenen mehr">+</button></div></div>
+    <div class="famrow"><span class="famlbl">Kinder</span><div class="stepper" role="group" aria-label="Kinder"><button type="button" data-qs="km" aria-label="Ein Kind weniger">−</button><span id="qsKids">${qs.kids}</span><button type="button" data-qs="kp" aria-label="Ein Kind mehr">+</button></div></div>
+    <p class="sub" id="qsFamTxt">${famText(qs.adults,qs.kids)} – du kannst das jederzeit ändern. Ein Kind zählt in den Mengen wie ein Erwachsener.</p>${nav(0,2)}`;
   } else if(step===2){
     h=`${qsProg(2)}<h2>Was soll bei euren Gerichten häufiger vorkommen?</h2>
     <div class="qs-chips" id="qsFav">${QS_FAV.map(([k,l])=>`<button type="button" data-qsf="${k}" aria-pressed="${qs.fav.has(k)}">${l}</button>`).join("")}<button type="button" data-qsf="" class="qs-none" aria-pressed="${!qs.fav.size}">Nichts festlegen</button></div>
@@ -4643,7 +4674,7 @@ function openQuickstart(step){
 function qsDrawNogo(){ const el=$("#qsNogo"); if(el) el.innerHTML = qs.nogo.map((k,i)=>`<button type="button" data-qsn="${i}" aria-label="${esc(k)} entfernen">${esc(k)} ×</button>`).join(""); }
 function qsApply(){
   const c=S(), keepFav=c.fav.filter(k=>!QS_FAV.some(x=>x[0]===k));
-  state.settings = {...(state.settings||{}), persons:qs.persons, fav:[...keepFav,...qs.fav], allerg:[...qs.allerg], nogo:[...qs.nogo], maxT:qs.maxT, meat:qs.meat};
+  state.settings = {...(state.settings||{}), adults:qs.adults, kids:qs.kids, persons:qs.adults+qs.kids, fav:[...keepFav,...qs.fav], allerg:[...qs.allerg], nogo:[...qs.nogo], maxT:qs.maxT, meat:qs.meat};
 }
 function qsBuildWeek(){
   qsApply();
@@ -4674,7 +4705,8 @@ $("#sheetRoot").addEventListener("click",e=>{
   if(b.dataset.qs){ const a=b.dataset.qs;
     if(a==="skip"||a==="nosave"){ heroClose(); closeSheet(); qs=null; return; }
     if(a==="build"){ qsBuildWeek(); qs=null; return; }
-    if(a==="pm"||a==="pp"){ qs.persons=Math.min(12,Math.max(1,qs.persons+(a==="pp"?1:-1))); $("#qsPers").textContent=qs.persons; return; }
+    if(a==="am"||a==="ap"){ qs.adults=Math.min(6,Math.max(1,qs.adults+(a==="ap"?1:-1))); $("#qsAdults").textContent=qs.adults; $("#qsFamTxt").textContent=`${famText(qs.adults,qs.kids)} – du kannst das jederzeit ändern. Ein Kind zählt in den Mengen wie ein Erwachsener.`; return; }
+    if(a==="km"||a==="kp"){ qs.kids=Math.min(6,Math.max(0,qs.kids+(a==="kp"?1:-1))); $("#qsKids").textContent=qs.kids; $("#qsFamTxt").textContent=`${famText(qs.adults,qs.kids)} – du kannst das jederzeit ändern. Ein Kind zählt in den Mengen wie ein Erwachsener.`; return; }
     if(a==="more"){ qsMore=true; openQuickstart(3); return; }
     if(a==="ngadd"){ const inp=$("#qsNgIn"), v=inp.value.trim().slice(0,40); if(v && !qs.nogo.some(x=>x.toLowerCase()===v.toLowerCase())) qs.nogo.push(v); inp.value=""; qsDrawNogo(); return; }
     if(/^to\d$/.test(a)){ if(step===3){ const inp=$("#qsNgIn"), v=inp&&inp.value.trim().slice(0,40); if(v && !qs.nogo.some(x=>x.toLowerCase()===v.toLowerCase())) qs.nogo.push(v); } openQuickstart(+a[2]); return; }
@@ -5199,9 +5231,9 @@ function openSyncSheet(){
       </div>
       <p class="sub">Alle Änderungen werden automatisch synchronisiert. Ein Handy-Wechsel ist einfach: Link öffnen, fertig. Zusätzlich könnt ihr unter ⚙ Einstellungen eine Sicherung speichern.</p>
       <p>Öffne diesen Link auf jedem Handy, das mitplanen soll. Danach sehen alle denselben Wochenplan und dieselbe Einkaufsliste.</p>
+      <div class="sharewarn" role="note"><b>Wichtig:</b> Jede Person mit diesem Link kann euren Wochenplan und die Einkaufsliste sehen und ändern. Teilt ihn nur mit eurer Familie.</div>
       <pre class="code" id="joinLinkText">${esc(link)}</pre>
       <div class="bar"><button class="btn primary" id="copyJoin">Familien-Link kopieren</button></div>
-      <p class="sub">Wer den Link hat, kann den Plan sehen und ändern. Schick ihn nur an die Familie.</p>
       <h3>Dieses Handy trennen</h3>
       <p class="sub">Der Plan bleibt online erhalten, dieses Handy plant dann wieder nur für sich.</p>
       <button class="btn" id="disconnect">Trennen</button>
@@ -5218,6 +5250,7 @@ function openSyncSheet(){
     <div class="syncinfo"><div><span>Status</span><b>Nur auf diesem Gerät gespeichert</b></div><div><span>Zugriff</span><b>Nur du auf diesem Gerät</b></div></div>
     <p>Dein Plan ist aktuell nur auf diesem Gerät gespeichert. Zum gemeinsamen Planen lädst du deine Familie ein: Alle sehen denselben Wochenplan, dieselbe Einkaufsliste und dieselben 👍/👎.</p>
     <p><b>Hast du schon einen Familien-Link bekommen?</b> Dann öffne einfach den Link – fertig.</p>
+    <div class="sharewarn" role="note"><b>Wichtig:</b> Jede Person mit dem Familien-Link, den du danach bekommst, kann euren Wochenplan und die Einkaufsliste sehen und ändern. Teilt ihn nur mit eurer Familie.</div>
     <div class="bar" style="margin:14px 0"><button class="btn primary" id="quickShare">Gemeinsamen Plan starten</button></div>
     <p class="sub">Dein aktueller Plan wird übernommen. Danach bekommst du einen Einladungslink für die anderen Handys. Jede Familie hat ihren eigenen, privaten Plan.</p>
     <div class="help faq-sync">
