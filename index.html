@@ -940,6 +940,12 @@ header.top .tag{margin:3px 0 0;font-size:13px;font-weight:500;color:var(--muted)
 .heute-foot{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin:14px 0}
 .heute-more{margin:10px 0}.heute-more summary{cursor:pointer;font-weight:700;color:var(--muted);padding:10px 0;min-height:44px;display:flex;align-items:center}
 .heute-ok{margin:12px 0}
+.tagchip{background:var(--mustard-soft);color:var(--ink);border-color:transparent}
+.tagopts{display:flex;flex-direction:column;gap:10px;margin:12px 0}
+.tagopt{all:unset;box-sizing:border-box;cursor:pointer;display:block;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.tagopt b{display:block;font-size:16px}.tagopt small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.tagopt[aria-pressed="true"]{border-color:var(--basil);background:var(--basil-soft)}
+.tagopt:focus-visible{outline:3px solid var(--mustard);outline-offset:2px}
 #heuteBox .dish span.title{display:block;font-weight:700;font-size:20px;line-height:1.25;overflow-wrap:anywhere}
 .hconf{padding:4px 12px 8px}.hconf p{margin:0 0 10px;font-size:15px}
 .qs-prog{margin:0 0 6px;font-size:14px;color:var(--muted)}
@@ -3127,10 +3133,10 @@ let viewWeek = 0;
 const EXAMPLE = {"0":"d07","1":"d02","2":"d05","3":"d25","4":"d19","5":"d24","6":"d04"};
 
 /* ---------- State ---------- */
-let state = {days:{...EXAMPLE}, checked:{}, hidden:{}, extras:{}, recipes:{}, likes:{}, cooked:{}, notes:{}, pantry:{}};
+let state = {days:{...EXAMPLE}, checked:{}, hidden:{}, extras:{}, recipes:{}, likes:{}, cooked:{}, notes:{}, pantry:{}, tags:{}};
 let isExample = true;
 const LS = "essensplan-v1", LS_SYNC = "essensplan-sync";
-const MAPS = ["days","checked","hidden","extras","recipes","likes","cooked","notes","settings","pantry"];
+const MAPS = ["days","checked","hidden","extras","recipes","likes","cooked","notes","settings","pantry","tags"];
 
 function lsGet(k=LS){ try{ const s = localStorage.getItem(k); return s ? JSON.parse(s) : null; }catch(e){ return null; } }
 function lsSet(v,k=LS){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
@@ -3155,7 +3161,7 @@ function normalize(s){
   s = s || {};
   let extras = s.extras || {};
   if(Array.isArray(extras)){ const m={}; extras.forEach(e=>{ if(e&&e.id) m[e.id]={text:e.text}; }); extras=m; }
-  return {days:s.days||{}, checked:s.checked||{}, hidden:s.hidden||{}, extras, recipes:s.recipes||{}, likes:s.likes||{}, cooked:s.cooked||{}, notes:s.notes||{}, settings:s.settings||{}, pantry:s.pantry||{}};
+  return {days:s.days||{}, checked:s.checked||{}, hidden:s.hidden||{}, extras, recipes:s.recipes||{}, likes:s.likes||{}, cooked:s.cooked||{}, notes:s.notes||{}, settings:s.settings||{}, pantry:s.pantry||{}, tags:s.tags||{}};
 }
 
 const local = lsGet();
@@ -3475,7 +3481,8 @@ function rollWeek(){
   if(passed===1 && nextKeys.length){
     [state.checked,state.hidden].forEach(mp=>{ Object.keys(mp).forEach(k=>{ const n=parseInt(k,10); if(n>=0 && n<7) delete mp[k]; }); Object.keys(mp).forEach(k=>{ const n=parseInt(k,10); if(n>=7 && n<14 && /^\d+\|/.test(k)){ mp[(n-7)+k.slice(String(n).length)] = mp[k]; delete mp[k]; } }); });
     for(let i=0;i<7;i++){ if(state.days[i+7]!==undefined) state.days[i]=state.days[i+7]; else delete state.days[i]; delete state.days[i+7]; }
-  } else { nextKeys.forEach(k=>{ delete state.days[k]; }); if(passed>1) [state.checked,state.hidden].forEach(mp=>Object.keys(mp).forEach(k=>{ const n=parseInt(k,10); if(n>=7 && n<14 && /^\d+\|/.test(k)) delete mp[k]; })); }
+    { const tg=state.tags=state.tags||{}; for(let i=0;i<7;i++){ if(tg[i+7]!==undefined) tg[i]=tg[i+7]; else delete tg[i]; delete tg[i+7]; } }
+  } else { nextKeys.forEach(k=>{ delete state.days[k]; }); Object.keys(state.tags||{}).forEach(k=>{ if(+k>=7) delete state.tags[k]; }); if(passed>1) [state.checked,state.hidden].forEach(mp=>Object.keys(mp).forEach(k=>{ const n=parseInt(k,10); if(n>=7 && n<14 && /^\d+\|/.test(k)) delete mp[k]; })); }
   state.settings.weekOf = cur; return true;
 }
 function lastCooked(id){ let best=""; for(const [k,v] of Object.entries(state.cooked||{})) if(v===id && k>best) best=k; return best||null; }
@@ -3519,6 +3526,34 @@ const ICON = {
 
 /* ---------- Vorschläge ---------- */
 function planned(){ return Object.values(state.days).filter(v=>typeof v==="string"); }
+/* ---------- Tagesprofile: Markierung pro Tag (state.tags) ---------- */
+const TAGS = {
+  schnell:["⚡","Sehr schnell","Gerichte bis 20 Min aktiv"],
+  reste:["🥫","Reste","Kein Gericht, nichts auf der Einkaufsliste"],
+  allein:["🧑‍🍳","Ein Elternteil kocht allein","Einfache Gerichte, bis 30 Min, wenige Schritte"],
+  aus:["🍽️","Auswärts","Niemand kocht, nichts auf der Einkaufsliste"]};
+const TAG_TXT = {reste:"Reste essen", aus:"Auswärts"};
+const tagOf = g=>((state.tags||{})[g])||"";
+const tagNoCook = g=>{ const t=tagOf(g); return t==="reste"||t==="aus"; };
+function tagMax(g){ const t=tagOf(g); return t==="schnell"?20:t==="allein"?30:0; }
+function tagOk(d,g){ const m=tagMax(g); if(!m) return true; if(act(d) && act(d)>m) return false; if(tagOf(g)==="allein" && STEPS[d.id] && STEPS[d.id].s.length>7) return false; return true; }
+function setTag(g,key){
+  state.tags = state.tags||{};
+  const was=tagOf(g), v=state.days[g];
+  if(!key){ delete state.tags[g]; if(tagNoCook0(was,v)) delete state.days[g]; }
+  else { state.tags[g]=key;
+    if(key==="reste"||key==="aus") state.days[g]={custom:TAG_TXT[key]};
+    else if(tagNoCook0(was,v)) delete state.days[g]; }
+  commit();
+}
+function tagNoCook0(was,v){ return (was==="reste"||was==="aus") && v && typeof v==="object" && v.custom; }
+function dropRestTag(g){ if(tagNoCook(g)) delete state.tags[g]; }
+function openTagSheet(g){
+  const cur=tagOf(g), has=state.days[g]!==undefined && !tagNoCook(g);
+  openSheet(`<button class="btn small close" data-close>Schließen</button><h2>${esc(dlong(g))}</h2><p class="sub">Wie ist dieser Tag? „Woche planen“ und 🎲 richten sich danach.</p>
+    <div class="tagopts">${Object.entries(TAGS).map(([k,[ic,l,sub]])=>`<button type="button" class="tagopt" data-tagset="${g}|${k}" aria-pressed="${cur===k}"><b>${ic} ${l}</b><small>${sub}${has&&(k==="reste"||k==="aus")?" · ersetzt das Gericht":""}</small></button>`).join("")}</div>
+    ${cur?`<button type="button" class="btn" data-tagset="${g}|">Markierung entfernen</button>`:""}`);
+}
 function randomDish(excludeDay){
   const wk = Math.floor(+excludeDay/7), inWk = k=>Math.floor(+k/7)===wk;
   const used = new Set(Object.entries(state.days).filter(([k,v])=>k!==String(excludeDay)&&inWk(k)&&typeof v==="string").map(([,v])=>v));
@@ -3528,9 +3563,10 @@ function randomDish(excludeDay){
   const weekday = +excludeDay>=0 && (+excludeDay%7)<=4;
   const maxT = S().maxT;
   const fits = d=>!weekday || !maxT || !act(d) || act(d)<=maxT;
-  let pool = ALL.filter(d=>!used.has(d.id) && (d.k==="veg" || nonVeg<meatCap()) && fits(d));
-  if(!pool.length) pool = ALL.filter(d=>!used.has(d.id) && fits(d));
-  if(!pool.length) pool = ALL;
+  const ALLt = ALL.filter(d=>tagOk(d,+excludeDay)), BASE = ALLt.length ? ALLt : ALL;
+  let pool = BASE.filter(d=>!used.has(d.id) && (d.k==="veg" || nonVeg<meatCap()) && fits(d));
+  if(!pool.length) pool = BASE.filter(d=>!used.has(d.id) && fits(d));
+  if(!pool.length) pool = BASE;
   // vegetarisch bevorzugen
   // Gewichtung: vegetarisch ×3, 👍 ×2, in den letzten 3 Wochen gekocht ÷3
   const weighted = pool.flatMap(d=>{ let w=(d.k==="veg"?vegWeight():1)*(likeOf(d.id)>0?2:1)*(isFav(d)?2:1)*3; if(daysSince(lastCooked(d.id))<=RECENT_DAYS) w=Math.max(1,Math.round(w/3)); return Array(w).fill(d); });
@@ -3562,32 +3598,36 @@ function renderWeek(){
     if(!isExample && i<today && !likeOf(v)) h += `<div class="rate-q">Hat es geschmeckt? <button type="button" data-like="${v}" data-v="1" aria-label="Hat geschmeckt">👍</button><button type="button" data-like="${v}" data-v="-1" aria-label="Hat nicht geschmeckt">👎</button></div>`;
     return h;
   };
+  const tagChip = g=>{ const k=tagOf(g); return k?`<div class="meta"><span class="chip tagchip">${TAGS[k][0]} ${TAGS[k][1]}</span></div>`:""; };
+  const tagWarn = (g,v)=>{ if(!(typeof v==="string" && dish(v))) return ""; const m=tagMax(g), x=dish(v); return (m && !tagOk(x,g)) ? `<div class="rep-hint">⚠️ ${act(x)?`Dauert ca. ${act(x)} Min aktiv`:"Viele Schritte"} – das passt nicht zu „${TAGS[tagOf(g)][1]}“. <button type="button" data-roll="${g}">Alternative</button></div>` : ""; };
   const emptyRow = i=>`<div class="pe-row"><button class="pickempty" data-pick="${i+O}">+ Selbst wählen</button><button class="pickempty" data-roll="${i+O}">🎲 Zufällig</button></div>`;
   const bigCard = (i,label)=>{
     const g = i+O, v = state.days[g]; let body, acts = "";
     if(typeof v==="string" && dish(v)){ const x = dish(v);
       body = `<button class="title" data-open="${x.id}">${esc(x.n)}</button>${chips(x)}`;
-      acts = `<div class="db-acts"><button type="button" class="btn small primary" data-open="${x.id}">Rezept ansehen</button><button type="button" class="btn small" data-roll="${g}">🎲 Tauschen</button><details class="wkmenu dbmenu"><summary aria-label="Weitere Aktionen" title="Weitere Aktionen">⋯</summary><div class="wkmenu-pop"><button type="button" data-pick="${g}">Auswählen …</button><button type="button" class="menu-clear" data-clear="${g}">Tag leeren</button></div></details></div>`;
+      acts = `<div class="db-acts"><button type="button" class="btn small primary" data-open="${x.id}">Rezept ansehen</button><button type="button" class="btn small" data-roll="${g}">🎲 Tauschen</button><details class="wkmenu dbmenu"><summary aria-label="Weitere Aktionen" title="Weitere Aktionen">⋯</summary><div class="wkmenu-pop"><button type="button" data-pick="${g}">Auswählen …</button><button type="button" data-tag="${g}">Tag markieren …</button><button type="button" class="menu-clear" data-clear="${g}">Tag leeren</button></div></details></div>`;
+      body += tagChip(g);
     } else if(v && typeof v==="object" && v.custom){
-      body = `<span class="title" style="font-weight:700">${esc(v.custom)}</span><div class="meta"><span class="chip">Eigenes Gericht</span></div>`;
-      acts = `<div class="db-acts"><button type="button" class="btn small" data-pick="${g}">Ändern</button><details class="wkmenu dbmenu"><summary aria-label="Weitere Aktionen" title="Weitere Aktionen">⋯</summary><div class="wkmenu-pop"><button type="button" class="menu-clear" data-clear="${g}">Tag leeren</button></div></details></div>`;
-    } else body = emptyRow(i);
+      body = `<span class="title" style="font-weight:700">${esc(v.custom)}</span>${tagNoCook(g)?tagChip(g):`<div class="meta"><span class="chip">Eigenes Gericht</span></div>`}`;
+      acts = `<div class="db-acts"><button type="button" class="btn small" data-pick="${g}">${tagNoCook(g)?"Doch kochen":"Ändern"}</button><details class="wkmenu dbmenu"><summary aria-label="Weitere Aktionen" title="Weitere Aktionen">⋯</summary><div class="wkmenu-pop"><button type="button" data-tag="${g}">Tag markieren …</button><button type="button" class="menu-clear" data-clear="${g}">Tag leeren</button></div></details></div>`;
+    } else { body = tagChip(g)+emptyRow(i); acts = `<div class="db-acts"><button type="button" class="btn small" data-tag="${g}">🏷️ Tag markieren</button></div>`; }
     const dl = dates[i].toLocaleDateString("de-DE",{weekday:"long",day:"numeric",month:"short"});
-    return `<div class="daybig${i===today?' today':''}"><div class="db-label"><b>${label}</b><span class="dsep"> · </span>${dl}</div><div class="dish">${body}${stapleHint(i,v)}</div>${acts}</div>`;
+    return `<div class="daybig${i===today?' today':''}"><div class="db-label"><b>${label}</b><span class="dsep"> · </span>${dl}</div><div class="dish">${body}${tagWarn(g,v)}${stapleHint(i,v)}</div>${acts}</div>`;
   };
   const compact = i=>{
     const g = i+O, v = state.days[g]; let body;
     if(typeof v==="string" && dish(v)){ const x = dish(v);
-      body = `<button class="title" data-open="${x.id}">${esc(x.n)}</button>${chips(x)}`;
+      body = `<button class="title" data-open="${x.id}">${esc(x.n)}</button>${chips(x)}${tagChip(g)}`;
     } else if(v && typeof v==="object" && v.custom){
-      body = `<span class="title" style="font-weight:700">${esc(v.custom)}</span><div class="meta"><span class="chip">Eigenes Gericht</span></div>`;
-    } else body = i<today ? `<span class="nothing">Nichts geplant</span>` : emptyRow(i);
+      body = `<span class="title" style="font-weight:700">${esc(v.custom)}</span>${tagNoCook(g)?tagChip(g):`<div class="meta"><span class="chip">Eigenes Gericht</span></div>`}`;
+    } else body = i<today ? `<span class="nothing">Nichts geplant</span>` : tagChip(g)+emptyRow(i);
     const past = i<today;
     return `<div class="day${i===today?' today':''}${past?' past':''}">
       <div class="dhead"><div class="dname" title="${dlong(g)}">${DAYS[i]}</div><div class="ddate">${dates[i].toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"})}</div>
         ${past?'':`<button class="icon droll" data-roll="${g}" aria-label="${dlong(g)}: Gericht tauschen (würfeln)" title="Tauschen (würfeln)">${ICON.dice}</button>`}</div>
-      <div class="dish">${body}${stapleHint(i,v)}</div>
+      <div class="dish">${body}${tagWarn(g,v)}${stapleHint(i,v)}</div>
       ${past?'':`<div class="acts">
+        <button class="icon" data-tag="${g}" aria-label="${dlong(g)}: Tag markieren" title="Tag markieren">🏷️</button>
         ${v?`<button class="icon" data-clear="${g}" aria-label="${dlong(g)} leeren" title="Leeren">${ICON.x}</button>`:''}
       </div>`}</div>`;
   };
@@ -4600,11 +4640,13 @@ document.addEventListener("click",e=>{
   }
   if(t.dataset.open){ showDish(t.dataset.open); return; }
   if(t.dataset.close!==undefined){ closeSheet(); return; }
-  if(t.dataset.roll){ const d = randomDish(t.dataset.roll); state.days[t.dataset.roll]=d.id; commit(); return; }
+  if(t.dataset.roll){ const d = randomDish(t.dataset.roll); dropRestTag(+t.dataset.roll); state.days[t.dataset.roll]=d.id; commit(); return; }
+  if(t.dataset.tag){ openTagSheet(+t.dataset.tag); return; }
+  if(t.dataset.tagset!==undefined){ const [g,k]=t.dataset.tagset.split("|"); closeSheet(); setTag(+g,k); toast(k?`${dlong(+g)}: ${TAGS[k][1]}`:"Markierung entfernt"); return; }
   if(t.dataset.pick){ pickFor(+t.dataset.pick); return; }
-  if(t.dataset.clear){ delete state.days[t.dataset.clear]; commit(); return; }
-  if(t.dataset.setday){ state.days[t.dataset.setday]=t.dataset.dish; closeSheet(); commit(); toast(`Für ${dlong(+t.dataset.setday)} eingeplant`); return; }
-  if(t.dataset.custom){ const v = $("#customDish").value.trim(); if(!v) { $("#customDish").focus(); return; } state.days[t.dataset.custom]={custom:v}; closeSheet(); commit(); return; }
+  if(t.dataset.clear){ delete state.days[t.dataset.clear]; if(state.tags) delete state.tags[t.dataset.clear]; commit(); return; }
+  if(t.dataset.setday){ dropRestTag(+t.dataset.setday); state.days[t.dataset.setday]=t.dataset.dish; closeSheet(); commit(); toast(`Für ${dlong(+t.dataset.setday)} eingeplant`); return; }
+  if(t.dataset.custom){ const v = $("#customDish").value.trim(); if(!v) { $("#customDish").focus(); return; } dropRestTag(+t.dataset.custom); state.days[t.dataset.custom]={custom:v}; closeSheet(); commit(); return; }
   if(t.dataset.assign){ showDish(t.dataset.assign); return; }
   if(t.dataset.like){ const id=t.dataset.like; setLike(id,+t.dataset.v); document.querySelectorAll(`[data-like="${id}"]`).forEach(b=>b.setAttribute("aria-pressed",String(likeOf(id)===+b.dataset.v))); const h=document.querySelector(".sheet .tags"); if(h) h.outerHTML=chips(dish(id),true); toast(likeOf(id)>0?"👍 Gemerkt – kommt öfter dran":likeOf(id)<0?"👎 Gemerkt – wird nicht mehr gewürfelt":"Bewertung entfernt"); return; }
   if(t.dataset.cook){ openCook(t.dataset.cook); return; }
@@ -4756,7 +4798,7 @@ function heutePlanned(){
 }
 function heutePool(){
   const hv = td.have.split(/[,;\n]+/).map(x=>x.trim()).filter(Boolean);
-  let pool = notExcl(allDishes().filter(d=>!d.side && likeOf(d.id)>=0 && !blockedAllergens(d).length && !nogoHits(d).length && (!td.t || !act(d) || act(d)<=td.t) && (!td.kid || d.kid) && (!td.k || d.k===td.k) && (d.k==="veg"||meatCap()>0)));
+  let pool = notExcl(allDishes().filter(d=>!d.side && likeOf(d.id)>=0 && !blockedAllergens(d).length && !nogoHits(d).length && (!td.t || !act(d) || act(d)<=td.t) && tagOk(d,todayIdx()) && (!td.kid || d.kid) && (!td.k || d.k===td.k) && (d.k==="veg"||meatCap()>0)));
   let note="";
   if(!pool.length){ pool = notExcl(allDishes().filter(d=>!d.side && !blockedAllergens(d).length && !nogoHits(d))); note="Mit diesen Angaben gab es nichts Passendes – hier Vorschläge mit gelockerten Angaben."; }
   if(hv.length){ const hit = pool.filter(d=>hv.some(t=>d.i.some(x=>frMatch(t,String(x[2]))))); if(hit.length) pool=hit; else note=note||"Mit euren Zutaten nichts gefunden – hier etwas anderes."; }
@@ -4799,7 +4841,7 @@ function renderHeute(force){
       <div class="heute-list">${heutePicks.list.map(d=>`<div class="hcard"><button type="button" class="hplan" data-hx="plan" data-id="${d.id}"><b>${esc(d.n)}</b>${metaLine(d)}${heuteConfirm===d.id?"":`<span class="hgo">Für heute einplanen</span>`}</button>${heuteConfirm===d.id?`<div class="hconf"><p>Heute steht schon <b>${esc(heutePlanned()?.d?heutePlanned().d.n:(heutePlanned()?.custom||""))}</b> auf dem Plan. Ersetzen?</p><button type="button" class="btn primary" data-hx="replace" data-id="${d.id}">Ja, ersetzen</button> <button type="button" class="btn" data-hx="keep">Nein</button></div>`:`<button type="button" class="linkbtn" data-open="${d.id}">Rezept ansehen</button>`}</div>`).join("")}</div>
       <div class="heute-foot"><button type="button" class="btn" data-hx="go">Andere Vorschläge</button><button type="button" class="linkbtn" data-hx="back">Angaben ändern</button></div>`;
   } else {
-    h=`<h2 class="heute-h">Was kochen wir heute?</h2><p class="sub">Zwei kurze Angaben, dann bekommst du drei Vorschläge.</p>
+    h=`<h2 class="heute-h">Was kochen wir heute?</h2><p class="sub">Zwei kurze Angaben, dann bekommst du drei Vorschläge.</p>${tagMax(todayIdx())?`<p class="note">${TAGS[tagOf(todayIdx())][0]} Heute ist „${TAGS[tagOf(todayIdx())][1]}“: Vorschläge bis ${tagMax(todayIdx())} Min aktiv.</p>`:""}
       <h3>Kochzeit</h3>${chip("tdt",[[20,"Bis 20 Min"],[30,"Bis 30 Min"],[45,"Bis 45 Min"],[0,"Egal"]],td.t).replace(/aria-pressed="(\w+)"/g,m=>m)}
       <h3>Was ist noch da?</h3><div class="fr-in"><input id="tdHave" type="text" value="${esc(td.have)}" placeholder="z. B. Paprika, Reis, Eier (optional)" autocomplete="off" enterkeyhint="done"></div>
       <details class="heute-more"${td.kid||td.k?" open":""}><summary>Mehr Angaben</summary>
@@ -4968,7 +5010,7 @@ function paPick(g, plan){
   const neighbors = [i>0?at(g-1):null, i<6?at(g+1):null].filter(Boolean).flatMap(paStaple);
   const have = opt.has("vorrat") ? frHave([]) : [];
   const weekday = i<=4;
-  const base = notExcl(allDishes().filter(d=>!d.side && likeOf(d.id)>=0 && !blockedAllergens(d).length && !nogoHits(d).length && (d.k==="veg"||meatCap()>0) && !used.has(d.id)));
+  const base0 = notExcl(allDishes().filter(d=>!d.side && likeOf(d.id)>=0 && !blockedAllergens(d).length && !nogoHits(d).length && (d.k==="veg"||meatCap()>0) && !used.has(d.id))), baseT = base0.filter(d=>tagOk(d,g)), base = baseT.length ? baseT : base0;
   const tryPool = (rel)=>base.filter(d=>{
     if(!rel.has("veg") && opt.has("veg") && d.k!=="veg") return false;
     if(!rel.has("schnell") && opt.has("schnell") && act(d)>30) return false;
