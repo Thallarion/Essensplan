@@ -4214,13 +4214,18 @@ function openHelp(first){
     <details ${first?"open":""}><summary>👋 Erste Schritte</summary>
       <p>Die App funktioniert sofort – ohne Anmeldung. Alles wird <b>nur auf deinem Handy</b> gespeichert, bis du den Plan mit jemandem teilst.</p>
       <p>Am Anfang siehst du eine <b>Beispielwoche</b>. Tausch einfach Gerichte aus – ab dann ist es dein Plan.</p>
+      <p><b>Unten</b> wechselst du zwischen <b>Heute</b> (spontan, nur für heute), <b>Woche</b>, <b>Einkauf</b> und <b>Ideen</b>. Oben rechts öffnet <b>⋯ Mehr</b> Familienplan, Einstellungen und Hilfe sowie „Woche kopieren“ und „Plan leeren“.</p>
       <p><b>Als App aufs Handy:</b> Im Browser-Menü ⋮ (Android) bzw. Teilen-Symbol (iPhone) → <b>„Zum Startbildschirm hinzufügen“</b>.</p>
       <p><b>Offline:</b> Öffne die App einmal mit Netz und danach noch einmal. Dann startet sie auch ohne Empfang, z. B. im Supermarkt, und die Einkaufsliste lässt sich abhaken und ergänzen. Beim nächsten Netz gleicht sie sich mit der Familie ab.</p>
     </details>
     <details><summary>🍽️ Heute</summary>
+      <p>Der Tab ganz links ist für den spontanen Tag: Was kochen wir <b>heute</b>?</p>
       <ul>
-        <li><b>Was kochen wir heute?</b> Wähle Kochzeit und was noch da ist, dann bekommst du drei Vorschläge. Ein Tipp auf <b>„Für heute einplanen“</b> setzt das Gericht auf heute, die Zutaten kommen automatisch auf die Einkaufsliste.</li>
-        <li>Ist heute schon etwas geplant, siehst du es hier mit dem Kochmodus. <b>„Etwas anderes“</b> zeigt neue Vorschläge, <b>„Rückgängig“</b> nimmt die Änderung zurück.</li>
+        <li><b>Noch nichts geplant:</b> Wähle die Kochzeit und tippe ein, was noch da ist (optional). Unter „Mehr Angaben“ kannst du „Familienfreundlich“ und die Art (vegetarisch, Fleisch, Fisch) einschränken. <b>„Vorschläge zeigen“</b> liefert drei Gerichte.</li>
+        <li><b>„Für heute einplanen“</b> setzt das Gericht auf heute, die Zutaten kommen automatisch auf die Einkaufsliste. <b>„Rezept ansehen“</b> öffnet das Rezept, <b>„Andere Vorschläge“</b> würfelt neu. Mit <b>„Rückgängig“</b> nimmst du das Einplanen zurück.</li>
+        <li><b>Schon geplant:</b> Du siehst das Gericht mit <b>👨‍🍳 Kochmodus</b> und darunter die <b>Zutaten</b> für eure Personenzahl. Mit − und + rechnest du um, falls heute mehr oder weniger mitessen. <b>📖 Rezept öffnen</b> zeigt die Schritte, <b>📋 Zutaten kopieren</b> kopiert die Mengen.</li>
+        <li><b>„Etwas anderes“</b> zeigt neue Vorschläge. Ist heute schon etwas geplant, fragt die App vor dem Ersetzen nach.</li>
+        <li>Solange noch die Beispielwoche aktiv ist, startet das Einplanen eure eigene, leere Woche.</li>
       </ul>
     </details>
     <details><summary>📅 Wochenplan</summary>
@@ -4229,13 +4234,13 @@ function openHelp(first){
         <li><b>🎲</b> (unter dem Datum) würfelt ein anderes, passendes Gericht.</li>
         <li><b>×</b> leert den Tag. Danach könnt ihr „Selbst wählen“ (ganze Liste mit Suche und Filtern) oder „Zufällig“ antippen.</li>
         <li><b>Leere Tage füllen</b> würfelt alle freien Tage – unter der Woche nur schnelle Gerichte (Kochzeit unter ⋯ Mehr → Einstellungen einstellbar), bevorzugt vegetarisch und eure Lieblingskategorien.</li>
-        <li><b>Plan leeren</b> leert Wochenplan und Einkaufsliste (zur Sicherheit zweimal tippen). Bewertungen, eigene Rezepte und Einstellungen bleiben erhalten.</li>
-        <li><b>⋯</b> neben „Diese Woche“: <b>Woche kopieren …</b> füllt die Woche aus einer anderen (auch aus zuletzt gekochten Wochen) und enthält „Plan leeren“.</li>
+        <li><b>Plan leeren</b> (unter <b>⋯ Mehr</b>, ganz unten) leert Wochenplan und Einkaufsliste (zur Sicherheit zweimal tippen). Bewertungen, eigene Rezepte und Einstellungen bleiben erhalten.</li>
+        <li><b>⋯ Mehr</b> (oben rechts): <b>Woche kopieren …</b> füllt die Woche aus einer anderen, auch aus zuletzt gekochten Wochen.</li>
         <li>Tipp auf ein Gericht öffnet das Rezept.</li>
         <li><b>Heute-Karte:</b> Sichtbar sind „Rezept ansehen“ und „🎲 Tauschen“. Hinter <b>⋯</b> findest du „Auswählen …“ und „Tag leeren“.</li>
       </ul>
     </details>
-    <details><summary>🍽️ Rezept ansehen</summary>
+    <details><summary>📖 Rezept ansehen</summary>
       ${img("rezept","Rezeptansicht mit Zutaten und Bewertung")}
       <ul>
         <li><b>👍 / 👎</b>: Mag die Familie das? 👍 kommt beim Würfeln öfter dran, 👎 nie.</li>
@@ -4311,7 +4316,7 @@ function openHelp(first){
     <details><summary>👨‍👩‍👧 Gemeinsam planen</summary>
       ${img("teilen","Gemeinsamen Plan starten")}
       <ul>
-        <li>Tipp oben rechts auf <b>⋯ Mehr → „Familienplan einrichten“</b> → <b>„Gemeinsamen Plan starten“</b>.</li>
+        <li>Tipp oben rechts auf <b>⋯ Mehr → „Familienplan einrichten“</b> (oder auf die Zeile „Nur auf diesem Gerät“ unter dem Titel) → <b>„Gemeinsamen Plan starten“</b>. Läuft der Plan schon, heißt der Eintrag <b>„Familie verwalten“</b>.</li>
         <li>Schick den <b>Einladungslink</b> an deinen Partner. Wer ihn öffnet, sieht denselben Plan, dieselbe Einkaufsliste und dieselben 👍/👎 – Änderungen erscheinen sofort bei allen.</li>
         <li>Geteilt werden Wochenplan, Einkaufsliste, Vorrat, Rezepte, Notizen und Bewertungen. <b>Filter, Allergene und Vorlieben gelten standardmäßig nur auf deinem Handy</b> – in den Einstellungen kannst du sie mit dem Schalter „Filter mit Familie teilen“ gemeinsam nutzen.</li>
         <li>Jede Familie hat ihren eigenen, privaten Plan. Teile den Link nur mit der Familie.</li>
@@ -4324,7 +4329,7 @@ function openHelp(first){
         <li><b>＋ Rezept hinzufügen</b> → <b>Selbst eingeben</b>: selbst eintippen – bleibt nur in deinem bzw. eurem Plan (Filter „⭐ Meine Rezepte“).</li>
       </ul>
     </details>
-    <p class="sub" style="margin-top:14px">Diese Anleitung findest du jederzeit oben über das <b>?</b> neben dem Titel.</p>
+    <p class="sub" style="margin-top:14px">Diese Anleitung findest du jederzeit über <b>⋯ Mehr → Hilfe</b> oben rechts.</p>
   </div>`);
 }
 function methodHtml(d){
