@@ -940,6 +940,7 @@ header.top .tag{margin:3px 0 0;font-size:13px;font-weight:500;color:var(--muted)
 .heute-foot{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin:14px 0}
 .heute-more{margin:10px 0}.heute-more summary{cursor:pointer;font-weight:700;color:var(--muted);padding:10px 0;min-height:44px;display:flex;align-items:center}
 .heute-ok{margin:12px 0}
+#heuteBox .dish span.title{display:block;font-weight:700;font-size:20px;line-height:1.25;overflow-wrap:anywhere}
 .hconf{padding:4px 12px 8px}.hconf p{margin:0 0 10px;font-size:15px}
 .qs-prog{margin:0 0 6px;font-size:14px;color:var(--muted)}
 .qs h2{margin:0 0 14px}
@@ -4769,6 +4770,18 @@ function heuteDraw(){
   heuteSeen.push(...list.map(d=>d.id));
   heutePicks = {list, note};
 }
+let heuteDishId=null;
+function heuteRecipe(d){
+  if(heuteDishId!==d.id){ heuteDishId=d.id; curPersons=S().persons; }
+  const bl=blockedAllergens(d), ng=nogoHits(d);
+  return `${ng.length?`<div class="allergy-warn">🚫 Enthält <b>${ng.map(esc).join(", ")}</b> – steht bei „Mögen wir nicht“.</div>`:""}
+    ${bl.length?`<div class="allergy-warn">⚠️ Enthält <b>${bl.map(x=>x[1]+" "+x[2]).join(", ")}</b> – laut euren Einstellungen ausgeschlossen.</div>`:""}
+    <div class="ing-head"><h3 id="ingTitle">Zutaten für ${curPersons} Person${curPersons>1?"en":""}</h3>
+      <div class="stepper" role="group" aria-label="Personen"><button type="button" data-pers="-1" aria-label="Eine Person weniger">−</button><span id="persN">${curPersons}</span><button type="button" data-pers="1" aria-label="Eine Person mehr">+</button></div></div>
+    <ul id="ingList">${ingItems(d,curPersons)}</ul>
+    <div class="bar" style="margin:10px 0 0"><button class="btn small" data-keepcopy="${d.id}">📋 Zutaten kopieren</button></div><div class="keep-ok" id="keepOk" hidden></div>
+    ${methodHtml(d)}`;
+}
 function renderHeute(force){
   const box = $("#heuteBox"); if(!box) return;
   if(!force && document.activeElement && document.activeElement.id==="tdHave") return;
@@ -4777,9 +4790,10 @@ function renderHeute(force){
   let h="";
   if(pl && !heuteOther){
     h=`<div class="daybig today"><div class="db-label"><b>HEUTE</b> · ${pl.d?"Auf dem Plan":"Auf dem Plan"}</div>
-      <div class="dish">${pl.d?`<button class="title" type="button" data-open="${pl.d.id}">${esc(pl.d.n)}</button>${metaLine(pl.d)}`:`<span class="title">${esc(pl.custom)}</span>`}</div>
+      <div class="dish">${pl.d?`<span class="title">${esc(pl.d.n)}</span>${metaLine(pl.d)}`:`<span class="title">${esc(pl.custom)}</span>`}</div>
       <div class="db-acts">${pl.d?`<button class="btn primary" type="button" data-cook="${pl.d.id}">👨‍🍳 Kochmodus</button>`:""}<button class="btn" type="button" data-hx="other">Etwas anderes</button></div></div>
       ${heuteJust?`<p class="note heute-ok">✓ Für heute eingeplant. Die Zutaten stehen auf der Einkaufsliste. <button type="button" class="linkbtn" data-hx="undo">Rückgängig</button></p>`:""}
+      ${pl.d?heuteRecipe(pl.d):""}
       <button type="button" class="linkbtn" data-hx="shop">Zur Einkaufsliste</button>`;
   } else if(heutePicks){
     h=`<h2 class="heute-h">Wie wäre es mit …</h2>${heutePicks.note?`<p class="sub">${esc(heutePicks.note)}</p>`:""}
