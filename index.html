@@ -4770,17 +4770,16 @@ function heuteDraw(){
   heuteSeen.push(...list.map(d=>d.id));
   heutePicks = {list, note};
 }
-let heuteDishId=null;
+let heuteDishId=null, heutePers=3;
 function heuteRecipe(d){
-  if(heuteDishId!==d.id){ heuteDishId=d.id; curPersons=S().persons; }
-  const bl=blockedAllergens(d), ng=nogoHits(d);
+  if(heuteDishId!==d.id){ heuteDishId=d.id; heutePers=S().persons; }
+  const bl=blockedAllergens(d), ng=nogoHits(d), n=heutePers;
   return `${ng.length?`<div class="allergy-warn">🚫 Enthält <b>${ng.map(esc).join(", ")}</b> – steht bei „Mögen wir nicht“.</div>`:""}
     ${bl.length?`<div class="allergy-warn">⚠️ Enthält <b>${bl.map(x=>x[1]+" "+x[2]).join(", ")}</b> – laut euren Einstellungen ausgeschlossen.</div>`:""}
-    <div class="ing-head"><h3 id="ingTitle">Zutaten für ${curPersons} Person${curPersons>1?"en":""}</h3>
-      <div class="stepper" role="group" aria-label="Personen"><button type="button" data-pers="-1" aria-label="Eine Person weniger">−</button><span id="persN">${curPersons}</span><button type="button" data-pers="1" aria-label="Eine Person mehr">+</button></div></div>
-    <ul id="ingList">${ingItems(d,curPersons)}</ul>
-    <div class="bar" style="margin:10px 0 0"><button class="btn small" data-keepcopy="${d.id}">📋 Zutaten kopieren</button></div><div class="keep-ok" id="keepOk" hidden></div>
-    ${methodHtml(d)}`;
+    <div class="ing-head"><h3>Zutaten für ${n} Person${n>1?"en":""}</h3>
+      <div class="stepper" role="group" aria-label="Personen"><button type="button" data-hx="pers" data-d="-1" aria-label="Eine Person weniger">−</button><span>${n}</span><button type="button" data-hx="pers" data-d="1" aria-label="Eine Person mehr">+</button></div></div>
+    <ul>${ingItems(d,n)}</ul>
+    <div class="bar" style="margin:10px 0 0"><button class="btn small" type="button" data-hx="copy" data-id="${d.id}">📋 Zutaten kopieren</button><button class="btn small" type="button" data-open="${d.id}">📖 Rezept öffnen</button></div>`;
 }
 function renderHeute(force){
   const box = $("#heuteBox"); if(!box) return;
@@ -4835,6 +4834,9 @@ $("#heuteBox").addEventListener("click",e=>{
   else if(a==="keep"){ heuteConfirm=null; renderHeute(true); }
   else if(a==="undo"){ const i=todayIdx(); if(heutePrev && heutePrev.had) state.days[i]=heutePrev.val; else delete state.days[i]; heuteJust=false; heutePrev=null; commit(); toast("Rückgängig gemacht"); }
   else if(a==="shop"){ $("#tab-einkauf").click(); }
+  else if(a==="pers"){ heutePers=Math.min(12,Math.max(1,heutePers+(+b.dataset.d))); renderHeute(true); }
+  else if(a==="copy"){ const d=dish(b.dataset.id); if(!d) return; const lines=d.i.map(([q,u,nm])=>{ const t=fmtQty(scaleQty(q,u,heutePers,nm),u); return ((t?t+" ":"")+nm).trim(); }).filter(Boolean);
+    (navigator.clipboard?navigator.clipboard.writeText(lines.join("\n")):Promise.reject()).then(()=>toast(`${lines.length} Zutaten kopiert`)).catch(()=>toast("Kopieren nicht möglich")); }
 });
 
 $("#heroX").addEventListener("click",heroClose);
