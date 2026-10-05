@@ -940,6 +940,7 @@ header.top .tag{margin:3px 0 0;font-size:13px;font-weight:500;color:var(--muted)
 .heute-foot{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin:14px 0}
 .heute-more{margin:10px 0}.heute-more summary{cursor:pointer;font-weight:700;color:var(--muted);padding:10px 0;min-height:44px;display:flex;align-items:center}
 .heute-ok{margin:12px 0}
+.hconf{padding:4px 12px 8px}.hconf p{margin:0 0 10px;font-size:15px}
 .qs-prog{margin:0 0 6px;font-size:14px;color:var(--muted)}
 .qs h2{margin:0 0 14px}
 .qs h3{font:700 16px var(--body);margin:18px 0 6px;color:var(--ink)}
@@ -4744,7 +4745,7 @@ document.addEventListener("keydown",e=>{ if(e.key==="Enter" && e.target.id==="qs
 
 /* ---------- Tab „Heute“: nur der heutige Tag, spontan ---------- */
 let td = {t:30, kid:false, k:"", have:""};
-let heuteOther=false, heutePicks=null, heuteSeen=[], heutePrev=null, heuteJust=false;
+let heuteConfirm=null, heuteOther=false, heutePicks=null, heuteSeen=[], heutePrev=null, heuteJust=false;
 function heutePlanned(){
   if(isExample) return null;
   const v = state.days[todayIdx()];
@@ -4782,7 +4783,7 @@ function renderHeute(force){
       <button type="button" class="linkbtn" data-hx="shop">Zur Einkaufsliste</button>`;
   } else if(heutePicks){
     h=`<h2 class="heute-h">Wie wäre es mit …</h2>${heutePicks.note?`<p class="sub">${esc(heutePicks.note)}</p>`:""}
-      <div class="heute-list">${heutePicks.list.map(d=>`<div class="hcard"><button type="button" class="hplan" data-hx="plan" data-id="${d.id}"><b>${esc(d.n)}</b>${metaLine(d)}<span class="hgo">Für heute einplanen</span></button><button type="button" class="linkbtn" data-open="${d.id}">Rezept ansehen</button></div>`).join("")}</div>
+      <div class="heute-list">${heutePicks.list.map(d=>`<div class="hcard"><button type="button" class="hplan" data-hx="plan" data-id="${d.id}"><b>${esc(d.n)}</b>${metaLine(d)}${heuteConfirm===d.id?"":`<span class="hgo">Für heute einplanen</span>`}</button>${heuteConfirm===d.id?`<div class="hconf"><p>Heute steht schon <b>${esc(heutePlanned()?.d?heutePlanned().d.n:(heutePlanned()?.custom||""))}</b> auf dem Plan. Ersetzen?</p><button type="button" class="btn primary" data-hx="replace" data-id="${d.id}">Ja, ersetzen</button> <button type="button" class="btn" data-hx="keep">Nein</button></div>`:`<button type="button" class="linkbtn" data-open="${d.id}">Rezept ansehen</button>`}</div>`).join("")}</div>
       <div class="heute-foot"><button type="button" class="btn" data-hx="go">Andere Vorschläge</button><button type="button" class="linkbtn" data-hx="back">Angaben ändern</button></div>`;
   } else {
     h=`<h2 class="heute-h">Was kochen wir heute?</h2><p class="sub">Zwei kurze Angaben, dann bekommst du drei Vorschläge.</p>
@@ -4799,7 +4800,7 @@ function heutePlan(id){
   const i=todayIdx(), ex=isExample;
   if(ex){ state = {days:{},checked:{},hidden:{},extras:{},recipes:state.recipes||{},likes:state.likes||{},cooked:state.cooked||{},notes:state.notes||{},settings:state.settings||{},pantry:state.pantry||{}}; heroClose(); }
   heutePrev = {had: state.days[i]!==undefined, val: state.days[i]};
-  state.days[i]=id; heuteJust=true; heutePicks=null; heuteOther=false;
+  state.days[i]=id; heuteJust=true; heuteConfirm=null; heutePicks=null; heuteOther=false;
   commit(ex); toast("Für heute eingeplant");
 }
 $("#heuteBox").addEventListener("input",e=>{ if(e.target.id==="tdHave") td.have=e.target.value; });
@@ -4811,11 +4812,13 @@ $("#heuteBox").addEventListener("click",e=>{
   if(b.dataset.tdk!==undefined){ e.stopPropagation(); td.k=b.dataset.tdk; renderHeute(true); return; }
   const a=b.dataset.hx; if(!a) return; e.stopPropagation();
   if(a==="kid"){ td.kid=!td.kid; renderHeute(true); }
-  else if(a==="go"){ heuteDraw(); if(!heutePicks.list.length){ heutePicks=null; toast("Kein passendes Gericht gefunden"); } renderHeute(true); }
+  else if(a==="go"){ heuteConfirm=null; heuteDraw(); if(!heutePicks.list.length){ heutePicks=null; toast("Kein passendes Gericht gefunden"); } renderHeute(true); }
   else if(a==="back"){ heutePicks=null; renderHeute(true); }
-  else if(a==="other"){ heuteOther=true; heuteJust=false; heutePicks=null; heuteSeen=[]; renderHeute(true); }
+  else if(a==="other"){ heuteConfirm=null; heuteOther=true; heuteJust=false; heutePicks=null; heuteSeen=[]; renderHeute(true); }
   else if(a==="cancel"){ heuteOther=false; heutePicks=null; renderHeute(true); }
-  else if(a==="plan"){ heutePlan(b.dataset.id); }
+  else if(a==="plan"){ if(heutePlanned()){ heuteConfirm=b.dataset.id; renderHeute(true); } else heutePlan(b.dataset.id); }
+  else if(a==="replace"){ heutePlan(b.dataset.id); }
+  else if(a==="keep"){ heuteConfirm=null; renderHeute(true); }
   else if(a==="undo"){ const i=todayIdx(); if(heutePrev && heutePrev.had) state.days[i]=heutePrev.val; else delete state.days[i]; heuteJust=false; heutePrev=null; commit(); toast("Rückgängig gemacht"); }
   else if(a==="shop"){ $("#tab-einkauf").click(); }
 });
