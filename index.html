@@ -976,7 +976,7 @@ header.top .tag{margin:3px 0 0;font-size:13px;font-weight:500;color:var(--muted)
     <div class="ttl">
       <img class="logo" src="icon.png" alt="" width="38" height="38">
       <div class="ttltx"><h1>Was <span>essen</span> wir?</h1><p class="tag">Familien-Wochenplan &amp; Einkaufsliste</p></div>
-      <details class="wkmenu" id="wkMenu"><summary aria-label="Mehr: Familie, Einstellungen, Hilfe" title="Mehr"><span aria-hidden="true">⋯</span><span class="wk-l">Mehr</span></summary><div class="wkmenu-pop"><button type="button" id="sync">Familienplan einrichten</button><button type="button" id="setBtn">⚙ Einstellungen</button><button type="button" id="helpBtn">? Hilfe</button><hr><button type="button" id="copyWeek">Woche kopieren …</button><button type="button" id="newWeek">Plan leeren</button></div></details>
+      <details class="wkmenu" id="wkMenu"><summary aria-label="Mehr: Familie, Einstellungen, Hilfe" title="Mehr"><span aria-hidden="true">⋯</span><span class="wk-l">Mehr</span></summary><div class="wkmenu-pop"><button type="button" id="helpBtn">? Hilfe</button><button type="button" id="setBtn">⚙ Einstellungen</button><button type="button" id="sync">Familienplan einrichten</button><hr><button type="button" id="copyWeek">Woche kopieren …</button><button type="button" id="newWeek">Plan leeren</button></div></details>
     </div>
     <div class="syncrow">
       <button class="sync-state" id="syncState" type="button" aria-label="Familienplan öffnen"><i aria-hidden="true"></i><b id="syncStateTx">Nur auf diesem Gerät</b></button>
@@ -3137,7 +3137,7 @@ function lsSet(v,k=LS){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(
 function lsDel(k){ try{ localStorage.removeItem(k); }catch(e){} }
 function clone(o){ return JSON.parse(JSON.stringify(o)); }
 /* Filter: standardmäßig nur auf diesem Gerät (Schalter in den Einstellungen); der Vorrat wird immer geteilt */
-const LOCAL_KEYS = ["persons","adults","kids","fav","excl","maxT","allerg","region","meat","nogo"];
+const LOCAL_KEYS = ["persons","adults","kids","fav","excl","maxT","allerg","region","meat","fish","nogo"];
 function shareOn(){ try{ return localStorage.getItem("essensplan-share")==="1"; }catch(e){ return false; } }
 function maskLocal(st, ref){   // st mit den Remote-Werten (ref) für lokale Felder
   const o = clone(st), r = ref||{};
@@ -3396,7 +3396,10 @@ const SET_DEF = {persons:3, fav:[], maxT:30, allerg:[]};
 const MEAT_OPTS = [["oft","Oft"],["mittel","Ab und zu"],["selten","Selten"],["nie","Nie"]];
 const MEAT_CAP = {oft:4, mittel:2, selten:1, nie:0}, MEAT_VEGW = {oft:1, mittel:3, selten:5, nie:3};
 function meatCap(){ return MEAT_CAP[S().meat]; }
-function vegWeight(){ return MEAT_VEGW[S().meat]; }
+function fishCap(){ return MEAT_CAP[S().fish]; }
+function capFor(d){ return d.k==="fleisch" ? meatCap() : d.k==="fisch" ? fishCap() : 99; }   /* Fleisch und Fisch haben je eine eigene Obergrenze pro Woche */
+function vegWeight(){ return Math.round((MEAT_VEGW[S().meat]+MEAT_VEGW[S().fish])/2); }
+function kindCount(list,k){ return list.filter(x=>x&&x.k===k).length; }
 const _ng = new Map();
 function nogoHits(d){
   const l = S().nogo; if(!l.length) return [];
@@ -3411,7 +3414,7 @@ function famSplit(v){
 }
 function famText(a,k){ const A = a===1?"1 Erwachsener":a+" Erwachsene"; return k ? A+" + "+(k===1?"1 Kind":k+" Kinder") : A; }
 function setFamily(a,k){ a=Math.min(6,Math.max(1,a)); k=Math.min(6,Math.max(0,k)); state.settings = {...(state.settings||{}), adults:a, kids:k, persons:a+k}; commit(); }
-function S(){ const v = state.settings||{}; const [adults,kids] = famSplit(v); return {persons: adults+kids, adults, kids, fav: Array.isArray(v.fav)?v.fav:[], excl: Array.isArray(v.excl)?v.excl:[], maxT: v.maxT===0?0:(+v.maxT||30), allerg: Array.isArray(v.allerg)?v.allerg:[], region: ["DE","AT","CH"].includes(v.region)?v.region:"DE", meat: MEAT_CAP[v.meat]!==undefined?v.meat:"mittel", nogo: Array.isArray(v.nogo)?v.nogo.filter(x=>typeof x==="string"):[]}; }
+function S(){ const v = state.settings||{}; const [adults,kids] = famSplit(v); return {persons: adults+kids, adults, kids, fav: Array.isArray(v.fav)?v.fav:[], excl: Array.isArray(v.excl)?v.excl:[], maxT: v.maxT===0?0:(+v.maxT||30), allerg: Array.isArray(v.allerg)?v.allerg:[], region: ["DE","AT","CH"].includes(v.region)?v.region:"DE", meat: MEAT_CAP[v.meat]!==undefined?v.meat:"mittel", fish: MEAT_CAP[v.fish]!==undefined?v.fish:(MEAT_CAP[v.meat]!==undefined?v.meat:"mittel"), nogo: Array.isArray(v.nogo)?v.nogo.filter(x=>typeof x==="string"):[]}; }
 function setSetting(k,v){ state.settings = {...(state.settings||{}), [k]:v}; commit(); }
 const _blk = new Map();
 function blockedAllergens(d){
@@ -3522,13 +3525,14 @@ function planned(){ return Object.values(state.days).filter(v=>typeof v==="strin
 function randomDish(excludeDay){
   const wk = Math.floor(+excludeDay/7), inWk = k=>Math.floor(+k/7)===wk;
   const used = new Set(Object.entries(state.days).filter(([k,v])=>k!==String(excludeDay)&&inWk(k)&&typeof v==="string").map(([,v])=>v));
-  const nonVeg = Object.entries(state.days).filter(([k,v])=>k!==String(excludeDay)&&inWk(k)&&typeof v==="string"&&dish(v)&&dish(v).k!=="veg").length;
-  const ALL = notExcl(allDishes().filter(d=>!d.side && likeOf(d.id)>=0 && !blockedAllergens(d).length && !nogoHits(d).length && (d.k==="veg"||meatCap()>0)));
+  const wkDishes = Object.entries(state.days).filter(([k,v])=>k!==String(excludeDay)&&inWk(k)&&typeof v==="string"&&dish(v)).map(([,v])=>dish(v));
+  const cntK = {fleisch:kindCount(wkDishes,"fleisch"), fisch:kindCount(wkDishes,"fisch")};
+  const ALL = notExcl(allDishes().filter(d=>!d.side && likeOf(d.id)>=0 && !blockedAllergens(d).length && !nogoHits(d).length && capFor(d)>0));
   // Mo–Fr nur schnelle Gerichte (bis 30 Min), am Wochenende alles
   const weekday = +excludeDay>=0 && (+excludeDay%7)<=4;
   const maxT = S().maxT;
   const fits = d=>!weekday || !maxT || !act(d) || act(d)<=maxT;
-  let pool = ALL.filter(d=>!used.has(d.id) && (d.k==="veg" || nonVeg<meatCap()) && fits(d));
+  let pool = ALL.filter(d=>!used.has(d.id) && (d.k==="veg" || cntK[d.k]<capFor(d)) && fits(d));
   if(!pool.length) pool = ALL.filter(d=>!used.has(d.id) && fits(d));
   if(!pool.length) pool = ALL;
   // vegetarisch bevorzugen
@@ -4120,9 +4124,12 @@ function openSettings(toPantry){
     <h3>⏱️ Kochzeit Mo–Fr</h3>
     <p class="sub">So lange darfst du unter der Woche höchstens aktiv am Herd stehen (ohne Garen, Backen und Warten). Gilt für Würfeln und den Plan-Assistenten.</p>
     <div class="filters" id="setTime">${[[20,"Bis 20 Min"],[30,"Bis 30 Min"],[45,"Bis 45 Min"],[0,"Egal"]].map(([v,l])=>`<button type="button" data-maxt="${v}" aria-pressed="${s.maxT===v}">${l}</button>`).join("")}</div>
-    <h3>🥩 Fleisch & Fisch</h3>
-    <p class="sub">Wie oft darf es Fleisch oder Fisch geben? Steuert Würfeln, „Leere Tage füllen“ und den Plan-Assistenten.</p>
+    <h3>🥩 Fleisch</h3>
+    <p class="sub">Wie oft darf es Fleisch geben? Steuert Würfeln, „Leere Tage füllen“ und den Plan-Assistenten.</p>
     <div class="filters" id="setMeat">${MEAT_OPTS.map(([k,l])=>`<button type="button" data-meat="${k}" aria-pressed="${s.meat===k}">${l}</button>`).join("")}</div>
+    <h3>🐟 Fisch</h3>
+    <p class="sub">Wie oft darf es Fisch geben? Wird getrennt von Fleisch gezählt.</p>
+    <div class="filters" id="setFish">${MEAT_OPTS.map(([k,l])=>`<button type="button" data-fish="${k}" aria-pressed="${s.fish===k}">${l}</button>`).join("")}</div>
     <h3>🚫 Mögen wir nicht</h3>
     <p class="sub">Zutaten, die bei euch nie auf den Tisch kommen, zum Beispiel Pilze. Solche Gerichte werden nie gewürfelt und mit 🚫 markiert.</p>
     <div class="filters" id="setNogo"></div>
@@ -4181,6 +4188,7 @@ function openSettings(toPantry){
     if(b.id==="pnAdd"||b.id==="ngAdd") return;
     if(b.dataset.ng){ setSetting("nogo",cur.nogo.filter(x=>x!==b.dataset.ng)); drawNogo(); return; }
     if(b.dataset.meat){ setSetting("meat",b.dataset.meat); document.querySelectorAll("#setMeat button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); return; }
+    if(b.dataset.fish){ setSetting("fish",b.dataset.fish); document.querySelectorAll("#setFish button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); return; }
     if(b.dataset.seta||b.dataset.setk){
       setFamily(cur.adults+(+b.dataset.seta||0), cur.kids+(+b.dataset.setk||0));
       const n=S(); $("#setAdults").textContent=n.adults; $("#setKids").textContent=n.kids; $("#setFamTxt").textContent=`${famText(n.adults,n.kids)} · ${n.persons} Person${n.persons>1?"en":""}`; }
@@ -4300,7 +4308,7 @@ function openHelp(first){
         <li><b>🎨 Design:</b> Hell, Dunkel oder wie dein Handy. Gilt nur für dieses Gerät.</li>
         <li><b>💡 Tipps:</b> Einmal am Tag zeigt die App beim Start einen kurzen Pro-Tipp, der Reihe nach. Hier schaltest du sie aus und wieder ein. Gilt nur für dieses Gerät.</li>
         <li><b>Erwachsene und Kinder:</b> Rezepte und Einkaufsliste rechnen alle Mengen darauf um.</li>
-        <li><b>🥩 Fleisch &amp; Fisch:</b> wie oft pro Woche es Fleisch oder Fisch geben darf. Das steuert Würfeln, „Leere Tage füllen“ und den Plan-Assistenten.</li>
+        <li><b>🥩 Fleisch</b> und <b>🐟 Fisch:</b> getrennt einstellbar, wie oft pro Woche es Fleisch bzw. Fisch geben darf (Oft, Ab und zu, Selten, Nie). Das steuert Würfeln, „Leere Tage füllen“ und den Plan-Assistenten.</li>
         <li><b>🚫 Mögen wir nicht:</b> Zutaten, die ihr nicht mögt. Gerichte damit werden nicht mehr vorgeschlagen.</li>
         <li><b>Kategorien ausschließen:</b> eine Kategorie im Ideen-Filter oder bei den Lieblingskategorien in den Einstellungen lange drücken. Solche Gerichte werden nicht vorgeschlagen; selbst gewählte und schon geplante bleiben. Nochmal tippen hebt es auf.</li>
         <li><b>Lieblingskategorien:</b> z. B. 🐟 Fisch oder 🥢 Asiatisch – kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran.</li>
@@ -4642,7 +4650,7 @@ const QS_ALG = ["gluten","ei","milch","fisch","soja","erdnuss"];
 const QS_TIME = [[20,"Bis 20 Minuten"],[30,"Bis 30 Minuten"],[45,"Bis 45 Minuten"],[0,"Unterschiedlich / egal"]];
 const LS_QSNOTE = "essensplan-qsnote";
 let qs = null, qsMore = false;
-function qsInit(){ const c=S(); qs = {adults:c.adults, kids:c.kids, fav:new Set(c.fav.filter(k=>QS_FAV.some(x=>x[0]===k))), allerg:new Set(c.allerg), nogo:[...c.nogo], maxT:c.maxT, meat:c.meat}; }
+function qsInit(){ const c=S(); qs = {adults:c.adults, kids:c.kids, fav:new Set(c.fav.filter(k=>QS_FAV.some(x=>x[0]===k))), allerg:new Set(c.allerg), nogo:[...c.nogo], maxT:c.maxT, meat:c.meat, fish:c.fish}; }
 const qsTog = (set,k)=>{ if(set.has(k)) set.delete(k); else set.add(k); };
 function qsProg(n){ return `<p class="qs-prog">Schritt ${n} von 5 <span aria-hidden="true">${[1,2,3,4,5].map(i=>i<=n?"●":"○").join(" ")}</span></p>`; }
 function qsSummary(){
@@ -4650,12 +4658,12 @@ function qsSummary(){
   QS_FAV.filter(x=>qs.fav.has(x[0])).forEach(x=>p.push(x[1].replace(/^\S+\s/,"")));
   p.push(qs.allerg.size?`Ohne ${[...qs.allerg].map(k=>(ALLERGENS.find(a=>a[0]===k)||[0,0,k])[2]).join(", ")}`:"Keine Allergene ausgewählt");
   if(qs.nogo.length) p.push(`Nicht gewünscht: ${qs.nogo.join(", ")}`);
-  p.push(`Fleisch und Fisch: ${(MEAT_OPTS.find(m=>m[0]===qs.meat)||[0,qs.meat])[1].toLowerCase()}`);
+  p.push(`Fleisch: ${(MEAT_OPTS.find(m=>m[0]===qs.meat)||[0,qs.meat])[1].toLowerCase()}`); p.push(`Fisch: ${(MEAT_OPTS.find(m=>m[0]===qs.fish)||[0,qs.fish])[1].toLowerCase()}`);
   return p.join(" · ");
 }
 function qsWhy(){
   const p=[]; if(qs.fav.has("schnell")||(qs.maxT&&qs.maxT<=30)) p.push("schnelle Gerichte"); if(qs.fav.has("kinder")) p.push("familienfreundliche Rezepte"); if(qs.fav.has("veg")) p.push("viel Vegetarisches"); if(qs.fav.has("b1")) p.push("günstige Zutaten");
-  if(qs.meat==="selten") p.push("wenig Fleisch"); if(qs.meat==="nie") p.push("kein Fleisch und Fisch");
+  if(qs.meat==="selten") p.push("wenig Fleisch"); if(qs.meat==="nie") p.push("kein Fleisch"); if(qs.fish==="nie") p.push("kein Fisch");
   if(qs.allerg.size) p.push("ohne eure Allergene"); if(qs.nogo.length) p.push("ohne ungeliebte Zutaten");
   return p.length>1 ? p.slice(0,-1).join(", ")+" und "+p[p.length-1] : (p[0]||"eure Angaben");
 }
@@ -4688,8 +4696,9 @@ function openQuickstart(step){
     <div class="qs-chips" id="qsTime">${QS_TIME.map(([v,l])=>`<button type="button" data-qst="${v}" aria-pressed="${qs.maxT===v}">${l}</button>`).join("")}</div>
     <p class="sub">Gemeint ist die aktive Zeit am Herd. Backen, Warten und Garzeit zählen nicht mit. 30 Minuten sind für die meisten Familien ein guter Startwert.</p>${nav(3,5)}`;
   } else if(step===5){
-    h=`${qsProg(5)}<h2>Wie oft sollen Fleisch oder Fisch vorkommen?</h2>
-    <div class="qs-chips" id="qsMeat">${MEAT_OPTS.map(([k,l])=>`<button type="button" data-qsm="${k}" aria-pressed="${qs.meat===k}">${l}</button>`).join("")}</div>
+    h=`${qsProg(5)}<h2>Wie oft sollen Fleisch und Fisch vorkommen?</h2>
+    <h3>🥩 Fleisch</h3><div class="qs-chips" id="qsMeat">${MEAT_OPTS.map(([k,l])=>`<button type="button" data-qsm="${k}" aria-pressed="${qs.meat===k}">${l}</button>`).join("")}</div>
+    <h3>🐟 Fisch</h3><div class="qs-chips" id="qsFish">${MEAT_OPTS.map(([k,l])=>`<button type="button" data-qsf="${k}" aria-pressed="${qs.fish===k}">${l}</button>`).join("")}</div>
     <p class="sub">Das steuert nur die Vorschläge. Du kannst einzelne Gerichte jederzeit selbst auswählen.</p>${nav(4,6)}`;
   } else {
     h=`<h2>Eure Startvorlieben</h2><p class="qs-sum">${esc(qsSummary())}</p>
@@ -4703,7 +4712,7 @@ function openQuickstart(step){
 function qsDrawNogo(){ const el=$("#qsNogo"); if(el) el.innerHTML = qs.nogo.map((k,i)=>`<button type="button" data-qsn="${i}" aria-label="${esc(k)} entfernen">${esc(k)} ×</button>`).join(""); }
 function qsApply(){
   const c=S(), keepFav=c.fav.filter(k=>!QS_FAV.some(x=>x[0]===k));
-  state.settings = {...(state.settings||{}), adults:qs.adults, kids:qs.kids, persons:qs.adults+qs.kids, fav:[...keepFav,...qs.fav], allerg:[...qs.allerg], nogo:[...qs.nogo], maxT:qs.maxT, meat:qs.meat};
+  state.settings = {...(state.settings||{}), adults:qs.adults, kids:qs.kids, persons:qs.adults+qs.kids, fav:[...keepFav,...qs.fav], allerg:[...qs.allerg], nogo:[...qs.nogo], maxT:qs.maxT, meat:qs.meat, fish:qs.fish};
 }
 function qsBuildWeek(){
   qsApply();
@@ -4745,6 +4754,7 @@ $("#sheetRoot").addEventListener("click",e=>{
   if(b.dataset.qsa){ qsTog(qs.allerg,b.dataset.qsa); b.setAttribute("aria-pressed",String(qs.allerg.has(b.dataset.qsa))); return; }
   if(b.dataset.qsn!==undefined){ qs.nogo.splice(+b.dataset.qsn,1); qsDrawNogo(); return; }
   if(b.dataset.qst!==undefined){ qs.maxT=+b.dataset.qst; document.querySelectorAll("#qsTime button").forEach(x=>x.setAttribute("aria-pressed",String(+x.dataset.qst===qs.maxT))); return; }
+  if(b.dataset.qsf){ qs.fish=b.dataset.qsf; document.querySelectorAll("#qsFish button").forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.qsf===qs.fish))); return; }
   if(b.dataset.qsm){ qs.meat=b.dataset.qsm; document.querySelectorAll("#qsMeat button").forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.qsm===qs.meat))); return; }
 });
 document.addEventListener("keydown",e=>{ if(e.key==="Enter" && e.target.id==="qsNgIn"){ e.preventDefault(); document.querySelector('[data-qs="ngadd"]').click(); } });
@@ -4761,7 +4771,7 @@ function heutePlanned(){
 }
 function heutePool(){
   const hv = td.have.split(/[,;\n]+/).map(x=>x.trim()).filter(Boolean);
-  let pool = notExcl(allDishes().filter(d=>!d.side && likeOf(d.id)>=0 && !blockedAllergens(d).length && !nogoHits(d).length && (!td.t || !act(d) || act(d)<=td.t) && (!td.kid || d.kid) && (!td.k || d.k===td.k) && (d.k==="veg"||meatCap()>0)));
+  let pool = notExcl(allDishes().filter(d=>!d.side && likeOf(d.id)>=0 && !blockedAllergens(d).length && !nogoHits(d).length && (!td.t || !act(d) || act(d)<=td.t) && (!td.kid || d.kid) && (!td.k || d.k===td.k) && capFor(d)>0));
   let note="";
   if(!pool.length){ pool = notExcl(allDishes().filter(d=>!d.side && !blockedAllergens(d).length && !nogoHits(d))); note="Mit diesen Angaben gab es nichts Passendes – hier Vorschläge mit gelockerten Angaben."; }
   if(hv.length){ const hit = pool.filter(d=>hv.some(t=>d.i.some(x=>frMatch(t,String(x[2]))))); if(hit.length) pool=hit; else note=note||"Mit euren Zutaten nichts gefunden – hier etwas anderes."; }
@@ -4969,18 +4979,18 @@ function paPick(g, plan){
   const at = k=>{ const id = plan[k]!==undefined ? plan[k] : state.days[k]; return typeof id==="string" ? dish(id) : null; };
   const week = []; for(let k=O;k<O+7;k++){ if(k!==g){ const x=at(k); if(x) week.push(x); } }
   const used = new Set(week.map(x=>x.id));
-  const nonVeg = week.filter(x=>x.k!=="veg").length, fish = week.filter(x=>x.k==="fisch").length;
+  const nMeat = kindCount(week,"fleisch"), fish = kindCount(week,"fisch");
   const neighbors = [i>0?at(g-1):null, i<6?at(g+1):null].filter(Boolean).flatMap(paStaple);
   const have = opt.has("vorrat") ? frHave([]) : [];
   const weekday = i<=4;
-  const base = notExcl(allDishes().filter(d=>!d.side && likeOf(d.id)>=0 && !blockedAllergens(d).length && !nogoHits(d).length && (d.k==="veg"||meatCap()>0) && !used.has(d.id)));
+  const base = notExcl(allDishes().filter(d=>!d.side && likeOf(d.id)>=0 && !blockedAllergens(d).length && !nogoHits(d).length && capFor(d)>0 && !used.has(d.id)));
   const tryPool = (rel)=>base.filter(d=>{
     if(!rel.has("veg") && opt.has("veg") && d.k!=="veg") return false;
     if(!rel.has("schnell") && opt.has("schnell") && act(d)>30) return false;
     if(!rel.has("guenstig") && opt.has("guenstig") && budgetTier(d)===3) return false;
     if(!rel.has("zeit") && weekday && maxT && act(d) && act(d)>maxT && !opt.has("schnell")) return false;
     if(!rel.has("kette") && paStaple(d).some(a=>neighbors.includes(a))) return false;
-    if(!rel.has("fleisch") && d.k!=="veg" && nonVeg>=meatCap()) return false;
+    if(!rel.has("fleisch") && d.k!=="veg" && (d.k==="fleisch"?nMeat:fish)>=capFor(d)) return false;
     if(!rel.has("fisch") && opt.has("abwechslung") && d.k==="fisch" && fish>=1) return false;
     return true;
   });
