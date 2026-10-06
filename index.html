@@ -571,6 +571,14 @@ nav.tabs button[aria-selected="true"] .count{background:var(--tomato);color:#fff
 .item.done .home-btn{display:none}
 .homebox{margin:0 0 12px;color:var(--muted)}
 .homebox-h{font:600 14px var(--body);padding:8px 4px}
+.cat-fold>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;font:700 13px var(--body);letter-spacing:.05em;text-transform:uppercase;color:var(--ink);-webkit-tap-highlight-color:transparent}
+.cat-fold>summary::-webkit-details-marker{display:none}
+.cat-fold>summary::after{content:"▾";font-size:14px;color:var(--muted);transition:transform .15s;transform:rotate(-90deg);flex:none}
+.cat-fold[open]>summary::after{transform:none}
+.cat-fold>summary .cf-n{margin-left:auto;font-weight:600;font-size:12px;letter-spacing:0;color:var(--muted);background:var(--line);border-radius:999px;padding:2px 9px}
+.cat-fold>summary .cf-n.ok{color:var(--basil)}
+.cat-fold[open]>summary{border-bottom:1px solid var(--line);margin-bottom:2px}
+.homebox.cat-fold>summary{text-transform:none;letter-spacing:0;font-weight:600;font-size:14px;color:var(--muted);justify-content:flex-start}
 
 /* --- Review-Umsetzung --- */
 .weekbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
@@ -3602,7 +3610,8 @@ function renderWeek(){
 /* ---------- Render: Einkauf ---------- */
 // Auswahl der Einkaufstage und Ansicht gelten nur auf diesem Handy
 const LS_SHOP = "essensplan-einkauf";
-let shopPrefs = (()=>{ const v = lsGet(LS_SHOP); return {days: Array.isArray(v&&v.days)?v.days:[0,1,2,3,4,5,6], view: (v&&v.view)||"cat"}; })();
+let shopPrefs = (()=>{ const v = lsGet(LS_SHOP); return {days: Array.isArray(v&&v.days)?v.days:[0,1,2,3,4,5,6], view: (v&&v.view)||"cat", open: (v&&v.open&&typeof v.open==="object")?v.open:{}, done: (v&&v.done&&typeof v.done==="object")?v.done:{}}; })();
+function foldOpen(k){ if(!shopPrefs.open[k]){ shopPrefs.open[k]=true; saveShopPrefs(); } }
 function saveShopPrefs(){ lsSet(shopPrefs, LS_SHOP); }
 function plannedDays(){ return [0,1,2,3,4,5,6,7,8,9,10,11,12,13].filter(i=>typeof state.days[i]==="string" && dish(state.days[i])); }
 
@@ -3684,7 +3693,7 @@ document.addEventListener("click",ev=>{
   if(rc){ askCat(rc.dataset.recat, false); return; }
   const pc = ev.target.closest("[data-pickcat]");
   if(pc){ const e = state.extras[pc.dataset.xid]; if(!e) return; const c = pc.dataset.pickcat, key = catKey(e.text);
-    e.c = c; if(key){ state.settings = {...(state.settings||{}), catMem:{...((state.settings&&state.settings.catMem)||{}), [key]:c}}; }
+    e.c = c; foldOpen(c); if(key){ state.settings = {...(state.settings||{}), catMem:{...((state.settings&&state.settings.catMem)||{}), [key]:c}}; }
     closeSheet(); commit(); toast(`${e.text} → ${(CATS_BASE.find(x=>x[0]===c)||[])[1]}`); }
 });
 function isDone(it){ return it.keys.every(k=>state.checked[k]); }
@@ -3714,7 +3723,7 @@ function renderShop(){
   const open = grouped.filter(it=>!isDone(it)).length + extras.filter(it=>!isDone(it)).length;
   $("#shopCount").textContent = open;
   homeList = groupParts(shopPartsAll().filter(pt=>(pantryHas(pt.n) && pantryVal(pt.n)!==1) || (!pantryHas(pt.n) && state.hidden[pt.key]==="home"))).map(it=>({...it, pantry:pantryHas(it.n)})).sort((a,b)=>a.n.localeCompare(b.n,"de"));
-  const homeHtml = homeList.length ? `<div class="homebox"><div class="homebox-h">🏠 Schon zuhause (${homeList.length})</div>${homeList.map((it,i)=>`<div class="item"><label style="cursor:default"><span class="qty">${fmtQty(it.a,it.u)}</span><span>${esc(it.n)}${it.pantry?" <small class=\"for\">Vorrat</small>":""}</span></label><button class="home-btn" type="button" data-unhome="${i}" aria-label="${it.pantry?"Aus Vorrat nehmen":"Zurück auf die Liste"}" title="${it.pantry?"Aus Vorrat nehmen":"Zurück auf die Liste"}">🛒</button></div>`).join("")}</div>` : "";
+  const homeHtml = homeList.length ? `<details class="homebox cat-fold" data-fold="home"${shopPrefs.open.home?" open":""}><summary class="homebox-h">🏠 Schon zuhause (${homeList.length})</summary>${homeList.map((it,i)=>`<div class="item"><label style="cursor:default"><span class="qty">${fmtQty(it.a,it.u)}</span><span>${esc(it.n)}${it.pantry?" <small class=\"for\">Vorrat</small>":""}</span></label><button class="home-btn" type="button" data-unhome="${i}" aria-label="${it.pantry?"Aus Vorrat nehmen":"Zurück auf die Liste"}" title="${it.pantry?"Aus Vorrat nehmen":"Zurück auf die Liste"}">🛒</button></div>`).join("")}</details>` : "";
   if(!grouped.length && !extras.length){
     $("#shop").innerHTML = `<p class="empty" style="padding:14px 0">${plannedDays().length?'Für die ausgewählten Tage ist nichts mehr offen. Wähl oben andere Tage aus.':'Die Liste ist leer. Plane ein paar Gerichte, dann erscheinen die Zutaten hier.'}</p>` + homeHtml;
     return;
@@ -3732,11 +3741,21 @@ function renderShop(){
     const all = [...grouped, ...extras];
     html = CATS.map(([c,label])=>{
       const its = all.filter(it=>it.c===c).sort((a,b)=>a.n.localeCompare(b.n,"de"));
-      return its.length ? `<div class="cat"><h3>${CAT_ICON[c]||""} ${label}</h3>${its.map(it=>itemHtml(it,true)).join("")}</div>` : "";
+      if(!its.length) return "";
+      const n = its.filter(it=>!isDone(it)).length;
+      if(n===0){ if(!shopPrefs.done[c]){ shopPrefs.done[c]=true; delete shopPrefs.open[c]; saveShopPrefs(); } }
+      else if(shopPrefs.done[c]){ delete shopPrefs.done[c]; saveShopPrefs(); }
+      return `<details class="cat cat-fold" data-fold="${c}"${shopPrefs.open[c]?" open":""}><summary><span>${CAT_ICON[c]||""} ${label}</span><span class="cf-n${n?"":" ok"}">${n||"✓"}</span></summary>${its.map(it=>itemHtml(it,true)).join("")}</details>`;
     }).join("");
   }
   $("#shop").innerHTML = html + homeHtml;
 }
+document.addEventListener("toggle",e=>{
+  const d = e.target; if(!d.matches||!d.matches("details[data-fold]")) return;
+  const k = d.dataset.fold; if(!!shopPrefs.open[k]===d.open) return;
+  if(d.open) shopPrefs.open[k]=true; else delete shopPrefs.open[k];
+  saveShopPrefs();
+},true);
 document.addEventListener("click",e=>{
   const m = e.target.closest(".more[data-tags]");
   if(m && !m.closest("button")){ e.stopImmediatePropagation(); e.preventDefault(); const open = m.getAttribute("aria-expanded")==="true"; m.setAttribute("aria-expanded",String(!open)); m.textContent = open ? m.dataset.n : m.dataset.tags; m.classList.toggle("open",!open); }
@@ -5080,7 +5099,7 @@ $("#newWeek").addEventListener("click",()=>{
 function addExtra(){
   const inp = $("#extraInput"); const v = inp.value.trim(); if(!v) return;
   const id = Date.now().toString(36)+Math.random().toString(36).slice(2,5);
-  state.extras[id] = {text:v}; inp.value=""; commit();
+  state.extras[id] = {text:v}; inp.value=""; try{ foldOpen(extraCat(state.extras[id])); }catch(_){} commit();
   if(!autoCat(v)) askCat(id, true);
 }
 $("#extraAdd").addEventListener("click",addExtra);
@@ -5459,6 +5478,9 @@ window.addEventListener("scroll",updateTodayBtn,{passive:true});
 window.addEventListener("resize",updateTodayBtn);
 document.addEventListener("click",e=>{ const t = e.target.closest("[data-tab]"); if(t){ requestAnimationFrame(()=>{ if(t.dataset.tab==="woche"){ if(TAB_SCROLL.woche===undefined) centerToday(); updateTodayBtn(); } else toToday.hidden = true; }); } });
 $("#printList").addEventListener("click",()=>window.print());
+let _printOpen=[];
+window.addEventListener("beforeprint",()=>{ _printOpen=[...document.querySelectorAll("details.cat-fold:not([open])")]; _printOpen.forEach(d=>d.open=true); });
+window.addEventListener("afterprint",()=>{ _printOpen.forEach(d=>d.open=false); _printOpen=[]; });
 window.addEventListener("beforeprint",()=>{ const h=$("#printHead"); if(h){ const d=$("#weekRange"); h.innerHTML="Einkaufsliste<small>"+(d?d.textContent+" · ":"")+"Stand "+new Date().toLocaleDateString("de-DE")+"</small>"; } });
 /* ---------- Zurück-Taste (Handy): erst Fenster/Reiter zurück, auf der Wochenansicht „App verlassen?“ ----------
    Chrome überspringt Einträge, die ohne Fingertipp angelegt wurden. Darum werden bei jedem Tippen mehrere Sperr-Einträge
