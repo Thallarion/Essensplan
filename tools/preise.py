@@ -29,7 +29,7 @@ PREIS = {
  "Kartoffeln (mehligkochend)":1.8,"Kartoffeln (mittelgroß)":1.8,"Kichererbsen":3.5,"Kidneybohnen":3.5,"Kirschtomaten":7,"Knoblauch":12,"Knollensellerie (klein)":3,"Kochschinken":14,
  "Kohlrabi":3,"Kokosmilch":4,"Koriander":40,"Krautsalat":4,"Kresse":40,"Kräuter-Schmelzkäse":8,"Käse-Tortellini":9,"Kürbiskerne":12,"Lachsfilet":25,"Lasagneplatten":4,"Lauch":3,
  "Leinsamen (geschrotet)":5,"Limette":8,"Limette (Bio)":8,"Linsen (Dose)":4,"Linsennudeln (glutenfrei)":9,"Magerquark":3,"Mais":3.5,"Mais-Reis-Nudeln (glutenfrei)":7,
- "Mais-Tortillas (glutenfrei)":12,"Makkaroni":3,"Mandelmus (hell)":22,"Mango":6,"Kochsahne (15 %)":3.5,"Mangold (oder Blattspinat)":6,"Mehl":1.5,"Mie-Nudeln":5,"Milch":1.2,"Milchreis":3,
+ "Mais-Tortillas (glutenfrei)":12,"Makkaroni":3,"Mandelmus (hell)":22,"Mango":6,"Kochsahne (15 %)":3.5,"Chinakohl":2.5,"Glasnudeln":8,"Ananas (Dose)":3,"Mangold (oder Blattspinat)":6,"Mehl":1.5,"Mie-Nudeln":5,"Milch":1.2,"Milchreis":3,
  "Mineralwasser (mit Kohlensäure)":0.3,"Minze":40,"Mozzarella":9,"Mungbohnensprossen":8,"Möhren":1.5,"Möhren (lila oder orange)":2.5,"Naan-Brot":8,"Naturjoghurt":2.5,
  "Naturjoghurt (3,8 %)":2.5,"Oliven":10,"Orzo (Risoni)":4,"Pak Choi":5,"Paneer (oder Halloumi)":12,"Paprika":4,"Parmesan":25,"Parmesan am Stück":25,"Passierte Tomaten":1.8,
  "Pastinaken":5,"Penne":3,"Petersilie":40,"Petersilienwurzeln":6,"Pinienkerne":60,"Pistazien":28,"Pizzateig":5,"Polenta":3,"Putenbrust":12,"Putenhackfleisch":9,"Quark":3,
