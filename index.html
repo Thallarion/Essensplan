@@ -1510,7 +1510,19 @@ const DISHES = [
  m:"Schnelle Variante der türkischen Pizza: Wraps mit einer dünnen, würzigen Hackschicht belegen, knusprig backen und mit Salat, Zitrone und Joghurt einrollen."},
 {id:"t10",N:{kcal:450,p:19,f:19,kh:43,bs:14,gv:640,pm:0,q:"s"},P:9.0,cu:"med",kid:1,az:"fotv",ta:20,n:"Türlü – türkischer Gemüse-Ofeneintopf",t:60,k:"veg",
  i:[[2,"Stk","Aubergine","g"],[2,"Stk","Zucchini","g"],[2,"Stk","Paprika","g"],[400,"g","Kartoffeln (festkochend)","g"],[400,"g","Stückige Tomaten","v"],[1,"Stk","Zwiebel","g"],[2,"Zehen","Knoblauch","g"],[150,"g","Feta","k"]],
- m:"Aubergine, Zucchini, Paprika und Kartoffeln werden in Tomatensauce im Ofen weich geschmort. Mit Feta bestreut servieren."}
+ m:"Aubergine, Zucchini, Paprika und Kartoffeln werden in Tomatensauce im Ofen weich geschmort. Mit Feta bestreut servieren."},
+{id:"u01",N:{kcal:460,p:33,f:20,kh:37,bs:9,gv:630,pm:0,q:"s"},P:10.5,cu:"italien",kid:1,az:"ft",ta:25,n:"Spaghettikürbis mit Tomaten-Hack-Sauce und Parmesan",t:60,k:"fleisch",
+ i:[[1,"Stk","Spaghettikürbis","g"],[300,"g","Putenhackfleisch","f"],[1,"Stk","Zwiebel","g"],[2,"Zehen","Knoblauch","g"],[1,"Stk","Karotten","g"],[500,"g","Passierte Tomaten","v"],[50,"g","Parmesan","k"]],
+ m:"Der Kürbis wird im Ofen weich gegart und mit der Gabel zu „Spaghetti“ gelockert. Dazu eine herzhafte Tomaten-Hack-Sauce und Parmesan."},
+{id:"u02",N:{kcal:490,p:20,f:32,kh:31,bs:8,gv:520,pm:0,q:"s"},P:10.5,cu:"med",kid:1,az:"o",ta:30,n:"Gefüllter Spaghettikürbis mit Spinat und Feta",t:65,k:"veg",
+ i:[[1,"Stk","Spaghettikürbis","g"],[250,"g","Babyspinat","g"],[150,"g","Feta","k"],[100,"g","Frischkäse","k"],[1,"Stk","Zwiebel","g"],[2,"Zehen","Knoblauch","g"],[50,"g","Gouda gerieben","k"]],
+ m:"Kürbishälften werden im Ofen gegart, die Stränge mit Spinat, Feta und Frischkäse vermischt, in die Schalen gefüllt und überbacken."},
+{id:"u03",N:{kcal:540,p:14,f:40,kh:32,bs:10,gv:530,pm:0,q:"s"},P:10.5,cu:"italien",az:"t",ta:25,n:"Spaghettikürbis mit Pilz-Rahm und Walnüssen",t:55,k:"veg",
+ i:[[1,"Stk","Spaghettikürbis","g"],[300,"g","Champignons","g"],[200,"ml","Sahne","k"],[1,"Stk","Zwiebel","g"],[2,"Zehen","Knoblauch","g"],[1,"Bund","Petersilie","g"],[30,"g","Walnusskerne","v"],[40,"g","Parmesan","k"]],
+ m:"Zarte Kürbisstränge mit einer cremigen Champignon-Knoblauch-Sauce, gerösteten Walnüssen und Parmesan."},
+{id:"u04",N:{kcal:490,p:17,f:34,kh:30,bs:7,gv:450,pm:0,q:"s"},P:13.5,cu:"italien",kid:1,az:"t",ta:25,n:"Spaghettikürbis mit Räucherlachs und Zitronen-Sahne",t:55,k:"fisch",
+ i:[[1,"Stk","Spaghettikürbis","g"],[150,"g","Räucherlachs","f"],[150,"g","Babyspinat","g"],[200,"ml","Sahne","k"],[1,"Stk","Zitrone","g"],[1,"Zehen","Knoblauch","g"],[1,"Bund","Dill","g"]],
+ m:"Im Ofen gegarter Kürbis, vermischt mit einer leichten Zitronen-Sahne-Sauce, Spinat und Räucherlachs – schnell fertig, sobald der Kürbis gar ist."}
 ];
 const STEPS = {};
 Object.assign(STEPS, {
@@ -3446,7 +3458,37 @@ t10:{v:"Olivenöl, 1 EL Tomatenmark, Salz, Pfeffer, 1 TL Paprikapulver, 1 TL Ore
 "Alles in eine große Auflaufform geben und mit 3 EL Olivenöl, Salz, Pfeffer, Paprikapulver und Oregano mischen.",
 "Stückige Tomaten mit Tomatenmark, Zucker und 100 ml Wasser verrühren und über das Gemüse gießen.",
 "Mit Alufolie abdecken und 30 Min. im Ofen garen. Folie abnehmen, einmal umrühren und weitere 20–25 Min. garen, bis Kartoffeln und Gemüse weich sind.",
-"Feta darüberbröseln und mit Brot oder Reis servieren."]}
+"Feta darüberbröseln und mit Brot oder Reis servieren."]},
+u01:{v:"Olivenöl, Salz, Pfeffer, 1 TL Oregano, 1 EL Tomatenmark, 1 TL Zucker",s:[
+"Backofen auf 200 °C Ober-/Unterhitze vorheizen. Spaghettikürbis mit einem großen, scharfen Messer vorsichtig der Länge nach halbieren (ist er sehr hart, vorher 2–3 Min. in der Mikrowelle weich machen) und die Kerne mit einem Löffel herauskratzen.",
+"Kürbishälften mit etwas Olivenöl bestreichen, salzen und mit der Schnittfläche nach unten auf ein Blech legen. 35–40 Min. backen, bis sich das Fruchtfleisch mit einer Gabel leicht lösen lässt.",
+"Währenddessen Zwiebel, Knoblauch und Karotte fein würfeln. Hack in 1 EL Olivenöl krümelig anbraten, Gemüse 4 Min. mitbraten, Tomatenmark kurz anrösten.",
+"Passierte Tomaten, Oregano, Salz, Pfeffer und Zucker zugeben und 15–20 Min. bei kleiner Hitze köcheln lassen.",
+"Kürbis mit einer Gabel in Längsrichtung zu spaghettiartigen Strängen herausschaben, dabei die Hälften heiß, aber handhabbar halten (Topflappen).",
+"Die Stränge kurz in der Sauce schwenken oder auf Tellern anrichten, Sauce darübergeben und mit Parmesan bestreuen."]},
+u02:{v:"Olivenöl, Salz, Pfeffer, Muskat",s:[
+"Backofen auf 200 °C Ober-/Unterhitze vorheizen. Spaghettikürbis mit einem großen, scharfen Messer vorsichtig der Länge nach halbieren (ist er sehr hart, vorher 2–3 Min. in der Mikrowelle weich machen) und die Kerne mit einem Löffel herauskratzen.",
+"Hälften mit Olivenöl einreiben, salzen und mit der Schnittfläche nach unten 35 Min. backen, bis das Fruchtfleisch weich ist.",
+"Zwiebel und Knoblauch fein hacken und in 1 EL Olivenöl andünsten. Spinat zugeben und zusammenfallen lassen, mit Salz, Pfeffer und Muskat würzen.",
+"Kürbis wenden und das Fruchtfleisch mit einer Gabel zu Strängen lockern, dabei die Schalen heil lassen.",
+"Stränge mit Spinat, Frischkäse und zerbröseltem Feta vorsichtig vermischen, abschmecken und wieder in die Schalen füllen.",
+"Mit Gouda bestreuen und weitere 12–15 Min. überbacken, bis der Käse goldbraun ist.",
+"Heiß mit einem Löffel aus den Schalen essen."]},
+u03:{v:"Olivenöl, Butter, Salz, Pfeffer, Muskat",s:[
+"Backofen auf 200 °C Ober-/Unterhitze vorheizen. Spaghettikürbis mit einem großen, scharfen Messer vorsichtig der Länge nach halbieren (ist er sehr hart, vorher 2–3 Min. in der Mikrowelle weich machen) und die Kerne mit einem Löffel herauskratzen.",
+"Mit Olivenöl bestreichen, salzen und mit der Schnittfläche nach unten 35–40 Min. backen, bis das Fruchtfleisch weich ist.",
+"Champignons in Scheiben schneiden, Zwiebel und Knoblauch fein hacken. In 1 EL Butter und 1 EL Olivenöl die Pilze kräftig anbraten, bis sie Farbe haben, dann Zwiebel und Knoblauch 2–3 Min. mitbraten.",
+"Mit Sahne ablöschen, 5 Min. einköcheln lassen, mit Salz, Pfeffer und Muskat abschmecken. Petersilie hacken.",
+"Walnüsse grob hacken und in einer trockenen Pfanne goldbraun rösten.",
+"Kürbis mit einer Gabel zu Strängen lockern, mit der Pilzsauce vermengen und kurz erwärmen.",
+"Mit Walnüssen, Petersilie und Parmesan bestreuen."]},
+u04:{v:"Olivenöl, Salz, Pfeffer, Muskat",s:[
+"Backofen auf 200 °C Ober-/Unterhitze vorheizen. Spaghettikürbis mit einem großen, scharfen Messer vorsichtig der Länge nach halbieren (ist er sehr hart, vorher 2–3 Min. in der Mikrowelle weich machen) und die Kerne mit einem Löffel herauskratzen.",
+"Mit Olivenöl bestreichen, salzen und mit der Schnittfläche nach unten 35–40 Min. backen, bis das Fruchtfleisch weich ist.",
+"Knoblauch fein hacken und in 1 EL Olivenöl kurz anbraten. Sahne, Abrieb und 2 EL Saft der Zitrone zugeben und 4–5 Min. einköcheln lassen. Mit Salz, Pfeffer und Muskat abschmecken.",
+"Spinat zugeben und 1–2 Min. zusammenfallen lassen. Dill hacken, Räucherlachs in Streifen schneiden.",
+"Kürbis mit einer Gabel zu Strängen lockern und in die Sauce geben, vorsichtig vermengen und kurz erwärmen.",
+"Lachs und Dill erst zum Schluss unterheben, damit der Lachs nicht gart. Bei Kindern auf Gräten achten."]}
 });
 
 const BY = Object.fromEntries(DISHES.map(d=>[d.id,d]));
@@ -4424,7 +4466,7 @@ const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","
 /* ---------- Pro-Tipps: ein Tipp pro Tag, der Reihe nach, nur beim Start; abschaltbar (pro Gerät) ---------- */
 const TIPS = [["Kochmodus", "Tippe im Rezept auf „Kochmodus“: große Schrift, Zutaten und Schritte zum Abhaken, der Bildschirm bleibt an. Wenn du etwas abhakst, scrollt es von selbst zum Nächsten."], ["Einkauf", "Das 🏠 hinter einer Zutat in der Einkaufsliste nimmt sie von der Liste, weil ihr sie zuhause habt. „Nur diesmal“ und „Angebrochen“ holst du unter „Schon zuhause“ mit dem 🛒 zurück."], ["Personenzahl", "Im Rezept änderst du mit − und + die Personenzahl. Die Zutaten und die Mengen in den Schritten rechnen sich automatisch mit um."], ["Vorrat", "Zutaten, die immer da sind, zum Beispiel Zwiebeln: Tippe in der Einkaufsliste beim 🏠 auf „Immer“. Dann tauchen sie nie wieder auf der Liste auf, beeinflussen aber keine Rezeptvorschläge. Ändern kannst du das unter „Vorrat anpassen“ ganz unten in der Liste."], ["Alltag-Filter", "Unter Ideen findest du bei „Alle Filter“ den Reiter „Zeit & Alltag“: zum Beispiel Ofengericht, ein Topf, gut einzufrieren oder mit wenigen Zutaten."], ["Supermarkt", "Die Einkaufsliste lässt sich nach Abteilung sortieren. In den Einstellungen stellst du die Reihenfolge so ein, wie euer Supermarkt aufgebaut ist."], ["Reste", "„Was haben wir noch zuhause?“ in den Ideen: Tippe ein, was im Kühlschrank liegt, und die App zeigt dir Gerichte, die dazu passen."], ["Liste teilen", "Mit „Teilen“ in der Einkaufsliste schickst du die offenen Artikel zum Beispiel direkt an Google Keep oder an deine Familie."], ["Link teilen", "Tippe im Rezept auf „Link teilen“, um es per Nachricht zu verschicken. Wer den Link öffnet, sieht sofort das Rezept."], ["Zutaten kopieren", "Im Rezept kopiert „Zutaten kopieren“ die Mengen für eure Personenzahl, bereit zum Einfügen in eine Notiz oder eine Listen-App."], ["Leere Tage", "Mit „Leere Tage füllen“ schlägt die App für alle freien Tage Gerichte vor. Unter der Woche sind es nur schnelle Gerichte, bevorzugt vegetarisch."], ["Design", "In den Einstellungen wählst du zwischen hellem und dunklem Design, oder die App folgt automatisch deinem Handy."], ["Notiz", "Im Rezept hältst du unter „Unsere Notiz“ fest, was ihr beim nächsten Mal anders macht, zum Beispiel weniger Salz."], ["Lieblinge", "In den Einstellungen wählst du Lieblingskategorien. Sie kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran."], ["Einsenden", "Unter Ideen kannst du über „Rezept hinzufügen“ ein Rezept als Foto, PDF oder Link einsenden. Nach der Prüfung steht es für alle in der App."], ["Bewerten", "Nach dem Essen fragt die App, wie es geschmeckt hat. Mit 👍 und 👎 merkt ihr euch eure Favoriten."], ["Offline", "Öffne die App einmal mit Netz und danach noch einmal: Dann startet sie auch ohne Empfang. Im Supermarkt kannst du die Einkaufsliste abhaken und ergänzen, beim nächsten Netz gleicht sie sich ab."], ["Eigene Filter", "Allergene und Vorlieben gelten standardmäßig nur auf deinem Handy. Mit dem Schalter „Filter mit Familie teilen“ in den Einstellungen nutzt ihr sie gemeinsam. Der Vorrat wird immer geteilt."], ["Sicherung", "Unter Einstellungen → Daten sichern speicherst du Plan, eigene Rezepte und Einstellungen als Datei, zum Beispiel vor einem Handywechsel."]];
 const LS_TIPS = "essensplan-tips";
-const APP_VERSION = "v1.15.0";
+const APP_VERSION = "v1.16.0";
 const LS_HERO = "essensplan-hero";
 function heroClosed(){ try{ return !!localStorage.getItem(LS_HERO); }catch(e){ return false; } }
 function heroClose(){ try{ localStorage.setItem(LS_HERO,"1"); }catch(e){} $("#hero").hidden = true; }
