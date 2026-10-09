@@ -299,6 +299,7 @@ a.btn{text-decoration:none;display:inline-block}
 .day-top{margin:2px 0 10px;padding-bottom:10px;border-bottom:1px solid var(--line)}
 .days button{font:700 14px var(--body);padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
 .days button:hover{background:var(--basil);color:var(--basil-ink);border-color:var(--basil)}
+.days button:disabled,.days button:disabled:hover{opacity:.38;cursor:default;background:var(--surface);color:var(--muted);border-color:var(--line)}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--ground);padding:10px 16px;border-radius:999px;font-size:14px;z-index:30}
 
 /* ===== Design 2: ruhig & minimal ===== */
@@ -4515,7 +4516,7 @@ const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","
 /* ---------- Pro-Tipps: ein Tipp pro Tag, der Reihe nach, nur beim Start; abschaltbar (pro Gerät) ---------- */
 const TIPS = [["Kochmodus", "Tippe im Rezept auf „Kochmodus“: große Schrift, Zutaten und Schritte zum Abhaken, der Bildschirm bleibt an. Wenn du etwas abhakst, scrollt es von selbst zum Nächsten."], ["Einkauf", "Das 🏠 hinter einer Zutat in der Einkaufsliste nimmt sie von der Liste, weil ihr sie zuhause habt. „Nur diesmal“ und „Angebrochen“ holst du unter „Schon zuhause“ mit dem 🛒 zurück."], ["Personenzahl", "Im Rezept änderst du mit − und + die Personenzahl. Die Zutaten und die Mengen in den Schritten rechnen sich automatisch mit um."], ["Vorrat", "Zutaten, die immer da sind, zum Beispiel Zwiebeln: Tippe in der Einkaufsliste beim 🏠 auf „Immer“. Dann tauchen sie nie wieder auf der Liste auf, beeinflussen aber keine Rezeptvorschläge. Ändern kannst du das unter „Vorrat anpassen“ ganz unten in der Liste."], ["Alltag-Filter", "Unter Ideen findest du bei „Alle Filter“ den Reiter „Zeit & Alltag“: zum Beispiel Ofengericht, ein Topf, gut einzufrieren oder mit wenigen Zutaten."], ["Supermarkt", "Die Einkaufsliste lässt sich nach Abteilung sortieren. In den Einstellungen stellst du die Reihenfolge so ein, wie euer Supermarkt aufgebaut ist."], ["Reste", "„Was haben wir noch zuhause?“ in den Ideen: Tippe ein, was im Kühlschrank liegt, und die App zeigt dir Gerichte, die dazu passen."], ["Liste teilen", "Mit „Teilen“ in der Einkaufsliste schickst du die offenen Artikel zum Beispiel direkt an Google Keep oder an deine Familie."], ["Link teilen", "Tippe im Rezept auf „Link teilen“, um es per Nachricht zu verschicken. Wer den Link öffnet, sieht sofort das Rezept."], ["Zutaten kopieren", "Im Rezept kopiert „Zutaten kopieren“ die Mengen für eure Personenzahl, bereit zum Einfügen in eine Notiz oder eine Listen-App."], ["Leere Tage", "Mit „Leere Tage füllen“ schlägt die App für alle freien Tage Gerichte vor. Unter der Woche sind es nur schnelle Gerichte, bevorzugt vegetarisch."], ["Design", "In den Einstellungen wählst du zwischen hellem und dunklem Design, oder die App folgt automatisch deinem Handy."], ["Notiz", "Im Rezept hältst du unter „Unsere Notiz“ fest, was ihr beim nächsten Mal anders macht, zum Beispiel weniger Salz."], ["Lieblinge", "In den Einstellungen wählst du Lieblingskategorien. Sie kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran."], ["Einsenden", "Unter Ideen kannst du über „Rezept hinzufügen“ ein Rezept als Foto, PDF oder Link einsenden. Nach der Prüfung steht es für alle in der App."], ["Bewerten", "Nach dem Essen fragt die App, wie es geschmeckt hat. Mit 👍 und 👎 merkt ihr euch eure Favoriten."], ["Offline", "Öffne die App einmal mit Netz und danach noch einmal: Dann startet sie auch ohne Empfang. Im Supermarkt kannst du die Einkaufsliste abhaken und ergänzen, beim nächsten Netz gleicht sie sich ab."], ["Eigene Filter", "Allergene und Vorlieben gelten standardmäßig nur auf deinem Handy. Mit dem Schalter „Filter mit Familie teilen“ in den Einstellungen nutzt ihr sie gemeinsam. Der Vorrat wird immer geteilt."], ["Sicherung", "Unter Einstellungen → Daten sichern speicherst du Plan, eigene Rezepte und Einstellungen als Datei, zum Beispiel vor einem Handywechsel."]];
 const LS_TIPS = "essensplan-tips";
-const APP_VERSION = "v1.18.1";
+const APP_VERSION = "v1.18.2";
 const LS_HERO = "essensplan-hero";
 function heroClosed(){ try{ return !!localStorage.getItem(LS_HERO); }catch(e){ return false; } }
 function heroClose(){ try{ localStorage.setItem(LS_HERO,"1"); }catch(e){} $("#hero").hidden = true; }
@@ -4868,7 +4869,8 @@ function shareDishLink(id){
 }
 function showDish(id,opts){
   const d = dish(id); if(!d) return;
-  const dayPick = `<h3>An welchem Tag?</h3><div class="days">${DAYS.map((x,i)=>`<button data-setday="${i}" data-dish="${d.id}">${x}</button>`).join("")}</div>
+  const nowIdx = (new Date().getDay()+6)%7;   // vergangene Tage dieser Woche sind nicht mehr wählbar
+  const dayPick = `<h3>An welchem Tag?</h3><div class="days">${DAYS.map((x,i)=>`<button data-setday="${i}" data-dish="${d.id}"${i<nowIdx?' disabled aria-disabled="true"':''}>${x}</button>`).join("")}</div>
     <h3>Nächste Woche</h3><div class="days">${DAYS.map((x,i)=>`<button data-setday="${i+7}" data-dish="${d.id}">${x}</button>`).join("")}</div>`;
   const pickTop = !!(opts&&opts.pickTop); /* „Einplanen“ unter Ideen: Tageswahl oben */
   curPersons = S().persons;
@@ -5026,7 +5028,6 @@ function pickFor(day){
   const pf = new Set();
   openSheet(`<button class="btn small close" data-close>Schließen</button>
     <h2>${dlong(day)}</h2>
-    <div class="add" style="margin-top:10px"><input id="customDish" type="text" placeholder="Eigenes Gericht, z. B. Resteessen" autocomplete="off"><button class="btn primary" data-custom="${day}">Übernehmen</button></div>
     <button type="button" class="btn small" data-cp="day" data-g="${day}" style="margin-bottom:10px">📋 Aus einer anderen Woche übernehmen</button>
     ${filterUI("pick","Gericht oder Zutat …")}
     <div class="fcount" id="pickCount"></div>
@@ -5064,7 +5065,6 @@ document.addEventListener("click",e=>{
   if(t.dataset.pick){ pickFor(+t.dataset.pick); return; }
   if(t.dataset.clear){ delete state.days[t.dataset.clear]; commit(); return; }
   if(t.dataset.setday){ state.days[t.dataset.setday]=t.dataset.dish; closeSheet(); commit(); toast(`Für ${dlong(+t.dataset.setday)} eingeplant`); return; }
-  if(t.dataset.custom){ const v = $("#customDish").value.trim(); if(!v) { $("#customDish").focus(); return; } state.days[t.dataset.custom]={custom:v}; closeSheet(); commit(); return; }
   if(t.dataset.assign){ showDish(t.dataset.assign,{pickTop:true}); return; }
   if(t.dataset.like){ const id=t.dataset.like; setLike(id,+t.dataset.v); document.querySelectorAll(`[data-like="${id}"]`).forEach(b=>b.setAttribute("aria-pressed",String(likeOf(id)===+b.dataset.v))); const h=document.querySelector(".sheet .tags"); if(h) h.outerHTML=chips(dish(id),true); toast(likeOf(id)>0?"👍 Gemerkt – kommt öfter dran":likeOf(id)<0?"👎 Gemerkt – wird nicht mehr gewürfelt":"Bewertung entfernt"); return; }
   if(t.dataset.cook){ openCook(t.dataset.cook); return; }
@@ -5081,7 +5081,7 @@ document.addEventListener("change",e=>{
   it.keys.forEach(k=>{ if(e.target.checked) state.checked[k]=true; else delete state.checked[k]; });
   commit();
 });
-document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeSheet(); if(e.key==="Enter" && e.target.id==="customDish"){ const b=document.querySelector("[data-custom]"); b&&b.click(); } });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeSheet(); });
 
 $("#noteHelp").addEventListener("click",()=>openHelp(false));
 /* Beispielwoche: übernehmen (wird eure Woche) oder leer starten */
