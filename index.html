@@ -3886,6 +3886,10 @@ function recordCooked(){
   }
   const cut = isoDate(new Date(Date.now()-400*864e5));
   Object.keys(state.cooked).forEach(k=>{ if(k<cut){ delete state.cooked[k]; changed=true; } });
+  // Einkaufsliste nur für heute und die Zukunft: Häkchen/Ausblendungen und Tagesauswahl vergangener Tage löschen
+  [state.checked,state.hidden].forEach(mp=>Object.keys(mp||{}).forEach(k=>{ const n=parseInt(k,10); if(/^\d+\|/.test(k) && n<today){ delete mp[k]; changed=true; } }));
+  const sd = state.settings && state.settings.shopDays;
+  if(Array.isArray(sd) && sd.some(n=>n<today)){ state.settings.shopDays = sd.filter(n=>n>=today); changed=true; }
   return changed;
 }
 // Wochenwechsel: am Montag rückt die geplante nächste Woche (Tage 7–13) nach vorn. Ohne Plan für nächste Woche bleibt alles wie bisher.
@@ -3902,6 +3906,7 @@ function rollWeek(){
     [state.checked,state.hidden].forEach(mp=>{ Object.keys(mp).forEach(k=>{ const n=parseInt(k,10); if(n>=0 && n<7) delete mp[k]; }); Object.keys(mp).forEach(k=>{ const n=parseInt(k,10); if(n>=7 && n<14 && /^\d+\|/.test(k)){ mp[(n-7)+k.slice(String(n).length)] = mp[k]; delete mp[k]; } }); });
     for(let i=0;i<7;i++){ if(state.days[i+7]!==undefined) state.days[i]=state.days[i+7]; else delete state.days[i]; delete state.days[i+7]; }
   } else { nextKeys.forEach(k=>{ delete state.days[k]; }); if(passed>1) [state.checked,state.hidden].forEach(mp=>Object.keys(mp).forEach(k=>{ const n=parseInt(k,10); if(n>=7 && n<14 && /^\d+\|/.test(k)) delete mp[k]; })); }
+  delete state.settings.shopDays;   // neue Woche: Tagesauswahl für den Einkauf zurücksetzen
   state.settings.weekOf = cur; return true;
 }
 function lastCooked(id){ let best=""; for(const [k,v] of Object.entries(state.cooked||{})) if(v===id && k>best) best=k; return best||null; }
@@ -4023,9 +4028,12 @@ function renderWeek(){
 }
 
 /* ---------- Render: Einkauf ---------- */
-// Auswahl der Einkaufstage und Ansicht gelten nur auf diesem Handy
+// Ansicht und aufgeklappte Kategorien gelten nur auf diesem Handy; die Auswahl der Einkaufstage wird mit den verbundenen Handys geteilt (state.settings.shopDays)
 const LS_SHOP = "essensplan-einkauf";
 let shopPrefs = (()=>{ const v = lsGet(LS_SHOP); return {days: Array.isArray(v&&v.days)?v.days:[0,1,2,3,4,5,6], view: (v&&v.view)||"cat", open: (v&&v.open&&typeof v.open==="object")?v.open:{}, done: (v&&v.done&&typeof v.done==="object")?v.done:{}}; })();
+Object.defineProperty(shopPrefs,"days",{enumerable:false,get(){ const v = state.settings && state.settings.shopDays; return Array.isArray(v) ? v : [0,1,2,3,4,5,6]; },set(v){ state.settings = state.settings||{}; state.settings.shopDays = v; }});
+const shopFrom = ()=> (new Date().getDay()+6)%7;   // Zutaten nur ab heute (vergangene Tage kommen nicht mehr auf die Liste)
+function futureDays(){ const f = shopFrom(); return plannedDays().filter(d=>d>=f); }
 function foldOpen(k){ if(!shopPrefs.open[k]){ shopPrefs.open[k]=true; saveShopPrefs(); } }
 function saveShopPrefs(){ lsSet(shopPrefs, LS_SHOP); }
 function plannedDays(){ return [0,1,2,3,4,5,6,7,8,9,10,11,12,13].filter(i=>typeof state.days[i]==="string" && dish(state.days[i])); }
@@ -4034,7 +4042,7 @@ function plannedDays(){ return [0,1,2,3,4,5,6,7,8,9,10,11,12,13].filter(i=>typeo
 function shopPartsAll(){
   const sel = new Set(shopPrefs.days);
   const parts = [];
-  plannedDays().filter(d=>sel.has(d)).forEach(day=>{
+  futureDays().filter(d=>sel.has(d)).forEach(day=>{
     const x = dish(state.days[day]);
     const merged = new Map();
     x.i.forEach(([a,u,n,c])=>{ const k=n+"|"+u; if(!merged.has(k)) merged.set(k,{a:0,u,n,c}); merged.get(k).a+=a; });
@@ -4123,7 +4131,7 @@ function itemHtml(it, showDays){
   </div>`;
 }
 function renderShopControls(){
-  const dates = weekDates(); const planned = new Set(plannedDays()); const sel = new Set(shopPrefs.days);
+  const dates = weekDates(); const planned = new Set(futureDays()); const sel = new Set(shopPrefs.days);
   const dates2 = weekDates(1), nextAny = [7,8,9,10,11,12,13].some(i=>planned.has(i));
   const chip = (i,d,dt)=>`<button data-shopday="${i}" aria-pressed="${sel.has(i)&&planned.has(i)}" ${planned.has(i)?'':'disabled'} title="${dlong(i)}">${DAYS[i%7]}<small>${dt.toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"})}</small></button>`;
   $("#dayChips").innerHTML = DAYS.map((d,i)=>chip(i,d,dates[i])).join("") + (nextAny ? `<div class="dc-lbl">Nächste Woche</div>` + DAYS.map((d,i)=>chip(i+7,d,dates2[i])).join("") : "");
@@ -4197,7 +4205,7 @@ function askHome(it){
   $("#ahOpen").addEventListener("click",()=>{ state.pantry = state.pantry||{}; state.pantry[it.n] = 2; closeSheet(); commit(); toast(`${it.n} ist angebrochen – wir schlagen Gerichte vor`); });
   $("#ahAlways").addEventListener("click",()=>{ state.pantry = state.pantry||{}; state.pantry[it.n] = 1; closeSheet(); commit(); toast(`${it.n} ist jetzt im Vorrat`); });
 }
-function setShopDays(days){ shopPrefs.days = days; saveShopPrefs(); renderShop(); }
+function setShopDays(days){ shopPrefs.days = days; commit(); }
 document.addEventListener("click",e=>{
   const b = e.target.closest("[data-shopday]"); if(!b) return;
   const d = +b.dataset.shopday; const set = new Set(shopPrefs.days);
@@ -4504,7 +4512,7 @@ const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","
 /* ---------- Pro-Tipps: ein Tipp pro Tag, der Reihe nach, nur beim Start; abschaltbar (pro Gerät) ---------- */
 const TIPS = [["Kochmodus", "Tippe im Rezept auf „Kochmodus“: große Schrift, Zutaten und Schritte zum Abhaken, der Bildschirm bleibt an. Wenn du etwas abhakst, scrollt es von selbst zum Nächsten."], ["Einkauf", "Das 🏠 hinter einer Zutat in der Einkaufsliste nimmt sie von der Liste, weil ihr sie zuhause habt. „Nur diesmal“ und „Angebrochen“ holst du unter „Schon zuhause“ mit dem 🛒 zurück."], ["Personenzahl", "Im Rezept änderst du mit − und + die Personenzahl. Die Zutaten und die Mengen in den Schritten rechnen sich automatisch mit um."], ["Vorrat", "Zutaten, die immer da sind, zum Beispiel Zwiebeln: Tippe in der Einkaufsliste beim 🏠 auf „Immer“. Dann tauchen sie nie wieder auf der Liste auf, beeinflussen aber keine Rezeptvorschläge. Ändern kannst du das unter „Vorrat anpassen“ ganz unten in der Liste."], ["Alltag-Filter", "Unter Ideen findest du bei „Alle Filter“ den Reiter „Zeit & Alltag“: zum Beispiel Ofengericht, ein Topf, gut einzufrieren oder mit wenigen Zutaten."], ["Supermarkt", "Die Einkaufsliste lässt sich nach Abteilung sortieren. In den Einstellungen stellst du die Reihenfolge so ein, wie euer Supermarkt aufgebaut ist."], ["Reste", "„Was haben wir noch zuhause?“ in den Ideen: Tippe ein, was im Kühlschrank liegt, und die App zeigt dir Gerichte, die dazu passen."], ["Liste teilen", "Mit „Teilen“ in der Einkaufsliste schickst du die offenen Artikel zum Beispiel direkt an Google Keep oder an deine Familie."], ["Link teilen", "Tippe im Rezept auf „Link teilen“, um es per Nachricht zu verschicken. Wer den Link öffnet, sieht sofort das Rezept."], ["Zutaten kopieren", "Im Rezept kopiert „Zutaten kopieren“ die Mengen für eure Personenzahl, bereit zum Einfügen in eine Notiz oder eine Listen-App."], ["Leere Tage", "Mit „Leere Tage füllen“ schlägt die App für alle freien Tage Gerichte vor. Unter der Woche sind es nur schnelle Gerichte, bevorzugt vegetarisch."], ["Design", "In den Einstellungen wählst du zwischen hellem und dunklem Design, oder die App folgt automatisch deinem Handy."], ["Notiz", "Im Rezept hältst du unter „Unsere Notiz“ fest, was ihr beim nächsten Mal anders macht, zum Beispiel weniger Salz."], ["Lieblinge", "In den Einstellungen wählst du Lieblingskategorien. Sie kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran."], ["Einsenden", "Unter Ideen kannst du über „Rezept hinzufügen“ ein Rezept als Foto, PDF oder Link einsenden. Nach der Prüfung steht es für alle in der App."], ["Bewerten", "Nach dem Essen fragt die App, wie es geschmeckt hat. Mit 👍 und 👎 merkt ihr euch eure Favoriten."], ["Offline", "Öffne die App einmal mit Netz und danach noch einmal: Dann startet sie auch ohne Empfang. Im Supermarkt kannst du die Einkaufsliste abhaken und ergänzen, beim nächsten Netz gleicht sie sich ab."], ["Eigene Filter", "Allergene und Vorlieben gelten standardmäßig nur auf deinem Handy. Mit dem Schalter „Filter mit Familie teilen“ in den Einstellungen nutzt ihr sie gemeinsam. Der Vorrat wird immer geteilt."], ["Sicherung", "Unter Einstellungen → Daten sichern speicherst du Plan, eigene Rezepte und Einstellungen als Datei, zum Beispiel vor einem Handywechsel."]];
 const LS_TIPS = "essensplan-tips";
-const APP_VERSION = "v1.17.2";
+const APP_VERSION = "v1.18.0";
 const LS_HERO = "essensplan-hero";
 function heroClosed(){ try{ return !!localStorage.getItem(LS_HERO); }catch(e){ return false; } }
 function heroClose(){ try{ localStorage.setItem(LS_HERO,"1"); }catch(e){} $("#hero").hidden = true; }
@@ -5528,8 +5536,8 @@ $("#clearDone").addEventListener("click",()=>{
 });
 function shopText(){
   const items = [...groupParts(shopParts()), ...extraItems()].filter(it=>!isDone(it));
-  const sel = shopPrefs.days.filter(d=>plannedDays().includes(d));
-  const head = sel.length===plannedDays().length ? "Einkaufsliste:\n\n" : "Einkaufsliste für "+daysText(sel)+":\n\n";
+  const sel = shopPrefs.days.filter(d=>futureDays().includes(d));
+  const head = sel.length===futureDays().length ? "Einkaufsliste:\n\n" : "Einkaufsliste für "+daysText(sel)+":\n\n";
   const line = i=>"- "+(i.extra?"":fmtQty(i.a,i.u)+" ")+i.n;
   let body;
   if(shopPrefs.view==="day"){
