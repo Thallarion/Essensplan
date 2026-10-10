@@ -1,1 +1,25 @@
-{"name":"Familien-Essensplan","short_name":"Essensplan","start_url":"./","display":"standalone","background_color":"#F4F6F0","theme_color":"#2E6A44","lang":"de","icons":[{"src":"icon.png","sizes":"512x512","type":"image/png"}]}
+{
+  "id": "https://wasessenwir.at/",
+  "name": "Was essen wir? – Familien-Essensplan",
+  "short_name": "Essensplan",
+  "description": "Familien-Wochenplan, Rezeptideen und Einkaufsliste in einer App.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F4F6F0",
+  "theme_color": "#2E6A44",
+  "lang": "de",
+  "categories": ["food", "lifestyle"],
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ],
+  "screenshots": [
+    {"src": "store/screenshot-1-woche.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Wochenplan"},
+    {"src": "store/screenshot-2-ideen.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Rezeptideen mit Filtern"},
+    {"src": "store/screenshot-3-rezept.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Rezept mit Zutaten und Kochmodus"},
+    {"src": "store/screenshot-4-einkauf.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Einkaufsliste"}
+  ]
+}
