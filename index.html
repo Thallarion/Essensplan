@@ -4865,9 +4865,12 @@ function scaleQty(a,u,n,name){
   return Math.max(0.5, Math.round(x*2)/2);
 }
 function ingItems(d,n){
-  const main = d.i.map(([a,u,nm])=>{ const q=fmtQty(scaleQty(a,u,n,nm),u); return `<li>${q?`<strong>${q}</strong> `:""}${esc(nm)}</li>`; }).join("");
+  // Zutaten, die im Vorrat zuhause stehen (wie auf der Einkaufsliste erkannt), wandern in den Kasten „Aus dem Vorrat“
+  const li = ([a,u,nm],cls)=>{ const q=fmtQty(scaleQty(a,u,n,nm),u); return `<li${cls?` class="${cls}"`:""}>${q?(cls?q+" ":`<strong>${q}</strong> `):""}${esc(nm)}</li>`; };
+  const inPantry = d.i.filter(x=>pantryHas(String(x[2])));
+  const main = d.i.filter(x=>!inPantry.includes(x)).map(x=>li(x)).join("");
   const st = STEPS[d.id];
-  const vor = st&&st.v ? st.v.split(/,\s*(?![^(]*\))/).map(x=>x.trim()).filter(Boolean).map(x=>`<li class="ing-v">${esc(scaleText(x,n))}</li>`).join("") : "";
+  const vor = inPantry.map(x=>li(x,"ing-v")).join("") + (st&&st.v ? st.v.split(/,\s*(?![^(]*\))/).map(x=>x.trim()).filter(Boolean).map(x=>`<li class="ing-v">${esc(scaleText(x,n))}</li>`).join("") : "");
   return main + (vor ? `<li class="ing-box"><p class="ing-vh">Aus dem Vorrat (nicht auf der Einkaufsliste)</p><ul>${vor}</ul></li>` : "");
 }
 let curPersons = 3;
