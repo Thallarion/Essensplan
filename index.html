@@ -935,6 +935,7 @@ header.top .tag{margin:3px 0 0;font-size:13px;font-weight:500;color:var(--muted)
 #byeRoot[hidden]{display:none}
 .bye-in{max-width:320px}.bye-emo{font-size:56px;line-height:1}.bye-in h2{margin:10px 0 6px;font-size:26px}.bye-in p{color:var(--muted);margin:0 0 18px}
 .appfoot{margin:28px 0 20px;text-align:center;font-size:13px;color:var(--muted)}
+.appver{margin-top:2px;font-size:12px;opacity:.8}
 .appfoot a{color:var(--muted);text-decoration:underline;text-underline-offset:2px;display:inline-block;padding:13px 8px}
 .hero{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px 16px 14px;margin:0 0 14px;box-shadow:var(--shadow)}
 .hero h2{margin:0 28px 4px 0;font-size:22px;line-height:1.2}
@@ -1102,7 +1103,7 @@ header.top .tag{margin:3px 0 0;font-size:13px;font-weight:500;color:var(--muted)
     <div class="season-info" id="seasonInfo" hidden></div>
     <div class="ideas" id="ideas"></div>
   </section>
-  <footer class="appfoot"><a href="info.html">Info</a> · <a href="datenschutz.html">Datenschutz</a> · <a href="mailto:postmaster@wasessenwir.at">Kontakt</a></footer>
+  <footer class="appfoot"><a href="info.html">Info</a> · <a href="datenschutz.html">Datenschutz</a> · <a href="mailto:postmaster@wasessenwir.at">Kontakt</a><div class="appver" id="appVer"></div></footer>
 </div>
 
 <div id="sheetRoot"></div>
@@ -4541,7 +4542,8 @@ const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","
 /* ---------- Pro-Tipps: ein Tipp pro Tag, der Reihe nach, nur beim Start; abschaltbar (pro Gerät) ---------- */
 const TIPS = [["Kochmodus", "Tippe im Rezept auf „Kochmodus“: große Schrift, Zutaten und Schritte zum Abhaken, der Bildschirm bleibt an. Wenn du etwas abhakst, scrollt es von selbst zum Nächsten."], ["Einkauf", "Das 🏠 hinter einer Zutat in der Einkaufsliste nimmt sie von der Liste, weil ihr sie zuhause habt. „Nur diesmal“ und „Angebrochen“ holst du unter „Schon zuhause“ mit dem 🛒 zurück."], ["Personenzahl", "Im Rezept änderst du mit − und + die Personenzahl. Die Zutaten und die Mengen in den Schritten rechnen sich automatisch mit um."], ["Vorrat", "Zutaten, die immer da sind, zum Beispiel Zwiebeln: Tippe in der Einkaufsliste beim 🏠 auf „Immer“. Dann tauchen sie nie wieder auf der Liste auf, beeinflussen aber keine Rezeptvorschläge. Ändern kannst du das unter „Vorrat anpassen“ ganz unten in der Liste."], ["Alltag-Filter", "Unter Ideen findest du bei „Alle Filter“ den Reiter „Zeit & Alltag“: zum Beispiel Ofengericht, ein Topf, gut einzufrieren oder mit wenigen Zutaten."], ["Supermarkt", "Die Einkaufsliste lässt sich nach Abteilung sortieren. In den Einstellungen stellst du die Reihenfolge so ein, wie euer Supermarkt aufgebaut ist."], ["Reste", "„Was haben wir noch zuhause?“ in den Ideen: Tippe ein, was im Kühlschrank liegt, und die App zeigt dir Gerichte, die dazu passen."], ["Liste teilen", "Mit „Teilen“ in der Einkaufsliste schickst du die offenen Artikel zum Beispiel direkt an Google Keep oder an deine Familie."], ["Link teilen", "Tippe im Rezept auf „Link teilen“, um es per Nachricht zu verschicken. Wer den Link öffnet, sieht sofort das Rezept."], ["Zutaten kopieren", "Im Rezept kopiert „Zutaten kopieren“ die Mengen für eure Personenzahl, bereit zum Einfügen in eine Notiz oder eine Listen-App."], ["Leere Tage", "Mit „Leere Tage füllen“ schlägt die App für alle freien Tage Gerichte vor. Unter der Woche sind es nur schnelle Gerichte, bevorzugt vegetarisch."], ["Design", "In den Einstellungen wählst du zwischen hellem und dunklem Design, oder die App folgt automatisch deinem Handy."], ["Notiz", "Im Rezept hältst du unter „Unsere Notiz“ fest, was ihr beim nächsten Mal anders macht, zum Beispiel weniger Salz."], ["Lieblinge", "In den Einstellungen wählst du Lieblingskategorien. Sie kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran."], ["Einsenden", "Unter Ideen kannst du über „Rezept hinzufügen“ ein Rezept als Foto, PDF oder Link einsenden. Nach der Prüfung steht es für alle in der App."], ["Bewerten", "Nach dem Essen fragt die App, wie es geschmeckt hat. Mit 👍 und 👎 merkt ihr euch eure Favoriten."], ["Offline", "Öffne die App einmal mit Netz und danach noch einmal: Dann startet sie auch ohne Empfang. Im Supermarkt kannst du die Einkaufsliste abhaken und ergänzen, beim nächsten Netz gleicht sie sich ab."], ["Eigene Filter", "Allergene und Vorlieben gelten standardmäßig nur auf deinem Handy. Mit dem Schalter „Filter mit Familie teilen“ in den Einstellungen nutzt ihr sie gemeinsam. Der Vorrat wird immer geteilt."], ["Sicherung", "Unter Einstellungen → Daten sichern speicherst du Plan, eigene Rezepte und Einstellungen als Datei, zum Beispiel vor einem Handywechsel."]];
 const LS_TIPS = "essensplan-tips";
-const APP_VERSION = "v1.18.8";
+const APP_VERSION = "v1.18.9";
+document.getElementById("appVer").textContent = "Version " + APP_VERSION;
 const LS_HERO = "essensplan-hero";
 function heroClosed(){ try{ return !!localStorage.getItem(LS_HERO); }catch(e){ return false; } }
 function heroClose(){ try{ localStorage.setItem(LS_HERO,"1"); }catch(e){} $("#hero").hidden = true; }
