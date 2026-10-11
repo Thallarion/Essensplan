@@ -368,7 +368,11 @@ nav.tabs button[aria-selected="true"] .count{background:var(--basil);color:var(-
 .filters button[aria-pressed="true"]{background:var(--basil-soft);color:var(--basil);border-color:var(--basil)}
 .fcount{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);margin:0 0 10px;min-height:26px}
 .fbar{display:flex;gap:8px;align-items:center;margin-bottom:8px}
-.fbar .search{flex:1;min-width:0;margin:0}
+.fbar .sbox{position:relative;flex:1;min-width:0}
+.fbar .search{width:100%;margin:0;padding-right:42px}
+.search::-webkit-search-cancel-button{-webkit-appearance:none;display:none}
+.sclear{position:absolute;right:2px;top:50%;transform:translateY(-50%);width:40px;height:40px;border:0;background:transparent;color:var(--muted);font:400 24px/1 var(--body);cursor:pointer;border-radius:50%}
+.sclear:hover,.sclear:focus-visible{color:var(--ink);background:var(--basil-soft)}
 .fbtn{flex:none;font:600 14px var(--body);padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer;white-space:nowrap}
 .fbtn.active{border-color:var(--basil);color:var(--basil)}
 .fbtn .caret{display:inline-block;transition:transform .15s}
@@ -4250,7 +4254,7 @@ const FILTER_GROUPS = [
 ];
 const FLABEL = Object.fromEntries(FILTER_GROUPS.flatMap(g=>g[1]).filter(x=>x[0]!=="#"));
 function filterUI(id, placeholder){
-  return `<div class="fbar"><input class="search" id="${id}Search" type="search" placeholder="${esc(placeholder)}" autocomplete="off">
+  return `<div class="fbar"><div class="sbox"><input class="search" id="${id}Search" type="search" placeholder="${esc(placeholder)}" autocomplete="off" enterkeyhint="search"><button type="button" class="sclear" id="${id}Clear" aria-label="Suche löschen" hidden>×</button></div>
     <button type="button" class="fbtn" id="${id}Toggle" aria-expanded="false" aria-controls="${id}Panel">Alle Filter<span class="fnum" id="${id}Num"></span> <span class="caret">▾</span></button></div>
     <div class="fchips" id="${id}Chips"></div>
     ${id==="idea"?`<div class="fchips fexcl" id="ideaExcl"></div>`:""}
@@ -4283,7 +4287,9 @@ function bindFilterUI(id, set, onChange){
   });
   const exEl = $$("Excl"); if(exEl) exEl.addEventListener("click",e=>{ const b=e.target.closest("[data-fxx]"); if(!b) return; e.stopPropagation(); setSetting("excl",S().excl.filter(x=>x!==b.dataset.fxx)); sync(); });
   $$("Chips").addEventListener("click",e=>{ const b=e.target.closest("[data-fx]"); if(!b) return; e.stopPropagation(); set.delete(b.dataset.fx); changed(); });
-  $$("Search").addEventListener("input",()=>onChange());
+  const sIn = $$("Search"), sClr = $$("Clear");
+  sIn.addEventListener("input",()=>{ sClr.hidden = !sIn.value; onChange(); });
+  sClr.addEventListener("click",()=>{ sIn.value=""; sClr.hidden=true; onChange(); sIn.focus(); });
   sync();
   return {sync, open};
 }
@@ -4527,7 +4533,7 @@ const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","
 /* ---------- Pro-Tipps: ein Tipp pro Tag, der Reihe nach, nur beim Start; abschaltbar (pro Gerät) ---------- */
 const TIPS = [["Kochmodus", "Tippe im Rezept auf „Kochmodus“: große Schrift, Zutaten und Schritte zum Abhaken, der Bildschirm bleibt an. Wenn du etwas abhakst, scrollt es von selbst zum Nächsten."], ["Einkauf", "Das 🏠 hinter einer Zutat in der Einkaufsliste nimmt sie von der Liste, weil ihr sie zuhause habt. „Nur diesmal“ und „Angebrochen“ holst du unter „Schon zuhause“ mit dem 🛒 zurück."], ["Personenzahl", "Im Rezept änderst du mit − und + die Personenzahl. Die Zutaten und die Mengen in den Schritten rechnen sich automatisch mit um."], ["Vorrat", "Zutaten, die immer da sind, zum Beispiel Zwiebeln: Tippe in der Einkaufsliste beim 🏠 auf „Immer“. Dann tauchen sie nie wieder auf der Liste auf, beeinflussen aber keine Rezeptvorschläge. Ändern kannst du das unter „Vorrat anpassen“ ganz unten in der Liste."], ["Alltag-Filter", "Unter Ideen findest du bei „Alle Filter“ den Reiter „Zeit & Alltag“: zum Beispiel Ofengericht, ein Topf, gut einzufrieren oder mit wenigen Zutaten."], ["Supermarkt", "Die Einkaufsliste lässt sich nach Abteilung sortieren. In den Einstellungen stellst du die Reihenfolge so ein, wie euer Supermarkt aufgebaut ist."], ["Reste", "„Was haben wir noch zuhause?“ in den Ideen: Tippe ein, was im Kühlschrank liegt, und die App zeigt dir Gerichte, die dazu passen."], ["Liste teilen", "Mit „Teilen“ in der Einkaufsliste schickst du die offenen Artikel zum Beispiel direkt an Google Keep oder an deine Familie."], ["Link teilen", "Tippe im Rezept auf „Link teilen“, um es per Nachricht zu verschicken. Wer den Link öffnet, sieht sofort das Rezept."], ["Zutaten kopieren", "Im Rezept kopiert „Zutaten kopieren“ die Mengen für eure Personenzahl, bereit zum Einfügen in eine Notiz oder eine Listen-App."], ["Leere Tage", "Mit „Leere Tage füllen“ schlägt die App für alle freien Tage Gerichte vor. Unter der Woche sind es nur schnelle Gerichte, bevorzugt vegetarisch."], ["Design", "In den Einstellungen wählst du zwischen hellem und dunklem Design, oder die App folgt automatisch deinem Handy."], ["Notiz", "Im Rezept hältst du unter „Unsere Notiz“ fest, was ihr beim nächsten Mal anders macht, zum Beispiel weniger Salz."], ["Lieblinge", "In den Einstellungen wählst du Lieblingskategorien. Sie kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran."], ["Einsenden", "Unter Ideen kannst du über „Rezept hinzufügen“ ein Rezept als Foto, PDF oder Link einsenden. Nach der Prüfung steht es für alle in der App."], ["Bewerten", "Nach dem Essen fragt die App, wie es geschmeckt hat. Mit 👍 und 👎 merkt ihr euch eure Favoriten."], ["Offline", "Öffne die App einmal mit Netz und danach noch einmal: Dann startet sie auch ohne Empfang. Im Supermarkt kannst du die Einkaufsliste abhaken und ergänzen, beim nächsten Netz gleicht sie sich ab."], ["Eigene Filter", "Allergene und Vorlieben gelten standardmäßig nur auf deinem Handy. Mit dem Schalter „Filter mit Familie teilen“ in den Einstellungen nutzt ihr sie gemeinsam. Der Vorrat wird immer geteilt."], ["Sicherung", "Unter Einstellungen → Daten sichern speicherst du Plan, eigene Rezepte und Einstellungen als Datei, zum Beispiel vor einem Handywechsel."]];
 const LS_TIPS = "essensplan-tips";
-const APP_VERSION = "v1.18.6";
+const APP_VERSION = "v1.18.7";
 const LS_HERO = "essensplan-hero";
 function heroClosed(){ try{ return !!localStorage.getItem(LS_HERO); }catch(e){ return false; } }
 function heroClose(){ try{ localStorage.setItem(LS_HERO,"1"); }catch(e){} $("#hero").hidden = true; }
@@ -4740,7 +4746,7 @@ function openHelp(first){
       <ul>
         <li><b>Keine Idee?</b> zeigt oben einen Zufallsvorschlag. Tipp auf den Namen öffnet das Rezept, „Einplanen“ trägt es in den Plan ein.</li>
         <li><b>Schnell zum Ziel</b>: Knöpfe für die häufigsten Wünsche, z. B. „Heute wenig Zeit“ oder „Vegetarisch“. Mit <b>✏️ Anpassen</b> daneben stellst du sie nach deinem Geschmack zusammen: Küchen (z. B. Italienisch), Alltag (z. B. Ofengericht) und Gesund-Kategorien (z. B. Proteinreich), verschiebst sie mit ↑ ↓ oder entfernst sie mit ×. Die ersten 10 sind sichtbar, der Rest liegt hinter „Mehr …“. Die Auswahl gilt nur auf deinem Gerät, „Zurücksetzen“ stellt die Standardauswahl wieder her.</li>
-        <li>Suche nach Gericht oder Zutat, z. B. „Feta“ oder „Nudeln“.</li>
+        <li>Suche nach Gericht oder Zutat, z. B. „Feta“ oder „Nudeln“. Das × im Suchfeld löscht die Eingabe mit einem Tipp.</li>
         <li><b>Alle Filter</b> öffnet die Filter in Reitern: Essen &amp; Küche, Zeit &amp; Alltag, Gesundheit &amp; Ernährung, Budget, Bewertung und Ohne Allergene. Mehrere lassen sich kombinieren, z. B. „Vegetarisch“ + „Italienisch“. Aktive Filter stehen als Chips darunter – mit × entfernen.</li>
         <li><b>Budget</b>: 💶, 💶💶 und 💶💶💶 – je mehr 💶, desto teurer sind die Zutaten (geschätzt für 3 Personen).</li>
         <li><b>Alltag</b> (unter „Zeit &amp; Alltag“): Airfryer, Ofengericht, Ein Topf, Gut einzufrieren, Vorkochen, Zum Mitnehmen, Kind kann helfen, Wenige Zutaten und Mit Vorrat machbar.</li>
