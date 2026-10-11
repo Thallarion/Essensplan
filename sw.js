@@ -1,6 +1,6 @@
 /* Service Worker: App offline starten (Stale-While-Revalidate für eigene Dateien) */
 const CACHE = "essensplan-app-v1";
-const PRE = ["./", "index.html", "manifest.webmanifest", "icon.png", "fonts/fraunces.woff2", "fonts/atkinson-400.woff2", "fonts/atkinson-700.woff2"];
+const PRE = ["./", "index.html", "manifest.webmanifest", "icon.png", "info.html", "datenschutz.html", "fonts/fraunces.woff2", "fonts/atkinson-400.woff2", "fonts/atkinson-700.woff2"];
 self.addEventListener("install", e=>{
   e.waitUntil(caches.open(CACHE).then(c=>c.addAll(PRE)).then(()=>self.skipWaiting()));
 });

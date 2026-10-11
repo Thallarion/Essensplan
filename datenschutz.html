@@ -11,13 +11,16 @@
 <link rel="icon" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
 <style>
+@font-face{font-family:"Fraunces";src:url("fonts/fraunces.woff2") format("woff2");font-weight:100 900;font-display:swap}
+@font-face{font-family:"Atkinson Hyperlegible";src:url("fonts/atkinson-400.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Atkinson Hyperlegible";src:url("fonts/atkinson-700.woff2") format("woff2");font-weight:700;font-display:swap}
 :root{--ground:#F4F6F0;--surface:#fff;--ink:#1D2820;--muted:#4F5C52;--line:#D8DFD2;--basil:#2E6A44;--soft:#DCEBDD}
 @media (prefers-color-scheme:dark){:root{--ground:#121814;--surface:#1B231D;--ink:#E6ECE5;--muted:#A9B5AB;--line:#2F3A32;--basil:#7CC494;--soft:#23392A}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--ground);color:var(--ink);font:17px/1.55 "Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif}
 main{max-width:720px;margin:0 auto;padding:28px 16px 60px}
-h1{font:700 clamp(32px,7vw,46px)/1.1 Georgia,serif;margin:0 0 10px}
-h2{font:700 24px/1.2 Georgia,serif;margin:38px 0 10px}
+h1{font:700 clamp(32px,7vw,46px)/1.1 "Fraunces",Georgia,serif;margin:0 0 10px}
+h2{font:700 24px/1.2 "Fraunces",Georgia,serif;margin:38px 0 10px}
 p{margin:0 0 12px}.lead{font-size:19px;color:var(--muted)}
 .cta{display:inline-block;background:var(--basil);color:var(--ground);font-weight:700;text-decoration:none;padding:14px 22px;border-radius:12px;margin:8px 0 4px}
 ul{padding-left:20px}li{margin:6px 0}
@@ -25,8 +28,9 @@ ul{padding-left:20px}li{margin:6px 0}
 .shots img{height:360px;width:auto;border-radius:14px;border:1px solid var(--line);flex:none}
 details{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:8px 0}
 summary{font-weight:700;cursor:pointer}
-a{color:var(--basil)}footer{margin-top:40px;font-size:14px;color:var(--muted)}
+a{color:var(--basil)}footer a,main>p:first-child a{display:inline-block;padding:12px 6px;margin:-12px -6px}footer{margin-top:40px;font-size:14px;color:var(--muted)}
 </style>
+</head>
 <body>
 <main>
 <p><a href="./">← Zur App</a></p>

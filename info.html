@@ -28,28 +28,31 @@
 {"@type":"Question","name":"Kann ich die App auf dem Handy installieren?","acceptedAnswer":{"@type":"Answer","text":"Ja. Öffne wasessenwir.at im Browser und wähle „Zum Startbildschirm hinzufügen“ (iPhone: Teilen-Menü, Android: Browser-Menü). Nach zweimaligem Öffnen mit Netz startet sie auch ohne Empfang."}},
 {"@type":"Question","name":"Wie funktioniert die Einkaufsliste?","acceptedAnswer":{"@type":"Answer","text":"Aus den geplanten Gerichten werden die Zutaten zusammengezählt, auf die Personenzahl umgerechnet und nach Supermarkt-Abteilungen sortiert. Was ihr schon zuhause habt, könnt ihr von der Liste nehmen – einmalig oder dauerhaft."}},
 {"@type":"Question","name":"Für wen ist die App gedacht?","acceptedAnswer":{"@type":"Answer","text":"Für Familien, die unter der Woche schnell kochen wollen und wenig Fleisch essen. Die Rezepte sind alltagstauglich und kindertauglich."}},
-{"@type":"Question","name":"Kann ich einstellen, was wir essen und was nicht?","acceptedAnswer":{"@type":"Answer","text":"Ja. In den Einstellungen legst du fest, wie viele Erwachsene und Kinder mitessen, dazu Allergene, Kochzeit unter der Woche und wie oft es Fleisch und wie oft es Fisch geben darf (getrennt einstellbar) fest. Zutaten, die ihr nicht mögt, trägst du bei „Mögen wir nicht“ ein. Solche Gerichte werden dann nicht mehr vorgeschlagen."}},
+{"@type":"Question","name":"Kann ich einstellen, was wir essen und was nicht?","acceptedAnswer":{"@type":"Answer","text":"Ja. In den Einstellungen legst du fest, wie viele Erwachsene und Kinder mitessen, dazu Allergene, Kochzeit unter der Woche und wie oft es Fleisch und wie oft es Fisch geben darf (getrennt einstellbar). Zutaten, die ihr nicht mögt, trägst du bei „Mögen wir nicht“ ein. Solche Gerichte werden dann nicht mehr vorgeschlagen."}},
 {"@type":"Question","name":"Kann ich nach Zeit oder Vorlieben filtern?","acceptedAnswer":{"@type":"Answer","text":"Ja. Unter Ideen filterst du zum Beispiel nach Kochzeit, vegetarisch, Ofengericht, ein Topf oder Budget."}},
 {"@type":"Question","name":"Was passiert, wenn mein Handy kaputtgeht?","acceptedAnswer":{"@type":"Answer","text":"Mit gemeinsamem Plan öffnest du auf dem neuen Handy einfach den Familien-Link. Ohne gemeinsamen Plan lädst du die Sicherung aus den Einstellungen auf dem neuen Handy."}},
 {"@type":"Question","name":"Sieht mein Partner meine Änderungen?","acceptedAnswer":{"@type":"Answer","text":"Ja, sobald ihr den gemeinsamen Plan nutzt. Änderungen am Wochenplan, an der Einkaufsliste und an den Bewertungen erscheinen automatisch auf allen verbundenen Handys. Der Vorrat wird ebenfalls geteilt. Filter, Allergene und Vorlieben gelten standardmäßig nur auf dem eigenen Handy; mit einem Schalter in den Einstellungen lassen sie sich ebenfalls teilen."}},
 {"@type":"Question","name":"Was passiert mit meinen Daten?","acceptedAnswer":{"@type":"Answer","text":"Ohne gemeinsamen Plan bleibt alles auf deinem Gerät. Beim gemeinsamen Plan werden Wochenplan, Einkaufsliste und Bewertungen unter einer zufälligen Kennung gespeichert; wer den Link kennt, kann den Plan sehen. Eine Sicherung als Datei ist jederzeit möglich."}}
 ]}</script>
 <style>
+@font-face{font-family:"Fraunces";src:url("fonts/fraunces.woff2") format("woff2");font-weight:100 900;font-display:swap}
+@font-face{font-family:"Atkinson Hyperlegible";src:url("fonts/atkinson-400.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Atkinson Hyperlegible";src:url("fonts/atkinson-700.woff2") format("woff2");font-weight:700;font-display:swap}
 :root{--ground:#F4F6F0;--surface:#fff;--ink:#1D2820;--muted:#4F5C52;--line:#D8DFD2;--basil:#2E6A44;--soft:#DCEBDD}
 @media (prefers-color-scheme:dark){:root{--ground:#121814;--surface:#1B231D;--ink:#E6ECE5;--muted:#A9B5AB;--line:#2F3A32;--basil:#7CC494;--soft:#23392A}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--ground);color:var(--ink);font:17px/1.55 "Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif}
 main{max-width:720px;margin:0 auto;padding:28px 16px 60px}
-h1{font:700 clamp(32px,7vw,46px)/1.1 Georgia,serif;margin:0 0 10px}
-h2{font:700 24px/1.2 Georgia,serif;margin:38px 0 10px}
+h1{font:700 clamp(32px,7vw,46px)/1.1 "Fraunces",Georgia,serif;margin:0 0 10px}
+h2{font:700 24px/1.2 "Fraunces",Georgia,serif;margin:38px 0 10px}
 p{margin:0 0 12px}.lead{font-size:19px;color:var(--muted)}
 .cta{display:inline-block;background:var(--basil);color:var(--ground);font-weight:700;text-decoration:none;padding:14px 22px;border-radius:12px;margin:8px 0 4px}
 ul{padding-left:20px}li{margin:6px 0}
 .shots{display:flex;gap:12px;overflow-x:auto;padding:4px 0 10px}
 .shots img{height:360px;width:auto;border-radius:14px;border:1px solid var(--line);flex:none}
 details{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:8px 0}
-summary{font-weight:700;cursor:pointer}
-a{color:var(--basil)}footer{margin-top:40px;font-size:14px;color:var(--muted)}
+summary{font-weight:700;cursor:pointer;padding:8px 0}
+a{color:var(--basil)}footer a,main>p:first-child a{display:inline-block;padding:12px 6px;margin:-12px -6px}footer{margin-top:40px;font-size:14px;color:var(--muted)}
 </style>
 <script data-goatcounter="https://wasessenwir.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
@@ -103,7 +106,7 @@ a{color:var(--basil)}footer{margin-top:40px;font-size:14px;color:var(--muted)}
 
 <h2>Häufige Fragen</h2>
 <details><summary>Für wen ist die App gedacht?</summary><p>Für Familien, die unter der Woche schnell kochen wollen und wenig Fleisch essen. Die Rezepte sind alltagstauglich und kindertauglich.</p></details>
-<details><summary>Kann ich einstellen, was wir essen und was nicht?</summary><p>Ja. In den Einstellungen legst du fest, wie viele Erwachsene und Kinder mitessen, dazu Allergene, Kochzeit unter der Woche und wie oft es Fleisch und wie oft es Fisch geben darf (getrennt einstellbar) fest. Zutaten, die ihr nicht mögt, trägst du bei „Mögen wir nicht“ ein. Solche Gerichte werden dann nicht mehr vorgeschlagen.</p></details>
+<details><summary>Kann ich einstellen, was wir essen und was nicht?</summary><p>Ja. In den Einstellungen legst du fest, wie viele Erwachsene und Kinder mitessen, dazu Allergene, Kochzeit unter der Woche und wie oft es Fleisch und wie oft es Fisch geben darf (getrennt einstellbar). Zutaten, die ihr nicht mögt, trägst du bei „Mögen wir nicht“ ein. Solche Gerichte werden dann nicht mehr vorgeschlagen.</p></details>
 <details><summary>Kann ich nach Zeit oder Vorlieben filtern?</summary><p>Ja. Unter Ideen filterst du zum Beispiel nach Kochzeit, vegetarisch, Ofengericht, ein Topf oder Budget.</p></details>
 <details><summary>Was koche ich, wenn mein Kind nur wenige Gerichte mag?</summary><p>Unter Ideen zeigt der Filter „Kinderliebling“ milde, kindertaugliche Gerichte. Mit 👍 und 👎 im Rezept merkt sich die App, was bei euch ankommt, und schlägt Gutes öfter vor. Scharfes ist in den Rezepten separat gehalten, sodass die Erwachsenen nachwürzen können.</p></details>
 <details><summary>Was koche ich spontan heute?</summary><p>Im Tab „Heute“ wählst du die Kochzeit und tippst ein, was noch im Haus ist. Die App zeigt drei Vorschläge. Ein Tipp plant das Gericht für heute ein, die Zutaten landen automatisch auf der Einkaufsliste. Darunter stehen die Zutaten für eure Personenzahl.</p></details>

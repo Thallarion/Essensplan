@@ -631,7 +631,7 @@ details.cp-wk summary{cursor:pointer;min-height:44px;display:flex;align-items:ce
 .pe-row{display:flex;gap:8px}.pe-row .pickempty{text-align:center}
 .rep-hint,.rate-q{font-size:12.5px;color:var(--muted);margin-top:6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .rep-hint button,.rate-q button,.linkbtn{background:transparent;border:1px solid var(--line);border-radius:999px;color:var(--ink);font:600 12.5px var(--body);padding:4px 10px;cursor:pointer}
-.linkbtn{border:0;padding:0;text-decoration:underline;color:var(--basil)}
+.linkbtn{border:0;padding:12px 4px;margin:-12px 0;text-decoration:underline;color:var(--basil)}
 #exampleNote .linkbtn{display:inline-block;margin-top:4px;font-size:13px;font-weight:700;text-underline-offset:2px}
 .qi{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
 .qi [data-qi-more]{border-style:dashed;color:var(--muted)}
@@ -643,7 +643,7 @@ details.cp-wk summary{cursor:pointer;min-height:44px;display:flex;align-items:ce
 .qi-edit{border:0;background:transparent;font-size:14px;line-height:1;padding:4px 6px;border-radius:8px;cursor:pointer;color:var(--muted)}
 .qi-edit:hover,.qi-edit:focus-visible{background:var(--basil-soft)}
 .qi-lbl{justify-content:space-between}
-.qi-lbl .qi-edit{margin-left:auto;display:inline-flex;align-items:center;gap:4px;min-height:0;padding:2px 10px;border:1px solid color-mix(in srgb,var(--basil) 35%,var(--line));border-radius:999px;background:transparent;color:var(--basil);font:700 13px/1.3 var(--body)}
+.qi-lbl .qi-edit{margin-left:auto;display:inline-flex;align-items:center;gap:4px;min-height:36px;padding:2px 10px;border:1px solid color-mix(in srgb,var(--basil) 35%,var(--line));border-radius:999px;background:transparent;color:var(--basil);font:700 13px/1.3 var(--body)}
 .qe-list{list-style:none;margin:8px 0 14px;padding:0}
 .qe-list li{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--line)}
 .qe-list li span.qe-n{flex:1;font:600 14px var(--body)}
@@ -929,7 +929,7 @@ header.top .tag{margin:3px 0 0;font-size:13px;font-weight:500;color:var(--muted)
 #byeRoot[hidden]{display:none}
 .bye-in{max-width:320px}.bye-emo{font-size:56px;line-height:1}.bye-in h2{margin:10px 0 6px;font-size:26px}.bye-in p{color:var(--muted);margin:0 0 18px}
 .appfoot{margin:28px 0 20px;text-align:center;font-size:13px;color:var(--muted)}
-.appfoot a{color:var(--muted);text-decoration:underline;text-underline-offset:2px;padding:6px 4px}
+.appfoot a{color:var(--muted);text-decoration:underline;text-underline-offset:2px;display:inline-block;padding:13px 8px}
 .hero{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px 16px 14px;margin:0 0 14px;box-shadow:var(--shadow)}
 .hero h2{margin:0 28px 4px 0;font-size:22px;line-height:1.2}
 .hero-sub{margin:0 0 12px;color:var(--muted);font-size:15px}
@@ -1053,7 +1053,7 @@ header.top .tag{margin:3px 0 0;font-size:13px;font-weight:500;color:var(--muted)
       <button class="btn small primary" id="sendKeep">📋 Für Keep</button>
       <button class="btn small" id="copyList">Kopieren</button>
       <button class="btn small" id="shareList" hidden>📤 Teilen</button>
-      <button class="btn small ghost" id="clearDone">Abgehakte ausblenden</button>
+      <button class="btn small ghost" id="clearDone">Abgehakte entfernen</button>
       <button class="btn small" id="printList" type="button">🖨 Drucken</button>
     </div>
     <p class="offnote" id="offNote" hidden></p>
@@ -4524,7 +4524,7 @@ const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","
 /* ---------- Pro-Tipps: ein Tipp pro Tag, der Reihe nach, nur beim Start; abschaltbar (pro Gerät) ---------- */
 const TIPS = [["Kochmodus", "Tippe im Rezept auf „Kochmodus“: große Schrift, Zutaten und Schritte zum Abhaken, der Bildschirm bleibt an. Wenn du etwas abhakst, scrollt es von selbst zum Nächsten."], ["Einkauf", "Das 🏠 hinter einer Zutat in der Einkaufsliste nimmt sie von der Liste, weil ihr sie zuhause habt. „Nur diesmal“ und „Angebrochen“ holst du unter „Schon zuhause“ mit dem 🛒 zurück."], ["Personenzahl", "Im Rezept änderst du mit − und + die Personenzahl. Die Zutaten und die Mengen in den Schritten rechnen sich automatisch mit um."], ["Vorrat", "Zutaten, die immer da sind, zum Beispiel Zwiebeln: Tippe in der Einkaufsliste beim 🏠 auf „Immer“. Dann tauchen sie nie wieder auf der Liste auf, beeinflussen aber keine Rezeptvorschläge. Ändern kannst du das unter „Vorrat anpassen“ ganz unten in der Liste."], ["Alltag-Filter", "Unter Ideen findest du bei „Alle Filter“ den Reiter „Zeit & Alltag“: zum Beispiel Ofengericht, ein Topf, gut einzufrieren oder mit wenigen Zutaten."], ["Supermarkt", "Die Einkaufsliste lässt sich nach Abteilung sortieren. In den Einstellungen stellst du die Reihenfolge so ein, wie euer Supermarkt aufgebaut ist."], ["Reste", "„Was haben wir noch zuhause?“ in den Ideen: Tippe ein, was im Kühlschrank liegt, und die App zeigt dir Gerichte, die dazu passen."], ["Liste teilen", "Mit „Teilen“ in der Einkaufsliste schickst du die offenen Artikel zum Beispiel direkt an Google Keep oder an deine Familie."], ["Link teilen", "Tippe im Rezept auf „Link teilen“, um es per Nachricht zu verschicken. Wer den Link öffnet, sieht sofort das Rezept."], ["Zutaten kopieren", "Im Rezept kopiert „Zutaten kopieren“ die Mengen für eure Personenzahl, bereit zum Einfügen in eine Notiz oder eine Listen-App."], ["Leere Tage", "Mit „Leere Tage füllen“ schlägt die App für alle freien Tage Gerichte vor. Unter der Woche sind es nur schnelle Gerichte, bevorzugt vegetarisch."], ["Design", "In den Einstellungen wählst du zwischen hellem und dunklem Design, oder die App folgt automatisch deinem Handy."], ["Notiz", "Im Rezept hältst du unter „Unsere Notiz“ fest, was ihr beim nächsten Mal anders macht, zum Beispiel weniger Salz."], ["Lieblinge", "In den Einstellungen wählst du Lieblingskategorien. Sie kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran."], ["Einsenden", "Unter Ideen kannst du über „Rezept hinzufügen“ ein Rezept als Foto, PDF oder Link einsenden. Nach der Prüfung steht es für alle in der App."], ["Bewerten", "Nach dem Essen fragt die App, wie es geschmeckt hat. Mit 👍 und 👎 merkt ihr euch eure Favoriten."], ["Offline", "Öffne die App einmal mit Netz und danach noch einmal: Dann startet sie auch ohne Empfang. Im Supermarkt kannst du die Einkaufsliste abhaken und ergänzen, beim nächsten Netz gleicht sie sich ab."], ["Eigene Filter", "Allergene und Vorlieben gelten standardmäßig nur auf deinem Handy. Mit dem Schalter „Filter mit Familie teilen“ in den Einstellungen nutzt ihr sie gemeinsam. Der Vorrat wird immer geteilt."], ["Sicherung", "Unter Einstellungen → Daten sichern speicherst du Plan, eigene Rezepte und Einstellungen als Datei, zum Beispiel vor einem Handywechsel."]];
 const LS_TIPS = "essensplan-tips";
-const APP_VERSION = "v1.18.4";
+const APP_VERSION = "v1.18.5";
 const LS_HERO = "essensplan-hero";
 function heroClosed(){ try{ return !!localStorage.getItem(LS_HERO); }catch(e){ return false; } }
 function heroClose(){ try{ localStorage.setItem(LS_HERO,"1"); }catch(e){} $("#hero").hidden = true; }
@@ -4558,7 +4558,7 @@ function openSettings(toPantry){
   openSheet(`<button class="btn small close" data-close>Schließen</button>
   <div class="set">
     <h2>Einstellungen</h2>
-    <p class="sub">${sync?"Gilt für eure ganze Familie – auf allen verbundenen Handys.":"Gilt für diese App. Wenn du den Plan teilst, gilt es für alle Verbundenen."}</p>
+    <p class="sub">${sync?"Plan, Einkauf, Rezepte und Vorrat sind für eure ganze Familie gemeinsam. Filter und Vorlieben nur, wenn du sie unten teilst.":"Gilt für dieses Handy. Wenn ihr einen gemeinsamen Plan nutzt, teilt ihr Plan, Einkauf, Rezepte und Vorrat; Filter und Vorlieben bleiben auf Wunsch bei jedem selbst."}</p>
     ${sync?`<div class="sharebox"><div class="filters" id="setShare"><button type="button" data-shareflt="1" aria-pressed="${shareOn()}">Filter mit Familie teilen: ${shareOn()?"An":"Aus"}</button></div>
     <p class="sub">${shareOn()?"Filter, Allergene und Vorlieben sind auf allen verbundenen Handys gleich.":"Filter, Allergene und Vorlieben gelten nur auf diesem Handy. Plan, Einkaufsliste, Rezepte und Vorrat bleiben gemeinsam."}</p></div>`:""}
     <h2 class="set-grp">A. Eure Familie</h2>
@@ -4614,7 +4614,7 @@ function openSettings(toPantry){
     <h3>💾 Daten sichern</h3>
     <p class="sub">Euer Plan liegt auf diesem Gerät${sync?" und im Familienplan":""}. Für einen Handywechsel oder als Sicherung: Plan, eigene Rezepte und Einstellungen als Datei speichern.</p>
     <div class="datarow"><button type="button" class="btn small" id="dataExport">Sicherung speichern</button><button type="button" class="btn small" id="dataImport">Sicherung laden</button><input type="file" id="dataFile" accept="application/json,.json" hidden></div>
-    <p class="sub"><a href="datenschutz.html" target="_blank" rel="noopener">Datenschutz</a> · Version ${APP_VERSION}</p>
+    <p class="sub"><a href="datenschutz.html" target="_blank" rel="noopener" style="display:inline-block;padding:10px 6px 10px 0">Datenschutz</a> · Version ${APP_VERSION}</p>
   </div>`);
   const drawPantry = ()=>{ const ks = Object.keys(state.pantry||{}).sort((a,b)=>a.localeCompare(b,"de")); $("#setPantry").innerHTML = ks.length ? ks.map(k=>`<button type="button" data-pn="${esc(k)}" aria-label="${esc(k)} entfernen">${state.pantry[k]===2?"🥫 ":""}${esc(k)} ×</button>`).join("") : `<span class="sub">Noch nichts im Vorrat.</span>`; };
   drawPantry();
@@ -4699,6 +4699,7 @@ function openHelp(first){
         <li><b>Plan leeren</b> (unter <b>⋯ Mehr</b>, ganz unten) leert Wochenplan und Einkaufsliste (zur Sicherheit zweimal tippen). Bewertungen, eigene Rezepte und Einstellungen bleiben erhalten.</li>
         <li><b>⋯ Mehr</b> (oben rechts): <b>Woche kopieren …</b> füllt die Woche aus einer anderen, auch aus zuletzt gekochten Wochen.</li>
         <li>Tipp auf ein Gericht öffnet das Rezept.</li>
+        <li><b>Diese / Nächste Woche</b>: Den Schalter gibt es oben und noch einmal unten auf der Seite, du musst fürs Wechseln nicht hochscrollen.</li>
         <li><b>Heute-Karte:</b> Sichtbar sind „Rezept ansehen“ und „🎲 Tauschen“. Hinter <b>⋯</b> findest du „Auswählen …“ und „Tag leeren“.</li>
       </ul>
     </details>
@@ -4720,13 +4721,13 @@ function openHelp(first){
       ${img("einkauf","Einkaufsliste nach Abteilungen")}
       <ul>
         <li>Entsteht <b>automatisch</b> aus dem Wochenplan – für eure Personenzahl, gleiche Zutaten werden zusammengezählt.</li>
-        <li>Oben wählst du, <b>für welche Tage</b> du einkaufst (z. B. „Heute + morgen“).</li>
+        <li>Oben wählst du, <b>für welche Tage</b> du einkaufst (z. B. „Heute + morgen“). Vergangene Tage sind ausgegraut und kommen nicht mehr auf die Liste. Die Auswahl gilt auf allen verbundenen Handys.</li>
         <li>Sortiert <b>nach Supermarkt-Abteilung</b> oder nach Tagen. Abhaken beim Einkaufen.</li>
         <li><b>Noch etwas dazu</b>: eigene Artikel wie Joghurt oder Obst ergänzen. Sie landen automatisch in der passenden Kategorie (Skyr im Kühlregal); kennt die App einen Artikel nicht, fragt sie kurz nach. Mit dem 🏷 änderst du die Kategorie später, die App merkt sich das.</li>
         <li><b>🏠</b> hinter einer Zutat: haben wir schon. Du wählst: <b>Nur diesmal</b> (kommt bei der nächsten Planung wieder), <b>Immer</b> (steht nie mehr auf der Liste, ohne Einfluss auf Rezeptvorschläge) oder <b>Angebrochen</b> (bald verbrauchen – die App schlägt passende Gerichte vor).</li>
         <li><b>Schon zuhause</b> unten in der Liste: Hier stehen „Nur diesmal“- und „Angebrochen“-Zutaten. Mit dem <b>🛒</b> holst du sie zurück auf die Liste. „Immer“-Zutaten stehen dort nicht, du änderst sie unter <b>⋯ Mehr → Einstellungen → Vorrat zuhause</b> oder über „Vorrat anpassen“ ganz unten.</li>
         <li><b>📤 Teilen</b> schickt die offenen Artikel z. B. an Google Keep oder an die Familie. Auf Geräten ohne Teilen-Funktion heißt der Knopf <b>📋 Für Keep</b>: Er kopiert die Liste, dann in Google Keep auf „+ Listenelement“ tippen und einfügen – jede Zeile wird ein eigener Punkt.</li>
-        <li><b>Kopieren</b> legt die offene Liste als Text in die Zwischenablage, <b>Abgehakte ausblenden</b> räumt Erledigtes weg, <b>🖨 Drucken</b> druckt die Liste.</li>
+        <li><b>Kopieren</b> legt die offene Liste als Text in die Zwischenablage, <b>Abgehakte entfernen</b> räumt Erledigtes von der Liste, <b>🖨 Drucken</b> druckt die Liste.</li>
         <li><b>📋 Zutaten kopieren</b> (im Rezept): kopiert die Mengen für eure Personenzahl, zum Einfügen in eine Listen-App oder Notiz.</li>
         <li>Salz, Öl, Gewürze & Co. stehen nicht drauf – die hat man meist im Haus.</li>
       </ul>
@@ -5546,7 +5547,7 @@ $("#extraInput").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventD
 $("#clearDone").addEventListener("click",()=>{
   let n=0; groupParts(shopParts()).forEach(it=>{ if(isDone(it)){ it.keys.forEach(k=>state.hidden[k]=true); n++; } });
   Object.keys(state.extras).forEach(id=>{ if(state.checked["x:"+id]){ delete state.extras[id]; delete state.checked["x:"+id]; } });
-  commit(); toast(n?`${n} Einträge ausgeblendet`:"In der Auswahl ist noch nichts abgehakt");
+  commit(); toast(n?`${n} abgehakte Einträge entfernt`:"In der Auswahl ist noch nichts abgehakt");
 });
 function shopText(){
   const items = [...groupParts(shopParts()), ...extraItems()].filter(it=>!isDone(it));
