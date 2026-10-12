@@ -996,6 +996,98 @@ header.top .tag{margin:3px 0 0;font-size:13px;font-weight:500;color:var(--muted)
 .hero #heroSet{margin-top:8px}
 .hero-trust{margin:10px 0 0;text-align:center;color:var(--muted);font-size:12.5px}
 @media (max-width:340px){#week .daybig .db-acts{flex-wrap:wrap;gap:4px}#week .daybig .db-acts .btn{padding:8px 6px;font-size:12.5px;white-space:nowrap}#week .daybig .db-acts .dbmenu summary{width:34px;height:34px}}
+
+/* ===== Design „Notizzettel": Kraftpapier, Zettel, Handschrift ===== */
+@font-face{font-family:"Caveat";src:url("fonts/caveat-700.woff2") format("woff2");font-weight:700;font-display:swap}
+:root{
+  --ground:#E8D9BE; --surface:#FFFDF6; --sunk:#F3E8D0; --ink:#2B2A33; --muted:#5C5240; --line:#CDBE9E;
+  --basil:#2F6A45; --basil-ink:#FFFFFF; --basil-soft:#E3EDDC; --mustard:#8A6A12; --mustard-soft:#FFE98A;
+  --tomato:#9B3D2A; --tomato-soft:#F6DCD2; --sea:#2F6380; --sea-soft:#DCE8EE;
+  --shadow:0 3px 0 rgba(60,40,10,.22);
+  --display:"Caveat","Segoe Script","Bradley Hand",cursive;
+  --sticky:#FFE98A; --tape:rgba(200,120,100,.55); --pen:#2B2A33; --sticky-ink:#2B2A33;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#1F1A14; --surface:#2B241B; --sunk:#352D22; --ink:#F1E8D6; --muted:#BBAE96; --line:#4A4030;
+    --basil:#8FCB9F; --basil-ink:#13200F; --basil-soft:#27362A; --mustard:#EBC060; --mustard-soft:#4A3F1C;
+    --tomato:#F0927B; --tomato-soft:#44271F; --sea:#86BEDC; --sea-soft:#1F3340;
+    --shadow:0 3px 0 rgba(0,0,0,.45); --sticky:#6A5A22; --tape:rgba(200,120,100,.4); --pen:#F1E8D6; --sticky-ink:#FFF6D8;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#1F1A14; --surface:#2B241B; --sunk:#352D22; --ink:#F1E8D6; --muted:#BBAE96; --line:#4A4030;
+  --basil:#8FCB9F; --basil-ink:#13200F; --basil-soft:#27362A; --mustard:#EBC060; --mustard-soft:#4A3F1C;
+  --tomato:#F0927B; --tomato-soft:#44271F; --sea:#86BEDC; --sea-soft:#1F3340;
+  --shadow:0 3px 0 rgba(0,0,0,.45); --sticky:#6A5A22; --tape:rgba(200,120,100,.4); --pen:#F1E8D6; --sticky-ink:#FFF6D8;
+}
+/* Handschrift für Überschriften */
+h1,.sheet h2,.dname,.surprise strong,.set h3,.k-head h2,.heute-h,.hero h2,.cat h3,.k-sec h3,.print-head,.ck-top h2,.ck-h h3{font-family:var(--display);font-weight:700;letter-spacing:0;font-variation-settings:normal}
+h1{font-size:clamp(34px,9vw,44px)}
+header.top h1{font-size:clamp(30px,8.4vw,38px);line-height:1}
+.sheet h2{font-size:32px}
+.dhead .dname{font-size:26px;line-height:1;color:var(--tomato);letter-spacing:0}
+.daybig .db-label b{font-family:var(--display);font-size:22px}
+.heute-h{font-size:clamp(30px,8vw,36px)}
+.cat h3{font-size:26px;letter-spacing:0;text-transform:none;border-bottom:2px solid var(--ink);padding-bottom:2px;margin:12px 0 4px;color:var(--ink)}
+.k-sec h3{font-size:24px}
+.ck-top h2{font-size:28px}.ck-h h3{font-size:30px}
+/* Zettel: Wochenplan */
+.day,.daybig,.idea,.hcard,.fridge-card,.hero,.shopdays,.surprise{background:var(--surface);border:0;border-radius:3px;box-shadow:var(--shadow)}
+.day:not(.today):not(.past){border-left:0}
+#week>.day:nth-child(odd){transform:rotate(-.5deg)}
+#week>.day:nth-child(even){transform:rotate(.6deg)}
+.day.today,.daybig.today{position:relative;background:var(--sticky);border:0;box-shadow:var(--shadow);transform:rotate(-1deg);color:var(--sticky-ink)}
+.day.today::before,.daybig.today::before{content:"";position:absolute;top:-10px;left:50%;margin-left:-40px;width:80px;height:20px;background:var(--tape);transform:rotate(3deg);pointer-events:none}
+.day.today .dname,.daybig .db-label b,.day.today .ddate::after,.ddate::after{color:var(--tomato)!important}
+:root[data-theme="dark"] .day.today .dname,:root[data-theme="dark"] .daybig .db-label b{color:#F6B7A6!important}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .day.today .dname,:root:not([data-theme="light"]) .daybig .db-label b{color:#F6B7A6!important}}
+.day.today .ddate,.day.today .muted,.daybig.today .muted{color:inherit;opacity:.8}
+.day.past:not(.today){opacity:.55;background:var(--surface)}
+.day .dish button.title,.daybig .dish button.title{font-family:var(--body)}
+.daybig .dish button.title{font-size:20px}
+.surprise{position:relative;background:var(--sticky);color:var(--sticky-ink);transform:rotate(-.6deg)}
+.surprise strong{font-size:30px}
+.note{border:1px dashed var(--line)}
+/* Knöpfe: Klebezettel-Look */
+.btn{border-radius:3px}
+.btn.primary{background:var(--sticky);color:var(--sticky-ink);border:2px solid var(--pen);box-shadow:3px 3px 0 var(--pen)}
+.btn:not(.primary){background:transparent;color:var(--ink);border:1.5px solid var(--pen)}
+.btn.textbtn,.btn.danger,.sd-quick .btn,.db-acts .btn.textbtn{border-color:transparent;background:transparent;box-shadow:none}
+.helpbtn{border-radius:3px;border:1.5px solid var(--pen);box-shadow:none;color:var(--ink)}
+.fridge-card .fa{background:var(--sticky);color:var(--sticky-ink)!important;border:1.5px solid var(--pen);border-radius:3px}
+/* Filter */
+.filters button,.k-tabs button,.qs-chips button{border-radius:3px;border:1.5px solid var(--line);background:transparent;color:var(--muted)}
+.filters button[aria-pressed="true"],.k-tabs button[aria-pressed="true"],.qs-chips button[aria-pressed="true"]{background:var(--sticky);color:var(--sticky-ink);border-color:var(--pen);transform:rotate(-1.5deg)}
+/* Einkauf: liniertes Blatt mit rotem Rand */
+.shop .cat{position:relative;border:0;border-radius:3px;box-shadow:var(--shadow);padding:6px 14px 8px 46px;background:var(--surface)}
+.shop .cat::before{content:"";position:absolute;left:34px;top:0;bottom:0;width:2px;background:#E39A8E;opacity:.8}
+.item{border-bottom:1px solid color-mix(in srgb,var(--sea) 30%,transparent)}
+.item label{font-family:var(--display);font-size:22px;line-height:1.1}
+.item input{border-color:var(--pen);border-radius:3px}
+.item input:checked{background:var(--pen);border-color:var(--pen)}
+.item input:checked::after{border-color:var(--surface)}
+.shopdays{border-radius:3px}
+/* Navigation unten: Papierstreifen */
+nav.tabs{background:var(--surface);border-top:2px dashed color-mix(in srgb,var(--muted) 70%,transparent);box-shadow:none}
+nav.tabs button{border-radius:3px;font-family:var(--display);font-size:20px;font-weight:700;color:var(--muted)}
+nav.tabs button[aria-selected="true"]{background:var(--sticky);color:var(--sticky-ink);transform:rotate(-2deg);box-shadow:0 2px 0 rgba(60,40,10,.2)}
+nav.tabs button .ti{filter:none;opacity:.9}
+/* Sheets, Rezept-Ansicht */
+.sheet{background:var(--surface);border-radius:3px 3px 0 0}
+.idea h4,.hplan b{font-family:var(--body)}
+.chip{border-radius:3px}
+@media (min-width:1000px){
+  nav.tabs{background:transparent;border:0;border-bottom:2px dashed var(--line);border-radius:0}
+  .sheet{border-radius:3px 0 0 3px}
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) nav.tabs button[aria-selected="true"]{background:var(--sticky);color:var(--sticky-ink)}}
+:root[data-theme="dark"] nav.tabs button[aria-selected="true"]{background:var(--sticky);color:var(--sticky-ink)}
+.cat-fold>summary{font-family:var(--display);font-size:26px;letter-spacing:0;text-transform:none;line-height:1.1}
+.cat-fold>summary .cf-n{font-family:var(--body);border-radius:3px}
+.shop .cat-fold:not([open]){border-radius:3px}
+.cat-fold[open]>summary{border-bottom:2px solid var(--ink)}
+@media (prefers-reduced-motion:reduce){#week>.day,.day.today,.daybig.today,.surprise,nav.tabs button,.filters button{transform:none!important}}
 </style>
 <script data-goatcounter="https://wasessenwir.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
@@ -4546,7 +4638,7 @@ const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","
 /* ---------- Pro-Tipps: ein Tipp pro Tag, der Reihe nach, nur beim Start; abschaltbar (pro Gerät) ---------- */
 const TIPS = [["Kochmodus", "Tippe im Rezept auf „Kochmodus“: große Schrift, Zutaten und Schritte zum Abhaken, der Bildschirm bleibt an. Wenn du etwas abhakst, scrollt es von selbst zum Nächsten."], ["Einkauf", "Das 🏠 hinter einer Zutat in der Einkaufsliste nimmt sie von der Liste, weil ihr sie zuhause habt. „Nur diesmal“ und „Angebrochen“ holst du unter „Schon zuhause“ mit dem 🛒 zurück."], ["Personenzahl", "Im Rezept änderst du mit − und + die Personenzahl. Die Zutaten und die Mengen in den Schritten rechnen sich automatisch mit um."], ["Vorrat", "Zutaten, die immer da sind, zum Beispiel Zwiebeln: Tippe in der Einkaufsliste beim 🏠 auf „Immer“. Dann tauchen sie nie wieder auf der Liste auf, beeinflussen aber keine Rezeptvorschläge. Ändern kannst du das unter „Vorrat anpassen“ ganz unten in der Liste."], ["Alltag-Filter", "Unter Ideen findest du bei „Alle Filter“ den Reiter „Zeit & Alltag“: zum Beispiel Ofengericht, ein Topf, gut einzufrieren oder mit wenigen Zutaten."], ["Supermarkt", "Die Einkaufsliste lässt sich nach Abteilung sortieren. In den Einstellungen stellst du die Reihenfolge so ein, wie euer Supermarkt aufgebaut ist."], ["Reste", "„Was haben wir noch zuhause?“ in den Ideen: Tippe ein, was im Kühlschrank liegt, und die App zeigt dir Gerichte, die dazu passen."], ["Liste teilen", "Mit „Teilen“ in der Einkaufsliste schickst du die offenen Artikel zum Beispiel direkt an Google Keep oder an deine Familie."], ["Link teilen", "Tippe im Rezept auf „Link teilen“, um es per Nachricht zu verschicken. Wer den Link öffnet, sieht sofort das Rezept."], ["Zutaten kopieren", "Im Rezept kopiert „Zutaten kopieren“ die Mengen für eure Personenzahl, bereit zum Einfügen in eine Notiz oder eine Listen-App."], ["Leere Tage", "Mit „Leere Tage füllen“ schlägt die App für alle freien Tage Gerichte vor. Unter der Woche sind es nur schnelle Gerichte, bevorzugt vegetarisch."], ["Design", "In den Einstellungen wählst du zwischen hellem und dunklem Design, oder die App folgt automatisch deinem Handy."], ["Notiz", "Im Rezept hältst du unter „Unsere Notiz“ fest, was ihr beim nächsten Mal anders macht, zum Beispiel weniger Salz."], ["Lieblinge", "In den Einstellungen wählst du Lieblingskategorien. Sie kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran."], ["Einsenden", "Unter Ideen kannst du über „Rezept hinzufügen“ ein Rezept als Foto, PDF oder Link einsenden. Nach der Prüfung steht es für alle in der App."], ["Bewerten", "Nach dem Essen fragt die App, wie es geschmeckt hat. Mit 👍 und 👎 merkt ihr euch eure Favoriten."], ["Offline", "Öffne die App einmal mit Netz und danach noch einmal: Dann startet sie auch ohne Empfang. Im Supermarkt kannst du die Einkaufsliste abhaken und ergänzen, beim nächsten Netz gleicht sie sich ab."], ["Eigene Filter", "Allergene und Vorlieben gelten standardmäßig nur auf deinem Handy. Mit dem Schalter „Filter mit Familie teilen“ in den Einstellungen nutzt ihr sie gemeinsam. Der Vorrat wird immer geteilt."], ["Sicherung", "Unter Einstellungen → Daten sichern speicherst du Plan, eigene Rezepte und Einstellungen als Datei, zum Beispiel vor einem Handywechsel."], ["App installieren", "Android (Chrome): oben rechts ⋮ → „App installieren“. iPhone (Safari): unten auf das Teilen-Symbol tippen → „Zum Home-Bildschirm“ → „Hinzufügen“. Danach startet Was essen wir? wie eine normale App, ohne Browserleiste."]];
 const LS_TIPS = "essensplan-tips";
-const APP_VERSION = "v1.18.13";
+const APP_VERSION = "v1.19.0";
 document.getElementById("appVer").textContent = "Version " + APP_VERSION;
 const LS_HERO = "essensplan-hero";
 function heroClosed(){ try{ return !!localStorage.getItem(LS_HERO); }catch(e){ return false; } }
