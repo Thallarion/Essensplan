@@ -1093,12 +1093,13 @@ nav.tabs button .ti{filter:none;opacity:.9}
 </style>
 <style id="kochCss" media="not all">
 /* ===== Design „Kochbuch": Papier, Serifenschrift, Haarlinien ===== */
+@font-face{font-family:"DM Serif Display";src:url("fonts/dm-serif-display.woff2") format("woff2");font-weight:400;font-display:swap}
 :root{
   --ground:#FBFAF6; --surface:#FBFAF6; --sunk:#F1EFE7; --ink:#181818; --muted:#5B5B55; --line:#DDDAD0;
   --basil:#181818; --basil-ink:#FBFAF6; --basil-soft:#EFEDE4; --mustard:#C8361F; --mustard-soft:#F6E4DE;
   --tomato:#C8361F; --tomato-soft:#F6E4DE; --sea:#3F5B73; --sea-soft:#E4EAEF;
   --shadow:none; --acc:#C8361F; --rule:#181818;
-  --display:"Fraunces",Georgia,"Times New Roman",serif;
+  --display:"DM Serif Display",Georgia,"Times New Roman",serif;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -1115,9 +1116,16 @@ nav.tabs button .ti{filter:none;opacity:.9}
   --shadow:none; --acc:#E0B04A; --rule:#E0B04A;
 }
 /* Serifenschrift */
-h1,.sheet h2,.surprise strong,.set h3,.k-head h2,.heute-h,.hero h2,.k-sec h3,.ck-top h2,.ck-h h3,.print-head{font-family:var(--display);font-weight:600;font-variation-settings:"SOFT" 0,"WONK" 0;letter-spacing:-.01em}
+h1,.sheet h2,.surprise strong,.set h3,.k-head h2,.heute-h,.hero h2,.k-sec h3,.ck-top h2,.ck-h h3,.print-head{font-family:var(--display);font-weight:400;font-variation-settings:normal;letter-spacing:-.01em}
 .dname,.daybig .db-label b{font-family:var(--body)}
-.day .dish button.title,.daybig .dish button.title,.idea h4,.hplan b{font-family:var(--display);font-weight:500;font-variation-settings:"SOFT" 0}
+.day .dish button.title,.daybig .dish button.title,.idea h4,.hplan b{font-family:var(--display);font-weight:400;font-variation-settings:normal}
+h1{font-size:clamp(38px,11vw,46px);line-height:1}
+.sheet h2{font-size:30px;line-height:1.1}
+.dhead .droll,.droll{display:none}
+.home-btn,.item .rc{width:auto;min-width:0;height:34px;border-radius:0;padding:0 10px;border:1px solid var(--line);background:transparent;box-shadow:none}
+.home-btn span,.item .rc{font:600 12px var(--body);color:var(--muted)}
+.fridge-card .fi{display:none}
+.sheet .tags{overflow-wrap:anywhere;white-space:normal}
 .day .dish button.title{font-size:18px}
 .daybig .dish button.title{font-size:22px}
 /* Wochenplan: Zeilen mit Haarlinien statt Karten */
@@ -1146,7 +1154,9 @@ h1,.sheet h2,.surprise strong,.set h3,.k-head h2,.heute-h,.hero h2,.k-sec h3,.ck
 .chip{border-radius:0}
 .filters button,.k-tabs button,.qs-chips button{border-radius:0;border:1px solid var(--line);background:transparent;color:var(--muted)}
 .filters button[aria-pressed="true"],.k-tabs button[aria-pressed="true"],.qs-chips button[aria-pressed="true"]{background:var(--ink);color:var(--ground);border-color:var(--ink)}
-.seg,.wk-switch{border-radius:0}
+.seg,.wk-switch{border-radius:0;background:transparent;border:0;border-bottom:1px solid var(--rule);padding:0;gap:22px;display:flex}
+.seg button,.wk-switch button{background:transparent!important;border:0;border-bottom:3px solid transparent;border-radius:0;margin-bottom:-1px;padding:0;min-height:44px;color:var(--muted);font-weight:600;box-shadow:none!important;flex:none}
+.seg button[aria-pressed="true"],.wk-switch button[aria-pressed="true"]{color:var(--ink)!important;font-weight:700;border-bottom-color:var(--acc)}
 /* Einkauf: Abteilungen wie Kapitel */
 .cat-fold>summary,.cat h3{font:700 12px var(--body);letter-spacing:.2em;text-transform:uppercase;color:var(--ink);border-bottom:2px solid var(--rule);padding-bottom:4px}
 .cat-fold>summary .cf-n{background:transparent;border-radius:0;color:var(--muted);font-family:var(--body)}
@@ -4746,13 +4756,37 @@ function maybeShowTip(){
 }
 function themeMode(){ try{ const m = localStorage.getItem("essensplan-theme"); return m==="light"||m==="dark" ? m : "auto"; }catch(e){ return "auto"; } }
 function lookMode(){ try{ const l=localStorage.getItem("essensplan-look"); return l==="notiz"||l==="kochbuch" ? l : "klassisch"; }catch(e){ return "klassisch"; } }
+const EMOJI_RE=/[\p{Extended_Pictographic}\p{Regional_Indicator}\u200d\ufe0f\u20e3]+/gu;
+const EMOJI_ONLY={"🏠":"Vorrat","🏷":"Kategorie","👍":"Gut","👎":"Nicht gut","🎲":"Tauschen","✏️":"Ändern","⭐":"Favorit","☆":"Favorit","★":"Favorit"};
+function stripEmoji(root){
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;const list=[];
+  while((n=w.nextNode())) if(n.nodeValue.search(EMOJI_RE)>=0) list.push(n);
+  for(const t of list){
+    const orig=t.nodeValue, bare=orig.replace(EMOJI_RE,"").trim();
+    if(bare===""){
+      const k=orig.trim(), m=EMOJI_ONLY[k]||EMOJI_ONLY[k.replace(/\ufe0f/g,"")], p=t.parentElement;
+      if(m && p && p.closest("button")) t.nodeValue=m; else { t.nodeValue=""; if(p && p.children.length===0 && p.textContent.trim()==="" && !p.closest("button")) p.style.display="none"; }
+      continue;
+    }
+    const lead=new RegExp("^\\s*"+EMOJI_RE.source,"u").test(orig);
+    let r=orig.replace(EMOJI_RE,"").replace(/\s{2,}/g," "); if(lead) r=r.replace(/^\s+/,""); t.nodeValue=r;
+  }
+}
+function startNoEmoji(){
+  const run=()=>{ stripEmoji(document.body); };
+  let busy=false;
+  new MutationObserver(()=>{ if(busy) return; busy=true; requestAnimationFrame(()=>{ try{ run(); }finally{ busy=false; } }); }).observe(document.body,{childList:true,subtree:true,characterData:true});
+  run();
+}
 function themeCols(){ const l=lookMode(); return l==="notiz" ? ["#E8D9BE","#1F1A14"] : l==="kochbuch" ? ["#FBFAF6","#16130F"] : ["#F7F1E6","#1A1612"]; }
 function applyLook(k){
+  const was=lookMode();
   try{ if(k==="notiz"||k==="kochbuch") localStorage.setItem("essensplan-look",k); else localStorage.removeItem("essensplan-look"); }catch(e){}
   const a = document.getElementById("notizCss"); if(a) a.media = k==="notiz" ? "all" : "not all";
   const c = document.getElementById("kochCss"); if(c) c.media = k==="kochbuch" ? "all" : "not all";
   if(k==="notiz"||k==="kochbuch") document.documentElement.setAttribute("data-look",k); else document.documentElement.removeAttribute("data-look");
   applyTheme(themeMode());
+  if(k==="kochbuch" || was==="kochbuch") location.reload();
 }
 function applyTheme(m){
   const root = document.documentElement;
@@ -4764,6 +4798,7 @@ function applyTheme(m){
   else { metas[0] && (metas[0].setAttribute("media","(prefers-color-scheme: light)"), metas[0].setAttribute("content",tc[0])); metas[1] && (metas[1].setAttribute("media","(prefers-color-scheme: dark)"), metas[1].setAttribute("content",tc[1])); }
 }
 if(lookMode()!=="klassisch") applyTheme(themeMode());
+if(lookMode()==="kochbuch") startNoEmoji();
 function openSettings(toPantry){
   const s = S();
   openSheet(`<button class="btn small close" data-close>Schließen</button>
@@ -4817,7 +4852,7 @@ function openSettings(toPantry){
     <p class="sub">${HINT_TYPES.map(([,l,d])=>`${l.replace(/^\S+\s/,"")}: ${d}.`).join(" ")}</p>
     <h2 class="set-grp">E. App und Gerät</h2>
     <h3>🎨 Aussehen</h3>
-    <p class="sub">„Klassisch“ ist ruhig und grün. „Notizzettel“ sieht aus wie Kraftpapier mit Klebezetteln und Handschrift. „Kochbuch“ ist ruhig und schlicht wie eine Buchseite mit Serifenschrift. Gilt nur für dieses Gerät.</p>
+    <p class="sub">„Klassisch“ ist ruhig und grün. „Notizzettel“ sieht aus wie Kraftpapier mit Klebezetteln und Handschrift. „Kochbuch“ ist schlicht und neutral wie eine Buchseite, ohne Emojis (die Seite lädt beim Wechseln neu). Gilt nur für dieses Gerät.</p>
     <div class="filters" id="setLook">${[["klassisch","Klassisch"],["notiz","📝 Notizzettel"],["kochbuch","📖 Kochbuch"]].map(([k,l])=>`<button type="button" data-setlook="${k}" aria-pressed="${lookMode()===k}">${l}</button>`).join("")}</div>
     <h3>🌗 Hell oder dunkel</h3>
     <p class="sub">Hell, dunkel oder wie dein Handy eingestellt ist. Gilt nur für dieses Gerät.</p>
@@ -5001,7 +5036,7 @@ function openHelp(first){
       ${img("einstellungen","Einstellungen")}
       <p>Über <b>⋯ Mehr → Einstellungen</b> oben rechts. Filter, Allergene, Vorlieben, Region sowie Erwachsene und Kinder gelten <b>nur auf deinem Gerät</b>, außer du schaltest oben <b>„Filter mit Familie teilen“</b> ein (nur sichtbar, wenn ihr einen gemeinsamen Plan nutzt). Design, Tipps und Hinweise gelten immer nur für dein Gerät.</p>
       <ul>
-        <li><b>🎨 Aussehen:</b> „Klassisch“, „Notizzettel“ (Kraftpapier und Handschrift) oder „Kochbuch“ (Buchseite mit Serifenschrift). <b>🌗 Hell oder dunkel:</b> Hell, Dunkel oder wie dein Handy. Beides gilt nur für dieses Gerät.</li>
+        <li><b>🎨 Aussehen:</b> „Klassisch“, „Notizzettel“ (Kraftpapier und Handschrift) oder „Kochbuch“ (schlicht, ohne Emojis). <b>🌗 Hell oder dunkel:</b> Hell, Dunkel oder wie dein Handy. Beides gilt nur für dieses Gerät.</li>
         <li><b>💡 Tipps:</b> Einmal am Tag zeigt die App beim Start einen kurzen Pro-Tipp, der Reihe nach. Hier schaltest du sie aus und wieder ein. Gilt nur für dieses Gerät.</li>
         <li><b>Erwachsene und Kinder:</b> Rezepte und Einkaufsliste rechnen alle Mengen darauf um.</li>
         <li><b>🥩 Fleisch</b> und <b>🐟 Fisch:</b> getrennt einstellbar, wie oft pro Woche es Fleisch bzw. Fisch geben darf (Oft, Ab und zu, Selten, Nie). Das steuert Würfeln, „Leere Tage füllen“ und den Plan-Assistenten.</li>
