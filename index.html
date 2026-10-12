@@ -997,6 +997,8 @@ header.top .tag{margin:3px 0 0;font-size:13px;font-weight:500;color:var(--muted)
 .hero-trust{margin:10px 0 0;text-align:center;color:var(--muted);font-size:12.5px}
 @media (max-width:340px){#week .daybig .db-acts{flex-wrap:wrap;gap:4px}#week .daybig .db-acts .btn{padding:8px 6px;font-size:12.5px;white-space:nowrap}#week .daybig .db-acts .dbmenu summary{width:34px;height:34px}}
 
+</style>
+<style id="notizCss" media="not all">
 /* ===== Design „Notizzettel": Kraftpapier, Zettel, Handschrift ===== */
 @font-face{font-family:"Caveat";src:url("fonts/caveat-700.woff2") format("woff2");font-weight:700;font-display:swap}
 :root{
@@ -1088,6 +1090,7 @@ nav.tabs button .ti{filter:none;opacity:.9}
 .cat-fold[open]>summary{border-bottom:2px solid var(--ink)}
 @media (prefers-reduced-motion:reduce){#week>.day,.day.today,.daybig.today,.surprise,nav.tabs button,.filters button{transform:none!important}}
 </style>
+<script>(function(){ try{ if(localStorage.getItem("essensplan-look")==="notiz"){ document.getElementById("notizCss").media="all"; document.documentElement.setAttribute("data-look","notiz"); } }catch(e){} })();</script>
 <script data-goatcounter="https://wasessenwir.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
@@ -4659,14 +4662,24 @@ function maybeShowTip(){
   $("#tipOff").addEventListener("click",e=>{ e.stopPropagation(); tipsSave({...tipsState(), off:true}); closeSheet(); toast("Tipps ausgeschaltet – in den Einstellungen wieder einschaltbar"); });
 }
 function themeMode(){ try{ const m = localStorage.getItem("essensplan-theme"); return m==="light"||m==="dark" ? m : "auto"; }catch(e){ return "auto"; } }
+function lookMode(){ try{ return localStorage.getItem("essensplan-look")==="notiz" ? "notiz" : "klassisch"; }catch(e){ return "klassisch"; } }
+function themeCols(){ return lookMode()==="notiz" ? ["#E8D9BE","#1F1A14"] : ["#F7F1E6","#1A1612"]; }
+function applyLook(k){
+  try{ if(k==="notiz") localStorage.setItem("essensplan-look","notiz"); else localStorage.removeItem("essensplan-look"); }catch(e){}
+  const st = document.getElementById("notizCss"); if(st) st.media = k==="notiz" ? "all" : "not all";
+  if(k==="notiz") document.documentElement.setAttribute("data-look","notiz"); else document.documentElement.removeAttribute("data-look");
+  applyTheme(themeMode());
+}
 function applyTheme(m){
   const root = document.documentElement;
   try{ if(m==="light"||m==="dark") localStorage.setItem("essensplan-theme", m); else localStorage.removeItem("essensplan-theme"); }catch(e){}
   if(m==="light"||m==="dark") root.setAttribute("data-theme", m); else root.removeAttribute("data-theme");
   const metas = document.querySelectorAll('meta[name="theme-color"]');
-  if(m==="light"||m==="dark"){ metas.forEach(e=>{ e.removeAttribute("media"); e.setAttribute("content", m==="dark"?"#1A1612":"#F7F1E6"); }); }
-  else { metas[0] && (metas[0].setAttribute("media","(prefers-color-scheme: light)"), metas[0].setAttribute("content","#F7F1E6")); metas[1] && (metas[1].setAttribute("media","(prefers-color-scheme: dark)"), metas[1].setAttribute("content","#1A1612")); }
+  const tc = themeCols();
+  if(m==="light"||m==="dark"){ metas.forEach(e=>{ e.removeAttribute("media"); e.setAttribute("content", m==="dark"?tc[1]:tc[0]); }); }
+  else { metas[0] && (metas[0].setAttribute("media","(prefers-color-scheme: light)"), metas[0].setAttribute("content",tc[0])); metas[1] && (metas[1].setAttribute("media","(prefers-color-scheme: dark)"), metas[1].setAttribute("content",tc[1])); }
 }
+if(lookMode()==="notiz") applyTheme(themeMode());
 function openSettings(toPantry){
   const s = S();
   openSheet(`<button class="btn small close" data-close>Schließen</button>
@@ -4719,7 +4732,10 @@ function openSettings(toPantry){
     <div class="filters" id="setHints">${HINT_TYPES.map(([k,l,d])=>`<button type="button" data-hintset="${k}" aria-pressed="${!hintPrefs().off[k]}" title="${esc(d)}">${l}</button>`).join("")}</div>
     <p class="sub">${HINT_TYPES.map(([,l,d])=>`${l.replace(/^\S+\s/,"")}: ${d}.`).join(" ")}</p>
     <h2 class="set-grp">E. App und Gerät</h2>
-    <h3>🎨 Design</h3>
+    <h3>🎨 Aussehen</h3>
+    <p class="sub">„Klassisch“ ist ruhig und grün. „Notizzettel“ sieht aus wie Kraftpapier mit Klebezetteln und Handschrift. Gilt nur für dieses Gerät.</p>
+    <div class="filters" id="setLook">${[["klassisch","Klassisch"],["notiz","📝 Notizzettel"]].map(([k,l])=>`<button type="button" data-setlook="${k}" aria-pressed="${lookMode()===k}">${l}</button>`).join("")}</div>
+    <h3>🌗 Hell oder dunkel</h3>
     <p class="sub">Hell, dunkel oder wie dein Handy eingestellt ist. Gilt nur für dieses Gerät.</p>
     <div class="filters" id="setTheme">${[["auto","Automatisch"],["light","☀️ Hell"],["dark","🌙 Dunkel"]].map(([k,l])=>`<button type="button" data-settheme="${k}" aria-pressed="${themeMode()===k}">${l}</button>`).join("")}</div>
     <h3>💡 Tipps</h3>
@@ -4772,6 +4788,7 @@ function openSettings(toPantry){
         if(synced){ const m = clone(synced); state.settings = state.settings||{}; LOCAL_KEYS.forEach(k=>{ if(m.settings && k in m.settings) state.settings[k]=clone(m.settings[k]); else delete state.settings[k]; }); } }
       const on = shareOn(); commit(); toast(on?"Filter werden jetzt geteilt":"Filter gelten nur noch auf diesem Gerät"); openSettings(); return; }
     else if(b.dataset.settips!==undefined){ const on = !tipsOn(); tipsSave({...tipsState(), off:!on}); b.setAttribute("aria-pressed",String(on)); b.textContent = "Pro-Tipps beim Start: "+(on?"An":"Aus"); }
+    else if(b.dataset.setlook!==undefined){ applyLook(b.dataset.setlook); document.querySelectorAll("#setLook button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); }
     else if(b.dataset.settheme!==undefined){ applyTheme(b.dataset.settheme); document.querySelectorAll("#setTheme button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); }
     else if(b.dataset.setregion!==undefined){ setSetting("region",b.dataset.setregion); document.querySelectorAll("#setRegion button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); }
     else if(b.dataset.hintset!==undefined){ const p=hintPrefs(), k=b.dataset.hintset; if(p.off[k]) delete p.off[k]; else p.off[k]=1; hintSave(p); b.setAttribute("aria-pressed",String(!p.off[k])); renderHints(); }
@@ -4900,7 +4917,7 @@ function openHelp(first){
       ${img("einstellungen","Einstellungen")}
       <p>Über <b>⋯ Mehr → Einstellungen</b> oben rechts. Filter, Allergene, Vorlieben, Region sowie Erwachsene und Kinder gelten <b>nur auf deinem Gerät</b>, außer du schaltest oben <b>„Filter mit Familie teilen“</b> ein (nur sichtbar, wenn ihr einen gemeinsamen Plan nutzt). Design, Tipps und Hinweise gelten immer nur für dein Gerät.</p>
       <ul>
-        <li><b>🎨 Design:</b> Hell, Dunkel oder wie dein Handy. Gilt nur für dieses Gerät.</li>
+        <li><b>🎨 Aussehen:</b> „Klassisch“ oder „Notizzettel“ (Kraftpapier und Handschrift). <b>🌗 Hell oder dunkel:</b> Hell, Dunkel oder wie dein Handy. Beides gilt nur für dieses Gerät.</li>
         <li><b>💡 Tipps:</b> Einmal am Tag zeigt die App beim Start einen kurzen Pro-Tipp, der Reihe nach. Hier schaltest du sie aus und wieder ein. Gilt nur für dieses Gerät.</li>
         <li><b>Erwachsene und Kinder:</b> Rezepte und Einkaufsliste rechnen alle Mengen darauf um.</li>
         <li><b>🥩 Fleisch</b> und <b>🐟 Fisch:</b> getrennt einstellbar, wie oft pro Woche es Fleisch bzw. Fisch geben darf (Oft, Ab und zu, Selten, Nie). Das steuert Würfeln, „Leere Tage füllen“ und den Plan-Assistenten.</li>
