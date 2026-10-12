@@ -3795,7 +3795,7 @@ function normalize(s){
   s = s || {};
   let extras = s.extras || {};
   if(Array.isArray(extras)){ const m={}; extras.forEach(e=>{ if(e&&e.id) m[e.id]={text:e.text}; }); extras=m; }
-  return {days:s.days||{}, checked:s.checked||{}, hidden:s.hidden||{}, extras, recipes:s.recipes||{}, likes:s.likes||{}, cooked:s.cooked||{}, notes:s.notes||{}, settings:s.settings||{}, pantry:s.pantry||{}};
+  return {days:s.days||{}, checked:s.checked||{}, hidden:s.hidden||{}, extras, recipes:s.recipes||{}, likes:s.likes||{}, cooked:s.cooked||{}, notes:s.notes||{}, settings:s.settings||{}, pantry:pantryClean(s.pantry)};
 }
 
 const local = lsGet();
@@ -4270,8 +4270,11 @@ function shopPartsAll(){
   });
   return parts;
 }
-function pantryVal(n){ const p = state.pantry||{}; if(p[n]) return p[n]; const l = String(n).toLowerCase(); const k = Object.keys(p).find(k=>k.toLowerCase()===l); return k ? p[k] : 0; }
-function pantryHas(n){ const p = state.pantry||{}; if(p[n]) return true; const l = String(n).toLowerCase(); return Object.keys(p).some(k=>k.toLowerCase()===l); }
+// Vorrat: Zutaten ohne Zusatz in Klammern führen („Gemüsebrühe (glutenfrei)“ = „Gemüsebrühe“)
+function pantryNorm(n){ return String(n).replace(/\s*\([^)]*\)/g,"").replace(/\s+/g," ").trim(); }
+function pantryClean(p){ const out={}, low={}; Object.keys(p||{}).forEach(k=>{ const nk=pantryNorm(k)||k, l=nk.toLowerCase(), v=p[k]; if(low[l]===undefined){ low[l]=nk; out[nk]=v; } else out[low[l]]=Math.max(out[low[l]]||0, v||0); }); return out; }
+function pantryVal(n){ const p = state.pantry||{}; const l = pantryNorm(n).toLowerCase(); const k = Object.keys(p).find(k=>pantryNorm(k).toLowerCase()===l); return k ? p[k] : 0; }
+function pantryHas(n){ const p = state.pantry||{}; const l = pantryNorm(n).toLowerCase(); return Object.keys(p).some(k=>pantryNorm(k).toLowerCase()===l); }
 function shopParts(){ return shopPartsAll().filter(pt=>!state.hidden[pt.key] && !pantryHas(pt.n)); }
 function groupParts(parts){
   const map = new Map();
@@ -4410,7 +4413,7 @@ document.addEventListener("click",e=>{
     if(it.pantry){ removePantry(it.n); }
     commit(); toast(it.pantry?`${it.n} ist nicht mehr im Vorrat`:`${it.n} steht wieder auf der Liste`); }
 });
-function removePantry(n){ const l = String(n).toLowerCase(); Object.keys(state.pantry||{}).forEach(k=>{ if(k.toLowerCase()===l) delete state.pantry[k]; }); }
+function removePantry(n){ const l = pantryNorm(n).toLowerCase(); Object.keys(state.pantry||{}).forEach(k=>{ if(pantryNorm(k).toLowerCase()===l) delete state.pantry[k]; }); }
 function askHome(it){
   openSheet(`<button class="btn small close" data-close>Schließen</button>
     <h2>🏠 ${esc(it.n)} – haben wir zu Hause</h2>
@@ -4421,8 +4424,8 @@ function askHome(it){
       <button type="button" class="add-opt" id="ahOpen"><span aria-hidden="true">🥫</span><b>Angebrochen – bald verbrauchen</b><small>Steht nicht auf der Liste, bis ein Gericht damit gekocht wurde; wir schlagen passende Gerichte vor</small></button>
     </div>`);
   $("#ahOnce").addEventListener("click",()=>{ it.keys.forEach(k=>{ state.hidden[k]="home"; }); closeSheet(); commit(); toast(`${it.n}: haben wir zu Hause`); });
-  $("#ahOpen").addEventListener("click",()=>{ state.pantry = state.pantry||{}; state.pantry[it.n] = 2; closeSheet(); commit(); toast(`${it.n} ist angebrochen – wir schlagen Gerichte vor`); });
-  $("#ahAlways").addEventListener("click",()=>{ state.pantry = state.pantry||{}; state.pantry[it.n] = 1; closeSheet(); commit(); toast(`${it.n} ist jetzt im Vorrat`); });
+  $("#ahOpen").addEventListener("click",()=>{ state.pantry = state.pantry||{}; removePantry(it.n); state.pantry[pantryNorm(it.n)] = 2; closeSheet(); commit(); toast(`${it.n} ist angebrochen – wir schlagen Gerichte vor`); });
+  $("#ahAlways").addEventListener("click",()=>{ state.pantry = state.pantry||{}; removePantry(it.n); state.pantry[pantryNorm(it.n)] = 1; closeSheet(); commit(); toast(`${it.n} ist jetzt im Vorrat`); });
 }
 function setShopDays(days){ shopPrefs.days = days; commit(); }
 document.addEventListener("click",e=>{
@@ -4733,7 +4736,7 @@ const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","
 /* ---------- Pro-Tipps: ein Tipp pro Tag, der Reihe nach, nur beim Start; abschaltbar (pro Gerät) ---------- */
 const TIPS = [["Kochmodus", "Tippe im Rezept auf „Kochmodus“: große Schrift, Zutaten und Schritte zum Abhaken, der Bildschirm bleibt an. Wenn du etwas abhakst, scrollt es von selbst zum Nächsten."], ["Einkauf", "Das 🏠 hinter einer Zutat in der Einkaufsliste nimmt sie von der Liste, weil ihr sie zuhause habt. „Nur diesmal“ und „Angebrochen“ holst du unter „Schon zuhause“ mit dem 🛒 zurück."], ["Personenzahl", "Im Rezept änderst du mit − und + die Personenzahl. Die Zutaten und die Mengen in den Schritten rechnen sich automatisch mit um."], ["Vorrat", "Zutaten, die immer da sind, zum Beispiel Zwiebeln: Tippe in der Einkaufsliste beim 🏠 auf „Immer“. Dann tauchen sie nie wieder auf der Liste auf, beeinflussen aber keine Rezeptvorschläge. Ändern kannst du das unter „Vorrat anpassen“ ganz unten in der Liste."], ["Alltag-Filter", "Unter Ideen findest du bei „Alle Filter“ den Reiter „Zeit & Alltag“: zum Beispiel Ofengericht, ein Topf, gut einzufrieren oder mit wenigen Zutaten."], ["Supermarkt", "Die Einkaufsliste lässt sich nach Abteilung sortieren. In den Einstellungen stellst du die Reihenfolge so ein, wie euer Supermarkt aufgebaut ist."], ["Reste", "„Was haben wir noch zuhause?“ in den Ideen: Tippe ein, was im Kühlschrank liegt, und die App zeigt dir Gerichte, die dazu passen."], ["Liste teilen", "Mit „Teilen“ in der Einkaufsliste schickst du die offenen Artikel zum Beispiel direkt an Google Keep oder an deine Familie."], ["Link teilen", "Tippe im Rezept auf „Link teilen“, um es per Nachricht zu verschicken. Wer den Link öffnet, sieht sofort das Rezept."], ["Zutaten kopieren", "Im Rezept kopiert „Zutaten kopieren“ die Mengen für eure Personenzahl, bereit zum Einfügen in eine Notiz oder eine Listen-App."], ["Leere Tage", "Mit „Leere Tage füllen“ schlägt die App für alle freien Tage Gerichte vor. Unter der Woche sind es nur schnelle Gerichte, bevorzugt vegetarisch."], ["Design", "In den Einstellungen wählst du zwischen hellem und dunklem Design, oder die App folgt automatisch deinem Handy."], ["Notiz", "Im Rezept hältst du unter „Unsere Notiz“ fest, was ihr beim nächsten Mal anders macht, zum Beispiel weniger Salz."], ["Lieblinge", "In den Einstellungen wählst du Lieblingskategorien. Sie kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran."], ["Einsenden", "Unter Ideen kannst du über „Rezept hinzufügen“ ein Rezept als Foto, PDF oder Link einsenden. Nach der Prüfung steht es für alle in der App."], ["Bewerten", "Nach dem Essen fragt die App, wie es geschmeckt hat. Mit 👍 und 👎 merkt ihr euch eure Favoriten."], ["Offline", "Öffne die App einmal mit Netz und danach noch einmal: Dann startet sie auch ohne Empfang. Im Supermarkt kannst du die Einkaufsliste abhaken und ergänzen, beim nächsten Netz gleicht sie sich ab."], ["Eigene Filter", "Allergene und Vorlieben gelten standardmäßig nur auf deinem Handy. Mit dem Schalter „Filter mit Familie teilen“ in den Einstellungen nutzt ihr sie gemeinsam. Der Vorrat wird immer geteilt."], ["Sicherung", "Unter Einstellungen → Daten sichern speicherst du Plan, eigene Rezepte und Einstellungen als Datei, zum Beispiel vor einem Handywechsel."], ["App installieren", "Android (Chrome): oben rechts ⋮ → „App installieren“. iPhone (Safari): unten auf das Teilen-Symbol tippen → „Zum Home-Bildschirm“ → „Hinzufügen“. Danach startet Was essen wir? wie eine normale App, ohne Browserleiste."]];
 const LS_TIPS = "essensplan-tips";
-const APP_VERSION = "v1.19.1";
+const APP_VERSION = "v1.19.2";
 document.getElementById("appVer").textContent = "Version " + APP_VERSION;
 const LS_HERO = "essensplan-hero";
 function heroClosed(){ try{ return !!localStorage.getItem(LS_HERO); }catch(e){ return false; } }
@@ -4873,7 +4876,7 @@ function openSettings(toPantry){
   $("#dataExport").addEventListener("click",e=>{ e.stopPropagation(); exportData(); });
   $("#dataImport").addEventListener("click",e=>{ e.stopPropagation(); $("#dataFile").click(); });
   $("#dataFile").addEventListener("change",e=>{ const f=e.target.files[0]; if(f) importData(f); });
-  const addPantry = ()=>{ const inp = $("#pnInput"); const v = inp.value.trim(); if(!v) return; state.pantry = state.pantry||{}; state.pantry[v]=1; inp.value=""; commit(); drawPantry(); };
+  const addPantry = ()=>{ const inp = $("#pnInput"); const v = inp.value.trim(); if(!v) return; state.pantry = state.pantry||{}; removePantry(v); state.pantry[pantryNorm(v)||v]=1; inp.value=""; commit(); drawPantry(); };
   $("#pnAdd").addEventListener("click",e=>{ e.stopPropagation(); addPantry(); });
   $("#pnInput").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); addPantry(); } });
   const drawNogo = ()=>{ const l = S().nogo; $("#setNogo").innerHTML = l.length ? l.map(k=>`<button type="button" data-ng="${esc(k)}" aria-label="${esc(k)} entfernen">${esc(k)} ×</button>`).join("") : '<span class="sub">Noch nichts eingetragen.</span>'; };
