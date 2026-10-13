@@ -1008,98 +1008,6 @@ body .hints .hint .h-r button[data-like][aria-pressed="true"]{border-color:var(-
 .sheet .btn.close[aria-label="Schließen"]:focus{outline:none}
 .sheet .btn.close[aria-label="Schließen"]:focus-visible{outline:none}
 </style>
-<style id="notizCss" media="not all">
-/* ===== Design „Notizzettel": Kraftpapier, Zettel, Handschrift ===== */
-@font-face{font-family:"Caveat";src:url("fonts/caveat-700.woff2") format("woff2");font-weight:700;font-display:swap}
-:root{
-  --ground:#E8D9BE; --surface:#FFFDF6; --sunk:#F3E8D0; --ink:#2B2A33; --muted:#5C5240; --line:#CDBE9E;
-  --basil:#2F6A45; --basil-ink:#FFFFFF; --basil-soft:#E3EDDC; --mustard:#8A6A12; --mustard-soft:#FFE98A;
-  --tomato:#9B3D2A; --tomato-soft:#F6DCD2; --sea:#2F6380; --sea-soft:#DCE8EE;
-  --shadow:0 3px 0 rgba(60,40,10,.22);
-  --display:"Caveat","Segoe Script","Bradley Hand",cursive;
-  --sticky:#FFE98A; --tape:rgba(200,120,100,.55); --pen:#2B2A33; --sticky-ink:#2B2A33;
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --ground:#1F1A14; --surface:#2B241B; --sunk:#352D22; --ink:#F1E8D6; --muted:#BBAE96; --line:#4A4030;
-    --basil:#8FCB9F; --basil-ink:#13200F; --basil-soft:#27362A; --mustard:#EBC060; --mustard-soft:#4A3F1C;
-    --tomato:#F0927B; --tomato-soft:#44271F; --sea:#86BEDC; --sea-soft:#1F3340;
-    --shadow:0 3px 0 rgba(0,0,0,.45); --sticky:#6A5A22; --tape:rgba(200,120,100,.4); --pen:#F1E8D6; --sticky-ink:#FFF6D8;
-  }
-}
-:root[data-theme="dark"]{
-  --ground:#1F1A14; --surface:#2B241B; --sunk:#352D22; --ink:#F1E8D6; --muted:#BBAE96; --line:#4A4030;
-  --basil:#8FCB9F; --basil-ink:#13200F; --basil-soft:#27362A; --mustard:#EBC060; --mustard-soft:#4A3F1C;
-  --tomato:#F0927B; --tomato-soft:#44271F; --sea:#86BEDC; --sea-soft:#1F3340;
-  --shadow:0 3px 0 rgba(0,0,0,.45); --sticky:#6A5A22; --tape:rgba(200,120,100,.4); --pen:#F1E8D6; --sticky-ink:#FFF6D8;
-}
-/* Handschrift für Überschriften */
-h1,.sheet h2,.dname,.surprise strong,.set h3,.k-head h2,.heute-h,.hero h2,.cat h3,.k-sec h3,.print-head,.ck-top h2,.ck-h h3{font-family:var(--display);font-weight:700;letter-spacing:0;font-variation-settings:normal}
-h1{font-size:clamp(34px,9vw,44px)}
-header.top h1{font-size:clamp(30px,8.4vw,38px);line-height:1}
-.sheet h2{font-size:32px}
-.dhead .dname{font-size:26px;line-height:1;color:var(--tomato);letter-spacing:0}
-.daybig .db-label b{font-family:var(--display);font-size:22px}
-.heute-h{font-size:clamp(30px,8vw,36px)}
-.cat h3{font-size:26px;letter-spacing:0;text-transform:none;border-bottom:2px solid var(--ink);padding-bottom:2px;margin:12px 0 4px;color:var(--ink)}
-.k-sec h3{font-size:24px}
-.ck-top h2{font-size:28px}.ck-h h3{font-size:30px}
-/* Zettel: Wochenplan */
-.day,.daybig,.idea,.hcard,.fridge-card,.hero,.shopdays,.surprise{background:var(--surface);border:0;border-radius:3px;box-shadow:var(--shadow)}
-.day:not(.today):not(.past){border-left:0}
-#week>.day:nth-child(odd){transform:rotate(-.5deg)}
-#week>.day:nth-child(even){transform:rotate(.6deg)}
-.day.today,.daybig.today{position:relative;background:var(--sticky);border:0;box-shadow:var(--shadow);transform:rotate(-1deg);color:var(--sticky-ink)}
-.day.today::before,.daybig.today::before{content:"";position:absolute;top:-10px;left:50%;margin-left:-40px;width:80px;height:20px;background:var(--tape);transform:rotate(3deg);pointer-events:none}
-.day.today .dname,.daybig .db-label b,.day.today .ddate::after,.ddate::after{color:var(--tomato)!important}
-:root[data-theme="dark"] .day.today .dname,:root[data-theme="dark"] .daybig .db-label b{color:#F6B7A6!important}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .day.today .dname,:root:not([data-theme="light"]) .daybig .db-label b{color:#F6B7A6!important}}
-.day.today .ddate,.day.today .muted,.daybig.today .muted{color:inherit;opacity:.8}
-.day.past:not(.today){opacity:.55;background:var(--surface)}
-.day .dish button.title,.daybig .dish button.title{font-family:var(--body)}
-.daybig .dish button.title{font-size:20px}
-.surprise{position:relative;background:var(--sticky);color:var(--sticky-ink);transform:rotate(-.6deg)}
-.surprise strong{font-size:30px}
-.note{border:1px dashed var(--line)}
-/* Knöpfe: Klebezettel-Look */
-.btn{border-radius:3px}
-.btn.primary{background:var(--sticky);color:var(--sticky-ink);border:2px solid var(--pen);box-shadow:3px 3px 0 var(--pen)}
-.btn:not(.primary){background:transparent;color:var(--ink);border:1.5px solid var(--pen)}
-.btn.textbtn,.btn.danger,.sd-quick .btn,.db-acts .btn.textbtn{border-color:transparent;background:transparent;box-shadow:none}
-.helpbtn{border-radius:3px;border:1.5px solid var(--pen);box-shadow:none;color:var(--ink)}
-.fridge-card .fa{background:var(--sticky);color:var(--sticky-ink)!important;border:1.5px solid var(--pen);border-radius:3px}
-/* Filter */
-.filters button,.k-tabs button,.qs-chips button{border-radius:3px;border:1.5px solid var(--line);background:transparent;color:var(--muted)}
-.filters button[aria-pressed="true"],.k-tabs button[aria-pressed="true"],.qs-chips button[aria-pressed="true"]{background:var(--sticky);color:var(--sticky-ink);border-color:var(--pen);transform:rotate(-1.5deg)}
-/* Einkauf: liniertes Blatt mit rotem Rand */
-.shop .cat{position:relative;border:0;border-radius:3px;box-shadow:var(--shadow);padding:6px 14px 8px 46px;background:var(--surface)}
-.shop .cat::before{content:"";position:absolute;left:34px;top:0;bottom:0;width:2px;background:#E39A8E;opacity:.8}
-.item{border-bottom:1px solid color-mix(in srgb,var(--sea) 30%,transparent)}
-.item input{border-color:var(--pen);border-radius:3px}
-.item input:checked{background:var(--pen);border-color:var(--pen)}
-.item input:checked::after{border-color:var(--surface)}
-.shopdays{border-radius:3px}
-/* Navigation unten: Papierstreifen */
-nav.tabs{background:var(--surface);border-top:2px dashed color-mix(in srgb,var(--muted) 70%,transparent);box-shadow:none}
-nav.tabs button{border-radius:3px;font-family:var(--display);font-size:20px;font-weight:700;color:var(--muted)}
-nav.tabs button[aria-selected="true"]{background:var(--sticky);color:var(--sticky-ink);transform:rotate(-2deg);box-shadow:0 2px 0 rgba(60,40,10,.2)}
-nav.tabs button .ti{filter:none;opacity:.9}
-/* Sheets, Rezept-Ansicht */
-.sheet{background:var(--surface);border-radius:3px 3px 0 0}
-.idea h4,.hplan b{font-family:var(--body)}
-.chip{border-radius:3px}
-@media (min-width:1000px){
-  nav.tabs{background:transparent;border:0;border-bottom:2px dashed var(--line);border-radius:0}
-  .sheet{border-radius:3px 0 0 3px}
-}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) nav.tabs button[aria-selected="true"]{background:var(--sticky);color:var(--sticky-ink)}}
-:root[data-theme="dark"] nav.tabs button[aria-selected="true"]{background:var(--sticky);color:var(--sticky-ink)}
-.cat-fold>summary{font-family:var(--display);font-size:26px;letter-spacing:0;text-transform:none;line-height:1.1}
-.cat-fold>summary .cf-n{font-family:var(--body);border-radius:3px}
-.shop .cat-fold:not([open]){border-radius:3px}
-.cat-fold[open]>summary{border-bottom:2px solid var(--ink)}
-@media (prefers-reduced-motion:reduce){#week>.day,.day.today,.daybig.today,.surprise,nav.tabs button,.filters button{transform:none!important}}
-</style>
 <style id="kochCss" media="not all">
 /* ===== Design „Kochbuch": Papier, Serifenschrift, Haarlinien ===== */
 @font-face{font-family:"DM Serif Display";src:url("fonts/dm-serif-display.woff2") format("woff2");font-weight:400;font-display:swap}
@@ -1306,7 +1214,7 @@ nav.tabs .count{background:var(--tomato);color:#fff}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
-<script>(function(){ try{ var l=localStorage.getItem("essensplan-look"), m={notiz:"notizCss",kochbuch:"kochCss",comic:"comicCss"}; if(m[l]){ document.getElementById(m[l]).media="all"; document.documentElement.setAttribute("data-look",l); } }catch(e){} })();</script>
+<script>(function(){ try{ var l=localStorage.getItem("essensplan-look"), m={kochbuch:"kochCss",comic:"comicCss"}; if(l==="notiz") l="comic"; if(m[l]){ document.getElementById(m[l]).media="all"; document.documentElement.setAttribute("data-look",l); } }catch(e){} })();</script>
 <script data-goatcounter="https://wasessenwir.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
@@ -4881,7 +4789,7 @@ function maybeShowTip(){
   $("#tipOff").addEventListener("click",e=>{ e.stopPropagation(); tipsSave({...tipsState(), off:true}); closeSheet(); toast("Tipps ausgeschaltet – in den Einstellungen wieder einschaltbar"); });
 }
 function themeMode(){ try{ const m = localStorage.getItem("essensplan-theme"); return m==="light"||m==="dark" ? m : "auto"; }catch(e){ return "auto"; } }
-function lookMode(){ try{ const l=localStorage.getItem("essensplan-look"); return l==="notiz"||l==="kochbuch"||l==="comic" ? l : "klassisch"; }catch(e){ return "klassisch"; } }
+function lookMode(){ try{ const l=localStorage.getItem("essensplan-look"); return l==="kochbuch"||l==="comic" ? l : l==="notiz" ? "comic" : "klassisch"; }catch(e){ return "klassisch"; } }
 const EMOJI_RE=/[\p{Extended_Pictographic}\p{Regional_Indicator}\u200d\ufe0f\u20e3]+/gu;
 const EMOJI_ONLY={"🏠":"Vorrat","🏷":"Kategorie","👍":"✓ Gut","👎":"✕ Nicht gut","🎲":"Tauschen","✏️":"Ändern","⭐":"Favorit","☆":"Favorit","★":"Favorit"};
 function stripEmoji(root){
@@ -4940,14 +4848,13 @@ function startDoodles(){
   new MutationObserver(()=>{ if(busy) return; busy=true; requestAnimationFrame(()=>{ try{ decorateDoodles(); }finally{ busy=false; } }); }).observe(document.body,{childList:true,subtree:true});
   decorateDoodles();
 }
-function themeCols(){ const l=lookMode(); return l==="comic" ? ["#F3E4C3","#1E1A12"] : l==="notiz" ? ["#E8D9BE","#1F1A14"] : l==="kochbuch" ? ["#FBFAF6","#16130F"] : ["#F7F1E6","#1A1612"]; }
+function themeCols(){ const l=lookMode(); return l==="comic" ? ["#F3E4C3","#1E1A12"] : l==="kochbuch" ? ["#FBFAF6","#16130F"] : ["#F7F1E6","#1A1612"]; }
 function applyLook(k){
   const was=lookMode();
-  try{ if(k==="notiz"||k==="kochbuch"||k==="comic") localStorage.setItem("essensplan-look",k); else localStorage.removeItem("essensplan-look"); }catch(e){}
-  const a = document.getElementById("notizCss"); if(a) a.media = k==="notiz" ? "all" : "not all";
+  try{ if(k==="kochbuch"||k==="comic") localStorage.setItem("essensplan-look",k); else localStorage.removeItem("essensplan-look"); }catch(e){}
   const c = document.getElementById("kochCss"); if(c) c.media = k==="kochbuch" ? "all" : "not all";
   const m2 = document.getElementById("comicCss"); if(m2) m2.media = k==="comic" ? "all" : "not all";
-  if(k==="notiz"||k==="kochbuch"||k==="comic") document.documentElement.setAttribute("data-look",k); else document.documentElement.removeAttribute("data-look");
+  if(k==="kochbuch"||k==="comic") document.documentElement.setAttribute("data-look",k); else document.documentElement.removeAttribute("data-look");
   applyTheme(themeMode());
   if(k==="kochbuch" || was==="kochbuch" || k==="comic" || was==="comic") location.reload();
 }
@@ -5016,8 +4923,8 @@ function openSettings(toPantry){
     <p class="sub">${HINT_TYPES.map(([,l,d])=>`${l.replace(/^\S+\s/,"")}: ${d}.`).join(" ")}</p>
     <h2 class="set-grp">E. App und Gerät</h2>
     <h3>🎨 Aussehen</h3>
-    <p class="sub">„Klassisch“ ist ruhig und grün. „Notizzettel“ sieht aus wie Kraftpapier mit Klebezetteln und Handschrift. „Kochbuch“ ist schlicht und neutral wie eine Buchseite, ohne Emojis. „Comic“ ist bunt mit dicken Umrissen und kleinen Zeichnungen zu den Gerichten (die Seite lädt beim Wechseln neu). Gilt nur für dieses Gerät.</p>
-    <div class="filters" id="setLook">${[["klassisch","Klassisch"],["notiz","📝 Notizzettel"],["kochbuch","📖 Kochbuch"],["comic","✏️ Comic"]].map(([k,l])=>`<button type="button" data-setlook="${k}" aria-pressed="${lookMode()===k}">${l}</button>`).join("")}</div>
+    <p class="sub">„Klassisch“ ist ruhig und grün. „Kochbuch“ ist schlicht und neutral wie eine Buchseite, ohne Emojis. „Comic“ ist bunt mit dicken Umrissen und kleinen Zeichnungen zu den Gerichten (die Seite lädt beim Wechseln neu). Gilt nur für dieses Gerät.</p>
+    <div class="filters" id="setLook">${[["klassisch","Klassisch"],["kochbuch","📖 Kochbuch"],["comic","✏️ Comic"]].map(([k,l])=>`<button type="button" data-setlook="${k}" aria-pressed="${lookMode()===k}">${l}</button>`).join("")}</div>
     <h3>🌗 Hell oder dunkel</h3>
     <p class="sub">Hell, dunkel oder wie dein Handy eingestellt ist. Gilt nur für dieses Gerät.</p>
     <div class="filters" id="setTheme">${[["auto","Automatisch"],["light","☀️ Hell"],["dark","🌙 Dunkel"]].map(([k,l])=>`<button type="button" data-settheme="${k}" aria-pressed="${themeMode()===k}">${l}</button>`).join("")}</div>
@@ -5200,7 +5107,7 @@ function openHelp(first){
       ${img("einstellungen","Einstellungen")}
       <p>Über <b>⋯ Mehr → Einstellungen</b> oben rechts. Filter, Allergene, Vorlieben, Region sowie Erwachsene und Kinder gelten <b>nur auf deinem Gerät</b>, außer du schaltest oben <b>„Filter mit Familie teilen“</b> ein (nur sichtbar, wenn ihr einen gemeinsamen Plan nutzt). Design, Tipps und Hinweise gelten immer nur für dein Gerät.</p>
       <ul>
-        <li><b>🎨 Aussehen:</b> „Klassisch“, „Notizzettel“ (Kraftpapier und Handschrift), „Kochbuch“ (schlicht, ohne Emojis) oder „Comic“ (bunt, mit kleinen Zeichnungen). <b>🌗 Hell oder dunkel:</b> Hell, Dunkel oder wie dein Handy. Beides gilt nur für dieses Gerät.</li>
+        <li><b>🎨 Aussehen:</b> „Klassisch“, „Kochbuch“ (schlicht, ohne Emojis) oder „Comic“ (bunt, mit kleinen Zeichnungen). <b>🌗 Hell oder dunkel:</b> Hell, Dunkel oder wie dein Handy. Beides gilt nur für dieses Gerät.</li>
         <li><b>💡 Tipps:</b> Einmal am Tag zeigt die App beim Start einen kurzen Pro-Tipp, der Reihe nach. Hier schaltest du sie aus und wieder ein. Gilt nur für dieses Gerät.</li>
         <li><b>Erwachsene und Kinder:</b> Rezepte und Einkaufsliste rechnen alle Mengen darauf um.</li>
         <li><b>🥩 Fleisch</b> und <b>🐟 Fisch:</b> getrennt einstellbar, wie oft pro Woche es Fleisch bzw. Fisch geben darf (Oft, Ab und zu, Selten, Nie). Das steuert Würfeln, „Leere Tage füllen“ und den Plan-Assistenten.</li>
