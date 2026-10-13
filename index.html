@@ -998,6 +998,15 @@ header.top .tag{margin:3px 0 0;font-size:13px;font-weight:500;color:var(--muted)
 .hero-trust{margin:10px 0 0;text-align:center;color:var(--muted);font-size:12.5px}
 @media (max-width:340px){#week .daybig .db-acts{flex-wrap:wrap;gap:4px}#week .daybig .db-acts .btn{padding:8px 6px;font-size:12.5px;white-space:nowrap}#week .daybig .db-acts .dbmenu summary{width:34px;height:34px}}
 
+
+/* Bewertung (Gut / Nicht gut) und Schließen: klein und dezent */
+body :is(.rate,.rate-q,.h-r) button[data-like]{min-width:0;min-height:36px;padding:0 12px;font:600 13px var(--body);line-height:1;border:1px solid var(--line);border-radius:8px;background:transparent;box-shadow:none;transform:none;opacity:1;white-space:nowrap}
+body :is(.rate,.rate-q,.h-r) button[data-like][aria-pressed="true"]{border-color:var(--basil);background:var(--basil-soft)}
+body .hints .hint .h-r button[data-like]{font-size:16px;border:1px solid var(--line);min-width:0;min-height:36px;padding:0 12px;background:transparent}
+body .hints .hint .h-r button[data-like][aria-pressed="true"]{border-color:var(--basil);background:var(--basil-soft)}
+.sheet .btn.close[aria-label="Schließen"]{width:44px;height:44px;min-width:0;min-height:0;padding:0;border:0;border-radius:50%;background:transparent;box-shadow:none;color:var(--muted);font-size:20px;line-height:1;display:inline-flex;align-items:center;justify-content:center;transform:none}
+.sheet .btn.close[aria-label="Schließen"]:focus{outline:none}
+.sheet .btn.close[aria-label="Schließen"]:focus-visible{outline:none}
 </style>
 <style id="notizCss" media="not all">
 /* ===== Design „Notizzettel": Kraftpapier, Zettel, Handschrift ===== */
@@ -1129,12 +1138,16 @@ h1{font-size:clamp(38px,11vw,46px);line-height:1}
 :root{--good:#2E6A44;--bad:#C8361F}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--good:#8FCB9F;--bad:#EE8F7A}}
 :root[data-theme="dark"]{--good:#8FCB9F;--bad:#EE8F7A}
-button[data-like]{font:700 14px var(--body)!important;min-width:0!important;min-height:44px;padding:0 14px!important;border:1.5px solid currentColor!important;border-radius:0!important;background:transparent!important;filter:none!important;opacity:1!important;box-shadow:none!important;white-space:nowrap}
-button[data-like][data-v="1"]{color:var(--good)!important}
-button[data-like][data-v="-1"]{color:var(--bad)!important}
-button[data-like][aria-pressed="true"][data-v="1"]{background:var(--good)!important;color:var(--ground)!important}
-button[data-like][aria-pressed="true"][data-v="-1"]{background:var(--bad)!important;color:var(--ground)!important}
-.hints .hint .h-r{gap:8px;flex-wrap:wrap;justify-content:flex-end}
+body :is(.rate,.rate-q,.h-r) button[data-like]{border-radius:0;color:var(--muted);font-weight:600}
+body :is(.rate,.rate-q,.h-r) button[data-like][data-v="1"]{color:var(--good)}
+body :is(.rate,.rate-q,.h-r) button[data-like][data-v="-1"]{color:var(--bad)}
+body :is(.rate,.rate-q,.h-r) button[data-like][aria-pressed="true"][data-v="1"]{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,transparent)}
+body :is(.rate,.rate-q,.h-r) button[data-like][aria-pressed="true"][data-v="-1"]{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 14%,transparent)}
+.hints .hint .h-r{gap:6px;flex-wrap:wrap;justify-content:flex-end}
+body .hints .hint .h-r button[data-like]{font-size:13px}
+.hints .hint:has(.h-r button[data-like]){flex-wrap:wrap}
+.hints .hint:has(.h-r button[data-like]) .h-t{flex:1 1 100%}
+.hints .hint:has(.h-r button[data-like]) .h-r{flex:1}
 .sheet .tags{overflow-wrap:anywhere;white-space:normal}
 .day .dish button.title{font-size:18px}
 .daybig .dish button.title{font-size:22px}
@@ -4337,7 +4350,7 @@ const CAT_ICON = {g:"🥕",b:"🥖",k:"🧀",f:"🥩",t:"🧊",v:"🥫",x:"🧺"
 function askCat(id, fresh){
   const e = state.extras[id]; if(!e) return;
   const cur = extraCat(e);
-  openSheet(`<button class="btn small close" data-close>Schließen</button>
+  openSheet(`<button class="btn small close" data-close aria-label="Schließen" title="Schließen">✕</button>
     <h2>${fresh?"Wohin gehört":"Kategorie für"} „${esc(e.text)}“?</h2>
     <p class="sub">${fresh?"Das kenne ich noch nicht. ":""}Ich merke mir deine Wahl für das nächste Mal.</p>
     <div class="add-opts">${CAT_ORDER_FOR_ASK().map(([c,l])=>`<button type="button" class="add-opt" data-pickcat="${c}" data-xid="${id}"><span aria-hidden="true">${CAT_ICON[c]||""}</span><b>${l}${c===cur&&!fresh?" ✓":""}</b><small>&nbsp;</small></button>`).join("")}</div>`);
@@ -4425,7 +4438,7 @@ document.addEventListener("click",e=>{
 });
 function removePantry(n){ const l = pantryNorm(n).toLowerCase(); Object.keys(state.pantry||{}).forEach(k=>{ if(pantryNorm(k).toLowerCase()===l) delete state.pantry[k]; }); }
 function askHome(it){
-  openSheet(`<button class="btn small close" data-close>Schließen</button>
+  openSheet(`<button class="btn small close" data-close aria-label="Schließen" title="Schließen">✕</button>
     <h2>🏠 ${esc(it.n)} – haben wir zu Hause</h2>
     <p class="sub">Soll das nur für diesen Einkauf gelten oder immer?</p>
     <div class="add-opts">
@@ -4669,7 +4682,7 @@ function frScore(d, have){
 function openFridge(init){
   const have = frHave(init ? init.have : []), fset = new Set(init ? init.f : []);
   const names = frAllNames();
-  openSheet(`<button class="btn small close" data-close>Schließen</button>
+  openSheet(`<button class="btn small close" data-close aria-label="Schließen" title="Schließen">✕</button>
     <h2>🏠 Was haben wir noch zuhause?</h2>
     <p class="sub">Gib ein, was im Kühlschrank ist – z. B. „Zucchini, Feta, Reis“. Salz, Öl, Gewürze, Zwiebeln und Knoblauch zählen als vorhanden.</p>
     <div class="fr-in"><input id="frInput" type="text" placeholder="Zutat eingeben …" autocomplete="off" enterkeyhint="done"><button class="btn primary" id="frAdd" type="button">+</button></div>
@@ -4746,7 +4759,7 @@ const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","
 /* ---------- Pro-Tipps: ein Tipp pro Tag, der Reihe nach, nur beim Start; abschaltbar (pro Gerät) ---------- */
 const TIPS = [["Kochmodus", "Tippe im Rezept auf „Kochmodus“: große Schrift, Zutaten und Schritte zum Abhaken, der Bildschirm bleibt an. Wenn du etwas abhakst, scrollt es von selbst zum Nächsten."], ["Einkauf", "Das 🏠 hinter einer Zutat in der Einkaufsliste nimmt sie von der Liste, weil ihr sie zuhause habt. „Nur diesmal“ und „Angebrochen“ holst du unter „Schon zuhause“ mit dem 🛒 zurück."], ["Personenzahl", "Im Rezept änderst du mit − und + die Personenzahl. Die Zutaten und die Mengen in den Schritten rechnen sich automatisch mit um."], ["Vorrat", "Zutaten, die immer da sind, zum Beispiel Zwiebeln: Tippe in der Einkaufsliste beim 🏠 auf „Immer“. Dann tauchen sie nie wieder auf der Liste auf, beeinflussen aber keine Rezeptvorschläge. Ändern kannst du das unter „Vorrat anpassen“ ganz unten in der Liste."], ["Alltag-Filter", "Unter Ideen findest du bei „Alle Filter“ den Reiter „Zeit & Alltag“: zum Beispiel Ofengericht, ein Topf, gut einzufrieren oder mit wenigen Zutaten."], ["Supermarkt", "Die Einkaufsliste lässt sich nach Abteilung sortieren. In den Einstellungen stellst du die Reihenfolge so ein, wie euer Supermarkt aufgebaut ist."], ["Reste", "„Was haben wir noch zuhause?“ in den Ideen: Tippe ein, was im Kühlschrank liegt, und die App zeigt dir Gerichte, die dazu passen."], ["Liste teilen", "Mit „Teilen“ in der Einkaufsliste schickst du die offenen Artikel zum Beispiel direkt an Google Keep oder an deine Familie."], ["Link teilen", "Tippe im Rezept auf „Link teilen“, um es per Nachricht zu verschicken. Wer den Link öffnet, sieht sofort das Rezept."], ["Zutaten kopieren", "Im Rezept kopiert „Zutaten kopieren“ die Mengen für eure Personenzahl, bereit zum Einfügen in eine Notiz oder eine Listen-App."], ["Leere Tage", "Mit „Leere Tage füllen“ schlägt die App für alle freien Tage Gerichte vor. Unter der Woche sind es nur schnelle Gerichte, bevorzugt vegetarisch."], ["Design", "In den Einstellungen wählst du zwischen hellem und dunklem Design, oder die App folgt automatisch deinem Handy."], ["Notiz", "Im Rezept hältst du unter „Unsere Notiz“ fest, was ihr beim nächsten Mal anders macht, zum Beispiel weniger Salz."], ["Lieblinge", "In den Einstellungen wählst du Lieblingskategorien. Sie kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran."], ["Einsenden", "Unter Ideen kannst du über „Rezept hinzufügen“ ein Rezept als Foto, PDF oder Link einsenden. Nach der Prüfung steht es für alle in der App."], ["Bewerten", "Nach dem Essen fragt die App, wie es geschmeckt hat. Mit 👍 und 👎 merkt ihr euch eure Favoriten."], ["Offline", "Öffne die App einmal mit Netz und danach noch einmal: Dann startet sie auch ohne Empfang. Im Supermarkt kannst du die Einkaufsliste abhaken und ergänzen, beim nächsten Netz gleicht sie sich ab."], ["Eigene Filter", "Allergene und Vorlieben gelten standardmäßig nur auf deinem Handy. Mit dem Schalter „Filter mit Familie teilen“ in den Einstellungen nutzt ihr sie gemeinsam. Der Vorrat wird immer geteilt."], ["Sicherung", "Unter Einstellungen → Daten sichern speicherst du Plan, eigene Rezepte und Einstellungen als Datei, zum Beispiel vor einem Handywechsel."], ["App installieren", "Android (Chrome): oben rechts ⋮ → „App installieren“. iPhone (Safari): unten auf das Teilen-Symbol tippen → „Zum Home-Bildschirm“ → „Hinzufügen“. Danach startet Was essen wir? wie eine normale App, ohne Browserleiste."]];
 const LS_TIPS = "essensplan-tips";
-const APP_VERSION = "v1.19.3";
+const APP_VERSION = "v1.19.4";
 document.getElementById("appVer").textContent = "Version " + APP_VERSION;
 const LS_HERO = "essensplan-hero";
 function heroClosed(){ try{ return !!localStorage.getItem(LS_HERO); }catch(e){ return false; } }
@@ -4814,7 +4827,7 @@ if(lookMode()!=="klassisch") applyTheme(themeMode());
 if(lookMode()==="kochbuch") startNoEmoji();
 function openSettings(toPantry){
   const s = S();
-  openSheet(`<button class="btn small close" data-close>Schließen</button>
+  openSheet(`<button class="btn small close" data-close aria-label="Schließen" title="Schließen">✕</button>
   <div class="set">
     <h2>Einstellungen</h2>
     <p class="sub">${sync?"Plan, Einkauf, Rezepte und Vorrat sind für eure ganze Familie gemeinsam. Filter und Vorlieben nur, wenn du sie unten teilst.":"Gilt für dieses Handy. Wenn ihr einen gemeinsamen Plan nutzt, teilt ihr Plan, Einkauf, Rezepte und Vorrat; Filter und Vorlieben bleiben auf Wunsch bei jedem selbst."}</p>
@@ -4933,7 +4946,7 @@ function openHelp(first){
   try{ localStorage.setItem("essensplan-hilfe","1"); }catch(e){}
   const img = (f,alt)=>`<img src="hilfe/${f}.webp" alt="${alt}" loading="lazy" width="320">`;
   const leg = [["🌱","Vegetarisch"],["🥩","Fleisch"],["🐟","Fisch"],["👶","Kinderliebling – mild und kindertauglich"],["❤️","Gesund – viel Gemüse und Ballaststoffe, nicht zu fett, kein verarbeitetes Fleisch"],["💪","Proteinreich – mind. 25 g Eiweiß pro Portion"],["🥦","Gemüsereich – mind. 250 g Gemüse/Hülsenfrüchte pro Portion"],["🌾","Ballaststoffreich – mind. 10 g pro Portion"],["🥗","Leicht – höchstens 550 kcal pro Portion"],["📉","Low-Carb – höchstens 35 g Kohlenhydrate pro Portion"],["🍔","Kalorienreich – über 800 kcal pro Portion"],["🌿","Antientzündlich – jodarm, viel Gemüse, gute Öle"],['<span class="gfb">GF</span>',"Glutenfrei"],["🥢","Asiatisch"],["🍛","Indisch"],["🥣","Beilage/Dip – wird nicht gewürfelt"],["📷 🔗","Eingesendet (Foto/Link)"],["⭐","Mein Rezept – selbst angelegt"],["👍 👎","Eure Bewertung"],["⚠️","Enthält ein Allergen, das ihr in den Einstellungen ausgeschlossen habt"]];
-  openSheet(`<button class="btn small close" data-close>Schließen</button>
+  openSheet(`<button class="btn small close" data-close aria-label="Schließen" title="Schließen">✕</button>
   <div class="help">
     <h2>${first?"Willkommen! 👋":"Anleitung"}</h2>
     <p class="intro">Was essen wir? plant eure Woche, schreibt die Einkaufsliste und hat viele Rezeptideen für jeden Tag. Tipp auf ein Thema:</p>
@@ -5158,7 +5171,7 @@ function copyDishForKeep(id){
   const ok = ()=>{ const el=$("#keepOk"); if(!el) return toast(`${lines.length} Zutaten kopiert`);
     el.innerHTML = `<span>✔ ${lines.length} Zutaten kopiert – jetzt in eine Listen-App oder Notiz einfügen.</span>`; el.hidden=false; };
   navigator.clipboard.writeText(text).then(ok).catch(()=>{
-    openSheet(`<button class="btn small close" data-close>Schließen</button><h2>Zutaten: ${esc(d.n)}</h2><p class="sub">Markieren und kopieren, dann einfügen:</p><textarea id="copyArea" style="width:100%;height:40vh;font:14px var(--body);background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px">${esc(text)}</textarea>`);
+    openSheet(`<button class="btn small close" data-close aria-label="Schließen" title="Schließen">✕</button><h2>Zutaten: ${esc(d.n)}</h2><p class="sub">Markieren und kopieren, dann einfügen:</p><textarea id="copyArea" style="width:100%;height:40vh;font:14px var(--body);background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px">${esc(text)}</textarea>`);
     $("#copyArea").select();
   });
 }
@@ -5176,7 +5189,7 @@ function showDish(id,opts){
   const pickTop = !!(opts&&opts.pickTop); /* „Einplanen“ unter Ideen: Tageswahl oben */
   curPersons = S().persons;
   const bl = blockedAllergens(d);
-  openSheet(`<button class="btn small close" data-close>Schließen</button>
+  openSheet(`<button class="btn small close" data-close aria-label="Schließen" title="Schließen">✕</button>
     <h2>${esc(d.n)}</h2>${pickTop?`<div class="day-top">${dayPick}</div>`:""}${chips(d,true)}
     ${d.own?`<div class="own-bar"><button type="button" class="btn small" data-editrecipe="${d.id}">✏️ Bearbeiten</button><button type="button" class="btn small danger" data-delrecipe="${d.id}">Löschen</button></div>`:''}
     ${nogoHits(d).length?`<div class="allergy-warn">🚫 Enthält <b>${nogoHits(d).map(esc).join(", ")}</b> – steht bei „Mögen wir nicht“.</div>`:""}
@@ -5327,7 +5340,7 @@ function matchQuery(d,q){ return !q || d.n.toLowerCase().includes(q) || d.i.some
 function pickFor(day){
   const opts = allDishes().sort((a,b)=>a.n.localeCompare(b.n,"de"));
   const pf = new Set();
-  openSheet(`<button class="btn small close" data-close>Schließen</button>
+  openSheet(`<button class="btn small close" data-close aria-label="Schließen" title="Schließen">✕</button>
     <h2>${dlong(day)}</h2>
     <button type="button" class="btn small" data-cp="day" data-g="${day}" style="margin-bottom:10px">📋 Aus einer anderen Woche übernehmen</button>
     ${filterUI("pick","Gericht oder Zutat …")}
@@ -5454,7 +5467,7 @@ function openQuickstart(step){
     <div class="qs-foot"><button type="button" class="btn" data-qs="to1">Noch etwas ändern</button></div>
     <button type="button" class="linkbtn qs-skip" data-qs="nosave">Ohne Einstellungen starten</button>`;
   }
-  openSheet(`<button class="btn small close" data-close>Schließen</button><div class="qs" data-qstep="${step}">${h}</div>`);
+  openSheet(`<button class="btn small close" data-close aria-label="Schließen" title="Schließen">✕</button><div class="qs" data-qstep="${step}">${h}</div>`);
   if(step===3) qsDrawNogo();
 }
 function qsDrawNogo(){ const el=$("#qsNogo"); if(el) el.innerHTML = qs.nogo.map((k,i)=>`<button type="button" data-qsn="${i}" aria-label="${esc(k)} entfernen">${esc(k)} ×</button>`).join(""); }
@@ -5677,7 +5690,7 @@ let cpSrc = [], cpWeek = 0;
 function cpNames(days){ return Object.keys(days).sort().map(i=>`${DAYS[i]} ${dish(days[i]).n}`).join(" · "); }
 function openCopyWeek(){
   cpWeek = viewWeek; cpSrc = copySources(cpWeek);
-  openSheet(`<button class="btn small close" data-close>Schließen</button>
+  openSheet(`<button class="btn small close" data-close aria-label="Schließen" title="Schließen">✕</button>
     <h2>${cpWeek?"Nächste":"Diese"} Woche aus einer anderen Woche füllen</h2>
     <p class="sub">Wähle eine Woche zum Kopieren. Auch die zuletzt gekochten Wochen stehen zur Auswahl.</p>
     ${cpSrc.length ? cpSrc.map((x,i)=>`<button type="button" class="cp-src" data-cp="week" data-i="${i}">${esc(x.label)}<small>${Object.keys(x.days).length} Gerichte: ${esc(cpNames(x.days))}</small></button>`).join("") : `<p class="empty">Noch keine andere Woche mit Gerichten vorhanden.</p>`}`);
@@ -5695,7 +5708,7 @@ function cpApply(i, mode){
 }
 function openDayFrom(g){
   const srcs = copySources(Math.floor(g/7));
-  openSheet(`<button class="btn small close" data-close>Schließen</button>
+  openSheet(`<button class="btn small close" data-close aria-label="Schließen" title="Schließen">✕</button>
     <h2>${dlong(g)}: Tag übernehmen</h2>
     <p class="sub">Tippe auf einen Tag, dessen Gericht du übernehmen möchtest.</p>
     ${srcs.length ? srcs.map(x=>`<details class="cp-wk"><summary>${esc(x.label)}</summary>${Object.keys(x.days).sort().map(i=>`<button type="button" class="cp-day" data-setday="${g}" data-dish="${x.days[i]}"><b>${DAYS[i]}</b><span>${esc(dish(x.days[i]).n)}</span></button>`).join("")}</details>`).join("") : `<p class="empty">Noch keine andere Woche mit Gerichten vorhanden.</p>`}`);
@@ -5709,7 +5722,7 @@ $("#sheetRoot").addEventListener("click",e=>{
     const i=+b.dataset.i, O=cpWeek*7, t0=cpWeek?0:(new Date().getDay()+6)%7;
     const have=[]; for(let k=t0;k<7;k++) if(state.days[O+k]!==undefined) have.push(k);
     if(!have.length){ cpApply(i,"free"); return; }
-    openSheet(`<button class="btn small close" data-close>Schließen</button>
+    openSheet(`<button class="btn small close" data-close aria-label="Schließen" title="Schließen">✕</button>
       <h2>Es sind schon Tage belegt</h2>
       <p class="sub">${have.length} Tag${have.length>1?"e":""} in dieser Woche ${have.length>1?"haben":"hat"} schon ein Gericht.</p>
       <button type="button" class="cp-src" data-cp="go" data-i="${i}" data-m="free">Nur freie Tage füllen<small>Belegte Tage bleiben wie sie sind</small></button>
@@ -5772,7 +5785,7 @@ function openPlanAssistant(){
 }
 function paRenderOpts(){
   const free = paFreeDays();
-  openSheet(`<button class="btn small close" data-close>Schließen</button>
+  openSheet(`<button class="btn small close" data-close aria-label="Schließen" title="Schließen">✕</button>
     <h2>Wie soll ${paWeek?"nächste":"diese"} Woche werden?</h2>
     <p class="sub">${free.length} freie${free.length>1?"":"r"} Tag${free.length>1?"e":""} – bereits geplante Tage bleiben unverändert. Danach kannst du einzelne Tage mit 🎲 tauschen oder mit × leeren. Ohne Auswahl wird gemischt.</p>
     <div class="pa-opts">${PA_OPTS.map(([k,l,s])=>`<button type="button" class="pa-opt" data-pa-opt="${k}" aria-pressed="${paSel.has(k)}">${l}<small>${s}</small></button>`).join("")}</div>
@@ -5863,7 +5876,7 @@ function shopText(){
 $("#copyList").addEventListener("click",()=>{
   const text = shopText(); if(!text){ toast("Nichts offen auf der Liste"); return; }
   navigator.clipboard.writeText(text).then(()=>toast("Einkaufsliste kopiert")).catch(()=>{
-    openSheet(`<button class="btn small close" data-close>Schließen</button><h2>Einkaufsliste</h2><p class="sub">Markieren und kopieren:</p><textarea id="copyArea" style="width:100%;height:50vh;font:14px var(--body);background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px">${esc(text)}</textarea>`);
+    openSheet(`<button class="btn small close" data-close aria-label="Schließen" title="Schließen">✕</button><h2>Einkaufsliste</h2><p class="sub">Markieren und kopieren:</p><textarea id="copyArea" style="width:100%;height:50vh;font:14px var(--body);background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px">${esc(text)}</textarea>`);
     $("#copyArea").select();
   });
 });
@@ -5880,13 +5893,13 @@ $("#sendKeep").addEventListener("click",()=>{
   const lines = keepLines();
   if(!lines.length){ toast("Nichts offen auf der Liste"); return; }
   const text = lines.join("\n");
-  const done = ()=>openSheet(`<button class="btn small close" data-close>Schließen</button>
+  const done = ()=>openSheet(`<button class="btn small close" data-close aria-label="Schließen" title="Schließen">✕</button>
     <h2>${lines.length} Einträge kopiert ✔</h2>
     <p class="sub">So kommen sie in eure geteilte Keep-Liste:</p>
     <ol class="keep-steps"><li>Google Keep öffnen und die Liste <b>„Einkaufsliste“</b> antippen</li><li>Auf <b>„+ Listenelement“</b> tippen</li><li>Lange ins Feld tippen → <b>Einfügen</b> – jede Zeile wird ein eigener Punkt</li></ol>
     <div class="bar" style="margin-top:12px"><a class="btn primary" href="https://keep.google.com/" target="_blank" rel="noopener">Google Keep öffnen</a></div>`);
   navigator.clipboard.writeText(text).then(done).catch(()=>{
-    openSheet(`<button class="btn small close" data-close>Schließen</button><h2>Für Keep kopieren</h2><p class="sub">Markieren und kopieren, dann in Keep einfügen:</p><textarea id="copyArea" style="width:100%;height:50vh;font:14px var(--body);background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px">${esc(text)}</textarea>`);
+    openSheet(`<button class="btn small close" data-close aria-label="Schließen" title="Schließen">✕</button><h2>Für Keep kopieren</h2><p class="sub">Markieren und kopieren, dann in Keep einfügen:</p><textarea id="copyArea" style="width:100%;height:50vh;font:14px var(--body);background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px">${esc(text)}</textarea>`);
     $("#copyArea").select();
   });
 });
@@ -5966,7 +5979,7 @@ function parseIngredients(text){
 function ingredientsToText(list){ return (list||[]).map(x=>(x.a?(fmtQty(x.a,x.u)+" "):"")+x.n).join("\n"); }
 function openRecipeForm(id){
   const r = id ? state.recipes[id] : null;
-  openSheet(`<button class="btn small close" data-close>Schließen</button>
+  openSheet(`<button class="btn small close" data-close aria-label="Schließen" title="Schließen">✕</button>
     <h2>${r?"Rezept bearbeiten":"Eigenes Rezept"}</h2>
     <div class="form">
       <label>Name<input type="text" id="rName" value="${r?esc(r.n):""}" placeholder="z. B. Omas Gemüsesuppe" autocomplete="off"></label>
@@ -6019,13 +6032,13 @@ let kOpen = {}, kTab = "like";
 const KSHORT = {like:"👍 Mögen wir",own:"⭐ Eigene",cooked:"🕒 Zuletzt"};
 function kitchenTabsHtml(){
   const list = kitchenList(kTab), g = KGROUPS.find(x=>x[0]===kTab);
-  return `<button class="btn small close" data-close>Schließen</button><h2>🍽 Meine Küche</h2><p class="sub">Was eure Familie mag, selbst eingetragen und zuletzt gekocht hat.</p>
+  return `<button class="btn small close" data-close aria-label="Schließen" title="Schließen">✕</button><h2>🍽 Meine Küche</h2><p class="sub">Was eure Familie mag, selbst eingetragen und zuletzt gekocht hat.</p>
     <div class="k-tabs" role="tablist">${KGROUPS.map(([k,l])=>`<button type="button" data-ktab="${k}" aria-pressed="${k===kTab}">${KSHORT[k]} <span class="k-n">${kitchenList(k).length}</span></button>`).join("")}</div>
     ${list.length ? `<div class="k-list">${list.map(kitchenRow).join("")}</div>` : `<div class="k-empty">${g[2]}</div>`}`;
 }
 function kitchenSheetHtml(){
   if(KUECHE_V==="C") return kitchenTabsHtml();
-  return `<button class="btn small close" data-close>Schließen</button><h2>🍽 Meine Küche</h2><p class="sub">Was eure Familie mag, selbst eingetragen und zuletzt gekocht hat.</p>` +
+  return `<button class="btn small close" data-close aria-label="Schließen" title="Schließen">✕</button><h2>🍽 Meine Küche</h2><p class="sub">Was eure Familie mag, selbst eingetragen und zuletzt gekocht hat.</p>` +
     KGROUPS.map(([k,l,empty])=>{ const list = kitchenList(k), open = !!kOpen[k], show = open ? list : list.slice(0,3);
       return `<div class="k-sec"><h3>${l}<small>${list.length}</small></h3>` + (list.length ? `<div class="k-list">${show.map(kitchenRow).join("")}</div>${list.length>3?`<button type="button" class="k-all" data-kall="${k}">${open?"Weniger anzeigen":"Alle "+list.length+" anzeigen"}</button>`:""}` : `<div class="k-empty">${empty}</div>`) + `</div>`; }).join("");
 }
@@ -6068,7 +6081,7 @@ function copyText(text, okMsg){
 function openSyncSheet(){
   if(sync){
     const link = joinLink();
-    openSheet(`<button class="btn small close" data-close>Schließen</button>
+    openSheet(`<button class="btn small close" data-close aria-label="Schließen" title="Schließen">✕</button>
       <h2>Familienplan</h2>
       <div class="syncinfo">
         <div><span>Status</span><b>${online?"✅ Verbunden – gemeinsamer Plan aktiv":"⚠️ Offline – Änderungen werden nachgeholt"}</b></div>
@@ -6091,7 +6104,7 @@ function openSyncSheet(){
     $("#endShare").addEventListener("click",e=>{ const b=e.currentTarget; if(!b.dataset.sure){ b.dataset.sure="1"; b.textContent="Wirklich beenden – neuer Plan, neuer Link"; b.classList.add("primary"); return; } sync = {c:sync.c, p:newPlanId()}; lsSet(sync, LS_SYNC); location.reload(); });
     return;
   }
-  openSheet(`<button class="btn small close" data-close>Schließen</button>
+  openSheet(`<button class="btn small close" data-close aria-label="Schließen" title="Schließen">✕</button>
     <h2>Gemeinsam planen</h2>
     <div class="syncinfo"><div><span>Status</span><b>Nur auf diesem Gerät gespeichert</b></div><div><span>Zugriff</span><b>Nur du auf diesem Gerät</b></div></div>
     <p>Dein Plan ist aktuell nur auf diesem Gerät gespeichert. Zum gemeinsamen Planen lädst du deine Familie ein: Alle sehen denselben Wochenplan, dieselbe Einkaufsliste und dieselben 👍/👎.</p>
@@ -6145,7 +6158,7 @@ $("#helpBtn").addEventListener("click",()=>{ $("#wkMenu").open=false; openHelp(f
 $("#setBtn").addEventListener("click",()=>{ $("#wkMenu").open=false; openSettings(); });
 /* ---------- Rezept hinzufügen (eine Auswahl statt drei Buttons) ---------- */
 function openAddSheet(){
-  openSheet(`<button class="btn small close" data-close>Schließen</button>
+  openSheet(`<button class="btn small close" data-close aria-label="Schließen" title="Schließen">✕</button>
     <h2>Rezept hinzufügen</h2>
     <p class="sub">Wie möchtest du es hinzufügen?</p>
     <div class="add-opts">
