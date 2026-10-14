@@ -1,0 +1,23 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Zahl der Einträge einer Liste (fehlt sie, zählt sie als leer)
+    function n(d, k, max) { return d.get(k, {}).size() <= max; }
+    function ok(d) {
+      return n(d,'days',30) && n(d,'checked',1500) && n(d,'hidden',1500)
+        && n(d,'extras',500) && n(d,'recipes',400) && n(d,'likes',1000)
+        && n(d,'cooked',500) && n(d,'notes',700) && n(d,'settings',60)
+        && n(d,'pantry',500);
+    }
+    match /plaene/{planId} {
+      allow get: if planId.size() >= 20;
+      allow create: if planId.size() >= 20
+        && request.resource.data.keys().hasOnly(['days','checked','hidden','extras','recipes','likes','cooked','notes','settings','pantry'])
+        && ok(request.resource.data);
+      allow update: if planId.size() >= 20
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['days','checked','hidden','extras','recipes','likes','cooked','notes','settings','pantry'])
+        && ok(request.resource.data);
+      allow list, delete: if false;
+    }
+  }
+}
