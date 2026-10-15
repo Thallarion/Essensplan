@@ -1330,7 +1330,39 @@ nav.tabs .count{background:var(--tomato);color:#fff}
   .sheet{border-radius:24px 0 0 24px}
 }
 </style>
-<script>(function(){ try{ var l=localStorage.getItem("essensplan-look"), m={kochbuch:"kochCss",comic:"comicCss",atelier:"atelierCss"}; if(l==="notiz") l="comic"; if(m[l]){ document.getElementById(m[l]).media="all"; document.documentElement.setAttribute("data-look",l); } }catch(e){} })();</script>
+<style id="mixCss" media="not all">
+/* ===== Design „Comic-Atelier": Comic-Papier und dicke Umrisse + gezeichnete Atelier-Szenen ===== */
+.at-banner{border:2px solid var(--ol);border-radius:var(--wob);overflow:hidden;height:104px;margin:2px 0 14px;box-shadow:var(--shadow)}
+.at-banner svg{display:block;width:100%;height:100%}
+.day,.daybig,.idea{padding-right:112px;min-height:92px}
+.daybig{min-height:150px;padding-right:14px}
+.daybig .dish{padding-right:118px}
+#ideas .idea{padding-right:12px;min-height:0}
+#ideas .idea .plan-btn{font-size:0!important;min-height:36px;padding:6px 12px!important}
+#ideas .idea .plan-btn::after{content:"＋ Plan";font:700 13px var(--body)}
+.atl{position:absolute;right:12px;top:50%;width:88px;height:88px;margin-top:-44px;border:2px solid var(--ol);border-radius:12px 14px 11px 13px / 13px 11px 14px 12px;box-shadow:2px 2px 0 var(--ol);pointer-events:none;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.atl svg{width:104%;height:104%;display:block;margin:-2px}
+.daybig .atl{top:16px;margin-top:0;width:104px;height:104px;right:14px}
+.atl::before,.at-hero::before{content:"";position:absolute;left:0;right:0;bottom:0;height:36%;border-top:2px solid var(--ol);background:repeating-linear-gradient(90deg,rgba(214,96,70,.3) 0 7px,transparent 7px 14px),repeating-linear-gradient(0deg,rgba(214,96,70,.3) 0 7px,transparent 7px 14px),#FFF7EA}
+.atl svg,.at-hero svg{position:relative;z-index:1}
+.at-hero{position:relative;overflow:hidden;margin:-18px -18px 14px;height:178px;display:flex;align-items:center;justify-content:center;border-bottom:2px solid var(--ol);background:radial-gradient(circle at 50% 40%,rgba(255,255,255,.75),rgba(255,255,255,0) 62%),var(--bg,#EDE3D0)}
+.at-hero svg{filter:drop-shadow(0 4px 0 rgba(42,36,24,.18))}
+.at-hero>svg:not(.atp){height:164px;width:auto;display:block}
+.at-hero .atp{position:absolute;bottom:20px;height:96px;width:auto;z-index:1}
+.at-hero .atp.l{left:10px}.at-hero .atp.r{right:10px}
+.sheet:has(.at-hero) .btn.close[aria-label="Schließen"]{position:absolute;top:12px;right:12px;z-index:3;background:#FFFDF3;color:#2A2418;border:2px solid #2A2418;box-shadow:2px 2px 0 #2A2418;float:none}
+.sheet h2{line-height:1.05;margin-bottom:8px}
+#ingList{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:8px}
+#ingList>li{background:var(--sunk);border:2px solid var(--ol);border-radius:var(--wob);padding:9px 14px;list-style:none}
+#ingList>li strong{color:var(--tomato)}
+#ingList>li.ing-box{background:transparent;border:2px dashed var(--line)}
+.steps-list{gap:12px}
+.steps-list li{background:var(--sunk);border:2px solid var(--ol);border-radius:var(--wob);padding:14px 14px 14px 62px;line-height:1.5}
+.steps-list li::before{left:14px;top:12px;width:34px;height:34px;font:700 22px var(--display);background:var(--btn);color:var(--btn-ink);border:2px solid var(--ol)}
+.steps-list li.done{opacity:.6}
+.empty,#emptyHint{text-align:center}
+</style>
+<script>(function(){ try{ var l=localStorage.getItem("essensplan-look"), m={kochbuch:"kochCss",comic:"comicCss",atelier:"atelierCss",comicat:"comicCss"}; if(l==="notiz") l="comic"; if(m[l]){ document.getElementById(m[l]).media="all"; if(l==="comicat") document.getElementById("mixCss").media="all"; document.documentElement.setAttribute("data-look",l); } }catch(e){} })();</script>
 <script data-goatcounter="https://wasessenwir.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
@@ -4883,7 +4915,7 @@ const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","
 /* ---------- Pro-Tipps: ein Tipp pro Tag, der Reihe nach, nur beim Start; abschaltbar (pro Gerät) ---------- */
 const TIPS = [["Kochmodus", "Tippe im Rezept auf „Kochmodus“: große Schrift, Zutaten und Schritte zum Abhaken, der Bildschirm bleibt an. Wenn du etwas abhakst, scrollt es von selbst zum Nächsten."], ["Einkauf", "Das 🏠 hinter einer Zutat in der Einkaufsliste nimmt sie von der Liste, weil ihr sie zuhause habt. „Nur diesmal“ und „Angebrochen“ holst du unter „Schon zuhause“ mit dem 🛒 zurück."], ["Personenzahl", "Im Rezept änderst du mit − und + die Personenzahl. Die Zutaten und die Mengen in den Schritten rechnen sich automatisch mit um."], ["Vorrat", "Zutaten, die immer da sind, zum Beispiel Zwiebeln: Tippe in der Einkaufsliste beim 🏠 auf „Immer“. Dann tauchen sie nie wieder auf der Liste auf, beeinflussen aber keine Rezeptvorschläge. Ändern kannst du das unter „Vorrat anpassen“ ganz unten in der Liste."], ["Alltag-Filter", "Unter Ideen findest du bei „Alle Filter“ den Reiter „Zeit & Alltag“: zum Beispiel Ofengericht, ein Topf, gut einzufrieren oder mit wenigen Zutaten."], ["Supermarkt", "Die Einkaufsliste lässt sich nach Abteilung sortieren. In den Einstellungen stellst du die Reihenfolge so ein, wie euer Supermarkt aufgebaut ist."], ["Reste", "„Was haben wir noch zuhause?“ in den Ideen: Tippe ein, was im Kühlschrank liegt, und die App zeigt dir Gerichte, die dazu passen."], ["Liste teilen", "Mit „Teilen“ in der Einkaufsliste schickst du die offenen Artikel zum Beispiel direkt an Google Keep oder an deine Familie."], ["Link teilen", "Tippe im Rezept auf „Link teilen“, um es per Nachricht zu verschicken. Wer den Link öffnet, sieht sofort das Rezept."], ["Zutaten kopieren", "Im Rezept kopiert „Zutaten kopieren“ die Mengen für eure Personenzahl, bereit zum Einfügen in eine Notiz oder eine Listen-App."], ["Leere Tage", "Mit „Leere Tage füllen“ schlägt die App für alle freien Tage Gerichte vor. Unter der Woche sind es nur schnelle Gerichte, bevorzugt vegetarisch."], ["Design", "In den Einstellungen wählst du zwischen hellem und dunklem Design, oder die App folgt automatisch deinem Handy."], ["Notiz", "Im Rezept hältst du unter „Unsere Notiz“ fest, was ihr beim nächsten Mal anders macht, zum Beispiel weniger Salz."], ["Lieblinge", "In den Einstellungen wählst du Lieblingskategorien. Sie kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran."], ["Einsenden", "Unter Ideen kannst du über „Rezept hinzufügen“ ein Rezept als Foto, PDF oder Link einsenden. Nach der Prüfung steht es für alle in der App."], ["Bewerten", "Nach dem Essen fragt die App, wie es geschmeckt hat. Mit 👍 und 👎 merkt ihr euch eure Favoriten."], ["Offline", "Öffne die App einmal mit Netz und danach noch einmal: Dann startet sie auch ohne Empfang. Im Supermarkt kannst du die Einkaufsliste abhaken und ergänzen, beim nächsten Netz gleicht sie sich ab."], ["Eigene Filter", "Allergene und Vorlieben gelten standardmäßig nur auf deinem Handy. Mit dem Schalter „Filter mit Familie teilen“ in den Einstellungen nutzt ihr sie gemeinsam. Der Vorrat wird immer geteilt."], ["Sicherung", "Unter Einstellungen → Daten sichern speicherst du Plan, eigene Rezepte und Einstellungen als Datei, zum Beispiel vor einem Handywechsel."], ["App installieren", "Android (Chrome): oben rechts ⋮ → „App installieren“. iPhone (Safari): unten auf das Teilen-Symbol tippen → „Zum Home-Bildschirm“ → „Hinzufügen“. Danach startet Was essen wir? wie eine normale App, ohne Browserleiste."]];
 const LS_TIPS = "essensplan-tips";
-const APP_VERSION = "v1.20.1";
+const APP_VERSION = "v1.21.0";
 document.getElementById("appVer").textContent = "Version " + APP_VERSION;
 const LS_HERO = "essensplan-hero";
 function heroClosed(){ try{ return !!localStorage.getItem(LS_HERO); }catch(e){ return false; } }
@@ -4905,7 +4937,7 @@ function maybeShowTip(){
   $("#tipOff").addEventListener("click",e=>{ e.stopPropagation(); tipsSave({...tipsState(), off:true}); closeSheet(); toast("Tipps ausgeschaltet – in den Einstellungen wieder einschaltbar"); });
 }
 function themeMode(){ try{ const m = localStorage.getItem("essensplan-theme"); return m==="light"||m==="dark" ? m : "auto"; }catch(e){ return "auto"; } }
-function lookMode(){ try{ const l=localStorage.getItem("essensplan-look"); return l==="kochbuch"||l==="comic"||l==="atelier" ? l : l==="notiz" ? "comic" : "klassisch"; }catch(e){ return "klassisch"; } }
+function lookMode(){ try{ const l=localStorage.getItem("essensplan-look"); return l==="kochbuch"||l==="comic"||l==="atelier"||l==="comicat" ? l : l==="notiz" ? "comic" : "klassisch"; }catch(e){ return "klassisch"; } }
 const EMOJI_RE=/[\p{Extended_Pictographic}\p{Regional_Indicator}\u200d\ufe0f\u20e3]+/gu;
 const EMOJI_ONLY={"🏠":"Vorrat","🏷":"Kategorie","👍":"✓ Gut","👎":"✕ Nicht gut","🎲":"Tauschen","✏️":"Ändern","⭐":"Favorit","☆":"Favorit","★":"Favorit"};
 function stripEmoji(root){
@@ -5257,16 +5289,16 @@ function startAtelier(){
   new MutationObserver(()=>{ if(busy) return; busy=true; requestAnimationFrame(()=>{ try{ decorateAtelier(); }finally{ busy=false; } }); }).observe(document.body,{childList:true,subtree:true});
   decorateAtelier();
 }
-function themeCols(){ const l=lookMode(); return l==="atelier" ? ["#FAF3E4","#1B1712"] : l==="comic" ? ["#F3E4C3","#1E1A12"] : l==="kochbuch" ? ["#FBFAF6","#16130F"] : ["#F7F1E6","#1A1612"]; }
+function themeCols(){ const l=lookMode(); return l==="atelier" ? ["#FAF3E4","#1B1712"] : l==="comic"||l==="comicat" ? ["#F3E4C3","#1E1A12"] : l==="kochbuch" ? ["#FBFAF6","#16130F"] : ["#F7F1E6","#1A1612"]; }
 function applyLook(k){
   const was=lookMode();
-  try{ if(k==="kochbuch"||k==="comic"||k==="atelier") localStorage.setItem("essensplan-look",k); else localStorage.removeItem("essensplan-look"); }catch(e){}
+  try{ if(k==="kochbuch"||k==="comic"||k==="atelier"||k==="comicat") localStorage.setItem("essensplan-look",k); else localStorage.removeItem("essensplan-look"); }catch(e){}
   const c = document.getElementById("kochCss"); if(c) c.media = k==="kochbuch" ? "all" : "not all";
   const m3 = document.getElementById("atelierCss"); if(m3) m3.media = k==="atelier" ? "all" : "not all";
-  const m2 = document.getElementById("comicCss"); if(m2) m2.media = k==="comic" ? "all" : "not all";
-  if(k==="kochbuch"||k==="comic"||k==="atelier") document.documentElement.setAttribute("data-look",k); else document.documentElement.removeAttribute("data-look");
+  const m2 = document.getElementById("comicCss"); if(m2) m2.media = k==="comic"||k==="comicat" ? "all" : "not all"; const m4 = document.getElementById("mixCss"); if(m4) m4.media = k==="comicat" ? "all" : "not all";
+  if(k==="kochbuch"||k==="comic"||k==="atelier"||k==="comicat") document.documentElement.setAttribute("data-look",k); else document.documentElement.removeAttribute("data-look");
   applyTheme(themeMode());
-  if(k==="kochbuch" || was==="kochbuch" || k==="comic" || was==="comic" || k==="atelier" || was==="atelier") location.reload();
+  if(k==="kochbuch" || was==="kochbuch" || k==="comic" || was==="comic" || k==="atelier" || was==="atelier" || k==="comicat" || was==="comicat") location.reload();
 }
 function applyTheme(m){
   const root = document.documentElement;
@@ -5280,7 +5312,7 @@ function applyTheme(m){
 if(lookMode()!=="klassisch") applyTheme(themeMode());
 if(lookMode()==="kochbuch") startNoEmoji();
 if(lookMode()==="comic") startDoodles();
-if(lookMode()==="atelier") startAtelier();
+if(lookMode()==="atelier"||lookMode()==="comicat") startAtelier();
 function openSettings(toPantry){
   const s = S();
   openSheet(`<button class="btn small close" data-close aria-label="Schließen" title="Schließen">✕</button>
@@ -5334,8 +5366,8 @@ function openSettings(toPantry){
     <p class="sub">${HINT_TYPES.map(([,l,d])=>`${l.replace(/^\S+\s/,"")}: ${d}.`).join(" ")}</p>
     <h2 class="set-grp">E. App und Gerät</h2>
     <h3>🎨 Aussehen</h3>
-    <p class="sub">„Klassisch“ ist ruhig und grün. „Kochbuch“ ist schlicht und neutral wie eine Buchseite, ohne Emojis. „Comic“ ist bunt mit dicken Umrissen und kleinen Zeichnungen zu den Gerichten. „Atelier“ ist warm und weich, mit gezeichneten Szenen zu jedem Gericht und einer großen Bildseite im Rezept (die Seite lädt beim Wechseln neu). Gilt nur für dieses Gerät.</p>
-    <div class="filters" id="setLook">${[["klassisch","Klassisch"],["kochbuch","📖 Kochbuch"],["comic","✏️ Comic"],["atelier","🎨 Atelier"]].map(([k,l])=>`<button type="button" data-setlook="${k}" aria-pressed="${lookMode()===k}">${l}</button>`).join("")}</div>
+    <p class="sub">„Klassisch“ ist ruhig und grün. „Kochbuch“ ist schlicht und neutral wie eine Buchseite, ohne Emojis. „Comic“ ist bunt mit dicken Umrissen und kleinen Zeichnungen zu den Gerichten. „Atelier“ ist warm und weich, mit gezeichneten Szenen zu jedem Gericht und einer großen Bildseite im Rezept (die Seite lädt beim Wechseln neu). „Comic-Atelier“ mischt beides: Comic-Papier mit dicken Umrissen und die gezeichneten Szenen. Gilt nur für dieses Gerät.</p>
+    <div class="filters" id="setLook">${[["klassisch","Klassisch"],["kochbuch","📖 Kochbuch"],["comic","✏️ Comic"],["atelier","🎨 Atelier"],["comicat","🖍 Comic-Atelier"]].map(([k,l])=>`<button type="button" data-setlook="${k}" aria-pressed="${lookMode()===k}">${l}</button>`).join("")}</div>
     <h3>🌗 Hell oder dunkel</h3>
     <p class="sub">Hell, dunkel oder wie dein Handy eingestellt ist. Gilt nur für dieses Gerät.</p>
     <div class="filters" id="setTheme">${[["auto","Automatisch"],["light","☀️ Hell"],["dark","🌙 Dunkel"]].map(([k,l])=>`<button type="button" data-settheme="${k}" aria-pressed="${themeMode()===k}">${l}</button>`).join("")}</div>
@@ -5518,7 +5550,7 @@ function openHelp(first){
       ${img("einstellungen","Einstellungen")}
       <p>Über <b>⋯ Mehr → Einstellungen</b> oben rechts. Filter, Allergene, Vorlieben, Region sowie Erwachsene und Kinder gelten <b>nur auf deinem Gerät</b>, außer du schaltest oben <b>„Filter mit Familie teilen“</b> ein (nur sichtbar, wenn ihr einen gemeinsamen Plan nutzt). Design, Tipps und Hinweise gelten immer nur für dein Gerät.</p>
       <ul>
-        <li><b>🎨 Aussehen:</b> „Klassisch“, „Kochbuch“ (schlicht, ohne Emojis), „Comic“ (bunt, mit kleinen Zeichnungen) oder „Atelier“ (warm, mit gezeichneten Szenen). <b>🌗 Hell oder dunkel:</b> Hell, Dunkel oder wie dein Handy. Beides gilt nur für dieses Gerät.</li>
+        <li><b>🎨 Aussehen:</b> „Klassisch“, „Kochbuch“ (schlicht, ohne Emojis), „Comic“ (bunt, mit kleinen Zeichnungen) oder „Atelier“ (warm, mit gezeichneten Szenen) oder „Comic-Atelier“ (beides gemischt). <b>🌗 Hell oder dunkel:</b> Hell, Dunkel oder wie dein Handy. Beides gilt nur für dieses Gerät.</li>
         <li><b>💡 Tipps:</b> Einmal am Tag zeigt die App beim Start einen kurzen Pro-Tipp, der Reihe nach. Hier schaltest du sie aus und wieder ein. Gilt nur für dieses Gerät.</li>
         <li><b>Erwachsene und Kinder:</b> Rezepte und Einkaufsliste rechnen alle Mengen darauf um.</li>
         <li><b>🥩 Fleisch</b> und <b>🐟 Fisch:</b> getrennt einstellbar, wie oft pro Woche es Fleisch bzw. Fisch geben darf (Oft, Ab und zu, Selten, Nie). Das steuert Würfeln, „Leere Tage füllen“ und den Plan-Assistenten.</li>
