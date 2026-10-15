@@ -1300,6 +1300,12 @@ nav.tabs .count{background:var(--tomato);color:#fff}
 .sheet{background:var(--surface);border-radius:28px 28px 0 0;overflow-x:hidden}
 .at-hero{position:relative;margin:-18px -18px 14px;height:178px;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,rgba(255,255,255,.75),rgba(255,255,255,0) 62%),var(--bg,#EDE3D0)}
 .at-hero svg{height:158px;width:auto;display:block;filter:drop-shadow(0 6px 8px rgba(60,40,10,.18))}
+.atl,.at-hero{overflow:hidden}
+.atl::before,.at-hero::before{content:"";position:absolute;left:0;right:0;bottom:0;height:36%;border-top:2px solid rgba(58,42,24,.3);background:repeating-linear-gradient(90deg,rgba(214,96,70,.3) 0 7px,transparent 7px 14px),repeating-linear-gradient(0deg,rgba(214,96,70,.3) 0 7px,transparent 7px 14px),#FFF7EA}
+.atl svg,.at-hero svg{position:relative;z-index:1}
+.at-hero .atp{position:absolute;bottom:20px;height:96px;width:auto;z-index:1;filter:drop-shadow(0 4px 5px rgba(60,40,10,.18))}
+.at-hero .atp.l{left:10px}.at-hero .atp.r{right:10px}
+.at-hero>svg:not(.atp){height:164px}
 .sheet:has(.at-hero) .btn.close[aria-label="Schließen"]{position:absolute;top:12px;right:12px;z-index:3;background:rgba(255,255,255,.92);color:#2B2218;box-shadow:0 3px 10px rgba(60,40,10,.25);float:none}
 .sheet h2{font-size:30px;line-height:1.08;margin-bottom:8px}
 #ingList{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:8px}
@@ -4874,7 +4880,7 @@ const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","
 /* ---------- Pro-Tipps: ein Tipp pro Tag, der Reihe nach, nur beim Start; abschaltbar (pro Gerät) ---------- */
 const TIPS = [["Kochmodus", "Tippe im Rezept auf „Kochmodus“: große Schrift, Zutaten und Schritte zum Abhaken, der Bildschirm bleibt an. Wenn du etwas abhakst, scrollt es von selbst zum Nächsten."], ["Einkauf", "Das 🏠 hinter einer Zutat in der Einkaufsliste nimmt sie von der Liste, weil ihr sie zuhause habt. „Nur diesmal“ und „Angebrochen“ holst du unter „Schon zuhause“ mit dem 🛒 zurück."], ["Personenzahl", "Im Rezept änderst du mit − und + die Personenzahl. Die Zutaten und die Mengen in den Schritten rechnen sich automatisch mit um."], ["Vorrat", "Zutaten, die immer da sind, zum Beispiel Zwiebeln: Tippe in der Einkaufsliste beim 🏠 auf „Immer“. Dann tauchen sie nie wieder auf der Liste auf, beeinflussen aber keine Rezeptvorschläge. Ändern kannst du das unter „Vorrat anpassen“ ganz unten in der Liste."], ["Alltag-Filter", "Unter Ideen findest du bei „Alle Filter“ den Reiter „Zeit & Alltag“: zum Beispiel Ofengericht, ein Topf, gut einzufrieren oder mit wenigen Zutaten."], ["Supermarkt", "Die Einkaufsliste lässt sich nach Abteilung sortieren. In den Einstellungen stellst du die Reihenfolge so ein, wie euer Supermarkt aufgebaut ist."], ["Reste", "„Was haben wir noch zuhause?“ in den Ideen: Tippe ein, was im Kühlschrank liegt, und die App zeigt dir Gerichte, die dazu passen."], ["Liste teilen", "Mit „Teilen“ in der Einkaufsliste schickst du die offenen Artikel zum Beispiel direkt an Google Keep oder an deine Familie."], ["Link teilen", "Tippe im Rezept auf „Link teilen“, um es per Nachricht zu verschicken. Wer den Link öffnet, sieht sofort das Rezept."], ["Zutaten kopieren", "Im Rezept kopiert „Zutaten kopieren“ die Mengen für eure Personenzahl, bereit zum Einfügen in eine Notiz oder eine Listen-App."], ["Leere Tage", "Mit „Leere Tage füllen“ schlägt die App für alle freien Tage Gerichte vor. Unter der Woche sind es nur schnelle Gerichte, bevorzugt vegetarisch."], ["Design", "In den Einstellungen wählst du zwischen hellem und dunklem Design, oder die App folgt automatisch deinem Handy."], ["Notiz", "Im Rezept hältst du unter „Unsere Notiz“ fest, was ihr beim nächsten Mal anders macht, zum Beispiel weniger Salz."], ["Lieblinge", "In den Einstellungen wählst du Lieblingskategorien. Sie kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran."], ["Einsenden", "Unter Ideen kannst du über „Rezept hinzufügen“ ein Rezept als Foto, PDF oder Link einsenden. Nach der Prüfung steht es für alle in der App."], ["Bewerten", "Nach dem Essen fragt die App, wie es geschmeckt hat. Mit 👍 und 👎 merkt ihr euch eure Favoriten."], ["Offline", "Öffne die App einmal mit Netz und danach noch einmal: Dann startet sie auch ohne Empfang. Im Supermarkt kannst du die Einkaufsliste abhaken und ergänzen, beim nächsten Netz gleicht sie sich ab."], ["Eigene Filter", "Allergene und Vorlieben gelten standardmäßig nur auf deinem Handy. Mit dem Schalter „Filter mit Familie teilen“ in den Einstellungen nutzt ihr sie gemeinsam. Der Vorrat wird immer geteilt."], ["Sicherung", "Unter Einstellungen → Daten sichern speicherst du Plan, eigene Rezepte und Einstellungen als Datei, zum Beispiel vor einem Handywechsel."], ["App installieren", "Android (Chrome): oben rechts ⋮ → „App installieren“. iPhone (Safari): unten auf das Teilen-Symbol tippen → „Zum Home-Bildschirm“ → „Hinzufügen“. Danach startet Was essen wir? wie eine normale App, ohne Browserleiste."]];
 const LS_TIPS = "essensplan-tips";
-const APP_VERSION = "v1.19.8";
+const APP_VERSION = "v1.19.9";
 document.getElementById("appVer").textContent = "Version " + APP_VERSION;
 const LS_HERO = "essensplan-hero";
 function heroClosed(){ try{ return !!localStorage.getItem(LS_HERO); }catch(e){ return false; } }
@@ -4956,30 +4962,151 @@ function startDoodles(){
   decorateDoodles();
 }
 /* Atelier: gezeichnete Szenen zu den Gerichten und der Kopfbereich */
-const AT_SH = '<ellipse cx="80" cy="106" rx="52" ry="7" fill="#3A2A18" opacity=".14"/>';
-const AT_DEFS = '<defs><linearGradient id="atB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E6DCC8"/></linearGradient><linearGradient id="atBl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#DCE9F3"/><stop offset="1" stop-color="#A9C4D9"/></linearGradient><linearGradient id="atG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C9E2B0"/><stop offset="1" stop-color="#8DBA6E"/></linearGradient><linearGradient id="atP" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6D6A66"/><stop offset="1" stop-color="#3E3C3A"/></linearGradient></defs>';
+const AT_SH = '<ellipse cx="80" cy="108" rx="56" ry="7" fill="#3A2A18" opacity=".2"/>';
+const AT_DEFS = '<defs>'
+ +'<linearGradient id="atB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E4D9C4"/></linearGradient>'
+ +'<linearGradient id="atBl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E3EEF7"/><stop offset="1" stop-color="#9DBBD3"/></linearGradient>'
+ +'<linearGradient id="atG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CDE6B4"/><stop offset="1" stop-color="#86B568"/></linearGradient>'
+ +'<linearGradient id="atP" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#77746F"/><stop offset="1" stop-color="#37352F"/></linearGradient>'
+ +'<linearGradient id="atBun" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2BE6B"/><stop offset="1" stop-color="#D9923F"/></linearGradient>'
+ +'<radialGradient id="atSoup" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#F7A94F"/><stop offset="1" stop-color="#D8661F"/></radialGradient>'
+ +'<radialGradient id="atCheese" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#FFEBA5"/><stop offset="1" stop-color="#F0BC47"/></radialGradient>'
+ +'<radialGradient id="atSauce" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#E8573F"/><stop offset="1" stop-color="#B72E1F"/></radialGradient>'
+ +'<radialGradient id="atRice" cx=".4" cy=".3" r=".8"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#EDE6D6"/></radialGradient>'
+ +'<radialGradient id="atPlate" cx=".4" cy=".3" r=".85"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E9DFCB"/></radialGradient>'
+ +'</defs>';
 const AT_S = 'stroke="#3A2A18" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"';
+const atLeaf=(x,y,r=0,s=1,c="#7DB05B")=>`<g transform="translate(${x} ${y}) rotate(${r}) scale(${s})"><path d="M0 0C5-9 17-9 21 0 17 9 5 9 0 0Z" fill="${c}" stroke-width="2"/><path d="M2 0H18" stroke="#4E7E3A" stroke-width="1.2" fill="none"/></g>`;
+const atTom=(x,y,r=7)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="url(#atSauce)" stroke-width="1.8"/><path d="M${x-r*.4} ${y-r*.4}q${r*.3}-${r*.4} ${r*.7}-${r*.4}" stroke="#FFD5CB" stroke-width="1.6" fill="none"/><path d="M${x-3} ${y-r+1}l3 3 3-3" stroke="#4E7E3A" stroke-width="2" fill="none"/>`;
+const atSteam=(xs,y,h=20)=>xs.map(x=>`<path d="M${x} ${y}q-7-${h/3} 0-${h*.66}t0-${h/3}" stroke="#FFFFFF" stroke-opacity=".9" stroke-width="3.6" fill="none"/>`).join("");
 const AT_SCENE = {
- soup:`<g ${AT_S}>${AT_SH}<path d="M28 56H132C132 88 110 104 80 104C50 104 28 88 28 56Z" fill="url(#atB)"/><ellipse cx="80" cy="56" rx="52" ry="10" fill="#F4EEDD"/><ellipse cx="80" cy="56" rx="45" ry="7.5" fill="#E4772E"/><path d="M52 55q8-3 14 0M92 57q10-3 18 0" stroke="#F6B26B" stroke-width="2" fill="none"/><circle cx="64" cy="57" r="4" fill="#F2C94C" stroke-width="1.6"/><circle cx="96" cy="55" r="3.6" fill="#7DB05B" stroke-width="1.6"/><circle cx="80" cy="58" r="3" fill="#C93B2B" stroke-width="1.6"/><path d="M62 40q-7-9 0-17M80 38q-7-9 0-17M98 40q-7-9 0-17" stroke="#FFFFFF" stroke-opacity=".85" stroke-width="4" fill="none"/><path d="M132 36l-26 26" stroke-width="3.4"/><ellipse cx="136" cy="32" rx="7" ry="5" transform="rotate(-45 136 32)" fill="#C79A5B"/><path d="M40 66q6 24 30 30" stroke="#FFFFFF" stroke-opacity=".6" stroke-width="3" fill="none"/></g>`,
- pasta:`<g ${AT_S}>${AT_SH}<path d="M28 58H132C132 88 110 104 80 104C50 104 28 88 28 58Z" fill="url(#atBl)"/><ellipse cx="80" cy="58" rx="52" ry="10" fill="#EAF2F8"/><path d="M42 56c6-18 16-20 24-8 6-14 24-18 30-4 8-12 24-8 24 12-14 8-72 8-78 0Z" fill="#F2C75C"/><path d="M50 54q10-10 20 0t20 0 18-2M58 48q8-6 16 0t16 0" stroke="#D9A236" stroke-width="2" fill="none"/><path d="M60 44c4-12 22-12 24-2 2 8-8 14-14 12-6-1-12-4-10-10Z" fill="#D8412F"/><path d="M92 38l6-10 8 6-6 8z" fill="#6AA84F"/><path d="M104 40l7-8 6 7-7 6z" fill="#8BC06C"/><path d="M40 70q6 22 30 28" stroke="#FFFFFF" stroke-opacity=".5" stroke-width="3" fill="none"/></g>`,
- pizza:`<g ${AT_S}><ellipse cx="80" cy="104" rx="52" ry="7" fill="#3A2A18" opacity=".14"/><circle cx="80" cy="58" r="46" fill="#D9984A"/><circle cx="80" cy="58" r="38" fill="#F6D77A"/><path d="M80 20v76M42 58h76M53 31l54 54M107 31L53 85" stroke="#E0A93E" stroke-width="1.4" fill="none"/><circle cx="62" cy="42" r="8" fill="#C93B2B"/><circle cx="62" cy="42" r="3" fill="#E8776A" stroke="none"/><circle cx="98" cy="46" r="8" fill="#C93B2B"/><circle cx="98" cy="46" r="3" fill="#E8776A" stroke="none"/><circle cx="76" cy="72" r="8" fill="#C93B2B"/><circle cx="76" cy="72" r="3" fill="#E8776A" stroke="none"/><circle cx="104" cy="74" r="6" fill="#C93B2B"/><path d="M82 52l8-8 7 8-8 7z" fill="#6AA84F"/><path d="M52 66l7-7 6 7-7 6z" fill="#8BC06C"/></g>`,
- wrap:`<g ${AT_S}>${AT_SH}<path d="M26 82C26 40 134 40 134 82C134 98 26 98 26 82Z" fill="#EBCB8F"/><path d="M26 82C40 66 120 66 134 82" fill="#F4DDA8"/><path d="M34 62c8-16 20-16 28-6 6-10 20-14 28-4 8-8 22-6 30 6-18 10-62 10-86 4Z" fill="url(#atG)"/><circle cx="58" cy="60" r="6" fill="#D8412F"/><circle cx="84" cy="56" r="5.4" fill="#F2C94C"/><circle cx="106" cy="62" r="6" fill="#D8412F"/><path d="M40 86q40 10 80 0" stroke="#C79A5B" stroke-width="2" fill="none"/></g>`,
- salad:`<g ${AT_S}>${AT_SH}<path d="M28 60H132C132 90 110 104 80 104C50 104 28 90 28 60Z" fill="url(#atBl)"/><path d="M30 62C24 36 44 28 54 40 52 22 82 16 90 32 100 20 124 30 118 50 130 52 132 62 130 64Z" fill="url(#atG)"/><path d="M52 42q10 6 6 18M92 34q-8 10 0 24M110 48q-8 4-6 12" stroke="#5E8C45" stroke-width="2" fill="none"/><circle cx="70" cy="54" r="8" fill="#D8412F"/><path d="M66 52l8 4" stroke="#F4A59A" stroke-width="2"/><circle cx="100" cy="56" r="6" fill="#F2C94C"/><circle cx="46" cy="58" r="5" fill="#E9B96A"/><path d="M118 34l18-14M132 20l8 8" stroke-width="3"/></g>`,
- pan:`<g ${AT_S}><ellipse cx="74" cy="106" rx="52" ry="7" fill="#3A2A18" opacity=".14"/><path d="M118 62l36-10" stroke-width="9" stroke="#3A2A18"/><path d="M118 62l36-10" stroke-width="5" stroke="#8A6B4A"/><circle cx="74" cy="60" r="46" fill="url(#atP)"/><circle cx="74" cy="60" r="38" fill="#F1DCB0"/><circle cx="56" cy="50" r="8" fill="#E8872F"/><circle cx="56" cy="50" r="3" fill="#F6B26B" stroke="none"/><circle cx="86" cy="44" r="9" fill="#6AA84F"/><circle cx="92" cy="72" r="8" fill="#D8412F"/><path d="M60 74q8-6 16 2" stroke="#6AA84F" stroke-width="5" fill="none"/><path d="M96 54l8 4" stroke="#F2C94C" stroke-width="5" fill="none"/><path d="M62 24q-6-8 0-14M80 22q-6-8 0-14" stroke="#FFFFFF" stroke-opacity=".9" stroke-width="3.4" fill="none"/></g>`,
- rice:`<g ${AT_S}>${AT_SH}<path d="M30 60H130C130 90 108 104 80 104C52 104 30 90 30 60Z" fill="url(#atBl)"/><path d="M32 68h96M36 78h88" stroke="#FFFFFF" stroke-opacity=".55" stroke-width="3" fill="none"/><ellipse cx="80" cy="60" rx="50" ry="9" fill="#F4F7FA"/><path d="M36 60C36 26 124 26 124 60Z" fill="#FFFFFF"/><g fill="#3A2A18" stroke="none"><circle cx="64" cy="46" r="1.6"/><circle cx="82" cy="40" r="1.6"/><circle cx="98" cy="48" r="1.6"/><circle cx="76" cy="52" r="1.6"/><circle cx="90" cy="54" r="1.6"/></g><path d="M60 40l6-4M100 42l6-2" stroke="#6AA84F" stroke-width="4" fill="none"/><path d="M116 18l-30 40M126 22l-30 40" stroke="#C79A5B" stroke-width="3.2"/></g>`,
- plate:`<g ${AT_S}>${AT_SH}<circle cx="80" cy="60" r="46" fill="url(#atB)"/><circle cx="80" cy="60" r="31" fill="#F7F1E4" stroke-width="1.6"/><path d="M22 28v28M28 28v28M34 28v28M22 56h12M28 56v36" stroke-width="2.6"/><path d="M138 28c-8 8-8 24 0 28v36" stroke-width="2.6"/><path d="M70 52c6-12 24-10 22 4-2 12-20 14-24 4Z" fill="#8BC06C"/><circle cx="92" cy="68" r="5" fill="#D8412F"/></g>`
+ soup:`<g ${AT_S}>${AT_SH}`
+  +`<ellipse cx="80" cy="102" rx="46" ry="5" fill="#E3D6BD" stroke-width="1.6"/>`
+  +`<path d="M26 54H134C134 88 112 104 80 104C48 104 26 88 26 54Z" fill="url(#atB)"/>`
+  +`<path d="M34 76q46 12 92 0" stroke="#5E8DB8" stroke-width="3" fill="none"/><path d="M40 84q40 10 80 0" stroke="#5E8DB8" stroke-width="1.6" stroke-dasharray="1 5" fill="none"/>`
+  +`<ellipse cx="80" cy="54" rx="54" ry="11" fill="#F4EEDD"/><ellipse cx="80" cy="55" rx="46" ry="8" fill="url(#atSoup)"/>`
+  +`<path d="M52 56q10-4 22 0M84 58q14-5 26 0" stroke="#FCD7A0" stroke-width="2" fill="none"/><path d="M66 52q12 4 24-2" stroke="#FFF6E5" stroke-width="3" fill="none"/>`
+  +`<circle cx="58" cy="57" r="4.6" fill="#F28F2C" stroke-width="1.5"/><circle cx="58" cy="57" r="1.4" fill="#FBC77D" stroke="none"/><circle cx="100" cy="54" r="4.6" fill="#F28F2C" stroke-width="1.5"/><circle cx="100" cy="54" r="1.4" fill="#FBC77D" stroke="none"/>`
+  +`<rect x="72" y="52" width="8" height="8" rx="2" fill="#E8B26A" stroke-width="1.5" transform="rotate(14 76 56)"/><rect x="86" y="58" width="7" height="7" rx="2" fill="#E8B26A" stroke-width="1.5" transform="rotate(-12 90 61)"/>`
+  +`<circle cx="46" cy="55" r="2.4" fill="#7DB05B" stroke-width="1.2"/><circle cx="112" cy="58" r="2.4" fill="#7DB05B" stroke-width="1.2"/>${atLeaf(76,46,-25,.7)}${atLeaf(90,48,15,.6,"#8BC06C")}`
+  +atSteam([60,80,100],40,22)
+  +`<path d="M126 26L104 60" stroke-width="3.2"/><ellipse cx="130" cy="22" rx="8" ry="5.5" transform="rotate(-55 130 22)" fill="#D4A768"/>`
+  +`<path d="M38 66q6 24 30 32" stroke="#FFFFFF" stroke-opacity=".7" stroke-width="3" fill="none"/></g>`,
+ pasta:`<g ${AT_S}>${AT_SH}`
+  +`<circle cx="80" cy="64" r="46" fill="url(#atPlate)"/><circle cx="80" cy="64" r="36" fill="#F8F2E4" stroke-width="1.4"/>`
+  +`<path d="M44 66c-2-24 20-34 40-30 22 2 34 18 30 34-4 14-22 18-40 16-20-2-28-8-30-20Z" fill="#F4CC63"/>`
+  +`<path d="M50 62c8-14 22-18 34-12M54 72c12-16 30-22 44-12M60 80c10-10 26-12 40-6M48 54c10-12 24-14 32-10M70 44c14-4 26 2 34 12M58 60q22-14 38-2M66 70q16-10 30 0" stroke="#D69E2E" stroke-width="2" fill="none"/>`
+  +`<path d="M58 52c4-12 24-14 30-4 6 8-2 20-12 20-10 0-22-6-18-16Z" fill="url(#atSauce)"/><path d="M64 52q8-6 16-2" stroke="#F4A59A" stroke-width="2" fill="none"/>`
+  +atLeaf(84,38,-30,.9)+atLeaf(96,44,20,.8,"#8BC06C")+atLeaf(70,34,-110,.7)
+  +`<g stroke="none" fill="#FFF3C4"><circle cx="102" cy="58" r="1.6"/><circle cx="106" cy="66" r="1.6"/><circle cx="96" cy="70" r="1.6"/><circle cx="60" cy="74" r="1.6"/><circle cx="52" cy="62" r="1.6"/></g>`
+  +`<path d="M20 28v26M26 28v26M32 28v26M20 54h12M26 54v38" stroke-width="2.6"/><path d="M142 28c-8 8-8 22 0 26v38" stroke-width="2.6"/>`
+  +`<path d="M44 82q10 14 30 18" stroke="#FFFFFF" stroke-opacity=".7" stroke-width="3" fill="none"/></g>`,
+ pizza:`<g ${AT_S}><ellipse cx="80" cy="108" rx="56" ry="7" fill="#3A2A18" opacity=".2"/>`
+  +`<rect x="20" y="96" width="120" height="10" rx="5" fill="#C99A62" stroke-width="1.8"/>`
+  +`<circle cx="80" cy="58" r="48" fill="#D68F3F"/><circle cx="80" cy="58" r="39" fill="url(#atCheese)"/><circle cx="80" cy="58" r="39" fill="none" stroke="#C26A2A" stroke-width="1.6" stroke-dasharray="3 6"/>`
+  +`<path d="M80 19v78M41 58h78M52 30l56 56M108 30L52 86" stroke="#E0A93E" stroke-width="1.3" fill="none"/>`
+  +[[62,42],[100,44],[76,72],[104,74],[50,64],[84,50]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="7.5" fill="url(#atSauce)" stroke-width="1.8"/><circle cx="${x-2}" cy="${y-2}" r="2" fill="#F4A59A" stroke="none"/><circle cx="${x+2.5}" cy="${y+2}" r="1.1" fill="#7A1C12" stroke="none"/>`).join("")
+  +`<g fill="#3A2A18" stroke-width="1.4"><ellipse cx="92" cy="30" rx="4" ry="3" fill="#4A3A2C"/><ellipse cx="68" cy="30" rx="4" ry="3" fill="#4A3A2C"/><ellipse cx="112" cy="60" rx="4" ry="3" fill="#4A3A2C"/></g>`
+  +atLeaf(54,50,-40,.9)+atLeaf(86,72,30,.9,"#8BC06C")+atLeaf(96,56,-80,.7)
+  +`<path d="M122 72q10 10 4 22" stroke="#F0BC47" stroke-width="4" fill="none"/>`
+  +`<path d="M50 36q-8 10-6 22" stroke="#FFFFFF" stroke-opacity=".55" stroke-width="3" fill="none"/></g>`,
+ wrap:`<g ${AT_S}>${AT_SH}`
+  +`<path d="M24 92L132 44" stroke-width="30" stroke="#3A2A18"/><path d="M24 92L132 44" stroke-width="26" stroke="#EBCB8F"/>`
+  +`<path d="M30 90L90 63" stroke-width="22" stroke="#F4DDA8"/>`
+  +`<path d="M124 38C142 36 148 56 134 66L120 72C112 56 114 44 124 38Z" fill="#F4DDA8"/>`
+  +`<ellipse cx="128" cy="52" rx="10" ry="14" transform="rotate(25 128 52)" fill="#FBF3DD" stroke-width="1.8"/>`
+  +`<path d="M118 46c-6-8 2-14 8-8 2-8 14-6 12 4 8 2 6 12-2 12" fill="url(#atG)" stroke-width="1.8"/>`
+  +`<circle cx="124" cy="56" r="4.2" fill="url(#atSauce)" stroke-width="1.5"/><circle cx="134" cy="50" r="3.4" fill="#F2C94C" stroke-width="1.5"/><circle cx="130" cy="62" r="2.6" fill="#E9B96A" stroke-width="1.3"/>`
+  +`<path d="M52 98L106 74" stroke="#C65D3B" stroke-width="4" stroke-dasharray="4 5" fill="none"/>`
+  +`<path d="M22 100q10 8 24 4" stroke="#FFFFFF" stroke-opacity=".6" stroke-width="3" fill="none"/>`
+  +atTom(42,36,6)+atLeaf(52,26,-20,.8)+`<circle cx="26" cy="40" r="6" fill="#F6D865" stroke-width="1.8"/></g>`,
+ salad:`<g ${AT_S}>${AT_SH}`
+  +`<path d="M26 58H134C134 90 112 106 80 106C48 106 26 90 26 58Z" fill="url(#atBl)"/>`
+  +`<path d="M30 60C22 34 42 24 54 38 52 18 84 12 92 30 104 16 130 28 122 50 134 52 136 62 132 64Z" fill="url(#atG)"/>`
+  +`<path d="M50 42q10 6 6 18M92 32q-8 12 0 26M112 46q-8 4-6 14M70 28q4 10 0 16" stroke="#5E8C45" stroke-width="1.8" fill="none"/>`
+  +`<circle cx="70" cy="52" r="9" fill="url(#atSauce)" stroke-width="1.8"/><path d="M62 52h16M70 44v16" stroke="#F4A59A" stroke-width="1.4"/>`
+  +`<circle cx="102" cy="54" r="7" fill="#C7E6A6" stroke-width="1.8"/><circle cx="102" cy="54" r="4" fill="#F1F7D9" stroke-width="1.2"/>`
+  +`<path d="M44 52c4-6 12-6 14 0" stroke="#B1417A" stroke-width="3" fill="none"/><path d="M84 40c6-4 14-2 16 4" stroke="#B1417A" stroke-width="3" fill="none"/>`
+  +`<rect x="52" y="60" width="9" height="9" rx="2" fill="#FFFFFF" stroke-width="1.6" transform="rotate(-10 56 64)"/><rect x="88" y="62" width="9" height="9" rx="2" fill="#FFFFFF" stroke-width="1.6" transform="rotate(12 92 66)"/>`
+  +`<ellipse cx="114" cy="62" rx="5" ry="4" fill="#4A3A2C" stroke-width="1.5"/><ellipse cx="40" cy="64" rx="5" ry="4" fill="#4A3A2C" stroke-width="1.5"/>`
+  +`<path d="M120 28l22-16M136 14l8 8" stroke-width="3"/>`
+  +`<path d="M34 72q6 22 28 30" stroke="#FFFFFF" stroke-opacity=".65" stroke-width="3" fill="none"/></g>`,
+ pan:`<g ${AT_S}><ellipse cx="72" cy="108" rx="54" ry="7" fill="#3A2A18" opacity=".2"/>`
+  +`<path d="M114 62l42-12" stroke-width="10" stroke="#3A2A18"/><path d="M114 62l42-12" stroke-width="6" stroke="#8A6B4A"/>`
+  +`<circle cx="72" cy="62" r="48" fill="url(#atP)"/><circle cx="72" cy="62" r="40" fill="#F0DDB4"/><circle cx="72" cy="62" r="40" fill="none" stroke="#C99A52" stroke-width="1.4" stroke-dasharray="2 6"/>`
+  +`<rect x="44" y="52" width="14" height="14" rx="3" fill="#F2C94C" stroke-width="1.7" transform="rotate(-14 51 59)"/><rect x="60" y="76" width="14" height="14" rx="3" fill="#F2C94C" stroke-width="1.7" transform="rotate(18 67 83)"/><rect x="84" y="62" width="13" height="13" rx="3" fill="#F2C94C" stroke-width="1.7" transform="rotate(8 90 68)"/>`
+  +`<circle cx="90" cy="44" r="9" fill="#6AA84F"/><circle cx="83" cy="40" r="5.5" fill="#86C06A" stroke-width="1.6"/><circle cx="97" cy="39" r="5" fill="#86C06A" stroke-width="1.6"/><path d="M90 52v6" stroke-width="3.2"/>`
+  +`<path d="M52 42c10-4 18 2 18 8s-10 8-18 2" fill="#E04B38" stroke-width="1.8"/><path d="M60 82c10 4 24-2 28-10" stroke="#F28F2C" stroke-width="7" fill="none"/><path d="M60 82c10 4 24-2 28-10" stroke="#3A2A18" stroke-width="1" fill="none" opacity=".0"/>`
+  +`<g stroke="none" fill="#7DB05B"><circle cx="54" cy="74" r="1.8"/><circle cx="104" cy="58" r="1.8"/><circle cx="76" cy="52" r="1.8"/></g>`
+  +atSteam([56,76,96],20,18)
+  +`<path d="M36 78q6 14 24 20" stroke="#FFFFFF" stroke-opacity=".45" stroke-width="3" fill="none"/></g>`,
+ rice:`<g ${AT_S}>${AT_SH}`
+  +`<path d="M28 58H132C132 90 110 106 80 106C50 106 28 90 28 58Z" fill="url(#atBl)"/>`
+  +`<path d="M32 70q48 14 96 0M38 82q42 12 84 0" stroke="#FFFFFF" stroke-opacity=".55" stroke-width="2.4" fill="none"/>`
+  +`<ellipse cx="80" cy="58" rx="52" ry="10" fill="#F4F7FA"/>`
+  +`<path d="M34 58C34 22 126 22 126 58Z" fill="url(#atRice)"/>`
+  +`<g stroke="none" fill="#3A2A18"><circle cx="64" cy="44" r="1.5"/><circle cx="82" cy="36" r="1.5"/><circle cx="98" cy="46" r="1.5"/><circle cx="74" cy="50" r="1.5"/><circle cx="90" cy="52" r="1.5"/><circle cx="52" cy="52" r="1.5"/></g>`
+  +`<path d="M36 58c8-14 20-18 30-10 6 12-6 20-20 20Z" fill="#9CCB6F" stroke-width="1.8" transform="translate(46 -6) scale(.8)"/>`
+  +`<path d="M100 56c2-14 16-18 22-10-2 12-10 20-22 10Z" fill="#C7E6A6" stroke-width="1.8"/><path d="M104 54q8-4 14-2" stroke="#6AA84F" stroke-width="1.4" fill="none"/>`
+  +`<circle cx="60" cy="52" r="5" fill="#F28F2C" stroke-width="1.6"/><circle cx="60" cy="52" r="1.6" fill="#FBC77D" stroke="none"/><circle cx="74" cy="58" r="4" fill="#E04B38" stroke-width="1.6"/>`
+  +`<path d="M64 36q4-5 9-2M84 40q4-5 9-1" stroke="#6AA84F" stroke-width="4" fill="none"/>`
+  +`<path d="M118 14l-34 44M128 20l-34 44" stroke="#C79A5B" stroke-width="3.2"/>`
+  +`<path d="M38 74q6 20 28 28" stroke="#FFFFFF" stroke-opacity=".65" stroke-width="3" fill="none"/></g>`,
+ plate:`<g ${AT_S}>${AT_SH}`
+  +`<circle cx="80" cy="62" r="48" fill="url(#atPlate)"/><circle cx="80" cy="62" r="35" fill="#F8F2E4" stroke-width="1.4"/>`
+  +`<path d="M52 50c0-14 14-18 28-14s20 12 14 24-30 14-38 2Z" fill="#E1A460"/><path d="M58 50c6-8 20-10 28-4M60 58c8 4 22 4 30-4" stroke="#B87A38" stroke-width="2" fill="none"/>`
+  +`<path d="M84 64c-6-8 6-16 14-10s2 18-6 18" fill="url(#atSauce)" stroke-width="1.8" transform="translate(-2 2)"/>`
+  +`<circle cx="62" cy="74" r="7" fill="#7DB05B" stroke-width="1.8"/><circle cx="55" cy="70" r="4.5" fill="#96C97A" stroke-width="1.5"/><circle cx="69" cy="69" r="4.5" fill="#96C97A" stroke-width="1.5"/><path d="M62 80v6" stroke-width="3"/>`
+  +`<rect x="96" y="66" width="16" height="8" rx="4" fill="#F2C94C" stroke-width="1.7" transform="rotate(25 104 70)"/><rect x="92" y="76" width="16" height="8" rx="4" fill="#F6D865" stroke-width="1.7" transform="rotate(-8 100 80)"/>`
+  +`<path d="M20 24v28M26 24v28M32 24v28M20 52h12M26 52v40" stroke-width="2.6"/><path d="M140 24c-8 8-8 24 0 28v40" stroke-width="2.6"/>`
+  +atLeaf(74,36,-20,.7)+`<path d="M40 82q8 14 28 20" stroke="#FFFFFF" stroke-opacity=".7" stroke-width="3" fill="none"/></g>`,
+ burger:`<g ${AT_S}>${AT_SH}`
+  +`<path d="M32 90C32 100 44 104 80 104S128 100 128 90Z" fill="url(#atBun)"/>`
+  +`<path d="M28 78C28 70 40 72 52 76c10-6 20 4 28-2 8 6 18-4 28 2 12-4 24-6 24 2 0 10-12 12-52 12S28 90 28 78Z" fill="url(#atG)"/>`
+  +`<path d="M30 70H130V80H30Z" fill="#7A3E22" stroke-width="2"/><path d="M30 80H130" stroke="#5A2B16" stroke-width="1.4"/>`
+  +`<path d="M30 66H130L120 76 105 68 90 78 75 68 60 78 45 68 35 76Z" fill="url(#atCheese)" stroke-width="1.8"/>`
+  +atTom(68,64,0.1)+`<path d="M34 58c-4-4 2-9 8-9h76c6 0 10 5 8 9Z" fill="#E04B38" stroke-width="1.8"/>`
+  +`<path d="M26 52C26 24 134 24 134 52Z" fill="url(#atBun)"/>`
+  +`<g fill="#FFF3C4" stroke="none"><ellipse cx="60" cy="38" rx="3" ry="1.6" transform="rotate(-20 60 38)"/><ellipse cx="80" cy="32" rx="3" ry="1.6"/><ellipse cx="100" cy="38" rx="3" ry="1.6" transform="rotate(20 100 38)"/><ellipse cx="72" cy="44" rx="3" ry="1.6"/><ellipse cx="92" cy="45" rx="3" ry="1.6"/></g>`
+  +`<path d="M44 44q-4 4-4 8" stroke="#FFFFFF" stroke-opacity=".7" stroke-width="3" fill="none"/></g>`,
+ fish:`<g ${AT_S}>${AT_SH}`
+  +`<ellipse cx="80" cy="64" rx="60" ry="38" fill="url(#atPlate)"/><ellipse cx="80" cy="64" rx="46" ry="27" fill="#F8F2E4" stroke-width="1.4"/>`
+  +`<path d="M36 66C52 44 86 42 108 62 98 56 92 66 108 74 86 90 52 88 36 66Z" fill="#F0A58B"/>`
+  +`<path d="M104 64l22-14v28Z" fill="#E88B6E"/><path d="M52 54q14 8 14 20M66 52q12 8 12 24M80 54q10 8 8 18" stroke="#CE6B50" stroke-width="1.6" fill="none"/>`
+  +`<circle cx="48" cy="62" r="2.2" fill="#3A2A18" stroke="none"/><path d="M38 68q6 2 10 0" stroke-width="1.6" fill="none"/>`
+  +`<path d="M104 80c8-6 22-2 22 6s-16 8-22-6Z" fill="#F6D865" stroke-width="1.8"/><path d="M110 82q6 0 10 2" stroke="#C99A1C" stroke-width="1.2" fill="none"/>`
+  +atLeaf(58,40,-20,.7)+atLeaf(74,38,-50,.7)+`<circle cx="90" cy="86" r="3.6" fill="#7DB05B" stroke-width="1.4"/><circle cx="62" cy="86" r="3.6" fill="#7DB05B" stroke-width="1.4"/></g>`,
+ sweet:`<g ${AT_S}>${AT_SH}`
+  +`<ellipse cx="80" cy="84" rx="54" ry="18" fill="url(#atPlate)"/>`
+  +`<ellipse cx="80" cy="82" rx="38" ry="11" fill="#E2A557"/><path d="M42 82v-8" stroke-width="1.6"/>`
+  +`<path d="M42 74C42 66 118 66 118 74V82C118 90 42 90 42 82Z" fill="#E8B468"/><ellipse cx="80" cy="74" rx="38" ry="10" fill="#F2C887"/>`
+  +`<path d="M44 66C44 58 116 58 116 66V74C116 82 44 82 44 74Z" fill="#E8B468"/><ellipse cx="80" cy="66" rx="36" ry="9" fill="#F2C887"/>`
+  +`<path d="M46 58C46 50 114 50 114 58V66C114 74 46 74 46 66Z" fill="#E8B468"/><ellipse cx="80" cy="58" rx="34" ry="8.5" fill="#F6D49A"/>`
+  +`<path d="M58 56c-4 8 2 16 8 14 6 2 10-8 14-6 6 2 12 12 18 6 4-4 0-12-4-14-12 2-24-4-36 0Z" fill="#B8581F" stroke-width="1.8"/>`
+  +`<circle cx="66" cy="48" r="5" fill="#C93B5B" stroke-width="1.7"/><circle cx="80" cy="44" r="5" fill="#8A3F9B" stroke-width="1.7"/><circle cx="94" cy="49" r="5" fill="#C93B5B" stroke-width="1.7"/>`
+  +atLeaf(76,34,-60,.6)+`<rect x="68" y="30" width="22" height="9" rx="2" fill="#F6D865" stroke-width="1.7" transform="rotate(-10 79 34)"/></g>`
 };
-const AT_BG = {soup:"#FBE0BE",pasta:"#FBEBB5",pizza:"#F8D6B8",wrap:"#EFE2BC",salad:"#DBEFCB",pan:"#EEDCC9",rice:"#DFEAF3",plate:"#EDE3D0"};
+const AT_BG = {soup:"#FBE0BE",pasta:"#FBEBB5",pizza:"#F8D6B8",wrap:"#EFE2BC",salad:"#DBEFCB",pan:"#EEDCC9",rice:"#DFEAF3",plate:"#EDE3D0",burger:"#F7DCBA",fish:"#D9E9F1",sweet:"#F9DCE0"};
 function atKind(d){
   const n=String(d.n).toLowerCase();
-  return /pizza|flammkuchen|focaccia|quiche|tarte/.test(n)?"pizza"
+  return /burger|sandwich|toast|bagel/.test(n)?"burger"
+    : /pizza|flammkuchen|focaccia|quiche|tarte/.test(n)?"pizza"
     : /nudel|pasta|spaghetti|gnocchi|lasagne|tortellini|penne|spätzle|makkaroni|ravioli/.test(n)?"pasta"
-    : /wrap|burrito|taco|gözleme|tortilla|quesadilla|fladen|pita|burger|sandwich|toast|brot|flatbread|naan/.test(n)?"wrap"
+    : /wrap|burrito|taco|gözleme|tortilla|quesadilla|fladen|pita|brot|flatbread|naan/.test(n)?"wrap"
+    : /lachs|fisch|forelle|kabeljau|garnele|thunfisch|stäbchen|seelachs/.test(n)?"fish"
+    : /pancake|pfannkuchen|waffel|kuchen|muffin|dessert|porridge|müsli|palatschinke|kaiserschmarrn|grießbrei|milchreis/.test(n)?"sweet"
     : /salat|bowl|rohkost|poke/.test(n)?"salad"
     : /suppe|eintopf|curry|dal\b|chili|gulasch|ragout|bolognese|linsen|bohnen|kichererbsen|brühe/.test(n)?"soup"
     : /reis|risotto|paella|couscous|quinoa|bulgur|hirse/.test(n)?"rice"
-    : /pfanne|wok|frittata|omelett|rührei|kartoffel|puffer|hähnchen|schnitzel|fisch|lachs|stäbchen|gemüse|bratling|laibchen|pancake|pfannkuchen/.test(n)?"pan":"plate";
+    : /pfanne|wok|frittata|omelett|rührei|kartoffel|puffer|gemüse|bratling|laibchen/.test(n)?"pan":"plate";
 }
+const AT_PROPS=[
+ ['<g stroke="#3A2A18" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 70H50L46 108H14Z" fill="#C65D3B"/><path d="M8 70H52" stroke-width="3"/><path d="M20 68q-8-18 2-34M30 68q-2-22 4-40M40 68q2-16 10-26" stroke="#5E9442" stroke-width="3.4" fill="none"/><ellipse cx="20" cy="38" rx="7" ry="4" transform="rotate(-60 20 38)" fill="#7DB05B" stroke-width="1.6"/><ellipse cx="34" cy="30" rx="7" ry="4" transform="rotate(-80 34 30)" fill="#8BC06C" stroke-width="1.6"/><ellipse cx="48" cy="46" rx="7" ry="4" transform="rotate(-50 48 46)" fill="#7DB05B" stroke-width="1.6"/></g>',
+  '<g stroke="#3A2A18" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="26" cy="86" r="17" fill="#F6D865"/><path d="M26 69v34M12 80q14 8 28 0" stroke="#C99A1C" stroke-width="1.4" fill="none"/><path d="M26 69l6-8" /><path d="M46 112L62 56" stroke-width="5" stroke="#3A2A18"/><path d="M46 112L62 56" stroke-width="2.6" stroke="#D4A768"/><ellipse cx="64" cy="50" rx="7" ry="9" transform="rotate(15 64 50)" fill="#D4A768"/></g>'],
+ ['<g stroke="#3A2A18" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 112V62C12 48 44 48 44 62V112Z" fill="#E9B96A"/><path d="M18 74h20M18 88h20" stroke="#C79A5B" stroke-width="2" fill="none"/><path d="M10 62H46" stroke-width="3"/><rect x="18" y="42" width="20" height="10" rx="3" fill="#92A67F"/></g>',
+  '<g stroke="#3A2A18" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="22" cy="96" r="9" fill="url(#atSauce)"/><circle cx="42" cy="100" r="8" fill="url(#atSauce)"/><circle cx="34" cy="84" r="8" fill="url(#atSauce)"/><path d="M34 76l3-5M22 88l-1-5" stroke="#4E7E3A" stroke-width="2.4"/><ellipse cx="34" cy="70" rx="6" ry="3" fill="#7DB05B" stroke-width="1.6"/></g>']
+];
+const atProps=(k)=>{const i=(k.length%AT_PROPS.length), P=AT_PROPS[i];return `<svg class="atp l" viewBox="0 0 70 120" aria-hidden="true">${AT_DEFS}${P[0]}</svg><svg class="atp r" viewBox="0 0 70 120" aria-hidden="true">${AT_DEFS}${P[1]}</svg>`;};
 function atSvg(k){ return `<svg viewBox="0 0 160 120" aria-hidden="true">${AT_DEFS}${AT_SCENE[k]}</svg>`; }
 /* Kopfbild: Regal mit Topf, Zitronen, Kräutern und Pfanne */
 const AT_BANNER = `<svg viewBox="0 0 390 110" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="atWall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F7E6CB"/><stop offset="1" stop-color="#F1D3A8"/></linearGradient></defs><rect width="390" height="110" fill="url(#atWall)"/><g stroke="#3A2A18" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="330" cy="28" r="16" fill="#FFF3C9" stroke="none" opacity=".8"/><path d="M0 92H390" stroke-width="3"/><rect x="0" y="92" width="390" height="18" fill="#B98558" stroke="none"/><path d="M0 100H390" stroke="#9A6B42" stroke-width="1.5"/><g transform="translate(24 36)"><path d="M0 30H46L42 56H4Z" fill="#C65D3B"/><path d="M-2 30H48" stroke-width="3"/><path d="M12 28q-6-12 2-22M24 28q-4-14 2-24M36 28q-2-12 6-18" stroke="#6AA84F" stroke-width="3.4" fill="none"/><circle cx="14" cy="6" r="4" fill="#8BC06C" stroke-width="1.6"/><circle cx="28" cy="2" r="4" fill="#6AA84F" stroke-width="1.6"/></g><g transform="translate(96 40)"><ellipse cx="22" cy="48" rx="22" ry="6" fill="#3A2A18" opacity=".12" stroke="none"/><path d="M0 22H44V46C44 52 38 54 22 54C6 54 0 52 0 46Z" fill="#7C8F6A"/><rect x="-3" y="14" width="50" height="10" rx="3" fill="#92A67F"/><path d="M14 14q-4-8 0-12M26 14q-4-8 0-12" stroke="#FFFFFF" stroke-opacity=".9" stroke-width="3" fill="none"/></g><g transform="translate(176 56)"><circle cx="12" cy="24" r="14" fill="#F2C94C"/><circle cx="38" cy="26" r="13" fill="#F6D865"/><path d="M12 14q4 2 6 6M38 16q4 2 5 6" stroke="#C99A1C" stroke-width="1.6" fill="none"/><path d="M26 12l8-10 8 8-8 6z" fill="#6AA84F" stroke-width="1.8"/></g><g transform="translate(250 20)"><circle cx="30" cy="40" r="26" fill="#4C4A47"/><circle cx="30" cy="40" r="20" fill="#706D69"/><path d="M52 40h36" stroke-width="7" stroke="#3A2A18"/><path d="M52 40h36" stroke-width="3.4" stroke="#8A6B4A"/><circle cx="24" cy="36" r="5" fill="#E8872F" stroke-width="1.6"/><circle cx="36" cy="44" r="5" fill="#6AA84F" stroke-width="1.6"/></g><g transform="translate(332 44)"><path d="M0 48V14C0 4 28 4 28 14V48Z" fill="#E9B96A"/><path d="M6 20h16M6 30h16" stroke="#C79A5B" stroke-width="2" fill="none"/><path d="M-2 14H30" stroke-width="3"/><circle cx="14" cy="6" r="3" fill="#C65D3B" stroke-width="1.6"/></g></g></svg>`;
@@ -4996,7 +5123,7 @@ function decorateAtelier(){
     if(sh.querySelector(":scope>.at-hero")) return;
     const c=sh.querySelector(".cook-btn[data-cook]"); if(!c) return;
     const d=dish(c.dataset.cook); if(!d) return;
-    const k=atKind(d); sh.insertAdjacentHTML("afterbegin",`<div class="at-hero" style="--bg:${AT_BG[k]}">${atSvg(k)}</div>`);
+    const k=atKind(d); sh.insertAdjacentHTML("afterbegin",`<div class="at-hero" style="--bg:${AT_BG[k]}">${atProps(k)}${atSvg(k)}</div>`);
   });
 }
 function startAtelier(){
