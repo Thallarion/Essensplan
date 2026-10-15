@@ -431,20 +431,23 @@ details.info p{margin:8px 0 0}
 .idea .inplan{display:inline-block;font-size:12px;color:var(--basil);margin-top:2px}
 .plan-btn{font-size:20px;line-height:1;width:40px;height:40px;padding:0;border-radius:50%;flex:none;color:var(--basil)!important}
 .plan-btn:hover{background:var(--basil-soft)}
-.day{grid-template-columns:52px 1fr auto;gap:10px;align-items:center}
+.day{grid-template-columns:52px 1fr;gap:10px;align-items:center}
 .acts{gap:0}
 .icon{width:34px;height:34px}
 .icon svg{width:17px;height:17px}
-@media (max-width:460px){.day{grid-template-columns:44px 1fr auto;padding:12px 8px 12px 14px}.acts{grid-column:auto;justify-content:flex-end;margin-top:0;flex-direction:row}.icon{width:32px;height:32px}}
+@media (max-width:460px){.day{grid-template-columns:44px 1fr;padding:12px 8px 12px 14px}.acts{grid-column:auto;justify-content:flex-end;margin-top:0;flex-direction:row}.icon{width:32px;height:32px}}
 /* Aktionen untereinander – mehr Platz für Gericht & Kategorien */
 .day .acts{flex-direction:column;gap:0;align-self:center;margin:-6px -4px -6px 0}
 .day .acts .icon{width:34px;height:32px}
 .dhead{display:flex;flex-direction:column;align-items:flex-start}
 .dhead .droll{width:30px;height:26px;margin:2px 0 -4px -6px}
+.dhead .dclr{width:30px;height:26px;margin:0 0 -4px -6px;display:inline-flex!important}
+.dhead .dclr svg{width:15px;height:15px}
+.bar-eq{display:flex;gap:8px}.bar-eq .btn{flex:1 1 0;justify-content:center;text-align:center}
 .dhead .dname{line-height:1.05}
 .dhead .ddate{line-height:1.2}
 .day{padding-top:10px;padding-bottom:10px}
-@media (max-width:460px){.day{grid-template-columns:44px 1fr auto;gap:8px}}
+@media (max-width:460px){.day{grid-template-columns:44px 1fr;gap:8px}}
 .tags .tg{white-space:nowrap}
 .tags .tg:first-child{white-space:normal}
 .gfb{display:inline-block;font:700 9px/1 var(--body);letter-spacing:.02em;padding:2px 3px;border:1.5px solid currentColor;border-radius:4px;vertical-align:2px;color:var(--basil);margin:0 1px}
@@ -776,7 +779,7 @@ header.top .tag{margin:3px 0 0;font-size:13px;font-weight:500;color:var(--muted)
 .dhead .dname{font-weight:800;font-size:18px;letter-spacing:.01em}
 .dhead .ddate{font-size:12px;color:var(--muted);font-weight:400;margin-top:4px}
 .dhead .droll{margin-top:6px}
-.day{grid-template-columns:52px 1fr auto}
+.day{grid-template-columns:52px 1fr}
 .day:not(.today):not(.past){border-left:3px solid color-mix(in srgb,var(--basil) 25%,var(--line))}
 .day.past:not(.today){opacity:.6;background:transparent}
 
@@ -844,6 +847,7 @@ header.top .tag{margin:3px 0 0;font-size:13px;font-weight:500;color:var(--muted)
   #week .day,#week .daybig{margin-top:0;display:flex;flex-direction:column;align-items:stretch;gap:8px;padding:14px 12px;min-width:0}
   #week .day .dhead{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;position:relative;padding-right:34px}
   #week .day .dhead .droll{position:absolute;top:-4px;right:-4px}
+  #week .day .dhead .dclr{position:absolute;top:22px;right:-4px;margin:0}
   #week .day .ddate{font-size:13px}
   #week .day .dish{flex:1}
   #week .day .acts{flex-direction:row;margin:0;align-self:flex-end}
@@ -1215,7 +1219,11 @@ nav.tabs .count{background:var(--tomato);color:#fff}
 /* ===== Design „Comic-Atelier": Comic-Papier und dicke Umrisse + gezeichnete Atelier-Szenen ===== */
 .at-banner{border:2px solid var(--ol);border-radius:var(--wob);overflow:hidden;height:104px;margin:2px 0 14px;box-shadow:var(--shadow)}
 .at-banner svg{display:block;width:100%;height:100%}
-.day,.daybig,.idea{padding-right:112px;min-height:92px}
+.day{padding-right:14px;min-height:104px}
+.daybig,.idea{padding-right:112px;min-height:92px}
+.day .dish .mline,.day .dish .meta{padding-right:62px}
+.day .dish button.title{font-size:15.5px;line-height:1.25}
+.day .cmx{top:-14px;right:10px;font-size:13px}
 .daybig{min-height:150px;padding-right:14px}
 .daybig .dish{padding-right:118px}
 #ideas .idea{padding-right:12px;min-height:0}
@@ -1223,6 +1231,7 @@ nav.tabs .count{background:var(--tomato);color:#fff}
 #ideas .idea .plan-btn::after{content:"＋ Plan";font:700 13px var(--body)}
 .atl{position:absolute;right:12px;top:50%;width:88px;height:88px;margin-top:-44px;border:2px solid var(--ol);border-radius:12px 14px 11px 13px / 13px 11px 14px 12px;box-shadow:2px 2px 0 var(--ol);pointer-events:none;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .atl svg{width:104%;height:104%;display:block;margin:-2px}
+.day .atl{top:auto;bottom:8px;margin-top:0;width:54px;height:54px;right:12px}
 .daybig .atl{top:16px;margin-top:0;width:104px;height:104px;right:14px}
 .atl::before,.at-hero::before{content:"";position:absolute;left:0;right:0;bottom:0;height:36%;border-top:2px solid var(--ol);background:repeating-linear-gradient(90deg,rgba(214,96,70,.3) 0 7px,transparent 7px 14px),repeating-linear-gradient(0deg,rgba(214,96,70,.3) 0 7px,transparent 7px 14px),#FFF7EA}
 .atl svg,.at-hero svg{position:relative;z-index:1}
@@ -4354,11 +4363,9 @@ function renderWeek(){
     const past = i<today;
     return `<div class="day${i===today?' today':''}${past?' past':''}">
       <div class="dhead"><div class="dname" title="${dlong(g)}">${DAYS[i]}</div><div class="ddate">${dates[i].toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"})}</div>
-        ${past?'':`<button class="icon droll" data-roll="${g}" aria-label="${dlong(g)}: Gericht tauschen (würfeln)" title="Tauschen (würfeln)">${ICON.dice}</button>`}</div>
+        ${past?'':`<button class="icon droll" data-roll="${g}" aria-label="${dlong(g)}: Gericht tauschen (würfeln)" title="Tauschen (würfeln)">${ICON.dice}</button>`}${!past&&v?`<button class="icon dclr" data-clear="${g}" aria-label="${dlong(g)} leeren" title="Leeren">${ICON.x}</button>`:''}</div>
       <div class="dish">${body}${stapleHint(i,v)}</div>
-      ${past?'':`<div class="acts">
-        ${v?`<button class="icon" data-clear="${g}" aria-label="${dlong(g)} leeren" title="Leeren">${ICON.x}</button>`:''}
-      </div>`}</div>`;
+</div>`;
   };
   $("#week").innerHTML = DAYS.map((_,i)=> i===today ? bigCard(i,"HEUTE") : compact(i)).join("");
   renderBalance(); renderHints();
@@ -4854,7 +4861,7 @@ const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","
 /* ---------- Pro-Tipps: ein Tipp pro Tag, der Reihe nach, nur beim Start; abschaltbar (pro Gerät) ---------- */
 const TIPS = [["Kochmodus", "Tippe im Rezept auf „Kochmodus“: große Schrift, Zutaten und Schritte zum Abhaken, der Bildschirm bleibt an. Wenn du etwas abhakst, scrollt es von selbst zum Nächsten."], ["Einkauf", "Das 🏠 hinter einer Zutat in der Einkaufsliste nimmt sie von der Liste, weil ihr sie zuhause habt. „Nur diesmal“ und „Angebrochen“ holst du unter „Schon zuhause“ mit dem 🛒 zurück."], ["Personenzahl", "Im Rezept änderst du mit − und + die Personenzahl. Die Zutaten und die Mengen in den Schritten rechnen sich automatisch mit um."], ["Vorrat", "Zutaten, die immer da sind, zum Beispiel Zwiebeln: Tippe in der Einkaufsliste beim 🏠 auf „Immer“. Dann tauchen sie nie wieder auf der Liste auf, beeinflussen aber keine Rezeptvorschläge. Ändern kannst du das unter „Vorrat anpassen“ ganz unten in der Liste."], ["Alltag-Filter", "Unter Ideen findest du bei „Alle Filter“ den Reiter „Zeit & Alltag“: zum Beispiel Ofengericht, ein Topf, gut einzufrieren oder mit wenigen Zutaten."], ["Supermarkt", "Die Einkaufsliste lässt sich nach Abteilung sortieren. In den Einstellungen stellst du die Reihenfolge so ein, wie euer Supermarkt aufgebaut ist."], ["Reste", "„Was haben wir noch zuhause?“ in den Ideen: Tippe ein, was im Kühlschrank liegt, und die App zeigt dir Gerichte, die dazu passen."], ["Liste teilen", "Mit „Teilen“ in der Einkaufsliste schickst du die offenen Artikel zum Beispiel direkt an Google Keep oder an deine Familie."], ["Link teilen", "Tippe im Rezept auf „Link teilen“, um es per Nachricht zu verschicken. Wer den Link öffnet, sieht sofort das Rezept."], ["Zutaten kopieren", "Im Rezept kopiert „Zutaten kopieren“ die Mengen für eure Personenzahl, bereit zum Einfügen in eine Notiz oder eine Listen-App."], ["Leere Tage", "Mit „Leere Tage füllen“ schlägt die App für alle freien Tage Gerichte vor. Unter der Woche sind es nur schnelle Gerichte, bevorzugt vegetarisch."], ["Design", "In den Einstellungen wählst du zwischen hellem und dunklem Design, oder die App folgt automatisch deinem Handy."], ["Notiz", "Im Rezept hältst du unter „Unsere Notiz“ fest, was ihr beim nächsten Mal anders macht, zum Beispiel weniger Salz."], ["Lieblinge", "In den Einstellungen wählst du Lieblingskategorien. Sie kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran."], ["Einsenden", "Unter Ideen kannst du über „Rezept hinzufügen“ ein Rezept als Foto, PDF oder Link einsenden. Nach der Prüfung steht es für alle in der App."], ["Bewerten", "Nach dem Essen fragt die App, wie es geschmeckt hat. Mit 👍 und 👎 merkt ihr euch eure Favoriten."], ["Offline", "Öffne die App einmal mit Netz und danach noch einmal: Dann startet sie auch ohne Empfang. Im Supermarkt kannst du die Einkaufsliste abhaken und ergänzen, beim nächsten Netz gleicht sie sich ab."], ["Eigene Filter", "Allergene und Vorlieben gelten standardmäßig nur auf deinem Handy. Mit dem Schalter „Filter mit Familie teilen“ in den Einstellungen nutzt ihr sie gemeinsam. Der Vorrat wird immer geteilt."], ["Sicherung", "Unter Einstellungen → Daten sichern speicherst du Plan, eigene Rezepte und Einstellungen als Datei, zum Beispiel vor einem Handywechsel."], ["App installieren", "Android (Chrome): oben rechts ⋮ → „App installieren“. iPhone (Safari): unten auf das Teilen-Symbol tippen → „Zum Home-Bildschirm“ → „Hinzufügen“. Danach startet Was essen wir? wie eine normale App, ohne Browserleiste."]];
 const LS_TIPS = "essensplan-tips";
-const APP_VERSION = "v1.24.0";
+const APP_VERSION = "v1.24.1";
 document.getElementById("appVer").textContent = "Version " + APP_VERSION;
 const LS_HERO = "essensplan-hero";
 function heroClosed(){ try{ return !!localStorage.getItem(LS_HERO); }catch(e){ return false; } }
@@ -5980,7 +5987,7 @@ function heuteRecipe(d){
     <div class="ing-head"><h3>Zutaten für ${n} Person${n>1?"en":""}</h3>
       <div class="stepper" role="group" aria-label="Personen"><button type="button" data-hx="pers" data-d="-1" aria-label="Eine Person weniger">−</button><span>${n}</span><button type="button" data-hx="pers" data-d="1" aria-label="Eine Person mehr">+</button></div></div>
     <ul>${ingItems(d,n)}</ul>
-    <div class="bar" style="margin:10px 0 0"><button class="btn small" type="button" data-hx="copy" data-id="${d.id}">📋 Zutaten kopieren</button><button class="btn small" type="button" data-open="${d.id}">📖 Rezept öffnen</button></div>`;
+    <div class="bar bar-eq" style="margin:10px 0 0"><button class="btn small" type="button" data-hx="copy" data-id="${d.id}">📋 Zutaten kopieren</button><button class="btn small" type="button" data-open="${d.id}">📖 Rezept öffnen</button></div>`;
 }
 function renderHeute(force){
   const box = $("#heuteBox"); if(!box) return;
@@ -5994,7 +6001,7 @@ function renderHeute(force){
       <div class="db-acts">${pl.d?`<button class="btn primary" type="button" data-cook="${pl.d.id}">👨‍🍳 Kochmodus</button>`:""}<button class="btn" type="button" data-hx="other">Etwas anderes</button></div></div>
       ${heuteJust?`<p class="note heute-ok">✓ Für heute eingeplant. Die Zutaten stehen auf der Einkaufsliste. <button type="button" class="linkbtn" data-hx="undo">Rückgängig</button></p>`:""}
       ${pl.d?heuteRecipe(pl.d):""}
-      <button type="button" class="linkbtn" data-hx="shop">Zur Einkaufsliste</button>`;
+`;
   } else if(heutePicks){
     h=`<h2 class="heute-h">Wie wäre es mit …</h2>${heutePicks.note?`<p class="sub">${esc(heutePicks.note)}</p>`:""}
       <div class="heute-list">${heutePicks.list.map(d=>`<div class="hcard"><button type="button" class="hplan" data-hx="plan" data-id="${d.id}"><b>${esc(d.n)}</b>${metaLine(d)}${heuteConfirm===d.id?"":`<span class="hgo">Für heute einplanen</span>`}</button>${heuteConfirm===d.id?`<div class="hconf"><p>Heute steht schon <b>${esc(heutePlanned()?.d?heutePlanned().d.n:(heutePlanned()?.custom||""))}</b> auf dem Plan. Ersetzen?</p><button type="button" class="btn primary" data-hx="replace" data-id="${d.id}">Ja, ersetzen</button> <button type="button" class="btn" data-hx="keep">Nein</button></div>`:`<button type="button" class="linkbtn" data-open="${d.id}">Rezept ansehen</button>`}</div>`).join("")}</div>
