@@ -1361,6 +1361,33 @@ nav.tabs .count{background:var(--tomato);color:#fff}
 .steps-list li::before{left:14px;top:12px;width:34px;height:34px;font:700 22px var(--display);background:var(--btn);color:var(--btn-ink);border:2px solid var(--ol)}
 .steps-list li.done{opacity:.6}
 .empty,#emptyHint{text-align:center}
+/* --- mehr Comic --- */
+:root{--dot:rgba(42,36,24,.075);--dot2:rgba(42,36,24,.16)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--dot:rgba(244,234,210,.05);--dot2:rgba(255,240,180,.14)}}
+:root[data-theme="dark"]{--dot:rgba(244,234,210,.05);--dot2:rgba(255,240,180,.14)}
+body{background-image:radial-gradient(var(--dot) 1.2px,transparent 1.5px);background-size:11px 11px}
+.day.today,.daybig.today,.surprise{background-image:linear-gradient(115deg,var(--hl) 45%,transparent 100%),radial-gradient(var(--dot2) 1.4px,transparent 1.7px);background-size:auto,8px 8px}
+.atl::after,.at-hero::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:radial-gradient(rgba(42,36,24,.22) 1px,transparent 1.3px) 0 0/6px 6px;-webkit-mask-image:linear-gradient(135deg,transparent 52%,#000);mask-image:linear-gradient(135deg,transparent 52%,#000)}
+.atl svg [stroke-width]:not([stroke="#FFFFFF"]),.at-hero>svg:not(.atp) [stroke-width]:not([stroke="#FFFFFF"]),.at-hero .atp [stroke-width],.at-banner svg [stroke-width]{stroke-width:2.6px}
+.at-banner{border-width:3px;position:relative}
+.cmc{position:absolute;left:0;top:0;z-index:3;background:var(--hl);color:#2A2418;border-right:2px solid #2A2418;border-bottom:2px solid #2A2418;border-radius:0 0 12px 0;padding:2px 11px 3px;font:700 18px var(--display)}
+.cmb{position:absolute;z-index:3;background:#FFFDF3;color:#2A2418;border:2px solid #2A2418;border-radius:14px 16px 13px 15px / 15px 12px 16px 13px;padding:1px 11px 2px;font:700 19px var(--display);transform:rotate(-3deg);box-shadow:2px 2px 0 #2A2418}
+.cmb::after{content:"";position:absolute;left:16px;bottom:-8px;width:11px;height:11px;background:#FFFDF3;border-right:2px solid #2A2418;border-bottom:2px solid #2A2418;transform:rotate(45deg)}
+.cmx{position:absolute;z-index:3;top:-10px;right:-4px;background:var(--tomato);color:var(--ground);border:2px solid var(--ol);border-radius:6px 9px 7px 8px;padding:0 7px 1px;font:700 15px var(--display);letter-spacing:.5px;transform:rotate(6deg);box-shadow:2px 2px 0 var(--ol);pointer-events:none;white-space:nowrap}
+.cmx.b{background:var(--sea)}
+.cmx.c{background:var(--btn);color:var(--btn-ink)}
+.idea .cmx{right:64px}
+.at-hero .cmx{left:12px;right:auto;top:14px;font-size:17px}
+.at-hero .cmb{right:64px;top:14px}
+.at-hero{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M10 1l2.6 6.2 6.4.6-4.9 4.2 1.5 6.4L10 15l-5.6 3.4 1.5-6.4L1 7.8l6.4-.6z' fill='%23FFE76B' stroke='%232A2418' stroke-width='1.4' stroke-linejoin='round'/%3E%3C/svg%3E") left 20px top 56px/18px 18px no-repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M10 1l2.6 6.2 6.4.6-4.9 4.2 1.5 6.4L10 15l-5.6 3.4 1.5-6.4L1 7.8l6.4-.6z' fill='%23FFE76B' stroke='%232A2418' stroke-width='1.4' stroke-linejoin='round'/%3E%3C/svg%3E") right 84px top 64px/13px 13px no-repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M10 1l2.6 6.2 6.4.6-4.9 4.2 1.5 6.4L10 15l-5.6 3.4 1.5-6.4L1 7.8l6.4-.6z' fill='%23FFE76B' stroke='%232A2418' stroke-width='1.4' stroke-linejoin='round'/%3E%3C/svg%3E") left 52px bottom 74px/12px 12px no-repeat,radial-gradient(circle at 50% 40%,rgba(255,255,255,.75),rgba(255,255,255,0) 62%),var(--bg,#EDE3D0)}
+.heute-h::after,.sheet h2::after{content:"";display:block;height:8px;margin-top:2px;max-width:170px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='8' viewBox='0 0 24 8'%3E%3Cpath d='M0 4q3-4 6 0t6 0 6 0 6 0' fill='none' stroke='%23C8361F' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x}
+.toast{background:#FFFDF3;color:#2A2418;border:2px solid #2A2418;border-radius:14px 17px 13px 16px / 16px 13px 17px 14px;box-shadow:3px 3px 0 #2A2418;font-weight:700;overflow:visible}
+.toast::after{content:"";position:absolute;left:50%;bottom:-8px;margin-left:-6px;width:11px;height:11px;background:#FFFDF3;border-right:2px solid #2A2418;border-bottom:2px solid #2A2418;transform:rotate(45deg)}
+.toast-undo{color:#2A2418}
+.hints{gap:14px}
+.hints .hint{position:relative;border:2px solid var(--ol);border-left:2px solid var(--ol);border-radius:var(--wob);box-shadow:var(--shadow)}
+.hints .hint::after{content:"";position:absolute;left:24px;bottom:-8px;width:11px;height:11px;background:var(--surface);border-right:2px solid var(--ol);border-bottom:2px solid var(--ol);transform:rotate(45deg)}
+.cat h3,.cat-fold>summary{text-shadow:2px 2px 0 var(--hl)}
 </style>
 <script>(function(){ try{ var l=localStorage.getItem("essensplan-look"), m={kochbuch:"kochCss",comic:"comicCss",atelier:"atelierCss",comicat:"comicCss"}; if(l==="notiz") l="comic"; if(m[l]){ document.getElementById(m[l]).media="all"; if(l==="comicat") document.getElementById("mixCss").media="all"; document.documentElement.setAttribute("data-look",l); } }catch(e){} })();</script>
 <script data-goatcounter="https://wasessenwir.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
@@ -4915,7 +4942,7 @@ const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","
 /* ---------- Pro-Tipps: ein Tipp pro Tag, der Reihe nach, nur beim Start; abschaltbar (pro Gerät) ---------- */
 const TIPS = [["Kochmodus", "Tippe im Rezept auf „Kochmodus“: große Schrift, Zutaten und Schritte zum Abhaken, der Bildschirm bleibt an. Wenn du etwas abhakst, scrollt es von selbst zum Nächsten."], ["Einkauf", "Das 🏠 hinter einer Zutat in der Einkaufsliste nimmt sie von der Liste, weil ihr sie zuhause habt. „Nur diesmal“ und „Angebrochen“ holst du unter „Schon zuhause“ mit dem 🛒 zurück."], ["Personenzahl", "Im Rezept änderst du mit − und + die Personenzahl. Die Zutaten und die Mengen in den Schritten rechnen sich automatisch mit um."], ["Vorrat", "Zutaten, die immer da sind, zum Beispiel Zwiebeln: Tippe in der Einkaufsliste beim 🏠 auf „Immer“. Dann tauchen sie nie wieder auf der Liste auf, beeinflussen aber keine Rezeptvorschläge. Ändern kannst du das unter „Vorrat anpassen“ ganz unten in der Liste."], ["Alltag-Filter", "Unter Ideen findest du bei „Alle Filter“ den Reiter „Zeit & Alltag“: zum Beispiel Ofengericht, ein Topf, gut einzufrieren oder mit wenigen Zutaten."], ["Supermarkt", "Die Einkaufsliste lässt sich nach Abteilung sortieren. In den Einstellungen stellst du die Reihenfolge so ein, wie euer Supermarkt aufgebaut ist."], ["Reste", "„Was haben wir noch zuhause?“ in den Ideen: Tippe ein, was im Kühlschrank liegt, und die App zeigt dir Gerichte, die dazu passen."], ["Liste teilen", "Mit „Teilen“ in der Einkaufsliste schickst du die offenen Artikel zum Beispiel direkt an Google Keep oder an deine Familie."], ["Link teilen", "Tippe im Rezept auf „Link teilen“, um es per Nachricht zu verschicken. Wer den Link öffnet, sieht sofort das Rezept."], ["Zutaten kopieren", "Im Rezept kopiert „Zutaten kopieren“ die Mengen für eure Personenzahl, bereit zum Einfügen in eine Notiz oder eine Listen-App."], ["Leere Tage", "Mit „Leere Tage füllen“ schlägt die App für alle freien Tage Gerichte vor. Unter der Woche sind es nur schnelle Gerichte, bevorzugt vegetarisch."], ["Design", "In den Einstellungen wählst du zwischen hellem und dunklem Design, oder die App folgt automatisch deinem Handy."], ["Notiz", "Im Rezept hältst du unter „Unsere Notiz“ fest, was ihr beim nächsten Mal anders macht, zum Beispiel weniger Salz."], ["Lieblinge", "In den Einstellungen wählst du Lieblingskategorien. Sie kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran."], ["Einsenden", "Unter Ideen kannst du über „Rezept hinzufügen“ ein Rezept als Foto, PDF oder Link einsenden. Nach der Prüfung steht es für alle in der App."], ["Bewerten", "Nach dem Essen fragt die App, wie es geschmeckt hat. Mit 👍 und 👎 merkt ihr euch eure Favoriten."], ["Offline", "Öffne die App einmal mit Netz und danach noch einmal: Dann startet sie auch ohne Empfang. Im Supermarkt kannst du die Einkaufsliste abhaken und ergänzen, beim nächsten Netz gleicht sie sich ab."], ["Eigene Filter", "Allergene und Vorlieben gelten standardmäßig nur auf deinem Handy. Mit dem Schalter „Filter mit Familie teilen“ in den Einstellungen nutzt ihr sie gemeinsam. Der Vorrat wird immer geteilt."], ["Sicherung", "Unter Einstellungen → Daten sichern speicherst du Plan, eigene Rezepte und Einstellungen als Datei, zum Beispiel vor einem Handywechsel."], ["App installieren", "Android (Chrome): oben rechts ⋮ → „App installieren“. iPhone (Safari): unten auf das Teilen-Symbol tippen → „Zum Home-Bildschirm“ → „Hinzufügen“. Danach startet Was essen wir? wie eine normale App, ohne Browserleiste."]];
 const LS_TIPS = "essensplan-tips";
-const APP_VERSION = "v1.21.0";
+const APP_VERSION = "v1.21.1";
 document.getElementById("appVer").textContent = "Version " + APP_VERSION;
 const LS_HERO = "essensplan-hero";
 function heroClosed(){ try{ return !!localStorage.getItem(LS_HERO); }catch(e){ return false; } }
@@ -5277,11 +5304,28 @@ function decorateAtelier(){
     const d=dish(t.dataset.open); if(!d) return;
     const k=atKind(d), sp=document.createElement("span"); sp.className="atl"; sp.setAttribute("aria-hidden","true"); sp.style.background=AT_BG[k]; sp.innerHTML=atSvg(k,d); card.appendChild(sp);
   });
+  if(lookMode()==="comicat") decorateMix();
   document.querySelectorAll(".sheet").forEach(sh=>{
     if(sh.querySelector(":scope>.at-hero")) return;
     const c=sh.querySelector(".cook-btn[data-cook]"); if(!c) return;
     const d=dish(c.dataset.cook); if(!d) return;
     const k=atKind(d); sh.insertAdjacentHTML("afterbegin",`<div class="at-hero" style="--bg:${AT_BG[k]}">${atProps(k)}${atSvg(k,d)}</div>`);
+  });
+}
+function decorateMix(){
+  const bn=document.querySelector(".at-banner");
+  if(bn && !bn.querySelector(".cmc")) bn.insertAdjacentHTML("beforeend",'<span class="cmc">Heute am Herd</span><span class="cmb" style="left:122px;top:12px">mjam!</span>');
+  document.querySelectorAll(".day,.daybig,.idea").forEach(card=>{
+    if(card.querySelector(":scope>.cmx")) return;
+    const t=card.querySelector("[data-open]"); if(!t) return;
+    const d=dish(t.dataset.open); if(!d) return;
+    const w=d.t&&d.t<=20?["BLITZ!",""]:d.kid?["KIDS-HIT!","b"]:(d.az||"").includes("o")?["OFEN!","c"]:null;
+    if(w) card.insertAdjacentHTML("beforeend",`<span class="cmx ${w[1]}" aria-hidden="true">${w[0]}</span>`);
+  });
+  document.querySelectorAll(".sheet").forEach(sh=>{
+    const h=sh.querySelector(":scope>.at-hero"); if(!h||h.querySelector(".cmx")) return;
+    const c=sh.querySelector(".cook-btn[data-cook]"); const d=c&&dish(c.dataset.cook); if(!d) return;
+    h.insertAdjacentHTML("beforeend",`<span class="cmx c">${d.t} MIN!</span><span class="cmb">Mjam!</span>`);
   });
 }
 function startAtelier(){
