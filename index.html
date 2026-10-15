@@ -1293,7 +1293,8 @@ nav.tabs button[aria-selected="true"]{animation:cmtab .4s cubic-bezier(.3,1.6,.5
 @keyframes dkfl{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 @keyframes dkwg{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
 @keyframes dkhp{0%,60%,100%{transform:translateY(0) scaleY(1)}30%{transform:translateY(-9px) scaleY(1.05)}45%{transform:translateY(0) scaleY(.9)}}
-#dkBg{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+body{position:relative}
+#dkBg{position:absolute;left:0;top:0;width:100%;z-index:-1;pointer-events:none;overflow:hidden}
 #dkBg .dk{opacity:.5}
 .day .dk.c1{left:-8px;bottom:-9px;width:22px;height:22px}
 .day .dk.c2{right:80px;bottom:-9px;width:22px;height:22px}
@@ -4891,7 +4892,7 @@ const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","
 /* ---------- Pro-Tipps: ein Tipp pro Tag, der Reihe nach, nur beim Start; abschaltbar (pro Gerät) ---------- */
 const TIPS = [["Kochmodus", "Tippe im Rezept auf „Kochmodus“: große Schrift, Zutaten und Schritte zum Abhaken, der Bildschirm bleibt an. Wenn du etwas abhakst, scrollt es von selbst zum Nächsten."], ["Einkauf", "Das 🏠 hinter einer Zutat in der Einkaufsliste nimmt sie von der Liste, weil ihr sie zuhause habt. „Nur diesmal“ und „Angebrochen“ holst du unter „Schon zuhause“ mit dem 🛒 zurück."], ["Personenzahl", "Im Rezept änderst du mit − und + die Personenzahl. Die Zutaten und die Mengen in den Schritten rechnen sich automatisch mit um."], ["Vorrat", "Zutaten, die immer da sind, zum Beispiel Zwiebeln: Tippe in der Einkaufsliste beim 🏠 auf „Immer“. Dann tauchen sie nie wieder auf der Liste auf, beeinflussen aber keine Rezeptvorschläge. Ändern kannst du das unter „Vorrat anpassen“ ganz unten in der Liste."], ["Alltag-Filter", "Unter Ideen findest du bei „Alle Filter“ den Reiter „Zeit & Alltag“: zum Beispiel Ofengericht, ein Topf, gut einzufrieren oder mit wenigen Zutaten."], ["Supermarkt", "Die Einkaufsliste lässt sich nach Abteilung sortieren. In den Einstellungen stellst du die Reihenfolge so ein, wie euer Supermarkt aufgebaut ist."], ["Reste", "„Was haben wir noch zuhause?“ in den Ideen: Tippe ein, was im Kühlschrank liegt, und die App zeigt dir Gerichte, die dazu passen."], ["Liste teilen", "Mit „Teilen“ in der Einkaufsliste schickst du die offenen Artikel zum Beispiel direkt an Google Keep oder an deine Familie."], ["Link teilen", "Tippe im Rezept auf „Link teilen“, um es per Nachricht zu verschicken. Wer den Link öffnet, sieht sofort das Rezept."], ["Zutaten kopieren", "Im Rezept kopiert „Zutaten kopieren“ die Mengen für eure Personenzahl, bereit zum Einfügen in eine Notiz oder eine Listen-App."], ["Leere Tage", "Mit „Leere Tage füllen“ schlägt die App für alle freien Tage Gerichte vor. Unter der Woche sind es nur schnelle Gerichte, bevorzugt vegetarisch."], ["Design", "In den Einstellungen wählst du zwischen hellem und dunklem Design, oder die App folgt automatisch deinem Handy."], ["Notiz", "Im Rezept hältst du unter „Unsere Notiz“ fest, was ihr beim nächsten Mal anders macht, zum Beispiel weniger Salz."], ["Lieblinge", "In den Einstellungen wählst du Lieblingskategorien. Sie kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran."], ["Einsenden", "Unter Ideen kannst du über „Rezept hinzufügen“ ein Rezept als Foto, PDF oder Link einsenden. Nach der Prüfung steht es für alle in der App."], ["Bewerten", "Nach dem Essen fragt die App, wie es geschmeckt hat. Mit 👍 und 👎 merkt ihr euch eure Favoriten."], ["Offline", "Öffne die App einmal mit Netz und danach noch einmal: Dann startet sie auch ohne Empfang. Im Supermarkt kannst du die Einkaufsliste abhaken und ergänzen, beim nächsten Netz gleicht sie sich ab."], ["Eigene Filter", "Allergene und Vorlieben gelten standardmäßig nur auf deinem Handy. Mit dem Schalter „Filter mit Familie teilen“ in den Einstellungen nutzt ihr sie gemeinsam. Der Vorrat wird immer geteilt."], ["Sicherung", "Unter Einstellungen → Daten sichern speicherst du Plan, eigene Rezepte und Einstellungen als Datei, zum Beispiel vor einem Handywechsel."], ["App installieren", "Android (Chrome): oben rechts ⋮ → „App installieren“. iPhone (Safari): unten auf das Teilen-Symbol tippen → „Zum Home-Bildschirm“ → „Hinzufügen“. Danach startet Was essen wir? wie eine normale App, ohne Browserleiste."]];
 const LS_TIPS = "essensplan-tips";
-const APP_VERSION = "v1.25.0";
+const APP_VERSION = "v1.25.1";
 document.getElementById("appVer").textContent = "Version " + APP_VERSION;
 const LS_HERO = "essensplan-hero";
 function heroClosed(){ try{ return !!localStorage.getItem(LS_HERO); }catch(e){ return false; } }
@@ -5255,9 +5256,15 @@ const DKI={
 };
 function dkAdd(el,key,cls,style){ el.insertAdjacentHTML("beforeend",`<span class="dk ${cls||""}" style="${style||""}" aria-hidden="true">${DKI[key]}</span>`); }
 function decorateDeko(){
-  if(!document.getElementById("dkBg")){
-    const pos=[["squig","fl",90,28],["tomato","hp d2",93,42],["leaf","wg",2,40],["star","tw d2",89,58],["spoon","wg d3",3,66],["pepper","fl d2",92,80],["arrow","",5,88],["carrot","wg",48,95],["star","tw d3",60,50]];
-    document.body.insertAdjacentHTML("beforeend",`<div id="dkBg" aria-hidden="true">${pos.map(p=>`<span class="dk ${p[1]}" style="left:${p[2]}%;top:${p[3]}%;width:30px;height:30px">${DKI[p[0]]}</span>`).join("")}</div>`);
+  let bg=document.getElementById("dkBg");
+  if(!bg){ document.body.insertAdjacentHTML("beforeend",'<div id="dkBg" aria-hidden="true"></div>'); bg=document.getElementById("dkBg"); }
+  const H=Math.max(document.body.scrollHeight,window.innerHeight);
+  if(Math.abs((+bg.dataset.h||0)-H)>150){
+    bg.dataset.h=H; bg.style.height=H+"px";
+    const seq=[["squig","fl"],["tomato","hp d2"],["leaf","wg"],["star","tw d2"],["spoon","wg d3"],["pepper","fl d2"],["arrow",""],["carrot","wg"],["star","tw d3"]];
+    let h="",n=0;
+    for(let y=230;y<H-60;y+=300,n++){ const p=seq[n%seq.length], left=n%2===0; h+=`<span class="dk ${p[1]}" style="${left?"left:2%":"right:3%"};top:${y+(n*37)%90}px;width:30px;height:30px">${DKI[p[0]]}</span>`; }
+    bg.innerHTML=h;
   }
   const cyc=[["star","tw"],["squig","fl"],["tomato","hp"],["arrow",""],["leaf","wg"],["pepper","fl"]];
   document.querySelectorAll("#week .day").forEach((c,i)=>{
