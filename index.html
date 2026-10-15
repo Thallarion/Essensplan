@@ -1214,7 +1214,114 @@ nav.tabs .count{background:var(--tomato);color:#fff}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
-<script>(function(){ try{ var l=localStorage.getItem("essensplan-look"), m={kochbuch:"kochCss",comic:"comicCss"}; if(l==="notiz") l="comic"; if(m[l]){ document.getElementById(m[l]).media="all"; document.documentElement.setAttribute("data-look",l); } }catch(e){} })();</script>
+<style id="atelierCss" media="not all">
+/* ===== Design „Atelier": warme Farben, weiche Karten, gezeichnete Szenen ===== */
+:root{
+  --ground:#FAF3E4; --surface:#FFFFFF; --sunk:#F6EDDB; --ink:#2B2218; --muted:#7A6A55; --line:#EADFC8;
+  --basil:#4F7A3F; --basil-ink:#FFFFFF; --basil-soft:#E5EFD8; --mustard:#B07A12; --mustard-soft:#FBE7A8;
+  --tomato:#C65D3B; --tomato-soft:#F8DDD2; --sea:#3E6E8E; --sea-soft:#DCE8F0;
+  --shadow:0 8px 22px rgba(95,60,20,.13);
+  --display:"Fraunces",Georgia,"Times New Roman",serif;
+  --at-grad:linear-gradient(135deg,#F7D9A6,#EDAE6A); --at-btn:linear-gradient(180deg,#6A9A55,#4B7539); --at-r:22px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#1B1712; --surface:#272017; --sunk:#322A1E; --ink:#F5EBD8; --muted:#BDB097; --line:#40372A;
+    --basil:#9CCB86; --basil-ink:#13200F; --basil-soft:#2A3826; --mustard:#EBC060; --mustard-soft:#4A3F1C;
+    --tomato:#EE9475; --tomato-soft:#44271F; --sea:#86BEDC; --sea-soft:#1F3340;
+    --shadow:0 8px 22px rgba(0,0,0,.45); --at-grad:linear-gradient(135deg,#5A4520,#7A5524); --at-btn:linear-gradient(180deg,#86B672,#5E8C4A);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#1B1712; --surface:#272017; --sunk:#322A1E; --ink:#F5EBD8; --muted:#BDB097; --line:#40372A;
+  --basil:#9CCB86; --basil-ink:#13200F; --basil-soft:#2A3826; --mustard:#EBC060; --mustard-soft:#4A3F1C;
+  --tomato:#EE9475; --tomato-soft:#44271F; --sea:#86BEDC; --sea-soft:#1F3340;
+  --shadow:0 8px 22px rgba(0,0,0,.45); --at-grad:linear-gradient(135deg,#5A4520,#7A5524); --at-btn:linear-gradient(180deg,#86B672,#5E8C4A);
+}
+body{background:var(--ground)}
+h1,.sheet h2,.surprise strong,.set h3,.k-head h2,.heute-h,.hero h2,.k-sec h3,.ck-top h2,.ck-h h3,.cat h3{font-family:var(--display);font-weight:700;letter-spacing:-.01em;font-variation-settings:"SOFT" 100,"WONK" 1}
+.dhead .dname{font-family:var(--display);font-weight:700;color:var(--tomato)}
+/* Kopfbild */
+.at-banner{border-radius:26px;overflow:hidden;height:104px;margin:2px 0 14px;box-shadow:var(--shadow)}
+.at-banner svg{display:block;width:100%;height:100%}
+/* Karten */
+.day,.daybig,.idea,.hcard,.fridge-card,.hero,.shopdays,.surprise,.shop .cat,.shop .cat-fold{background:var(--surface);border:0;border-radius:var(--at-r);box-shadow:var(--shadow)}
+.day:not(.today):not(.past){border-left:0}
+.day,.daybig,.idea{position:relative;padding-right:112px;min-height:92px}
+.daybig{min-height:150px}
+.day.today,.daybig.today{background:var(--at-grad);color:#2B2218;box-shadow:0 10px 26px rgba(200,120,40,.30)}
+.day.today .muted,.daybig.today .muted,.day.today .ddate{color:#5A4220;opacity:1}
+.day.today .dname,.daybig .db-label b{color:#A8431F!important}
+:root[data-theme="dark"] .day.today,:root[data-theme="dark"] .daybig.today{color:#FBEFD2}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .day.today,:root:not([data-theme="light"]) .daybig.today{color:#FBEFD2}}
+:root[data-theme="dark"] .day.today .muted,:root[data-theme="dark"] .day.today .ddate,:root[data-theme="dark"] .daybig.today .muted{color:#E7D3A8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .day.today .muted,:root:not([data-theme="light"]) .day.today .ddate,:root:not([data-theme="light"]) .daybig.today .muted{color:#E7D3A8}}
+.day.past:not(.today){opacity:.6;box-shadow:none}
+.surprise{background:var(--at-grad);color:#2B2218}
+:root[data-theme="dark"] .surprise,:root[data-theme="dark"] .surprise strong{color:#FBEFD2}
+:root[data-theme="dark"] .day.today .dname,:root[data-theme="dark"] .daybig .db-label b{color:#FFC9A8!important}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .surprise,:root:not([data-theme="light"]) .surprise strong{color:#FBEFD2}
+:root:not([data-theme="light"]) .day.today .dname,:root:not([data-theme="light"]) .daybig .db-label b{color:#FFC9A8!important}}
+.note,.wk-status{border:0;border-radius:18px;background:var(--sunk)}
+/* Kacheln mit Zeichnung */
+.atl{position:absolute;right:12px;top:50%;width:88px;height:88px;margin-top:-44px;border-radius:20px;pointer-events:none;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px rgba(60,40,10,.08)}
+.atl svg{width:104%;height:104%;display:block;margin:-2px}
+.daybig .atl{top:16px;margin-top:0;width:104px;height:104px;right:14px}
+.daybig{padding-right:14px}
+.daybig .dish{padding-right:118px}
+:root[data-theme="dark"] .atl,.atl{filter:none}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .atl{filter:saturate(.92) brightness(.96)}}
+:root[data-theme="dark"] .atl{filter:saturate(.92) brightness(.96)}
+/* Knöpfe */
+.btn{border-radius:999px}
+.btn.primary{background:var(--at-btn);color:#fff;border:0;box-shadow:0 5px 14px rgba(60,100,40,.35)}
+.btn:not(.primary){background:var(--surface);color:var(--ink);border:1.5px solid var(--line);box-shadow:0 2px 6px rgba(95,60,20,.08)}
+.btn.textbtn,.btn.danger,.sd-quick .btn,.db-acts .btn.textbtn{background:transparent;border-color:transparent;box-shadow:none}
+.helpbtn{border-radius:999px;border:1.5px solid var(--line);background:var(--surface);box-shadow:0 2px 6px rgba(95,60,20,.08);color:var(--ink)}
+.fridge-card .fa{background:var(--at-btn);color:#fff!important;border-radius:999px;border:0;box-shadow:0 4px 10px rgba(60,100,40,.3)}
+.chip{border-radius:999px}
+.filters button,.k-tabs button,.qs-chips button{border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink)}
+.filters button[aria-pressed="true"],.k-tabs button[aria-pressed="true"],.qs-chips button[aria-pressed="true"]{background:var(--at-btn);color:#fff;border-color:transparent;box-shadow:0 4px 10px rgba(60,100,40,.28)}
+.seg,.wk-switch{background:var(--sunk);border:0;border-radius:999px;padding:4px}
+.seg button[aria-pressed="true"],.wk-switch button[aria-pressed="true"]{background:var(--surface);color:var(--ink);border-radius:999px;box-shadow:0 3px 8px rgba(95,60,20,.16)}
+/* Einkauf */
+.shop .cat,.shop .cat-fold{padding:8px 16px 10px;margin-bottom:12px}
+.cat h3,.cat-fold>summary{font-size:22px;text-transform:none;letter-spacing:0}
+.item{border-bottom:1px solid var(--line)}
+.item input{border-radius:8px;border:2px solid var(--basil)}
+.item input:checked{background:var(--basil);border-color:var(--basil)}
+/* Navigation: schwebende Leiste */
+nav.tabs{background:var(--surface);border:0;border-radius:26px;margin:0 10px 10px;box-shadow:0 10px 28px rgba(60,40,10,.22)}
+nav.tabs button{border-radius:20px;color:var(--muted);font-weight:700}
+nav.tabs button[aria-selected="true"]{background:var(--basil-soft);color:var(--basil)}
+nav.tabs .count{background:var(--tomato);color:#fff}
+:root[data-theme] nav.tabs button[aria-selected="true"],:root:not([data-theme="light"]) nav.tabs button[aria-selected="true"]{background:var(--basil-soft);color:var(--basil)}
+/* Fenster und Rezept-Ansicht */
+.sheet{background:var(--surface);border-radius:28px 28px 0 0;overflow-x:hidden}
+.at-hero{position:relative;margin:-18px -18px 14px;height:178px;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,rgba(255,255,255,.75),rgba(255,255,255,0) 62%),var(--bg,#EDE3D0)}
+.at-hero svg{height:158px;width:auto;display:block;filter:drop-shadow(0 6px 8px rgba(60,40,10,.18))}
+.sheet:has(.at-hero) .btn.close[aria-label="Schließen"]{position:absolute;top:12px;right:12px;z-index:3;background:rgba(255,255,255,.92);color:#2B2218;box-shadow:0 3px 10px rgba(60,40,10,.25);float:none}
+.sheet h2{font-size:30px;line-height:1.08;margin-bottom:8px}
+#ingList{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:8px}
+#ingList>li{background:var(--sunk);border-radius:16px;padding:11px 16px;list-style:none}
+#ingList>li strong{color:var(--tomato)}
+#ingList>li.ing-box{background:transparent;border:1.5px dashed var(--line)}
+.steps-list{gap:12px}
+.steps-list li{background:var(--sunk);border-radius:18px;padding:14px 14px 14px 62px;line-height:1.5}
+.steps-list li::before{left:14px;top:12px;width:34px;height:34px;font:700 17px var(--display);background:var(--at-grad);color:#6B3412;box-shadow:0 3px 8px rgba(200,120,40,.3)}
+.steps-list li.done{opacity:.6}
+.steps-list li.done::before{background:var(--at-btn);color:#fff}
+.cook-btn{border-radius:999px}
+.rate{margin-top:12px}
+/* Leere Zustände mit Zeichnung */
+.empty,#emptyHint{text-align:center}
+.empty::before,#emptyHint::before{content:"";display:block;height:96px;margin:6px auto 4px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 100'%3E%3Cg stroke='%233A2A18' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cellipse cx='80' cy='88' rx='46' ry='6' fill='%233A2A18' opacity='.12' stroke='none'/%3E%3Ccircle cx='80' cy='52' r='34' fill='%23FFFFFF'/%3E%3Ccircle cx='80' cy='52' r='23' fill='%23F7F1E4' stroke-width='1.6'/%3E%3Cpath d='M26 22v26M32 22v26M38 22v26M26 48h12M32 48v34' stroke-width='2.6' fill='none'/%3E%3Cpath d='M134 22c-8 8-8 22 0 26v34' stroke-width='2.6' fill='none'/%3E%3Cpath d='M70 40q-6-9 0-16M82 38q-6-9 0-16M94 40q-6-9 0-16' stroke='%23E0B070' stroke-width='3.4' fill='none'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat}
+@media (min-width:1000px){
+  nav.tabs{margin:0;background:transparent;box-shadow:none;border-radius:0}
+  .sheet{border-radius:24px 0 0 24px}
+}
+</style>
+<script>(function(){ try{ var l=localStorage.getItem("essensplan-look"), m={kochbuch:"kochCss",comic:"comicCss",atelier:"atelierCss"}; if(l==="notiz") l="comic"; if(m[l]){ document.getElementById(m[l]).media="all"; document.documentElement.setAttribute("data-look",l); } }catch(e){} })();</script>
 <script data-goatcounter="https://wasessenwir.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
@@ -4767,7 +4874,7 @@ const FAV_OPTS = [["veg","🌱 Vegetarisch"],["fisch","🐟 Fisch"],["fleisch","
 /* ---------- Pro-Tipps: ein Tipp pro Tag, der Reihe nach, nur beim Start; abschaltbar (pro Gerät) ---------- */
 const TIPS = [["Kochmodus", "Tippe im Rezept auf „Kochmodus“: große Schrift, Zutaten und Schritte zum Abhaken, der Bildschirm bleibt an. Wenn du etwas abhakst, scrollt es von selbst zum Nächsten."], ["Einkauf", "Das 🏠 hinter einer Zutat in der Einkaufsliste nimmt sie von der Liste, weil ihr sie zuhause habt. „Nur diesmal“ und „Angebrochen“ holst du unter „Schon zuhause“ mit dem 🛒 zurück."], ["Personenzahl", "Im Rezept änderst du mit − und + die Personenzahl. Die Zutaten und die Mengen in den Schritten rechnen sich automatisch mit um."], ["Vorrat", "Zutaten, die immer da sind, zum Beispiel Zwiebeln: Tippe in der Einkaufsliste beim 🏠 auf „Immer“. Dann tauchen sie nie wieder auf der Liste auf, beeinflussen aber keine Rezeptvorschläge. Ändern kannst du das unter „Vorrat anpassen“ ganz unten in der Liste."], ["Alltag-Filter", "Unter Ideen findest du bei „Alle Filter“ den Reiter „Zeit & Alltag“: zum Beispiel Ofengericht, ein Topf, gut einzufrieren oder mit wenigen Zutaten."], ["Supermarkt", "Die Einkaufsliste lässt sich nach Abteilung sortieren. In den Einstellungen stellst du die Reihenfolge so ein, wie euer Supermarkt aufgebaut ist."], ["Reste", "„Was haben wir noch zuhause?“ in den Ideen: Tippe ein, was im Kühlschrank liegt, und die App zeigt dir Gerichte, die dazu passen."], ["Liste teilen", "Mit „Teilen“ in der Einkaufsliste schickst du die offenen Artikel zum Beispiel direkt an Google Keep oder an deine Familie."], ["Link teilen", "Tippe im Rezept auf „Link teilen“, um es per Nachricht zu verschicken. Wer den Link öffnet, sieht sofort das Rezept."], ["Zutaten kopieren", "Im Rezept kopiert „Zutaten kopieren“ die Mengen für eure Personenzahl, bereit zum Einfügen in eine Notiz oder eine Listen-App."], ["Leere Tage", "Mit „Leere Tage füllen“ schlägt die App für alle freien Tage Gerichte vor. Unter der Woche sind es nur schnelle Gerichte, bevorzugt vegetarisch."], ["Design", "In den Einstellungen wählst du zwischen hellem und dunklem Design, oder die App folgt automatisch deinem Handy."], ["Notiz", "Im Rezept hältst du unter „Unsere Notiz“ fest, was ihr beim nächsten Mal anders macht, zum Beispiel weniger Salz."], ["Lieblinge", "In den Einstellungen wählst du Lieblingskategorien. Sie kommen beim Würfeln und bei „Leere Tage füllen“ öfter dran."], ["Einsenden", "Unter Ideen kannst du über „Rezept hinzufügen“ ein Rezept als Foto, PDF oder Link einsenden. Nach der Prüfung steht es für alle in der App."], ["Bewerten", "Nach dem Essen fragt die App, wie es geschmeckt hat. Mit 👍 und 👎 merkt ihr euch eure Favoriten."], ["Offline", "Öffne die App einmal mit Netz und danach noch einmal: Dann startet sie auch ohne Empfang. Im Supermarkt kannst du die Einkaufsliste abhaken und ergänzen, beim nächsten Netz gleicht sie sich ab."], ["Eigene Filter", "Allergene und Vorlieben gelten standardmäßig nur auf deinem Handy. Mit dem Schalter „Filter mit Familie teilen“ in den Einstellungen nutzt ihr sie gemeinsam. Der Vorrat wird immer geteilt."], ["Sicherung", "Unter Einstellungen → Daten sichern speicherst du Plan, eigene Rezepte und Einstellungen als Datei, zum Beispiel vor einem Handywechsel."], ["App installieren", "Android (Chrome): oben rechts ⋮ → „App installieren“. iPhone (Safari): unten auf das Teilen-Symbol tippen → „Zum Home-Bildschirm“ → „Hinzufügen“. Danach startet Was essen wir? wie eine normale App, ohne Browserleiste."]];
 const LS_TIPS = "essensplan-tips";
-const APP_VERSION = "v1.19.5";
+const APP_VERSION = "v1.19.8";
 document.getElementById("appVer").textContent = "Version " + APP_VERSION;
 const LS_HERO = "essensplan-hero";
 function heroClosed(){ try{ return !!localStorage.getItem(LS_HERO); }catch(e){ return false; } }
@@ -4789,7 +4896,7 @@ function maybeShowTip(){
   $("#tipOff").addEventListener("click",e=>{ e.stopPropagation(); tipsSave({...tipsState(), off:true}); closeSheet(); toast("Tipps ausgeschaltet – in den Einstellungen wieder einschaltbar"); });
 }
 function themeMode(){ try{ const m = localStorage.getItem("essensplan-theme"); return m==="light"||m==="dark" ? m : "auto"; }catch(e){ return "auto"; } }
-function lookMode(){ try{ const l=localStorage.getItem("essensplan-look"); return l==="kochbuch"||l==="comic" ? l : l==="notiz" ? "comic" : "klassisch"; }catch(e){ return "klassisch"; } }
+function lookMode(){ try{ const l=localStorage.getItem("essensplan-look"); return l==="kochbuch"||l==="comic"||l==="atelier" ? l : l==="notiz" ? "comic" : "klassisch"; }catch(e){ return "klassisch"; } }
 const EMOJI_RE=/[\p{Extended_Pictographic}\p{Regional_Indicator}\u200d\ufe0f\u20e3]+/gu;
 const EMOJI_ONLY={"🏠":"Vorrat","🏷":"Kategorie","👍":"✓ Gut","👎":"✕ Nicht gut","🎲":"Tauschen","✏️":"Ändern","⭐":"Favorit","☆":"Favorit","★":"Favorit"};
 function stripEmoji(root){
@@ -4848,15 +4955,65 @@ function startDoodles(){
   new MutationObserver(()=>{ if(busy) return; busy=true; requestAnimationFrame(()=>{ try{ decorateDoodles(); }finally{ busy=false; } }); }).observe(document.body,{childList:true,subtree:true});
   decorateDoodles();
 }
-function themeCols(){ const l=lookMode(); return l==="comic" ? ["#F3E4C3","#1E1A12"] : l==="kochbuch" ? ["#FBFAF6","#16130F"] : ["#F7F1E6","#1A1612"]; }
+/* Atelier: gezeichnete Szenen zu den Gerichten und der Kopfbereich */
+const AT_SH = '<ellipse cx="80" cy="106" rx="52" ry="7" fill="#3A2A18" opacity=".14"/>';
+const AT_DEFS = '<defs><linearGradient id="atB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E6DCC8"/></linearGradient><linearGradient id="atBl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#DCE9F3"/><stop offset="1" stop-color="#A9C4D9"/></linearGradient><linearGradient id="atG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C9E2B0"/><stop offset="1" stop-color="#8DBA6E"/></linearGradient><linearGradient id="atP" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6D6A66"/><stop offset="1" stop-color="#3E3C3A"/></linearGradient></defs>';
+const AT_S = 'stroke="#3A2A18" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"';
+const AT_SCENE = {
+ soup:`<g ${AT_S}>${AT_SH}<path d="M28 56H132C132 88 110 104 80 104C50 104 28 88 28 56Z" fill="url(#atB)"/><ellipse cx="80" cy="56" rx="52" ry="10" fill="#F4EEDD"/><ellipse cx="80" cy="56" rx="45" ry="7.5" fill="#E4772E"/><path d="M52 55q8-3 14 0M92 57q10-3 18 0" stroke="#F6B26B" stroke-width="2" fill="none"/><circle cx="64" cy="57" r="4" fill="#F2C94C" stroke-width="1.6"/><circle cx="96" cy="55" r="3.6" fill="#7DB05B" stroke-width="1.6"/><circle cx="80" cy="58" r="3" fill="#C93B2B" stroke-width="1.6"/><path d="M62 40q-7-9 0-17M80 38q-7-9 0-17M98 40q-7-9 0-17" stroke="#FFFFFF" stroke-opacity=".85" stroke-width="4" fill="none"/><path d="M132 36l-26 26" stroke-width="3.4"/><ellipse cx="136" cy="32" rx="7" ry="5" transform="rotate(-45 136 32)" fill="#C79A5B"/><path d="M40 66q6 24 30 30" stroke="#FFFFFF" stroke-opacity=".6" stroke-width="3" fill="none"/></g>`,
+ pasta:`<g ${AT_S}>${AT_SH}<path d="M28 58H132C132 88 110 104 80 104C50 104 28 88 28 58Z" fill="url(#atBl)"/><ellipse cx="80" cy="58" rx="52" ry="10" fill="#EAF2F8"/><path d="M42 56c6-18 16-20 24-8 6-14 24-18 30-4 8-12 24-8 24 12-14 8-72 8-78 0Z" fill="#F2C75C"/><path d="M50 54q10-10 20 0t20 0 18-2M58 48q8-6 16 0t16 0" stroke="#D9A236" stroke-width="2" fill="none"/><path d="M60 44c4-12 22-12 24-2 2 8-8 14-14 12-6-1-12-4-10-10Z" fill="#D8412F"/><path d="M92 38l6-10 8 6-6 8z" fill="#6AA84F"/><path d="M104 40l7-8 6 7-7 6z" fill="#8BC06C"/><path d="M40 70q6 22 30 28" stroke="#FFFFFF" stroke-opacity=".5" stroke-width="3" fill="none"/></g>`,
+ pizza:`<g ${AT_S}><ellipse cx="80" cy="104" rx="52" ry="7" fill="#3A2A18" opacity=".14"/><circle cx="80" cy="58" r="46" fill="#D9984A"/><circle cx="80" cy="58" r="38" fill="#F6D77A"/><path d="M80 20v76M42 58h76M53 31l54 54M107 31L53 85" stroke="#E0A93E" stroke-width="1.4" fill="none"/><circle cx="62" cy="42" r="8" fill="#C93B2B"/><circle cx="62" cy="42" r="3" fill="#E8776A" stroke="none"/><circle cx="98" cy="46" r="8" fill="#C93B2B"/><circle cx="98" cy="46" r="3" fill="#E8776A" stroke="none"/><circle cx="76" cy="72" r="8" fill="#C93B2B"/><circle cx="76" cy="72" r="3" fill="#E8776A" stroke="none"/><circle cx="104" cy="74" r="6" fill="#C93B2B"/><path d="M82 52l8-8 7 8-8 7z" fill="#6AA84F"/><path d="M52 66l7-7 6 7-7 6z" fill="#8BC06C"/></g>`,
+ wrap:`<g ${AT_S}>${AT_SH}<path d="M26 82C26 40 134 40 134 82C134 98 26 98 26 82Z" fill="#EBCB8F"/><path d="M26 82C40 66 120 66 134 82" fill="#F4DDA8"/><path d="M34 62c8-16 20-16 28-6 6-10 20-14 28-4 8-8 22-6 30 6-18 10-62 10-86 4Z" fill="url(#atG)"/><circle cx="58" cy="60" r="6" fill="#D8412F"/><circle cx="84" cy="56" r="5.4" fill="#F2C94C"/><circle cx="106" cy="62" r="6" fill="#D8412F"/><path d="M40 86q40 10 80 0" stroke="#C79A5B" stroke-width="2" fill="none"/></g>`,
+ salad:`<g ${AT_S}>${AT_SH}<path d="M28 60H132C132 90 110 104 80 104C50 104 28 90 28 60Z" fill="url(#atBl)"/><path d="M30 62C24 36 44 28 54 40 52 22 82 16 90 32 100 20 124 30 118 50 130 52 132 62 130 64Z" fill="url(#atG)"/><path d="M52 42q10 6 6 18M92 34q-8 10 0 24M110 48q-8 4-6 12" stroke="#5E8C45" stroke-width="2" fill="none"/><circle cx="70" cy="54" r="8" fill="#D8412F"/><path d="M66 52l8 4" stroke="#F4A59A" stroke-width="2"/><circle cx="100" cy="56" r="6" fill="#F2C94C"/><circle cx="46" cy="58" r="5" fill="#E9B96A"/><path d="M118 34l18-14M132 20l8 8" stroke-width="3"/></g>`,
+ pan:`<g ${AT_S}><ellipse cx="74" cy="106" rx="52" ry="7" fill="#3A2A18" opacity=".14"/><path d="M118 62l36-10" stroke-width="9" stroke="#3A2A18"/><path d="M118 62l36-10" stroke-width="5" stroke="#8A6B4A"/><circle cx="74" cy="60" r="46" fill="url(#atP)"/><circle cx="74" cy="60" r="38" fill="#F1DCB0"/><circle cx="56" cy="50" r="8" fill="#E8872F"/><circle cx="56" cy="50" r="3" fill="#F6B26B" stroke="none"/><circle cx="86" cy="44" r="9" fill="#6AA84F"/><circle cx="92" cy="72" r="8" fill="#D8412F"/><path d="M60 74q8-6 16 2" stroke="#6AA84F" stroke-width="5" fill="none"/><path d="M96 54l8 4" stroke="#F2C94C" stroke-width="5" fill="none"/><path d="M62 24q-6-8 0-14M80 22q-6-8 0-14" stroke="#FFFFFF" stroke-opacity=".9" stroke-width="3.4" fill="none"/></g>`,
+ rice:`<g ${AT_S}>${AT_SH}<path d="M30 60H130C130 90 108 104 80 104C52 104 30 90 30 60Z" fill="url(#atBl)"/><path d="M32 68h96M36 78h88" stroke="#FFFFFF" stroke-opacity=".55" stroke-width="3" fill="none"/><ellipse cx="80" cy="60" rx="50" ry="9" fill="#F4F7FA"/><path d="M36 60C36 26 124 26 124 60Z" fill="#FFFFFF"/><g fill="#3A2A18" stroke="none"><circle cx="64" cy="46" r="1.6"/><circle cx="82" cy="40" r="1.6"/><circle cx="98" cy="48" r="1.6"/><circle cx="76" cy="52" r="1.6"/><circle cx="90" cy="54" r="1.6"/></g><path d="M60 40l6-4M100 42l6-2" stroke="#6AA84F" stroke-width="4" fill="none"/><path d="M116 18l-30 40M126 22l-30 40" stroke="#C79A5B" stroke-width="3.2"/></g>`,
+ plate:`<g ${AT_S}>${AT_SH}<circle cx="80" cy="60" r="46" fill="url(#atB)"/><circle cx="80" cy="60" r="31" fill="#F7F1E4" stroke-width="1.6"/><path d="M22 28v28M28 28v28M34 28v28M22 56h12M28 56v36" stroke-width="2.6"/><path d="M138 28c-8 8-8 24 0 28v36" stroke-width="2.6"/><path d="M70 52c6-12 24-10 22 4-2 12-20 14-24 4Z" fill="#8BC06C"/><circle cx="92" cy="68" r="5" fill="#D8412F"/></g>`
+};
+const AT_BG = {soup:"#FBE0BE",pasta:"#FBEBB5",pizza:"#F8D6B8",wrap:"#EFE2BC",salad:"#DBEFCB",pan:"#EEDCC9",rice:"#DFEAF3",plate:"#EDE3D0"};
+function atKind(d){
+  const n=String(d.n).toLowerCase();
+  return /pizza|flammkuchen|focaccia|quiche|tarte/.test(n)?"pizza"
+    : /nudel|pasta|spaghetti|gnocchi|lasagne|tortellini|penne|spätzle|makkaroni|ravioli/.test(n)?"pasta"
+    : /wrap|burrito|taco|gözleme|tortilla|quesadilla|fladen|pita|burger|sandwich|toast|brot|flatbread|naan/.test(n)?"wrap"
+    : /salat|bowl|rohkost|poke/.test(n)?"salad"
+    : /suppe|eintopf|curry|dal\b|chili|gulasch|ragout|bolognese|linsen|bohnen|kichererbsen|brühe/.test(n)?"soup"
+    : /reis|risotto|paella|couscous|quinoa|bulgur|hirse/.test(n)?"rice"
+    : /pfanne|wok|frittata|omelett|rührei|kartoffel|puffer|hähnchen|schnitzel|fisch|lachs|stäbchen|gemüse|bratling|laibchen|pancake|pfannkuchen/.test(n)?"pan":"plate";
+}
+function atSvg(k){ return `<svg viewBox="0 0 160 120" aria-hidden="true">${AT_DEFS}${AT_SCENE[k]}</svg>`; }
+/* Kopfbild: Regal mit Topf, Zitronen, Kräutern und Pfanne */
+const AT_BANNER = `<svg viewBox="0 0 390 110" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="atWall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F7E6CB"/><stop offset="1" stop-color="#F1D3A8"/></linearGradient></defs><rect width="390" height="110" fill="url(#atWall)"/><g stroke="#3A2A18" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="330" cy="28" r="16" fill="#FFF3C9" stroke="none" opacity=".8"/><path d="M0 92H390" stroke-width="3"/><rect x="0" y="92" width="390" height="18" fill="#B98558" stroke="none"/><path d="M0 100H390" stroke="#9A6B42" stroke-width="1.5"/><g transform="translate(24 36)"><path d="M0 30H46L42 56H4Z" fill="#C65D3B"/><path d="M-2 30H48" stroke-width="3"/><path d="M12 28q-6-12 2-22M24 28q-4-14 2-24M36 28q-2-12 6-18" stroke="#6AA84F" stroke-width="3.4" fill="none"/><circle cx="14" cy="6" r="4" fill="#8BC06C" stroke-width="1.6"/><circle cx="28" cy="2" r="4" fill="#6AA84F" stroke-width="1.6"/></g><g transform="translate(96 40)"><ellipse cx="22" cy="48" rx="22" ry="6" fill="#3A2A18" opacity=".12" stroke="none"/><path d="M0 22H44V46C44 52 38 54 22 54C6 54 0 52 0 46Z" fill="#7C8F6A"/><rect x="-3" y="14" width="50" height="10" rx="3" fill="#92A67F"/><path d="M14 14q-4-8 0-12M26 14q-4-8 0-12" stroke="#FFFFFF" stroke-opacity=".9" stroke-width="3" fill="none"/></g><g transform="translate(176 56)"><circle cx="12" cy="24" r="14" fill="#F2C94C"/><circle cx="38" cy="26" r="13" fill="#F6D865"/><path d="M12 14q4 2 6 6M38 16q4 2 5 6" stroke="#C99A1C" stroke-width="1.6" fill="none"/><path d="M26 12l8-10 8 8-8 6z" fill="#6AA84F" stroke-width="1.8"/></g><g transform="translate(250 20)"><circle cx="30" cy="40" r="26" fill="#4C4A47"/><circle cx="30" cy="40" r="20" fill="#706D69"/><path d="M52 40h36" stroke-width="7" stroke="#3A2A18"/><path d="M52 40h36" stroke-width="3.4" stroke="#8A6B4A"/><circle cx="24" cy="36" r="5" fill="#E8872F" stroke-width="1.6"/><circle cx="36" cy="44" r="5" fill="#6AA84F" stroke-width="1.6"/></g><g transform="translate(332 44)"><path d="M0 48V14C0 4 28 4 28 14V48Z" fill="#E9B96A"/><path d="M6 20h16M6 30h16" stroke="#C79A5B" stroke-width="2" fill="none"/><path d="M-2 14H30" stroke-width="3"/><circle cx="14" cy="6" r="3" fill="#C65D3B" stroke-width="1.6"/></g></g></svg>`;
+
+function decorateAtelier(){
+  if(!document.querySelector(".at-banner")){ const h=document.querySelector("header.top"); if(h) h.insertAdjacentHTML("afterend",`<div class="at-banner">${AT_BANNER}</div>`); }
+  document.querySelectorAll(".day,.daybig,.idea").forEach(card=>{
+    if(card.querySelector(":scope>.atl")) return;
+    const t=card.querySelector("[data-open]"); if(!t) return;
+    const d=dish(t.dataset.open); if(!d) return;
+    const k=atKind(d), sp=document.createElement("span"); sp.className="atl"; sp.setAttribute("aria-hidden","true"); sp.style.background=AT_BG[k]; sp.innerHTML=atSvg(k); card.appendChild(sp);
+  });
+  document.querySelectorAll(".sheet").forEach(sh=>{
+    if(sh.querySelector(":scope>.at-hero")) return;
+    const c=sh.querySelector(".cook-btn[data-cook]"); if(!c) return;
+    const d=dish(c.dataset.cook); if(!d) return;
+    const k=atKind(d); sh.insertAdjacentHTML("afterbegin",`<div class="at-hero" style="--bg:${AT_BG[k]}">${atSvg(k)}</div>`);
+  });
+}
+function startAtelier(){
+  let busy=false;
+  new MutationObserver(()=>{ if(busy) return; busy=true; requestAnimationFrame(()=>{ try{ decorateAtelier(); }finally{ busy=false; } }); }).observe(document.body,{childList:true,subtree:true});
+  decorateAtelier();
+}
+function themeCols(){ const l=lookMode(); return l==="atelier" ? ["#FAF3E4","#1B1712"] : l==="comic" ? ["#F3E4C3","#1E1A12"] : l==="kochbuch" ? ["#FBFAF6","#16130F"] : ["#F7F1E6","#1A1612"]; }
 function applyLook(k){
   const was=lookMode();
-  try{ if(k==="kochbuch"||k==="comic") localStorage.setItem("essensplan-look",k); else localStorage.removeItem("essensplan-look"); }catch(e){}
+  try{ if(k==="kochbuch"||k==="comic"||k==="atelier") localStorage.setItem("essensplan-look",k); else localStorage.removeItem("essensplan-look"); }catch(e){}
   const c = document.getElementById("kochCss"); if(c) c.media = k==="kochbuch" ? "all" : "not all";
+  const m3 = document.getElementById("atelierCss"); if(m3) m3.media = k==="atelier" ? "all" : "not all";
   const m2 = document.getElementById("comicCss"); if(m2) m2.media = k==="comic" ? "all" : "not all";
-  if(k==="kochbuch"||k==="comic") document.documentElement.setAttribute("data-look",k); else document.documentElement.removeAttribute("data-look");
+  if(k==="kochbuch"||k==="comic"||k==="atelier") document.documentElement.setAttribute("data-look",k); else document.documentElement.removeAttribute("data-look");
   applyTheme(themeMode());
-  if(k==="kochbuch" || was==="kochbuch" || k==="comic" || was==="comic") location.reload();
+  if(k==="kochbuch" || was==="kochbuch" || k==="comic" || was==="comic" || k==="atelier" || was==="atelier") location.reload();
 }
 function applyTheme(m){
   const root = document.documentElement;
@@ -4870,6 +5027,7 @@ function applyTheme(m){
 if(lookMode()!=="klassisch") applyTheme(themeMode());
 if(lookMode()==="kochbuch") startNoEmoji();
 if(lookMode()==="comic") startDoodles();
+if(lookMode()==="atelier") startAtelier();
 function openSettings(toPantry){
   const s = S();
   openSheet(`<button class="btn small close" data-close aria-label="Schließen" title="Schließen">✕</button>
@@ -4923,8 +5081,8 @@ function openSettings(toPantry){
     <p class="sub">${HINT_TYPES.map(([,l,d])=>`${l.replace(/^\S+\s/,"")}: ${d}.`).join(" ")}</p>
     <h2 class="set-grp">E. App und Gerät</h2>
     <h3>🎨 Aussehen</h3>
-    <p class="sub">„Klassisch“ ist ruhig und grün. „Kochbuch“ ist schlicht und neutral wie eine Buchseite, ohne Emojis. „Comic“ ist bunt mit dicken Umrissen und kleinen Zeichnungen zu den Gerichten (die Seite lädt beim Wechseln neu). Gilt nur für dieses Gerät.</p>
-    <div class="filters" id="setLook">${[["klassisch","Klassisch"],["kochbuch","📖 Kochbuch"],["comic","✏️ Comic"]].map(([k,l])=>`<button type="button" data-setlook="${k}" aria-pressed="${lookMode()===k}">${l}</button>`).join("")}</div>
+    <p class="sub">„Klassisch“ ist ruhig und grün. „Kochbuch“ ist schlicht und neutral wie eine Buchseite, ohne Emojis. „Comic“ ist bunt mit dicken Umrissen und kleinen Zeichnungen zu den Gerichten. „Atelier“ ist warm und weich, mit gezeichneten Szenen zu jedem Gericht und einer großen Bildseite im Rezept (die Seite lädt beim Wechseln neu). Gilt nur für dieses Gerät.</p>
+    <div class="filters" id="setLook">${[["klassisch","Klassisch"],["kochbuch","📖 Kochbuch"],["comic","✏️ Comic"],["atelier","🎨 Atelier"]].map(([k,l])=>`<button type="button" data-setlook="${k}" aria-pressed="${lookMode()===k}">${l}</button>`).join("")}</div>
     <h3>🌗 Hell oder dunkel</h3>
     <p class="sub">Hell, dunkel oder wie dein Handy eingestellt ist. Gilt nur für dieses Gerät.</p>
     <div class="filters" id="setTheme">${[["auto","Automatisch"],["light","☀️ Hell"],["dark","🌙 Dunkel"]].map(([k,l])=>`<button type="button" data-settheme="${k}" aria-pressed="${themeMode()===k}">${l}</button>`).join("")}</div>
@@ -5107,7 +5265,7 @@ function openHelp(first){
       ${img("einstellungen","Einstellungen")}
       <p>Über <b>⋯ Mehr → Einstellungen</b> oben rechts. Filter, Allergene, Vorlieben, Region sowie Erwachsene und Kinder gelten <b>nur auf deinem Gerät</b>, außer du schaltest oben <b>„Filter mit Familie teilen“</b> ein (nur sichtbar, wenn ihr einen gemeinsamen Plan nutzt). Design, Tipps und Hinweise gelten immer nur für dein Gerät.</p>
       <ul>
-        <li><b>🎨 Aussehen:</b> „Klassisch“, „Kochbuch“ (schlicht, ohne Emojis) oder „Comic“ (bunt, mit kleinen Zeichnungen). <b>🌗 Hell oder dunkel:</b> Hell, Dunkel oder wie dein Handy. Beides gilt nur für dieses Gerät.</li>
+        <li><b>🎨 Aussehen:</b> „Klassisch“, „Kochbuch“ (schlicht, ohne Emojis), „Comic“ (bunt, mit kleinen Zeichnungen) oder „Atelier“ (warm, mit gezeichneten Szenen). <b>🌗 Hell oder dunkel:</b> Hell, Dunkel oder wie dein Handy. Beides gilt nur für dieses Gerät.</li>
         <li><b>💡 Tipps:</b> Einmal am Tag zeigt die App beim Start einen kurzen Pro-Tipp, der Reihe nach. Hier schaltest du sie aus und wieder ein. Gilt nur für dieses Gerät.</li>
         <li><b>Erwachsene und Kinder:</b> Rezepte und Einkaufsliste rechnen alle Mengen darauf um.</li>
         <li><b>🥩 Fleisch</b> und <b>🐟 Fisch:</b> getrennt einstellbar, wie oft pro Woche es Fleisch bzw. Fisch geben darf (Oft, Ab und zu, Selten, Nie). Das steuert Würfeln, „Leere Tage füllen“ und den Plan-Assistenten.</li>
