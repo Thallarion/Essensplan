@@ -5907,7 +5907,7 @@ function shareDishLink(id){
   if(navigator.share){ navigator.share({title:d.n, text:"Rezept: "+d.n, url}).catch(()=>{}); return; }
   navigator.clipboard.writeText(url).then(()=>toast("Link kopiert")).catch(()=>toast(url));
 }
-function thumb(d,cls){ return d&&d.img?`<img class="dthumb ${cls}" src="img/${d.id}.jpg" alt="" loading="lazy" width="64" height="48">`:""; }
+function thumb(d,cls){ return d&&d.img&&lookMode()==="klassisch"?`<img class="dthumb ${cls}" src="img/${d.id}.jpg" alt="" loading="lazy" width="64" height="48">`:""; }
 function showDish(id,opts){
   const d = dish(id); if(!d) return;
   const nowIdx = (new Date().getDay()+6)%7;   // vergangene Tage dieser Woche sind nicht mehr wählbar
