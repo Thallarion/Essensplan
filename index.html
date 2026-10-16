@@ -1027,9 +1027,13 @@ body .hints .hint .h-r button[data-like][aria-pressed="true"]{border-color:var(-
 .dthumb.sm{float:right;width:64px;height:48px;margin:0 0 4px 8px}
 .dthumb.wk{float:right;align-self:flex-end;width:44px;height:33px;margin:2px 0 4px 8px;border-radius:6px}
 .idea{position:relative}
-.idea:has(.dthumb){align-items:flex-end;min-height:104px}
-.idea:has(.dthumb) .idea-main{padding-right:72px}
-.idea .dthumb.sm{position:absolute;top:12px;right:10px;float:none;margin:0}
+.idea:has(.dthumb),#ideas .idea:has(.dthumb){align-items:flex-end;min-height:124px}
+.idea .dthumb.sm{position:absolute;top:12px;right:41px;float:none;margin:0}
+.day,.daybig{position:relative}
+.day:has(.dthumb) .dish{padding-right:58px}
+.day .dthumb.wk{position:absolute;right:14px;top:50%;transform:translateY(-50%);float:none;margin:0}
+.daybig:has(.dthumb) .dish{padding-right:98px}
+.daybig .dthumb.wk{position:absolute;right:14px;top:34px;width:84px;height:63px;float:none;margin:0;border-radius:8px}
 </style>
 <style id="kochCss" media="not all">
 /* ===== Design „Kochbuch": Papier, Serifenschrift, Haarlinien ===== */
