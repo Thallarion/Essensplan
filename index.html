@@ -1037,6 +1037,13 @@ html:not([data-look]) .daybig .db-acts .dbx{width:34px!important;height:34px!imp
 .day .dthumb.wk{position:absolute;right:14px;top:50%;transform:translateY(-50%);float:none;margin:0}
 .daybig:has(.dthumb) .dish{padding-right:98px}
 .daybig .dthumb.wk{position:absolute;right:14px;top:34px;width:84px;height:63px;float:none;margin:0;border-radius:8px}
+@media (min-width:1000px){
+  .idea:has(.dthumb),#ideas .idea:has(.dthumb){min-height:0;align-items:stretch}
+  #ideas .idea:has(.dthumb) .idea-main{padding-right:84px;min-height:60px}
+  #ideas .idea .dthumb.sm{top:14px;right:16px;width:72px;height:54px}
+  .day:has(.dthumb) .dish,.daybig:has(.dthumb) .dish{padding-right:0}
+  .day .dthumb.wk,.daybig .dthumb.wk{position:static;transform:none;order:-1;align-self:stretch;width:100%;height:86px;margin:8px 0;border-radius:10px}
+}
 </style>
 <style id="kochCss" media="not all">
 /* ===== Design „Kochbuch": Papier, Serifenschrift, Haarlinien ===== */
