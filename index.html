@@ -444,6 +444,7 @@ details.info p{margin:8px 0 0}
 .dhead .dclr{width:30px;height:26px;margin:0 0 -4px -6px;display:inline-flex!important}
 .dhead .dclr svg{width:15px;height:15px}
 @media (max-width:999px){.day .dhead{width:max-content;min-width:44px}.day .dhead .droll,.day .dhead .dclr{width:32px!important;height:28px!important;align-self:center!important;padding:0!important;align-items:center;justify-content:center}.day .dhead .droll{margin:2px 0 0!important}.day .dhead .dclr{margin:0!important}.day .dhead .droll svg,.day .dhead .dclr svg{width:17px!important;height:17px!important}}
+.bar-eq .btn:only-child{flex:0 1 calc(50% - 4px)}
 .bar-eq{display:flex;gap:8px}.bar-eq .btn{flex:1 1 0;justify-content:center;text-align:center}
 .dhead .dname{line-height:1.05}
 .dhead .ddate{line-height:1.2}
@@ -5722,7 +5723,7 @@ function openHelp(first){
       <ul>
         <li><b>Noch nichts geplant:</b> Wähle die Kochzeit und tippe ein, was noch da ist (optional). Unter „Mehr Angaben“ kannst du „Familienfreundlich“ und die Art (vegetarisch, Fleisch, Fisch) einschränken. <b>„Vorschläge zeigen“</b> liefert drei Gerichte.</li>
         <li><b>„Für heute einplanen“</b> setzt das Gericht auf heute, die Zutaten kommen automatisch auf die Einkaufsliste. <b>„Rezept ansehen“</b> öffnet das Rezept, <b>„Andere Vorschläge“</b> würfelt neu. Mit <b>„Rückgängig“</b> nimmst du das Einplanen zurück.</li>
-        <li><b>Schon geplant:</b> Du siehst das Gericht mit <b>👨‍🍳 Kochmodus</b> und darunter die <b>Zutaten</b> für eure Personenzahl. Mit − und + rechnest du um, falls heute mehr oder weniger mitessen. <b>📖 Rezept öffnen</b> zeigt die Schritte, <b>📋 Zutaten kopieren</b> kopiert die Mengen.</li>
+        <li><b>Schon geplant:</b> Du siehst das Gericht mit <b>👨‍🍳 Kochmodus</b> und darunter die <b>Zutaten</b> für eure Personenzahl. Mit − und + rechnest du um, falls heute mehr oder weniger mitessen. Tippe auf den <b>Namen des Gerichts</b>, um die Schritte zu sehen, <b>📋 Zutaten kopieren</b> kopiert die Mengen.</li>
         <li><b>„Etwas anderes“</b> zeigt neue Vorschläge. Ist heute schon etwas geplant, fragt die App vor dem Ersetzen nach.</li>
         <li>Solange noch die Beispielwoche aktiv ist, startet das Einplanen eure eigene, leere Woche.</li>
       </ul>
@@ -6300,7 +6301,7 @@ function heuteRecipe(d){
     <div class="ing-head"><h3>Zutaten für ${n} Person${n>1?"en":""}</h3>
       <div class="stepper" role="group" aria-label="Personen"><button type="button" data-hx="pers" data-d="-1" aria-label="Eine Person weniger">−</button><span>${n}</span><button type="button" data-hx="pers" data-d="1" aria-label="Eine Person mehr">+</button></div></div>
     <ul>${ingItems(d,n)}</ul>
-    <div class="bar bar-eq" style="margin:10px 0 0"><button class="btn small" type="button" data-hx="copy" data-id="${d.id}">📋 Zutaten kopieren</button><button class="btn small" type="button" data-open="${d.id}">📖 Rezept öffnen</button></div>`;
+    <div class="bar bar-eq" style="margin:10px 0 0"><button class="btn small" type="button" data-hx="copy" data-id="${d.id}">📋 Zutaten kopieren</button></div>`;
 }
 function renderHeute(force){
   const box = $("#heuteBox"); if(!box) return;
@@ -6310,7 +6311,7 @@ function renderHeute(force){
   let h="";
   if(pl && !heuteOther){
     h=`<div class="daybig today"><div class="db-label"><b>HEUTE</b> · ${pl.d?"Auf dem Plan":"Auf dem Plan"}</div>
-      <div class="dish">${pl.d?`<span class="title">${esc(pl.d.n)}</span>${metaLine(pl.d)}`:`<span class="title">${esc(pl.custom)}</span>`}</div>
+      <div class="dish">${pl.d?`<button type="button" class="title" data-open="${pl.d.id}">${esc(pl.d.n)}</button>${metaLine(pl.d)}`:`<span class="title">${esc(pl.custom)}</span>`}</div>
       <div class="db-acts">${pl.d?`<button class="btn primary" type="button" data-cook="${pl.d.id}">👨‍🍳 Kochmodus</button>`:""}<button class="btn" type="button" data-hx="other">Etwas anderes</button></div></div>
       ${heuteJust?`<p class="note heute-ok">✓ Für heute eingeplant. Die Zutaten stehen auf der Einkaufsliste. <button type="button" class="linkbtn" data-hx="undo">Rückgängig</button></p>`:""}
       ${pl.d?heuteRecipe(pl.d):""}
