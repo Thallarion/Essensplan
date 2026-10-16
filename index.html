@@ -6311,7 +6311,7 @@ function renderHeute(force){
   let h="";
   if(pl && !heuteOther){
     h=`<div class="daybig today"><div class="db-label"><b>HEUTE</b> · ${pl.d?"Auf dem Plan":"Auf dem Plan"}</div>
-      <div class="dish">${pl.d?`<button type="button" class="title" data-open="${pl.d.id}">${esc(pl.d.n)}</button>${metaLine(pl.d)}`:`<span class="title">${esc(pl.custom)}</span>`}</div>
+      <div class="dish">${pl.d?`<button type="button" class="title" data-open="${pl.d.id}">${esc(pl.d.n)}</button>${thumb(pl.d,"wk")}${metaLine(pl.d)}`:`<span class="title">${esc(pl.custom)}</span>`}</div>
       <div class="db-acts">${pl.d?`<button class="btn primary" type="button" data-cook="${pl.d.id}">👨‍🍳 Kochmodus</button>`:""}<button class="btn" type="button" data-hx="other">Etwas anderes</button></div></div>
       ${heuteJust?`<p class="note heute-ok">✓ Für heute eingeplant. Die Zutaten stehen auf der Einkaufsliste. <button type="button" class="linkbtn" data-hx="undo">Rückgängig</button></p>`:""}
       ${pl.d?heuteRecipe(pl.d):""}
