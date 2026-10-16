@@ -1025,7 +1025,11 @@ body .hints .hint .h-r button[data-like][aria-pressed="true"]{border-color:var(-
 .dthumb{object-fit:cover;border-radius:8px;display:block;background:#eee}
 .dthumb.big{width:100%;height:170px;border-radius:14px;margin:6px 0 10px}
 .dthumb.sm{float:right;width:64px;height:48px;margin:0 0 4px 8px}
-.dthumb.wk{float:left;width:44px;height:33px;margin:0 8px 4px 0;border-radius:6px}
+.dthumb.wk{float:right;align-self:flex-end;width:44px;height:33px;margin:2px 0 4px 8px;border-radius:6px}
+.idea{position:relative}
+.idea:has(.dthumb){align-items:flex-end;min-height:104px}
+.idea:has(.dthumb) .idea-main{padding-right:72px}
+.idea .dthumb.sm{position:absolute;top:12px;right:10px;float:none;margin:0}
 </style>
 <style id="kochCss" media="not all">
 /* ===== Design „Kochbuch": Papier, Serifenschrift, Haarlinien ===== */
@@ -4581,7 +4585,7 @@ function renderWeek(){
   const bigCard = (i,label)=>{
     const g = i+O, v = state.days[g]; let body, acts = "";
     if(typeof v==="string" && dish(v)){ const x = dish(v);
-      body = `${thumb(x,"wk")}<button class="title" data-open="${x.id}">${esc(x.n)}</button>${chips(x)}`;
+      body = `<button class="title" data-open="${x.id}">${esc(x.n)}</button>${thumb(x,"wk")}${chips(x)}`;
       acts = `<div class="db-acts"><button type="button" class="btn small primary" data-open="${x.id}">Rezept ansehen</button><button type="button" class="btn small" data-roll="${g}">🎲 Tauschen</button><button type="button" class="icon dbx" data-clear="${g}" aria-label="Tag leeren" title="Tag leeren">${ICON.x}</button></div>`;
     } else if(v && typeof v==="object" && v.custom){
       body = `<span class="title" style="font-weight:700">${esc(v.custom)}</span><div class="meta"><span class="chip">Eigenes Gericht</span></div>`;
@@ -4593,7 +4597,7 @@ function renderWeek(){
   const compact = i=>{
     const g = i+O, v = state.days[g]; let body;
     if(typeof v==="string" && dish(v)){ const x = dish(v);
-      body = `${thumb(x,"wk")}<button class="title" data-open="${x.id}">${esc(x.n)}</button>${chips(x)}`;
+      body = `<button class="title" data-open="${x.id}">${esc(x.n)}</button>${thumb(x,"wk")}${chips(x)}`;
     } else if(v && typeof v==="object" && v.custom){
       body = `<span class="title" style="font-weight:700">${esc(v.custom)}</span><div class="meta"><span class="chip">Eigenes Gericht</span></div>`;
     } else body = i<today ? `<span class="nothing">Nichts geplant</span>` : emptyRow(i);
