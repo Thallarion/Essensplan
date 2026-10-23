@@ -60,7 +60,7 @@ TAB = {
  "Mineralwasser (mit Kohlensäure)":(None,0,0,0,0,0,0,0), "Mozzarella":(125,250,18,19,1,0,0,0), "Mungbohnensprossen":(None,20,2.5,0.2,2,1.5,1,0),
  "Möhren (lila oder orange)":(80,36,0.9,0.2,7,3,1,0), "Möhren":(None,36,0.9,0.2,7,3,1,0), "Naan-Brot":(90,290,8,7,48,2,0,0),
  "Naturjoghurt (3,8 %)":(None,64,3.4,3.8,4.1,0,0,0), "Naturjoghurt":(None,64,3.4,3.8,4.1,0,0,0), "Oliven":(80,150,1,15,1,3,0,0),
- "Pak Choi":(150,13,1.5,0.2,1.2,1,1,0), "Paneer (oder Halloumi)":(None,300,18,24,3,0,0,0), "Paprika":(160,30,1,0.3,5,2,1,0),
+ "Pak Choi":(150,13,1.5,0.2,1.2,1,1,0), "Paneer (oder Halloumi)":(None,300,18,24,3,0,0,0), "Paprika":(160,30,1,0.3,5,2,1,0), "Spitzpaprika":(100,30,1,0.3,5,2,1,0),
  "Parmesan am Stück":(None,390,35,28,0,0,0,0), "Parmesan":(None,390,35,28,0,0,0,0), "Passierte Tomaten":(None,25,1.3,0.2,4,1.2,1,0),
  "Pastinaken":(150,60,1.3,0.4,12,4,1,0), "Penne":(None,355,12.5,1.5,71,3,0,0), "Petersilienwurzeln":(100,40,3,0.5,6,4,1,0),
  "Petersilie":(25,30,3,0.6,3,3,0,0), "Pizzateig":(400,260,7,5,45,2,0,0), "Polenta":(None,350,8,1.5,75,4,0,0),

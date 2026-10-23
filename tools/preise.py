@@ -31,7 +31,7 @@ PREIS = {
  "Leinsamen (geschrotet)":5,"Limette":8,"Limette (Bio)":8,"Linsen (Dose)":4,"Linsennudeln (glutenfrei)":9,"Magerquark":3,"Mais":3.5,"Mais-Reis-Nudeln (glutenfrei)":7,
  "Mais-Tortillas (glutenfrei)":12,"Makkaroni":3,"Mandelmus (hell)":22,"Mango":6,"Kochsahne (15 %)":3.5,"Chinakohl":2.5,"Spaghettikürbis":3.5,"Glasnudeln":8,"Ananas (Dose)":3,"Ananas":4,"Butternut-Kürbis":2.5,"Maracujasaft":3,"Mangold (oder Blattspinat)":6,"Mehl":1.5,"Mie-Nudeln":5,"Milch":1.2,"Milchreis":3,
  "Mineralwasser (mit Kohlensäure)":0.3,"Minze":40,"Mozzarella":9,"Mungbohnensprossen":8,"Möhren":1.5,"Möhren (lila oder orange)":2.5,"Naan-Brot":8,"Naturjoghurt":2.5,
- "Naturjoghurt (3,8 %)":2.5,"Oliven":10,"Orzo (Risoni)":4,"Pak Choi":5,"Paneer (oder Halloumi)":12,"Paprika":4,"Parmesan":25,"Parmesan am Stück":25,"Passierte Tomaten":1.8,
+ "Naturjoghurt (3,8 %)":2.5,"Oliven":10,"Orzo (Risoni)":4,"Pak Choi":5,"Paneer (oder Halloumi)":12,"Paprika":4,"Spitzpaprika":5,"Parmesan":25,"Parmesan am Stück":25,"Passierte Tomaten":1.8,
  "Pastinaken":5,"Penne":3,"Petersilie":40,"Petersilienwurzeln":6,"Pinienkerne":60,"Pistazien":28,"Pizzateig":5,"Polenta":3,"Putenbrust":12,"Putenhackfleisch":9,"Quark":3,
  "Quark (20 % Fett)":4,"Quinoa":8,"Radieschen":6,"Reis":3,"Reisnudeln":6,"Reispapier":15,"Ricotta":8,"Rinderhack":11,"Rindersteak (Hüfte)":28,"Risottoreis":5,"Rosenkohl":6,
  "Rote Bete (gegart, vakuumverpackt)":4,"Rote Bete (klein, roh)":2.5,"Räuchertofu":12,"Salsa":6,"Salatmix":12,"Tortilla-Gewürzmischung (z. B. Fuego)":40,"Maronen (gegart, vakuumverpackt)":14,"Gemüsebrühe (1 l)":0.3,"Rote Chilischote":30,"Grüne Chilischote":30,"Orange":2.5,"Rote Currypaste":15,"Rote Linsen":3.5,"Rote Zwiebel":3,"Rotkohl":2,"Rucola":18,
