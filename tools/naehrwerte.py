@@ -68,7 +68,7 @@ TAB = {
  "Reisnudeln":(None,360,6,0.6,82,1.5,0,0), "Reispapier":(120,340,5,0.5,80,1,0,0), "Reis":(None,350,7,0.6,78,1.3,0,0),
  "Ricotta":(None,150,9,11,3,0,0,0), "Rinderhack":(None,230,20,16,0,0,0,0), "Risottoreis":(None,350,7,0.6,78,1.3,0,0),
  "Rosenkohl":(None,40,4.5,0.3,3.5,4.5,1,0), "Rote Bete (gegart, vakuumverpackt)":(400,40,1.5,0.1,8,2.5,1,0),
- "Rote Bete (klein, roh)":(150,40,1.5,0.1,8,2.5,1,0), "Rote Chilischote":(15,40,2,0.4,7,1.5,0,0), "Grüne Chilischote":(15,30,2,0.4,5,1.5,0,0), "Orange":(200,47,1,0.2,9,2.2,0,0), "Rote Currypaste":(40,120,2.5,8,10,4,0,0),
+ "Rote Bete (klein, roh)":(150,40,1.5,0.1,8,2.5,1,0), "Rote Chilischote":(15,40,2,0.4,7,1.5,0,0), "Grüne Chilischote":(15,30,2,0.4,5,1.5,0,0), "Orange":(200,47,1,0.2,9,2.2,0,0), "Granatapfel":(200,83,1.7,1.2,16,4,0,0), "Rote Currypaste":(40,120,2.5,8,10,4,0,0),
  "Rote Linsen":(None,340,24,1.5,50,11,1,0), "Romanesco":(500,25,2.5,0.3,3,2.5,1,0),
  "Rucola":(None,25,2.6,0.7,2,1.6,1,0), "Römersalat":(400,15,1.2,0.2,1.8,1.5,1,0),
  "Sahne":(None,300,2.4,30,3.2,0,0,0), "Salatgurke (groß)":(500,12,0.6,0.1,2,0.5,1,0), "Salatgurke":(400,12,0.6,0.1,2,0.5,1,0),
