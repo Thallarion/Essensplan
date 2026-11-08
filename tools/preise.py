@@ -35,7 +35,7 @@ PREIS = {
  "Pastinaken":5,"Penne":3,"Petersilie":40,"Petersilienwurzeln":6,"Pinienkerne":60,"Pistazien":28,"Pizzateig":5,"Polenta":3,"Putenbrust":12,"Putenhackfleisch":9,"Quark":3,
  "Quark (20 % Fett)":4,"Quinoa":8,"Radieschen":6,"Reis":3,"Reisnudeln":6,"Reispapier":15,"Ricotta":8,"Rinderhack":11,"Rindersteak (Hüfte)":28,"Risottoreis":5,"Rosenkohl":6,
  "Rote Bete (gegart, vakuumverpackt)":4,"Rote Bete (klein, roh)":2.5,"Räuchertofu":12,"Salsa":6,"Salatmix":12,"Tortilla-Gewürzmischung (z. B. Fuego)":40,"Maronen (gegart, vakuumverpackt)":14,"Gemüsebrühe (1 l)":0.3,"Rote Chilischote":30,"Grüne Chilischote":30,"Orange":2.5,"Granatapfel":7.5,"Rote Currypaste":15,"Rote Linsen":3.5,"Rote Zwiebel":3,"Rotkohl":2,"Rucola":18,
- "Räucherlachs":35,"Römersalat":6,"Sahne":4.5,"Salat":5,"Salatgurke":3,"Salatgurke (groß)":3,"Sauerkirschen":4,"Saure Sahne":4,"Schalotten":8,"Schmand":4,"Schmelzkäse":8,
+ "Räucherlachs":35,"Römersalat":6,"Sahne":4.5,"Mascarpone":8,"Löffelbiskuits":8,"Salat":5,"Salatgurke":3,"Salatgurke (groß)":3,"Sauerkirschen":4,"Saure Sahne":4,"Schalotten":8,"Schmand":4,"Schmelzkäse":8,
  "Schnittlauch":40,"Schwarze Bohnen":4,"Schwarzer Sesam":40,"Seelachsfilet":12,"Semmelbrösel":3,"Semmelknödel (Kochbeutel)":8,"Sesamöl":20,"Spaghetti":2.5,"Speckwürfel":10,
  "Spinat gehackt":3.5,"Stangensellerie":5,"Stückige Tomaten":1.8,"Suppengemüse / gemischtes Gemüse":5,"Suppennudeln":3,"Sushireis":5,"Süßkartoffel":3.5,"Tahin (Sesammus)":14,
  "Tamari (glutenfreie Sojasauce)":15,"Tellerlinsen":4,"Teriyakisauce":10,"Thunfisch (im eigenen Saft)":14,"Thunfisch im eigenen Saft":14,"Thymian":50,"Toastbrot":3,"Tofu":7,
