@@ -71,7 +71,7 @@ TAB = {
  "Rote Bete (klein, roh)":(150,40,1.5,0.1,8,2.5,1,0), "Rote Chilischote":(15,40,2,0.4,7,1.5,0,0), "Grüne Chilischote":(15,30,2,0.4,5,1.5,0,0), "Orange":(200,47,1,0.2,9,2.2,0,0), "Granatapfel":(200,83,1.7,1.2,16,4,0,0), "Rote Currypaste":(40,120,2.5,8,10,4,0,0),
  "Rote Linsen":(None,340,24,1.5,50,11,1,0), "Romanesco":(500,25,2.5,0.3,3,2.5,1,0),
  "Rucola":(None,25,2.6,0.7,2,1.6,1,0), "Römersalat":(400,15,1.2,0.2,1.8,1.5,1,0),
- "Sahne":(None,300,2.4,30,3.2,0,0,0), "Mascarpone":(None,420,4.5,43,3.5,0,0,0), "Löffelbiskuits":(None,390,8,5,78,2,0,0), "Salatgurke (groß)":(500,12,0.6,0.1,2,0.5,1,0), "Salatgurke":(400,12,0.6,0.1,2,0.5,1,0),
+ "Sahne":(None,300,2.4,30,3.2,0,0,0), "Mascarpone":(None,420,4.5,43,3.5,0,0,0), "Corned Beef":(None,200,25,11,0.5,0,0,1), "Matjesfilet":(80,200,15,15,0,0,0,0), "Rindergulasch":(None,125,21,4,0,0,0,0), "Portwein (trocken)":(None,150,0,0,10,0,0,0), "Vollkornbaguette":(250,240,9,2,45,7,0,0), "Löffelbiskuits":(None,390,8,5,78,2,0,0), "Salatgurke (groß)":(500,12,0.6,0.1,2,0.5,1,0), "Salatgurke":(400,12,0.6,0.1,2,0.5,1,0),
  "Salat":(300,15,1.2,0.2,1.8,1.5,1,0), "Sauerkirschen":(350,60,0.7,0.1,13,1,0,0), "Saure Sahne":(200,115,3,10,4,0,0,0),
  "Schalotten":(30,30,1.2,0.2,5,1.8,1,0), "Schmand":(None,240,2.6,24,3.5,0,0,0), "Schmelzkäse":(None,280,11,23,6,0,0,0),
  "Schnittlauch":(25,30,3,0.6,3,3,0,0), "Schwarzer Sesam":(10,580,18,50,12,12,0,0), "Seelachsfilet":(None,80,18,0.9,0,0,0,0),
